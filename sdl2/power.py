@@ -1,0 +1,11 @@
+from ctypes import POINTER, c_int
+from .dll import _bind
+
+SDL_PowerState = c_int
+SDL_POWERSTATE_UNKNOWN = 0
+SDL_POWERSTATE_ON_BATTERY = 1
+SDL_POWERSTATE_NO_BATTERY = 2
+SDL_POWERSTATE_CHARGING = 3
+SDL_POWERSTATE_CHARGED = 4
+
+SDL_GetPowerInfo = _bind("SDL_GetPowerInfo", [POINTER(c_int), POINTER(c_int)], SDL_PowerState)
