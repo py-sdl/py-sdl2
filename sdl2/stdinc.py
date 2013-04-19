@@ -1,7 +1,7 @@
 import sys
 from .dll import _bind
-from ctypes import c_int, c_byte, c_ubyte, c_ushort, c_long, c_short, \
-    c_ulong, c_longlong, c_ulonglong, cdll, c_size_t, c_void_p, c_char_p
+from ctypes import c_int, c_byte, c_ubyte, c_ushort, c_short, c_uint, \
+    c_longlong, c_ulonglong, cdll, c_size_t, c_void_p, c_char_p
 
 SDL_FALSE = 0
 SDL_TRUE = 1
@@ -11,8 +11,8 @@ Sint8 = c_byte
 Uint8 = c_ubyte
 Sint16 = c_short
 Uint16 = c_ushort
-Sint32 = c_long
-Uint32 = c_ulong
+Sint32 = c_int
+Uint32 = c_uint
 Sint64 = c_longlong
 Uint64 = c_ulonglong
 
