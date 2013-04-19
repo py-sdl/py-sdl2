@@ -1,6 +1,5 @@
 import os
 import sys
-import array
 import unittest
 from ctypes import c_int, byref, cast, POINTER
 from .. import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
@@ -324,7 +323,6 @@ class SDLSurfaceTest(unittest.TestCase):
             sf = surface.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
                                               bmask, amask)
             for r, g, b in colorkeys:
-                pixels.SDL_PixelFormat
                 key = pixels.SDL_MapRGB(pformat, r, g, b)
                 surface.SDL_SetColorKey(sf, 1, key)
                 skey = Uint32()
