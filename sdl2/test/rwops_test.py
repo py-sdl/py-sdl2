@@ -30,9 +30,9 @@ class SDLRWopsTest(unittest.TestCase):
     def test_SDL_RWFromFile(self):
         rw = rwops.SDL_RWFromFile(self.testfile.encode("utf-8"), b"r")
         self.assertIsInstance(rw.contents, rwops.SDL_RWops)
-        # Read the first 42 bytes(sic!). It should be:
-        # 'This is a test file for pygame2.sdl.rwops!'
-        length = 42
+        # Read the first 36 bytes(sic!). It should be:
+        # 'This is a test file for sdl2.rwops!'
+        length = 36
         buf = BytesIO()
         while length >= 2:
             # Reading in two bytes - we have plain text(1-byte encoding), so
@@ -43,7 +43,7 @@ class SDLRWopsTest(unittest.TestCase):
             buf.write(byteify(chr(ch >> 8), "utf-8"))
             length -= 2
         self.assertEqual(stringify(buf.getvalue(), "utf-8"),
-                         "This is a test file for pygame2.sdl.rwops!")
+                         "This is a test file for  sdl2.rwops!")
 
     @unittest.skip("not implemented")
     def test_SDL_RWFromFP(self):

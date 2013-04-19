@@ -12,11 +12,7 @@ import random
 import subprocess
 import time
 
-try:
-    from . import support, testrunner
-except:
-    import support
-    import testrunner
+from . import support, testrunner
 
 if sys.version_info[0] >= 3:
     MAXINT = sys.maxsize
@@ -262,7 +258,6 @@ def run():
         writer.writeline(HEAVYDELIM)
 
     maxcount = 0
-    curcount = 0
     for suite in testsuites:
         maxcount += suite.countTestCases()
 
@@ -283,7 +278,6 @@ def run():
     for suite in testsuites:
         result = runner.run(suite, runwrite)
         timetaken += result.duration
-        curcount += result.testsRun
         results.append(result)
     writer.writeline()
     testcount, errors, failures, skips, ok = prepare_results(results)

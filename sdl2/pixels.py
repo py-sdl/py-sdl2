@@ -56,10 +56,8 @@ SDL_DEFINE_PIXELFORMAT = lambda ptype, order, layout, bits, pbytes: ((1 << 28) |
 SDL_PIXELFLAG = lambda X: (((X) >> 28) & 0x0F)
 SDL_PIXELTYPE = lambda X: (((X) >> 24) & 0x0F)
 SDL_PIXELORDER = lambda X: (((X) >> 20) & 0x0F)
-SDL_PIXELLAYOUT = lambda X:    (((X) >> 16) & 0x0F)
+SDL_PIXELLAYOUT = lambda X: (((X) >> 16) & 0x0F)
 SDL_BITSPERPIXEL = lambda X: (((X) >> 8) & 0xFF)
-def SDL_BITSPERPIXEL(x):
-    return ((x >> 8) & 0xFF)
 def SDL_BYTESPERPIXEL(x):
     valid = (SDL_PIXELFORMAT_YUY2, SDL_PIXELFORMAT_UYVY, SDL_PIXELFORMAT_YVYU)
     if SDL_ISPIXELFORMAT_FOURCC(x):
@@ -228,6 +226,7 @@ class SDL_Color(Structure):
                 ]
 
     def __init__(self, r=255, g=255, b=255):
+        super(SDL_Color, self).__init__()
         self.r = r
         self.g = g
         self.b = b

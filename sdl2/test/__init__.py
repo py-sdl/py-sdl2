@@ -6,6 +6,7 @@ unit tests using
     python -c "import sdl.test; sdl.test.run()"
 
 """
+import sys
 from .util.runtests import run
 
 __all__ = ["run"]

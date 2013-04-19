@@ -13,6 +13,7 @@ class SDL_DisplayMode(Structure):
                 ("driverdata", c_void_p)
                 ]
     def __init__(self, format_=0, w=0, h=0, refresh_rate=0):
+        super(SDL_DisplayMode, self).__init__()
         self.format = format_
         self.w = w
         self.h = h
