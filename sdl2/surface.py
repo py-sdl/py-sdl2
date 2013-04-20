@@ -6,6 +6,22 @@ from .rect import SDL_Rect
 from .pixels import SDL_PixelFormat, SDL_Palette
 from .rwops import SDL_RWops, SDL_RWFromFile
 
+__all__ = ["SDL_SWSURFACE", "SDL_PREALLOC", "SDL_RLEACCEL", "SDL_DONTFREE",
+           "SDL_MUSTLOCK", "SDL_BlitMap", "SDL_Surface", "SDL_Blit",
+           "SDL_CreateRGBSurface", "SDL_CreateRGBSurfaceFrom", "SDL_FreeSurface",
+           "SDL_SetSurfacePalette", "SDL_LockSurface", "SDL_UnlockSurface",
+           "SDL_LoadBMP_RW", "SDL_LoadBMP", "SDL_SaveBMP_RW", "SDL_SaveBMP",
+           "SDL_SetSurfaceRLE", "SDL_SetColorKey", "SDL_GetColorKey",
+           "SDL_SetSurfaceColorMod", "SDL_GetSurfaceColorMod",
+           "SDL_SetSurfaceAlphaMod", "SDL_GetSurfaceAlphaMod",
+           "SDL_SetSurfaceBlendMode", "SDL_GetSurfaceBlendMode",
+           "SDL_SetClipRect", "SDL_GetClipRect", "SDL_ConvertSurface",
+           "SDL_ConvertSurfaceFormat", "SDL_ConvertPixels", "SDL_FillRect",
+           "SDL_FillRects", "SDL_UpperBlit", "SDL_BlitSurface", "SDL_LowerBlit",
+           "SDL_SoftStretch", "SDL_UpperBlitScaled", "SDL_BlitScaled",
+           "SDL_LowerBlitScaled"
+           ]
+
 SDL_SWSURFACE = 0
 SDL_PREALLOC = 0x00000001
 SDL_RLEACCEL = 0x00000002

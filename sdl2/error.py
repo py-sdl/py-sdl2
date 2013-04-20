@@ -1,6 +1,12 @@
 from ctypes import c_char_p, c_int
 from .dll import _bind
 
+__all__ = ["SDL_SetError", "SDL_GetError", "SDL_ClearError", "SDL_ENOMEM",
+           "SDL_EFREAD", "SDL_EFWRITE", "SDL_EFSEEK", "SDL_UNSUPPORTED",
+           "SDL_LASTERROR", "SDL_errorcode", "SDL_Error", "SDL_OutOfMemory",
+           "SDL_Unsupported", "SDL_InvalidParamError"
+           ]
+
 SDL_SetError = _bind("SDL_SetError", [c_char_p], c_int)
 SDL_GetError = _bind("SDL_GetError", None, c_char_p)
 SDL_ClearError = _bind("SDL_ClearError")

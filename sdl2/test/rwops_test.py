@@ -18,7 +18,7 @@ class SDLRWopsTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def setUp(self):
-        self.testfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rwopstest.txt")
+        self.testfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "rwopstest.txt")
 
     def tearDown(self):
         pass

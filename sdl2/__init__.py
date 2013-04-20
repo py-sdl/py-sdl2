@@ -3,6 +3,13 @@ from .dll import get_dll_file, _bind
 from ctypes import c_int
 from .stdinc import Uint32
 
+__all__ = ["SDL_INIT_TIMER", "SDL_INIT_AUDIO", "SDL_INIT_VIDEO",
+           "SDL_INIT_JOYSTICK", "SDL_INIT_HAPTIC", "SDL_INIT_GAMECONTROLLER",
+           "SDL_INIT_NOPARACHUTE", "SDL_INIT_EVERYTHING", "SDL_Init",
+           "SDL_InitSubSystem", "SDL_QuitSubSystem", "SDL_WasInit", "SDL_Quit",
+           "version_info"
+           ]
+
 SDL_INIT_TIMER = 0x00000001
 SDL_INIT_AUDIO = 0x00000010
 SDL_INIT_VIDEO = 0x00000020

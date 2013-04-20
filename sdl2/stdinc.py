@@ -3,6 +3,13 @@ from .dll import _bind
 from ctypes import c_int, c_byte, c_ubyte, c_ushort, c_short, c_uint, \
     c_longlong, c_ulonglong, cdll, c_size_t, c_void_p, c_char_p
 
+__all__ = ["SDL_FALSE", "SDL_TRUE", "SDL_bool", "Sint8", "Uint8", "Sint16",
+           "Uint16", "Sint32", "Uint32", "Sint64", "Uint64", "SDL_malloc",
+           "SDL_calloc", "SDL_realloc", "SDL_free", "SDL_getenv",
+           "SDL_setenv", "SDL_abs", "SDL_min", "SDL_max", "SDL_memset",
+           "SDL_memcpy"
+           ]
+
 SDL_FALSE = 0
 SDL_TRUE = 1
 

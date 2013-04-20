@@ -6,6 +6,15 @@ from .scancode import SDL_Scancode
 from .rect import SDL_Rect
 from .video import SDL_Window
 
+__all__ = ["SDL_Keysym", "SDL_GetKeyboardFocus", "SDL_GetKeyboardState",
+           "SDL_GetModState", "SDL_SetModState", "SDL_GetKeyFromScancode",
+           "SDL_GetScancodeFromKey", "SDL_GetScancodeName",
+           "SDL_GetScancodeFromName", "SDL_GetKeyName", "SDL_GetKeyFromName",
+           "SDL_StartTextInput", "SDL_IsTextInputActive", "SDL_StopTextInput",
+           "SDL_SetTextInputRect", "SDL_HasScreenKeyboardSupport",
+           "SDL_IsScreenKeyboardShown"
+           ]
+
 class SDL_Keysym(Structure):
     _fields_ = [("scancode", SDL_Scancode),
                 ("sym", SDL_Keycode),

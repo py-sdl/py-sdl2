@@ -2,6 +2,21 @@ from ctypes import Structure, c_int, c_char_p, POINTER
 from .dll import _bind
 from .stdinc import Sint16, Sint32, Uint8, SDL_bool
 
+__all__ = ["SDL_Joystick", "SDL_JoystickGUID", "SDL_JoystickID",
+           "SDL_NumJoysticks", "SDL_JoystickNameForIndex", "SDL_JoystickOpen",
+           "SDL_JoystickName", "SDL_JoystickGetDeviceGUID",
+           "SDL_JoystickGetGUID", "SDL_JoystickGetGUIDString",
+           "SDL_JoystickGetGUIDFromString", "SDL_JoystickGetAttached",
+           "SDL_JoystickInstanceID", "SDL_JoystickNumAxes",
+           "SDL_JoystickNumBalls", "SDL_JoystickNumHats",
+           "SDL_JoystickNumButtons", "SDL_JoystickUpdate",
+           "SDL_JoystickEventState", "SDL_JoystickGetAxis", "SDL_HAT_CENTERED",
+           "SDL_HAT_UP", "SDL_HAT_RIGHT", "SDL_HAT_DOWN", "SDL_HAT_LEFT",
+           "SDL_HAT_RIGHTUP", "SDL_HAT_RIGHTDOWN", "SDL_HAT_LEFTUP",
+           "SDL_HAT_LEFTDOWN", "SDL_JoystickGetHat", "SDL_JoystickGetBall",
+           "SDL_JoystickGetButton", "SDL_JoystickClose"
+           ]
+
 class SDL_Joystick(Structure):
     pass
 
