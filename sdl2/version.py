@@ -2,6 +2,12 @@ from ctypes import Structure, POINTER, c_char_p, c_int
 from .dll import _bind
 from .stdinc import Uint8
 
+__all__ = ["SDL_version", "SDL_MAJOR_VERSION", "SDL_MINOR_VERSION",
+           "SDL_PATCHLEVEL", "SDL_VERSION", "SDL_VERSIONNUM",
+           "SDL_COMPILEDVERSION", "SDL_VERSION_ATLEAST", "SDL_GetVersion",
+           "SDL_GetRevision", "SDL_GetRevisionNumber"
+           ]
+
 class SDL_version(Structure):
     _fields_ = [("major", Uint8),
                 ("minor", Uint8),

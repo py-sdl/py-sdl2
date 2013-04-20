@@ -2,6 +2,10 @@ from ctypes import Structure, POINTER, c_float, c_int
 from .dll import _bind
 from .stdinc import Sint64
 
+__all__ = ["SDL_TouchID", "SDL_FingerID", "SDL_Finger", "SDL_GetNumTouchDevices",
+           "SDL_GetTouchDevice", "SDL_GetNumTouchFingers", "SDL_GetTouchFinger"
+           ]
+
 SDL_TouchID = Sint64
 SDL_FingerID = Sint64
 

@@ -7,6 +7,40 @@ from .joystick import SDL_JoystickID
 from .touch import SDL_FingerID, SDL_TouchID
 from .gesture import SDL_GestureID
 
+__all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_WINDOWEVENT", "SDL_SYSWMEVENT",
+           "SDL_KEYDOWN", "SDL_KEYUP", "SDL_TEXTEDITING", "SDL_TEXTINPUT",
+           "SDL_MOUSEMOTION", "SDL_MOUSEBUTTONDOWN", "SDL_MOUSEBUTTONUP",
+           "SDL_MOUSEWHEEL", "SDL_JOYAXISMOTION", "SDL_JOYBALLMOTION",
+           "SDL_JOYHATMOTION", "SDL_JOYBUTTONDOWN", "SDL_JOYBUTTONUP",
+           "SDL_JOYDEVICEADDED", "SDL_JOYDEVICEREMOVED",
+           "SDL_CONTROLLERAXISMOTION", "SDL_CONTROLLERBUTTONDOWN",
+           "SDL_CONTROLLERBUTTONUP", "SDL_CONTROLLERDEVICEADDED",
+           "SDL_CONTROLLERDEVICEREMOVED", "SDL_CONTROLLERDEVICEREMAPPED",
+           "SDL_FINGERDOWN", "SDL_FINGERUP", "SDL_FINGERMOTION",
+           "SDL_DOLLARGESTURE", "SDL_DOLLARRECORD", "SDL_MULTIGESTURE",
+           "SDL_CLIPBOARDUPDATE", "SDL_DROPFILE", "SDL_USEREVENT",
+           "SDL_LASTEVENT", "SDL_EventType", "SDL_GenericEvent",
+           "SDL_WindowEvent", "SDL_KeyboardEvent",
+           "SDL_TEXTEDITINGEVENT_TEXT_SIZE", "SDL_TextEditingEvent",
+           "SDL_TEXTINPUTEVENT_TEXT_SIZE", "SDL_TextInputEvent",
+           "SDL_MouseMotionEvent", "SDL_MouseButtonEvent",
+           "SDL_MouseWheelEvent", "SDL_JoyAxisEvent", "SDL_JoyBallEvent",
+           "SDL_JoyHatEvent", "SDL_JoyButtonEvent", "SDL_JoyDeviceEvent",
+           "SDL_ControllerAxisEvent", "SDL_ControllerButtonEvent",
+           "SDL_ControllerDeviceEvent", "SDL_TouchFingerEvent",
+           "SDL_MultiGestureEvent", "SDL_DollarGestureEvent", "SDL_DropEvent",
+           "SDL_QuitEvent", "SDL_UserEvent", "SDL_SysWMmsg", "SDL_SysWMEvent",
+           "SDL_Event", "SDL_PumpEvents", "SDL_ADDEVENT", "SDL_PEEKEVENT",
+           "SDL_GETEVENT", "SDL_eventaction", "SDL_PeepEvents", "SDL_HasEvent",
+           "SDL_HasEvents", "SDL_FlushEvent", "SDL_FlushEvents",
+           "SDL_PollEvent", "SDL_WaitEvent", "SDL_WaitEventTimeout",
+           "SDL_PushEvent", "SDL_EventFilter", "SDL_SetEventFilter",
+           "SDL_GetEventFilter", "SDL_AddEventWatch", "SDL_DelEventWatch",
+           "SDL_FilterEvents", "SDL_QUERY", "SDL_IGNORE", "SDL_DISABLE",
+           "SDL_ENABLE", "SDL_EventState", "SDL_GetEventState",
+           "SDL_RegisterEvents", "SDL_QuitRequested"
+           ]
+
 SDL_FIRSTEVENT = 0
 SDL_QUIT = 0x100
 SDL_WINDOWEVENT = 0x200

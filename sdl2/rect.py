@@ -2,6 +2,12 @@ from ctypes import Structure, c_int, POINTER
 from .dll import _bind
 from .stdinc import SDL_bool
 
+__all__ = ["SDL_Point", "SDL_Rect", "SDL_RectEmpty", "SDL_RectEquals",
+           "SDL_HasIntersection", "SDL_IntersectRect", "SDL_UnionRect",
+           "SDL_EnclosePoints", "SDL_IntersectRectAndLine"
+           ]
+
+
 class SDL_Point(Structure):
     _fields_ = [("x", c_int), ("y", c_int)]
 

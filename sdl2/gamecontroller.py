@@ -3,6 +3,38 @@ from .dll import _bind
 from .stdinc import SDL_bool, Sint16, Uint8
 from .joystick import SDL_JoystickGUID, SDL_Joystick
 
+__all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
+           "SDL_CONTROLLER_BINDTYPE_BUTTON", "SDL_CONTROLLER_BINDTYPE_AXIS",
+           "SDL_CONTROLLER_BINDTYPE_HAT", "SDL_GameControllerBindType",
+           "SDL_GameControllerButtonBind", "SDL_GameControllerAddMapping",
+           "SDL_GameControllerMappingForGUID", "SDL_GameControllerMapping",
+           "SDL_IsGameController", "SDL_GameControllerNameForIndex",
+           "SDL_GameControllerOpen", "SDL_GameControllerName",
+           "SDL_GameControllerGetAttached", "SDL_GameControllerGetJoystick",
+           "SDL_GameControllerEventState", "SDL_GameControllerUpdate",
+           "SDL_CONTROLLER_AXIS_INVALID", "SDL_CONTROLLER_AXIS_LEFTX",
+           "SDL_CONTROLLER_AXIS_LEFTY", "SDL_CONTROLLER_AXIS_RIGHTX",
+           "SDL_CONTROLLER_AXIS_RIGHTY", "SDL_CONTROLLER_AXIS_TRIGGERLEFT",
+           "SDL_CONTROLLER_AXIS_TRIGGERRIGHT", "SDL_CONTROLLER_AXIS_MAX",
+           "SDL_GameControllerAxis", "SDL_GameControllerGetAxisFromString",
+           "SDL_GameControllerGetStringForAxis",
+           "SDL_GameControllerGetBindForAxis", "SDL_GameControllerGetAxis",
+           "SDL_CONTROLLER_BUTTON_INVALID", "SDL_CONTROLLER_BUTTON_A",
+           "SDL_CONTROLLER_BUTTON_B", "SDL_CONTROLLER_BUTTON_X",
+           "SDL_CONTROLLER_BUTTON_Y", "SDL_CONTROLLER_BUTTON_BACK",
+           "SDL_CONTROLLER_BUTTON_GUIDE", "SDL_CONTROLLER_BUTTON_START",
+           "SDL_CONTROLLER_BUTTON_LEFTSTICK", "SDL_CONTROLLER_BUTTON_RIGHTSTICK",
+           "SDL_CONTROLLER_BUTTON_LEFTSHOULDER",
+           "SDL_CONTROLLER_BUTTON_RIGHTSHOULDER",
+           "SDL_CONTROLLER_BUTTON_DPAD_UP", "SDL_CONTROLLER_BUTTON_DPAD_DOWN",
+           "SDL_CONTROLLER_BUTTON_DPAD_LEFT", "SDL_CONTROLLER_BUTTON_DPAD_RIGHT",
+           "SDL_CONTROLLER_BUTTON_MAX", "SDL_GameControllerButton",
+           "SDL_GameControllerGetButtonFromString",
+           "SDL_GameControllerGetStringForButton",
+           "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
+           "SDL_GameControllerClose"
+           ]
+
 class SDL_GameController(Structure):
     pass
 

@@ -5,6 +5,32 @@ from .endian import SDL_BYTEORDER, SDL_LIL_ENDIAN
 from .stdinc import Uint8, Uint16, Uint32
 from .rwops import SDL_RWops, SDL_RWFromFile
 
+__all__ = ["SDL_AudioFormat", "SDL_AUDIO_MASK_BITSIZE",
+           "SDL_AUDIO_MASK_DATATYPE", "SDL_AUDIO_MASK_ENDIAN",
+           "SDL_AUDIO_MASK_SIGNED", "SDL_AUDIO_BITSIZE", "SDL_AUDIO_ISFLOAT",
+           "SDL_AUDIO_ISBIGENDIAN", "SDL_AUDIO_ISSIGNED", "SDL_AUDIO_ISINT",
+           "SDL_AUDIO_ISLITTLEENDIAN", "SDL_AUDIO_ISUNSIGNED", "AUDIO_U8",
+           "AUDIO_S8", "AUDIO_U16LSB", "AUDIO_S16LSB", "AUDIO_U16MSB",
+           "AUDIO_S16MSB", "AUDIO_U16", "AUDIO_S16", "AUDIO_S32LSB",
+           "AUDIO_S32MSB", "AUDIO_S32", "AUDIO_F32LSB", "AUDIO_S32MSB",
+           "AUDIO_F32", "AUDIO_U16SYS", "AUDIO_S16SYS", "AUDIO_S32SYS",
+           "AUDIO_F32SYS", "SDL_AUDIO_ALLOW_FREQUENCY_CHANGE",
+           "SDL_AUDIO_ALLOW_FORMAT_CHANGE", "SDL_AUDIO_ALLOW_CHANNELS_CHANGE",
+           "SDL_AUDIO_ALLOW_ANY_CHANGE", "SDL_AudioCallback", "SDL_AudioSpec",
+           "SDL_AudioCVT", "SDL_AudioFilter", "SDL_GetNumAudioDrivers",
+           "SDL_GetAudioDriver", "SDL_AudioInit", "SDL_AudioQuit",
+           "SDL_GetCurrentAudioDriver", "SDL_OpenAudio", "SDL_AudioDeviceID",
+           "SDL_GetNumAudioDevices", "SDL_GetAudioDeviceName",
+           "SDL_OpenAudioDevice", "SDL_AUDIO_STOPPED", "SDL_AUDIO_PLAYING",
+           "SDL_AUDIO_PAUSED", "SDL_AudioStatus", "SDL_GetAudioStatus",
+           "SDL_GetAudioDeviceStatus", "SDL_PauseAudio", "SDL_PauseAudioDevice",
+           "SDL_LoadWAV_RW", "SDL_LoadWAV", "SDL_FreeWAV", "SDL_BuildAudioCVT",
+           "SDL_ConvertAudio", "SDL_MIX_MAXVOLUME", "SDL_MixAudio",
+           "SDL_MixAudioFormat", "SDL_LockAudio", "SDL_LockAudioDevice",
+           "SDL_UnlockAudio", "SDL_UnlockAudioDevice", "SDL_CloseAudio",
+           "SDL_CloseAudioDevice"
+         ]
+
 SDL_AudioFormat = Uint16
 
 SDL_AUDIO_MASK_BITSIZE = 0xFF

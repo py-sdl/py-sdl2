@@ -4,6 +4,24 @@ from .stdinc import Uint8, Uint32, SDL_bool
 from .video import SDL_Window
 from .surface import SDL_Surface
 
+__all__ = ["SDL_Cursor", "SDL_SYSTEM_CURSOR_ARROW", "SDL_SYSTEM_CURSOR_IBEAM",
+           "SDL_SYSTEM_CURSOR_WAIT", "SDL_SYSTEM_CURSOR_CROSSHAIR",
+           "SDL_SYSTEM_CURSOR_WAITARROW", "SDL_SYSTEM_CURSOR_SIZENWSE",
+           "SDL_SYSTEM_CURSOR_SIZENESW", "SDL_SYSTEM_CURSOR_SIZEWE",
+           "SDL_SYSTEM_CURSOR_SIZENS", "SDL_SYSTEM_CURSOR_SIZEALL",
+           "SDL_SYSTEM_CURSOR_NO", "SDL_SYSTEM_CURSOR_HAND",
+           "SDL_NUM_SYSTEM_CURSORS", "SDL_SystemCursor", "SDL_GetMouseFocus",
+           "SDL_GetMouseState", "SDL_GetRelativeMouseState",
+           "SDL_WarpMouseInWindow", "SDL_SetRelativeMouseMode",
+           "SDL_GetRelativeMouseMode", "SDL_CreateCursor",
+           "SDL_CreateColorCursor", "SDL_CreateSystemCursor", "SDL_SetCursor",
+           "SDL_GetCursor", "SDL_FreeCursor", "SDL_ShowCursor", "SDL_BUTTON",
+           "SDL_BUTTON_LEFT", "SDL_BUTTON_MIDDLE", "SDL_BUTTON_RIGHT",
+           "SDL_BUTTON_X1", "SDL_BUTTON_X2", "SDL_BUTTON_LMASK",
+           "SDL_BUTTON_MMASK", "SDL_BUTTON_RMASK", "SDL_BUTTON_X1MASK",
+           "SDL_BUTTON_X2MASK"
+           ]
+
 class SDL_Cursor(Structure):
     pass
 SDL_SYSTEM_CURSOR_ARROW = 0

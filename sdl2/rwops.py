@@ -4,6 +4,18 @@ from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_size_t, c_void_p, \
 from .dll import _bind
 from .stdinc import Sint64, Uint8, Uint16, Uint32, Uint64, SDL_bool
 
+__all__ = ["SDL_RWOPS_UNKNOWN", "SDL_RWOPS_WINFILE", "SDL_RWOPS_STDFILE",
+           "SDL_RWOPS_JNIFILE", "SDL_RWOPS_MEMORY", "SDL_RWOPS_MEMORY_RO",
+           "SDL_RWops", "SDL_RWFromFile", "SDL_RWFromFP", "SDL_RWFromMem",
+           "SDL_RWFromConstMem", "SDL_AllocRW", "SDL_FreeRW", "RW_SEEK_SET",
+           "RW_SEEK_CUR", "RW_SEEK_END", "SDL_RWsize", "SDL_RWseek",
+           "SDL_RWtell", "SDL_RWread", "SDL_RWwrite", "SDL_RWclose",
+           "SDL_ReadU8", "SDL_ReadLE16", "SDL_ReadBE16", "SDL_ReadLE32",
+           "SDL_ReadBE32", "SDL_ReadLE64", "SDL_ReadBE64", "SDL_WriteU8",
+           "SDL_WriteLE16", "SDL_WriteBE16", "SDL_WriteLE32", "SDL_WriteBE32",
+           "SDL_WriteLE64", "SDL_WriteBE64", "rw_from_object"
+           ]
+
 SDL_RWOPS_UNKNOWN = 0
 SDL_RWOPS_WINFILE = 1
 SDL_RWOPS_STDFILE = 2

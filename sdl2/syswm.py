@@ -5,6 +5,12 @@ from .stdinc import SDL_bool
 from .version import SDL_version
 from .video import SDL_Window
 
+__all__ = ["SDL_SYSWM_TYPE", "SDL_SYSWM_UNKNOWN", "SDL_SYSWM_WINDOWS",
+           "SDL_SYSWM_X11", "SDL_SYSWM_DIRECTFB", "SDL_SYSWM_COCOA",
+           "SDL_SYSWM_UIKIT", "SDL_SysWMmsg", "SDL_SysWMinfo",
+           "SDL_GetWindowWMInfo"
+           ]
+
 SDL_SYSWM_TYPE = c_int
 SDL_SYSWM_UNKNOWN = 0
 SDL_SYSWM_WINDOWS = 1

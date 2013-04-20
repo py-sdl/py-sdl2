@@ -1,6 +1,28 @@
 from ctypes import c_int, c_char_p, c_void_p, CFUNCTYPE, POINTER, py_object
 from .dll import _bind
 
+__all__ = ["SDL_MAX_LOG_MESSAGE", "SDL_LOG_CATEGORY_APPLICATION",
+           "SDL_LOG_CATEGORY_ERROR", "SDL_LOG_CATEGORY_ASSERT",
+           "SDL_LOG_CATEGORY_SYSTEM", "SDL_LOG_CATEGORY_AUDIO",
+           "SDL_LOG_CATEGORY_VIDEO", "SDL_LOG_CATEGORY_RENDER",
+           "SDL_LOG_CATEGORY_INPUT", "SDL_LOG_CATEGORY_TEST",
+           "SDL_LOG_CATEGORY_RESERVED1", "SDL_LOG_CATEGORY_RESERVED2",
+           "SDL_LOG_CATEGORY_RESERVED3", "SDL_LOG_CATEGORY_RESERVED4",
+           "SDL_LOG_CATEGORY_RESERVED5", "SDL_LOG_CATEGORY_RESERVED6",
+           "SDL_LOG_CATEGORY_RESERVED7", "SDL_LOG_CATEGORY_RESERVED8",
+           "SDL_LOG_CATEGORY_RESERVED9", "SDL_LOG_CATEGORY_RESERVED10",
+           "SDL_LOG_CATEGORY_CUSTOM", "SDL_LOG_PRIORITY_VERBOSE",
+           "SDL_LOG_PRIORITY_DEBUG", "SDL_LOG_PRIORITY_INFO",
+           "SDL_LOG_PRIORITY_WARN", "SDL_LOG_PRIORITY_ERROR",
+           "SDL_LOG_PRIORITY_CRITICAL", "SDL_NUM_LOG_PRIORITIES",
+           "SDL_LogPriority", "SDL_LogSetAllPriority", "SDL_LogSetPriority",
+           "SDL_LogGetPriority", "SDL_LogResetPriorities", "SDL_Log",
+           "SDL_LogVerbose", "SDL_LogDebug", "SDL_LogInfo", "SDL_LogWarn",
+           "SDL_LogError", "SDL_LogCritical", "SDL_LogMessage",
+           "SDL_LogOutputFunction", "SDL_LogGetOutputFunction",
+           "SDL_LogSetOutputFunction"
+           ]
+
 SDL_MAX_LOG_MESSAGE = 4096
 SDL_LOG_CATEGORY_APPLICATION = 0
 SDL_LOG_CATEGORY_ERROR = 1
