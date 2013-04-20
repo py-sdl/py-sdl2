@@ -276,7 +276,7 @@ class SDLSurfaceTest(unittest.TestCase):
             surface.SDL_FreeSurface(sf)
 
     def test_SDL_GetSetClipRect(self):
-        rectlist = ((rect.SDL_Rect(0, 0, 0, 0), SDL_FALSE, False),
+        rectlist = ((rect.SDL_Rect(0, 0, 0, 0), SDL_FALSE, True),
                     (rect.SDL_Rect(2, 2, 0, 0), SDL_FALSE, False),
                     (rect.SDL_Rect(2, 2, 5, 1), SDL_TRUE, True),
                     (rect.SDL_Rect(6, 5, 10, 3), SDL_TRUE, False),
