@@ -12,7 +12,6 @@ Contents
 
    install.rst
    integration.rst
-   sdl.rst
    news.rst
 
 Further readings:
