@@ -3,6 +3,7 @@ top_srcdir := `pwd`
 PYTHONPATH ?= $(top_srcdir)
 SUBDIRS = \
 	$(top_srcdir)/sdl2 \
+	$(top_srcdir)/sdl2/ext \
 	$(top_srcdir)/sdl2/test \
 	$(top_srcdir)/sdl2/test/resources \
 	$(top_srcdir)/sdl2/test/util \

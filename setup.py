@@ -19,13 +19,14 @@ if __name__ == "__main__":
         "author": "Marcus von Appen",
         "author_email": "marcus@sysfault.org",
         "license": "Public Domain / zlib",
-        "url": "http://code.google.com/p/py-sdl",
-        #"package_dir": {"sdl2.examples": "examples"},
+        "url": "http://bitbucket.org/marcusva/py-sdl2",
+        "package_dir": {"sdl2.examples": "examples"},
         "package_data": {"sdl2.test": ["resources/*.*"]},
         "packages": ["sdl2",
+                     "sdl2.ext",
                      "sdl2.test",
                      "sdl2.test.util",
-                     #"sdl2.examples"
+                     "sdl2.examples"
                      ],
         "classifiers": [
             "Development Status :: 4 - Beta",
