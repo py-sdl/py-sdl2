@@ -151,7 +151,7 @@ API
    :class:`sdl2.render.SDL_Renderer` as drawing device to display
    :class:`Sprite` surfaces.
 
-   *target* can be a :class:`mule.video.window.Window`,
+   *target* can be a :class:`sdl2.ext.window.Window`,
    :class:`sdl2.video.SDL_Window`, a
    :class:`sdl2.ext.sprite.RenderContext` or a
    :class:`sdl2.render.SDL_Renderer`. If it is a

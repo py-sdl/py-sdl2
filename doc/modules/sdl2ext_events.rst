@@ -66,7 +66,7 @@ sdl2.ext.events - General purpose event handling routines
 
       The :class:`MPEventHandler` relies on the :mod:`multiprocessing`
       module. If the module is not available in the target environment,
-      a :exc:`mule.compat.UnsupportedError` is raised.
+      a :exc:`sdl2.ext.compat.UnsupportedError` is raised.
       
       Also, please be aware of the restrictions that apply to the
       :mod:`multiprocessing` module; arguments and callback functions for
