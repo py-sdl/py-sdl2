@@ -88,7 +88,7 @@ class MPEventHandler(EventHandler):
         else:
             pool = Pool()
         psize = len(self.callbacks)
-        pv = zip(self.callbacks, [self.sender]*psize, [args[:]]*psize)
+        pv = zip(self.callbacks, [self.sender] * psize, [args[:]] * psize)
         results = pool.map_async(_mp_callback, pv)
         pool.close()
         pool.join()

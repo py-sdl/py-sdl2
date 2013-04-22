@@ -1,6 +1,6 @@
-TODOs
-=====
+Todo list for PySDL2
+====================
 
 General
 -------
-* proper unit tests
+* more unit tests

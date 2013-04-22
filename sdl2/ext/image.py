@@ -1,5 +1,5 @@
 """Image loaders."""
-from . import SDLError
+from .common import SDLError
 from .compat import UnsupportedError, byteify
 from .. import endian, surface, pixels
 

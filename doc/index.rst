@@ -1,5 +1,5 @@
 Welcome to PySDL2's documentation!
-===================================
+==================================
 PySDL2 is a wrapper around the SDL2 library and as such similar to the
 discontinued PySDL project. In contrast to PySDL, it has no licensing
 restrictions, nor does it rely on C code, but uses :mod:`ctypes` instead.
@@ -12,6 +12,8 @@ Contents
 
    install.rst
    integration.rst
+   tutorial/index.rst
+   modules/index.rst
    news.rst
 
 Further readings:

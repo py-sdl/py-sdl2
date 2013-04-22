@@ -1,7 +1,7 @@
 """Window routines to manage on-screen windows."""
 from ctypes import c_int, byref
 from .compat import byteify, stringify
-from . import SDLError
+from .common import SDLError
 from .. import video
 
 __all__ = ["Window"]

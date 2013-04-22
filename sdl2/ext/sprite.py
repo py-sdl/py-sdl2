@@ -1,7 +1,7 @@
 """Sprite, texture and pixel surface routines."""
 import abc
 from ctypes import byref, cast, POINTER, c_int
-from . import SDLError
+from .common import SDLError
 from .compat import *
 from .color import convert_to_color
 from .ebs import System

@@ -39,13 +39,13 @@ def run():
     # after creation. Thus we need to tell it to be shown now.
     window.show()
 
-    factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
-    # If you want hardware-accelerated rendering, use video.TEXTURE instead
-    # and pass a renderer along:
-    #
-    # renderer = video.RenderContext(window)
-    # factory = video.SpriteFactory(video.TEXTURE, renderer=renderer)
-    #
+    if "-hardware" in sys.argv:
+        print("Using hardware acceleration")
+        renderer = sdl2ext.RenderContext(window)
+        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+    else:
+        print("Using software rendering")
+        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
     
     # Creates a simple rendering system for the Window. The
     # SpriteRenderer can draw Sprite objects on the window.

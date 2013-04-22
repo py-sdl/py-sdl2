@@ -1,12 +1,11 @@
 import sys
 import unittest
-from ..ext import events
-
 try:
     import multiprocessing
     _HASMP = True
 except ImportError:
     _HASMP = False
+from ..ext import events
 
 
 def mp_do_nothing(sender, *args):
@@ -188,6 +187,8 @@ class EventsTest(unittest.TestCase):
         self.assertEqual(len(ev), 2)
 
     @unittest.skipIf(not _HASMP, "multiprocessing is not supported")
+    @unittest.skipIf(sys.platform == "win32",
+                     "relative import will create a fork bomb")
     def test_MPEventHandler__call__(self):
         ev = events.MPEventHandler("Test")
 
