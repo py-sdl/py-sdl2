@@ -56,7 +56,7 @@ class _DLL(object):
             except Exception as exc:
                 # Could not load it, silently ignore that issue and move
                 # to the next one.
-                warnings.warn(exc, ImportWarning)
+                warnings.warn(repr(exc), ImportWarning)
         if self._dll is None:
             raise RuntimeError("could not load any library for %s" % libinfo)
 

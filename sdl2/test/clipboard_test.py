@@ -3,6 +3,7 @@ import unittest
 from .. import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_INIT_EVERYTHING
 from .. import clipboard
+from ..stdinc import SDL_TRUE, SDL_FALSE
 from .util.testutils import interactive, doprint
 
 def is_win_or_mac():
@@ -23,7 +24,7 @@ class SDLClipboardTest(unittest.TestCase):
     @interactive()
     def test_SDL_HasClipboardText(self):
         doprint("Please put some text on the clipboard")
-        self.assertTrue(clipboard.SDL_HasClipboardText())
+        self.assertEqual(clipboard.SDL_HasClipboardText(), SDL_TRUE)
 
     @unittest.skipIf(not is_win_or_mac(), "we would need a SDL window")
     @interactive("Does the shown value match the clipboard content?")
@@ -34,19 +35,19 @@ class SDLClipboardTest(unittest.TestCase):
 
     @unittest.skipIf(not is_win_or_mac(), "we would need a SDL window")
     def test_SDL_SetClipboardText(self):
-        self.assertIsNone(clipboard.SDL_SetClipboardText("Test content"))
+        self.assertEquals(clipboard.SDL_SetClipboardText("Test content"), 0)
         retval = clipboard.SDL_GetClipboardText()
         self.assertEqual(retval, "Test content")
 
-        self.assertIsNone(clipboard.SDL_SetClipboardText(""))
+        self.assertEquals(clipboard.SDL_SetClipboardText(""), 0)
         retval = clipboard.SDL_GetClipboardText()
         self.assertEqual(retval, "")
 
-        self.assertIsNone(clipboard.SDL_SetClipboardText("Test content"))
+        self.assertEquals(clipboard.SDL_SetClipboardText("Test content"), 0)
         retval = clipboard.SDL_GetClipboardText()
         self.assertEqual(retval, "Test content")
 
-        self.assertIsNone(clipboard.SDL_SetClipboardText(None))
+        self.assertEquals(clipboard.SDL_SetClipboardText(None), 0)
         retval = clipboard.SDL_GetClipboardText()
         self.assertEqual(retval, str(None))
 

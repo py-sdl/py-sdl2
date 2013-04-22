@@ -11,9 +11,9 @@ __all__ = ["Scene", "SceneManager", "SCENE_ENDED", "SCENE_RUNNING",
            ]
 
 
-SCENE_ENDED =   0
+SCENE_ENDED = 0
 SCENE_RUNNING = 1
-SCENE_PAUSED =  2
+SCENE_PAUSED = 2
 
 
 class SceneManager(object):

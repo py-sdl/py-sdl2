@@ -11,6 +11,7 @@ import optparse
 import random
 import subprocess
 import time
+import inspect
 
 from . import support, testrunner
 
@@ -216,9 +217,10 @@ def run():
     if options.subprocess:
         timeout = options.timeout
         gettime = time.time
+        curmodule = "%s.%s" % (__package__, inspect.getmodulename(__file__))
         for test in testfiles:
             writer.write("Executing tests from [%s]... " % test)
-            procargs = [sys.executable, __file__]
+            procargs = [sys.executable, "-m", curmodule]
             procargs += ["-f", os.path.join(testdir, test)]
             proc = subprocess.Popen(procargs, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE)

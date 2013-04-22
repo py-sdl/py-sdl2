@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import sys
 from distutils.core import setup
 
@@ -12,10 +13,16 @@ if __name__ == "__main__":
         VERSION = VERSION.replace("-beta", "b")
         VERSION = VERSION.replace("-rc", "r")
 
+    fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.txt")
+    readme = open(fname, "r")
+    long_desc = readme.read()
+    readme.close()
+
     setupdata = {
         "name":  "PySDL2",
         "version": VERSION,
         "description": "Python SDL2 bindings",
+        "long_description": long_desc,
         "author": "Marcus von Appen",
         "author_email": "marcus@sysfault.org",
         "license": "Public Domain / zlib",
