@@ -28,7 +28,7 @@ sdl2.ext.scene - Scene management
 
    .. attribute:: switched
    
-      A :class:`mule.events.EventHandler` that is invoked, when a new
+      A :class:`sdl2.ext.events.EventHandler` that is invoked, when a new
       :class:`Scene` is started.
       
    .. method:: push(scene : Scene) -> None
@@ -79,22 +79,22 @@ sdl2.ext.scene - Scene management
 
    .. attribute:: started
 
-      A :class:`mule.events.EventHandler` that is invoked, when the
+      A :class:`sdl2.ext.events.EventHandler` that is invoked, when the
       :class:`Scene` starts.
 
    .. attribute:: paused
 
-      A :class:`mule.events.EventHandler` that is invoked, when the
+      A :class:`sdl2.ext.events.EventHandler` that is invoked, when the
       :class:`Scene` is paused.
 
    .. attribute:: unpaused
 
-      A :class:`mule.events.EventHandler` that is invoked, when the
+      A :class:`sdl2.ext.events.EventHandler` that is invoked, when the
       :class:`Scene` is unpaused.
 
    .. attribute:: ended
 
-      A :class:`mule.events.EventHandler` that is invoked, when the
+      A :class:`sdl2.ext.events.EventHandler` that is invoked, when the
       :class:`Scene` ends.
 
    .. attribute:: is_running

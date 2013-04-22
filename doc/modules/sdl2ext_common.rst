@@ -11,19 +11,19 @@ API
 
 .. exception:: SDLError(msg=None)
 
-   An SDL2 specific :class:?Exception` class. if no *msg* is provided,
+   An SDL2 specific :class:`Exception` class. if no *msg* is provided,
    the message will be set to the value of :func:`sdl2.error.SDL_GetError()`
 
 .. function:: init() -> None
 
    Initializes the underlying SDL2 video subsystem. Raises a
-   :exc:`mule.sdl.SDLError`, if the SDL2 video subsystem could not be
+   :exc:`SDLError`, if the SDL2 video subsystem could not be
    initialised.
 
 .. function:: quit() -> None
 
    Quits the underlying SDL2 video subysystem. If no other SDL2 subsystems are
-   active, this will also call :func:`mule.sdl.quit()`.
+   active, this will also call :func:`quit()`.
 
 .. function:: get_events() -> [SDL_Event, SDL_Event, ...]
 

@@ -119,7 +119,7 @@ element. ::
 
     >>> firstrow = view[0]
     >>> type(firstrow)
-    <class 'mule.array.MemoryView'>
+    <class 'sdl2.ext.array.MemoryView'>
     >>> type(firstrow[0])
     <type 'bytearray'>
 
