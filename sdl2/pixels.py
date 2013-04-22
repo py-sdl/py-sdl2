@@ -222,30 +222,34 @@ class SDL_Color(Structure):
     _fields_ = [("r", Uint8),
                 ("g", Uint8),
                 ("b", Uint8),
-                ("_unused", Uint8),
+                ("a", Uint8),
                 ]
 
-    def __init__(self, r=255, g=255, b=255):
+    def __init__(self, r=255, g=255, b=255, a=255):
         super(SDL_Color, self).__init__()
         self.r = r
         self.g = g
         self.b = b
-        self._unused = 0
+        self.a = a
 
     def __repr__(self):
-        return "SDL_Color(r=%d, g=%d, b=%d)" % (self.r, self.g, self.b)
+        return "SDL_Color(r=%d, g=%d, b=%d, a=%d)" % (self.r, self.g, self.b,
+                                                      self.a)
 
     def __copy__(self):
-        return SDL_Color(self.r, self.g, self.b)
+        return SDL_Color(self.r, self.g, self.b, self.a)
 
     def __deepcopy__(self, memo):
-        return SDL_Color(self.r, self.g, self.b)
+        return SDL_Color(self.r, self.g, self.b, self.a)
 
     def __eq__(self, color):
-        return self.r == color.r and self.g == color.g and self.b == color.b
-
+        return self.r == color.r and self.g == color.g and \
+            self.b == color.b and self.a == color.a
+    
     def __ne__(self, color):
-        return self.r != color.r or self.g != color.g or self.b != color.b
+        return self.r != color.r or self.g != color.g or self.b != color.b or \
+            self.a != color.a
+
 SDL_Colour = SDL_Color
 
 class SDL_Palette(Structure):
