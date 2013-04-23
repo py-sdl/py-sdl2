@@ -5,12 +5,12 @@ from .. import surface
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")
 
-formats = (#"bmp",  # Do not use bmp - it's contained in resources.zip
+formats = [  #"bmp",  # Do not use bmp - it's contained in resources.zip
            "cur",
            "gif",
            "ico",
            "jpg",
-           # "lbm",
+           "lbm",
            "pbm",
            "pcx",
            "pgm",
@@ -20,14 +20,19 @@ formats = (#"bmp",  # Do not use bmp - it's contained in resources.zip
            "tga",
            "tif",
            "webp",
-           "xcf",
+           #"xcf",
            "xpm",
            # "xv",
-           )
+           ]
 
+if sys.version_info[:2] == (3, 3) and sys.platform in ("win32", "cli"):
+    # TODO: fix this - lbm and pbm crash Python 3.3 on Win32 - maybe an
+    # issue in SDL2_image?
+    formats.remove("lbm")
+    formats.remove("pbm")
 
-class VideoImageTest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtImageTest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def setUp(self):
         sdl2ext.init()
@@ -58,7 +63,7 @@ class VideoImageTest(unittest.TestCase):
             self.assertIsInstance(sf, surface.SDL_Surface)
 
             # Force only PIL
-            if _HASPIL and fmt not in ("webp", "xcf"):
+            if _HASPIL and fmt not in ("webp", "xcf", "lbm"):
                 sf = sdl2ext.load_image(filename, enforce="PIL")
                 self.assertIsInstance(sf, surface.SDL_Surface)
 

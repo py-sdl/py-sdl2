@@ -57,7 +57,8 @@ def _assign_item(x, p, y):
     x[p] = y
 
 
-class ColorTest(unittest.TestCase):
+class SDL2ExtColorTest(unittest.TestCase):
+    __tags__ = ["sdl2ext"]
 
     def test_Color(self):
         c = color.Color(10, 20, 30, 40)

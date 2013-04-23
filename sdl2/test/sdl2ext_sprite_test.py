@@ -18,13 +18,10 @@ class MSprite(sdl2ext.Sprite):
         return self._size
 
 
-class VideoSpriteTest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtSpriteTest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def setUp(self):
-        if sys.version.startswith("3.1"):
-            self.assertIsInstance = \
-                lambda x, t: self.assertTrue(isinstance(x, t))
         sdl2ext.init()
 
     def tearDown(self):

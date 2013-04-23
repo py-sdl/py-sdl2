@@ -1,6 +1,6 @@
 import sys
 from ctypes.util import find_library
-from ctypes import c_int, byref, cast, py_object, POINTER
+from ctypes import c_int, byref, cast, POINTER
 import unittest
 from .util.testutils import interactive, doprint
 from ..stdinc import SDL_FALSE, SDL_TRUE
@@ -615,11 +615,8 @@ class SDLVideoTest(unittest.TestCase):
             gammas = (x * 0.1 for x in range(0, 20))
             count = 0
             for b in gammas:
-                try:
-                    video.SDL_SetWindowBrightness(window, b)
-                except:
-                    pass  # ignore the issue, if the gamma is not supported
-                else:
+                ret = video.SDL_SetWindowBrightness(window, b)
+                if ret == 0:
                     val = video.SDL_GetWindowBrightness(window)
                     self.assertAlmostEqual(val, b)
                     count += 1
@@ -640,7 +637,7 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_GL_UnloadLibrary()
 
         if has_opengl_lib():
-            self.assertTrue(video.SDL_GL_LoadLibrary(get_opengl_path()))
+            self.assertEqual(video.SDL_GL_LoadLibrary(get_opengl_path().encode("utf-8")), 0)
             video.SDL_GL_UnloadLibrary()
 
         #self.assertRaises(sdl.SDLError, video.SDL_GL_LoadLibrary, "Test")

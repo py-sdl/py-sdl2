@@ -5,8 +5,8 @@ from .. import surface, video
 from .util.testutils import interactive, doprint
 
 
-class VideoWindowTest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtWindowTest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def setUp(self):
         sdl2ext.init()

@@ -4,8 +4,8 @@ from .. import ext as sdl2ext
 from .. import SDL_WasInit, SDL_INIT_VIDEO
 
 
-class VideoTest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtTest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def test_init_quit(self):
         sdl2ext.init()

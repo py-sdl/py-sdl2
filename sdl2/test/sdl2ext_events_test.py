@@ -12,15 +12,8 @@ def mp_do_nothing(sender, *args):
     # Does nothing
     pass
 
-class EventsTest(unittest.TestCase):
-
-    def setUp(self):
-        if sys.version.startswith("3.1"):
-            self.assertIsInstance = \
-                lambda x, t: self.assertTrue(isinstance(x, t))
-
-    def tearDown(self):
-        pass
+class SDL2ExtEventsTest(unittest.TestCase):
+    __tags__ = ["sdl2ext"]
 
     def test_EventHandler(self):
         self.assertRaises(TypeError, events.EventHandler)

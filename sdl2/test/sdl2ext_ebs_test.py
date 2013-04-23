@@ -55,16 +55,8 @@ class MovementApplicator(Applicator):
             p.y += m.vy
 
 
-class EBSTest(unittest.TestCase):
-    __tags__ = ["ebs"]
-
-    def setUp(self):
-        if sys.version.startswith("3.1"):
-            self.assertIsInstance = \
-                lambda x, t: self.assertTrue(isinstance(x, t))
-
-    def tearDown(self):
-        pass
+class SDL2ExtEBSTest(unittest.TestCase):
+    __tags__ = ["ebs", "sdl2ext"]
 
     def test_Entity(self):
         world = World()

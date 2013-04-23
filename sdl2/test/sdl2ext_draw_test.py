@@ -4,8 +4,8 @@ from ..ext.color import Color, COLOR
 from .. import ext as sdl2ext
 
 
-class VideoDrawTest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtDrawTest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def setUp(self):
         sdl2ext.init()

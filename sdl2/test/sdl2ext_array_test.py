@@ -138,15 +138,8 @@ def ltrbyte32(val, pos):
             raise IndexError("invalid position")
 
 
-class ArrayTest(unittest.TestCase):
-
-    def setUp(self):
-        if sys.version.startswith("3.1"):
-            self.assertIsInstance = \
-                lambda x, t: self.assertTrue(isinstance(x, t))
-
-    def tearDown(self):
-        pass
+class SDL2ExtArrayTest(unittest.TestCase):
+    __tags__ = ["sdl2ext"]
 
     def test_to_ctypes(self):
         for seq, dtype in ((singlebyteseq, ctypes.c_ubyte),

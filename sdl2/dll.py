@@ -12,6 +12,8 @@ def _findlib(libnames, path=None):
     platform = sys.platform
     if platform in ("win32", "cli"):
         suffix = ".dll"
+        if path:
+            os.environ["PATH"] += ";%s" % path
     elif platform == "darwin":
         suffix = ".dylib"
     else:

@@ -3,8 +3,8 @@ import unittest
 from ..ext import particles
 
 
-class ParticlesTest(unittest.TestCase):
-
+class SDL2ExtParticlesTest(unittest.TestCase):
+    __tags__ = ["sdl2ext"]
 
     def test_Particle(self):
         p = particles.Particle(0, 0, 0)
