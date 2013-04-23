@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     if "--format=msi" in sys.argv or "bdist_msi" in sys.argv:
         # hack the version name to a format msi doesn't have trouble with
-        VERSIOgbN = VERSION.replace("-alpha", "a")
+        VERSION = VERSION.replace("-alpha", "a")
         VERSION = VERSION.replace("-beta", "b")
         VERSION = VERSION.replace("-rc", "r")
 
