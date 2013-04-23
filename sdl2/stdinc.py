@@ -24,7 +24,7 @@ Sint64 = c_int64
 Uint64 = c_uint64
 
 _libc = None
-if sys.platform == "win32":
+if sys.platform in ("win32", "cli"):
     _libc = cdll.msvcrt
 else:
     _libc = cdll.LoadLibrary("libc.so")

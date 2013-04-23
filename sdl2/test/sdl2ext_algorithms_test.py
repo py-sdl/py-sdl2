@@ -3,7 +3,8 @@ import unittest
 from ..ext import algorithms
 
 
-class AlgorithmsTest(unittest.TestCase):
+class SDL2ExtAlgorithmsTest(unittest.TestCase):
+    __tags__ = ["sdl2ext"]
 
     @unittest.skip("not implemented")
     def test_cohensutherland(self):
@@ -12,7 +13,7 @@ class AlgorithmsTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_liangbarsky(self):
         pass
-    
+
     @unittest.skip("not implemented")
     def test_clipline(self):
         pass

@@ -4,8 +4,8 @@ from ..ext.events import EventHandler
 from ..ext import scene
 
 
-class SceneTest(unittest.TestCase):
-    __tags__ = ["scene"]
+class SDL2ExtSceneTest(unittest.TestCase):
+    __tags__ = ["scene", "sdl2ext"]
 
     def test_SceneManager(self):
         mgr = scene.SceneManager()

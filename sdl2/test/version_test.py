@@ -35,7 +35,11 @@ class SDLVersionTest(unittest.TestCase):
         self.assertEqual(version.SDL_GetRevision()[0:3], b"hg-")
 
     def test_SDL_GetRevisionNumber(self):
-        self.assertGreaterEqual(version.SDL_GetRevisionNumber(), 6380)
+        if sys.platform in ("win32", "cli"):
+            # HG tip on Win32 does not set any revision number
+            self.assertGreaterEqual(version.SDL_GetRevisionNumber(), 0)
+        else:
+            self.assertGreaterEqual(version.SDL_GetRevisionNumber(), 7000)
 
 
 if __name__ == '__main__':

@@ -16,8 +16,8 @@ FONTMAP = ["0123456789",
            ]
 
 
-class VideoFontTest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtFontTest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def setUp(self):
         sdl2ext.init()

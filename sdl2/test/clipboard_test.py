@@ -35,21 +35,21 @@ class SDLClipboardTest(unittest.TestCase):
 
     @unittest.skipIf(not is_win_or_mac(), "we would need a SDL window")
     def test_SDL_SetClipboardText(self):
-        self.assertEquals(clipboard.SDL_SetClipboardText("Test content"), 0)
+        self.assertEquals(clipboard.SDL_SetClipboardText(b"Test content"), 0)
         retval = clipboard.SDL_GetClipboardText()
-        self.assertEqual(retval, "Test content")
+        self.assertEqual(retval, b"Test content")
 
-        self.assertEquals(clipboard.SDL_SetClipboardText(""), 0)
+        self.assertEquals(clipboard.SDL_SetClipboardText(b""), 0)
         retval = clipboard.SDL_GetClipboardText()
-        self.assertEqual(retval, "")
+        self.assertEqual(retval, b"")
 
-        self.assertEquals(clipboard.SDL_SetClipboardText("Test content"), 0)
+        self.assertEquals(clipboard.SDL_SetClipboardText(b"Test content"), 0)
         retval = clipboard.SDL_GetClipboardText()
-        self.assertEqual(retval, "Test content")
+        self.assertEqual(retval, b"Test content")
 
         self.assertEquals(clipboard.SDL_SetClipboardText(None), 0)
         retval = clipboard.SDL_GetClipboardText()
-        self.assertEqual(retval, str(None))
+        self.assertEqual(retval, b"")
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

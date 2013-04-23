@@ -9,7 +9,8 @@ else:
 from ..ext import resources
 
 
-class ResourcesTest(unittest.TestCase):
+class SDL2ExtResourcesTest(unittest.TestCase):
+    __tags__ = ["sdl2ext"]
 
     def test_open_zipfile(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")

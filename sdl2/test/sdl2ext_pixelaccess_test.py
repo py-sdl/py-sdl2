@@ -8,8 +8,8 @@ try:
 except:
     _HASNUMPY = False
 
-class VideoPixelAccessTest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtPixelAccessTest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def setUp(self):
         sdl2ext.init()

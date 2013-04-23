@@ -3,8 +3,8 @@ import unittest
 from .. import ext as sdl2ext
 
 
-class VideoGUITest(unittest.TestCase):
-    __tags__ = ["sdl"]
+class SDL2ExtGUITest(unittest.TestCase):
+    __tags__ = ["sdl", "sdl2ext"]
 
     def setUp(self):
         sdl2ext.init()

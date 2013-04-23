@@ -5,12 +5,12 @@ import unittest
 from .. import SDL_Init, SDL_Quit, version, surface, rwops, render
 from .. import sdlimage
 
-formats = ("bmp",
+formats = ["bmp",
            "cur",
            "gif",
            "ico",
            "jpg",
-           # "lbm",
+           "lbm",
            "pbm",
            "pcx",
            "pgm",
@@ -20,10 +20,16 @@ formats = ("bmp",
            "tga",
            "tif",
            "webp",
-           "xcf",
+           #"xcf",
            "xpm",
-           # "xv",
-           )
+           #"xv",
+           ]
+
+if sys.version_info[:2] == (3, 3) and sys.platform in ("win32", "cli"):
+    # TODO: fix this - lbm and pbm crash Python 3.3 on Win32 - maybe an
+    # issue in SDL2_image?
+    formats.remove("lbm")
+    formats.remove("pbm")
 
 
 class SDLImageTest(unittest.TestCase):
