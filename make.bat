@@ -1,4 +1,7 @@
 @SETLOCAL
+@IF "%DLLPATH_X86%" == "" SET DLLPATH_X86=%CD%\..\dlls\32bit
+@IF "%DLLPATH_X64%" == "" SET DLLPATH_X64=%CD%\..\dlls\64bit
+
 @IF "%PYTHONPATH%" == "" SET PYTHONPATH=%CHDIR%
 @IF "%PYTHON27_X86%" == "" SET PYTHON27_X86=c:\Python27-x86\python.exe
 @IF "%PYTHON27_X64%" == "" SET PYTHON27_X64=c:\Python27-x64\python.exe
@@ -12,9 +15,12 @@
 @IF "%PYPY20%" == "" SET PYPY20=c:\pypy-2.0\pypy.exe
 @IF "%IRONPYTHON27_X86%" == "" SET IRONPYTHON27_X86=c:\IronPython-2.7.3\ipy.exe
 @IF "%IRONPYTHON27_X64%" == "" SET IRONPYTHON27_X64=c:\IronPython-2.7.3\ipy64.exe
-@SET INTERPRETERS=%PYTHON27_X86%;%PYTHON27_X64%;%PYTHON32_X86%;^
- %PYTHON32_X64%;%PYTHON33_X86%;%PYTHON33_X64%;%PYTHON%;%PYPY18%;^
- %PYPY19%;%PYPY20%;%IRONPYTHON27_X86%;%IRONPYTHON27_X64%
+
+@SET INTERP_X64=%PYTHON27_X64%;%PYTHON32_X64%;%PYTHON33_X64%;%IRONPYTHON27_X64%
+@SET INTERP_X86=%PYTHON27_X86%;%PYTHON32_X86%;%PYTHON33_X86%;%PYPY18%;^
+ %PYPY19%;%PYPY20%;%IRONPYTHON27_X86%
+@SET INTERPRETERS=%INTERP_X86%;%INTERP_X64%
+
 
 @IF "%~1" == "" GOTO :all
 @GOTO :%~1
@@ -76,7 +82,10 @@
 
 :testall
 @FOR /F "tokens=1 delims=" %%A in ('CHDIR') do @SET PYTHONPATH=%%A && @SET IRONPYTHONPATH=%%A
-@FOR %%A in (%INTERPRETERS%) do @%%A -B -m sdl2.test.util.runtests
+@SET PYSDL2_DLL_PATH=%DLLPATH_X86%
+@FOR %%A in (%INTERP_X86%) do @%%A -B -m sdl2.test.util.runtests
+@SET PYSDL2_DLL_PATH=%DLLPATH_X64%
+@FOR %%A in (%INTERP_X64%) do @%%A -B -m sdl2.test.util.runtests
 @GOTO :eof
 
 @REM Do not run these in production environments. They are for testing purposes
@@ -93,7 +102,10 @@
 @GOTO :eof
 
 :testall2
-@FOR %%A in (%INTERPRETERS%) do  @%%A -B -c "import sdl2.test; sdl2.test.run()"
+@SET PYSDL2_DLL_PATH=%DLLPATH_X86%
+@FOR %%A in (%INTERP_X86%) do @%%A -B -c "import sdl2.test; sdl2.test.run()"
+@SET PYSDL2_DLL_PATH=%DLLPATH_X64%
+@FOR %%A in (%INTERP_X64%) do @%%A -B -c "import sdl2.test; sdl2.test.run()"
 @GOTO :eof
 
 :purge_installs
