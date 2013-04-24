@@ -1,27 +1,25 @@
 """User interface examples."""
 import sys
-
-# Import the Color class, so we can create RGBA color values.
-from sdl2.ext.color import Color
+from sdl2.events import SDL_TEXTINPUT
 
 # Try to import SDL2. The import might fail, if the SDL2 DLL could not be
 # loaded. In that case, just print the error and exit with a proper
 # error code.
 try:
+    from sdl2 import SDL_QUIT
     import sdl2.ext as sdl2ext
-    import sdl2.events as sdlevents
 except ImportError:
     import traceback
     traceback.print_exc()
     sys.exit(1)
 
-# Define some global color constants
-WHITE = Color(255, 255, 255)
-GREY = Color(200, 200, 200)
 
-# Import the resources, so we have easy access to the example images.
-from sdl2.ext.resources import Resources
-RESOURCES = Resources(__file__, "resources")
+# Define some global color constants
+WHITE = sdl2ext.Color(255, 255, 255)
+GREY = sdl2ext.Color(200, 200, 200)
+
+# Create a resource, so we have easy access to the example images.
+RESOURCES = sdl2ext.Resources(__file__, "resources")
 
 
 # A callback for the Button.motion event.
@@ -123,7 +121,7 @@ def run():
     while running:
         events = sdl2ext.get_events()
         for event in events:
-            if event.type == sdlevents.SDL_QUIT:
+            if event.type == SDL_QUIT:
                 running = False
                 break
             # Pass the SDL2 events to the UIProcessor, which takes care of

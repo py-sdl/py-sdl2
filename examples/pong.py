@@ -120,9 +120,9 @@ class TrackingAIController(Applicator):
                     vel.vy = 0
             else:
                 bcentery = self.ball.sprite.y + self.ball.sprite.size[1] // 2
-                if bcentery < centery + sheight // 3:
+                if bcentery < centery:
                     vel.vy = -PADDLE_SPEED
-                elif bcentery > centery - sheight // 3:
+                elif bcentery > centery:
                     vel.vy = PADDLE_SPEED
                 else:
                     vel.vy = 0

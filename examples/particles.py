@@ -1,18 +1,14 @@
 """Particle simulation"""
 import sys
-import ctypes
 import random
 
 # Try to import SDL2. The import might fail, if the SDL2 DLL could
 # not be loaded. In that case, just print the error and exit with a
 # proper error code.
 try:
+    from sdl2 import SDL_QUIT, SDL_MOUSEMOTION, SDL_FlushEvent, \
+        SDL_WarpMouseInWindow, SDL_ShowCursor, SDL_Rect, SDL_RenderCopy
     import sdl2.ext as sdl2ext
-    import sdl2.events as sdlevents
-    import sdl2.mouse as sdlmouse
-    import sdl2.timer as sdltimer
-    import sdl2.render as sdlrender
-    import sdl2.rect as sdlrect
 except ImportError:
     import traceback
     traceback.print_exc()
@@ -21,14 +17,9 @@ except ImportError:
 # Import the particles module, so we have access to all relevant parts
 # for dealing with particles.
 import sdl2.ext.particles as particles
-# We will create some systems and an entity for creating the particle
-# simulation. Hence we will need some things from the ebs module.
-from sdl2.ext.ebs import Entity, System, World
 
-
-# Import the resources, so we have easy access to the example images.
-from sdl2.ext.resources import Resources
-RESOURCES = Resources(__file__, "resources")
+# Create a resource, so we have easy access to the example images.
+RESOURCES = sdl2ext.Resources(__file__, "resources")
 
 
 # The Particle class offered by sdl2.ext.particles only contains the life
@@ -54,7 +45,7 @@ class CParticle(particles.Particle):
 
 # A simple Entity class, that contains the particle information. This
 # represents our living particle object.
-class EParticle(Entity):
+class EParticle(sdl2ext.Entity):
     def __init__(self, world, x, y, vx, vy, ptype, life):
         self.cparticle = CParticle(self, x, y, vx, vy, ptype, life)
 
@@ -104,7 +95,7 @@ def deleteparticles(world, deadones):
 # similar to the TextureSprinteRenderer from mule.video. Since we
 # operate on particles rather than sprites, we need to provide our own
 # rendering logic.
-class ParticleRenderer(System):
+class ParticleRenderer(sdl2ext.System):
     def __init__(self, renderer, images):
         # Create a new particle renderer. The surface argument will be
         # the targets surface to do the rendering on. images is a set of
@@ -128,11 +119,11 @@ class ParticleRenderer(System):
         #
         # The SDL_Rect is used for the blit operation below and is used
         # as destination position for rendering the particle.
-        r = sdlrect.SDL_Rect()
+        r = SDL_Rect()
 
         # The SDL2 blit function to use. This will take an image
         # (SDL_Texture) as source and copies it on the target.
-        dorender = sdlrender.SDL_RenderCopy
+        dorender = SDL_RenderCopy
 
         # And some more shortcuts.
         sdlrenderer = self.renderer.renderer
@@ -156,7 +147,7 @@ class ParticleRenderer(System):
 
 def run():
     # Create the environment, in which our particles will exist.
-    world = World()
+    world = sdl2ext.World()
 
     # Set up the globally available information about the current mouse
     # position. We use that information to determine the emitter
@@ -206,12 +197,12 @@ def run():
 
     # Center the mouse on the window. We use the SDL2 functions directly
     # here. Since the SDL2 functions do not know anything about the
-    # video.Window class, we have to pass the window's SDL_Window to it.
-    sdlmouse.SDL_WarpMouseInWindow(window.window, world.mousex, world.mousey)
+    # sdl2.ext.Window class, we have to pass the window's SDL_Window to it.
+    SDL_WarpMouseInWindow(window.window, world.mousex, world.mousey)
 
-    # Hide the mouse cursor, os it does not show up - just show the
+    # Hide the mouse cursor, so it does not show up - just show the
     # particles.
-    sdlmouse.SDL_ShowCursor(0)
+    SDL_ShowCursor(0)
 
     # Create the rendering system for the particles. This is somewhat
     # similar to the SoftSpriteRenderer, but since we only operate with
@@ -224,11 +215,11 @@ def run():
     running = True
     while running:
         for event in sdl2ext.get_events():
-            if event.type == sdlevents.SDL_QUIT:
+            if event.type == SDL_QUIT:
                 running = False
                 break
 
-            if event.type == sdlevents.SDL_MOUSEMOTION:
+            if event.type == SDL_MOUSEMOTION:
                 # Take care of the mouse motions here. Every time the
                 # mouse is moved, we will make that information globally
                 # available to our application environment by updating
@@ -241,7 +232,7 @@ def run():
                 # queue (10ths to 100ths!), and we do not want to handle
                 # each of them. For this example, it is enough to handle
                 # one per update cycle.
-                sdlevents.SDL_FlushEvent(sdlevents.SDL_MOUSEMOTION)
+                SDL_FlushEvent(SDL_MOUSEMOTION)
                 break
         world.process()
 

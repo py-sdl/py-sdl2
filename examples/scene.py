@@ -1,19 +1,19 @@
 """Scene management examples."""
 import sys
 
-from sdl2.ext.scene import Scene, SceneManager
-
-# Try to import the video system and event system. Since mule.video makes
-# use of mule.sdl, the import might fail, if the SDL DLL could not be
+# Try to import SDL2. The import might fail, if the SDL2 DLL could not be
 # loaded. In that case, just print the error and exit with a proper
 # error code.
 try:
+    from sdl2 import SDL_QUIT
     import sdl2.ext as sdl2ext
-    import sdl2.events as sdlevents
 except ImportError:
     import traceback
     traceback.print_exc()
     sys.exit(1)
+
+# Import the scene system
+from sdl2.ext.scene import Scene, SceneManager
 
 
 # A simple, extended Scene that contains visual components
@@ -157,7 +157,7 @@ def run():
         # The main event loop; we already learned about that in other examples.
         # Check for the events and pass them around.
         for event in sdl2ext.get_events():
-            if event.type == sdlevents.SDL_QUIT:
+            if event.type == SDL_QUIT:
                 running = False
                 break
             # Pass the SDL2 events to the UIProcessor, which takes care of
