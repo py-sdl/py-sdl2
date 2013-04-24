@@ -8,6 +8,8 @@ from .algorithms import *
 from .array import *
 from .color import *
 from .resources import *
+from .events import *
+from .ebs import *
 
 from .common import *
 from .draw import *

@@ -158,7 +158,7 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    def test_lIMG_LoadCUR_RW(self):
+    def test_IMG_LoadCUR_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "surfacetest.cur"), "rb")
         sf = sdlimage.IMG_LoadCUR_RW(rwops.rw_from_object(fp))
         fp.close()
@@ -187,7 +187,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skip("not implemented")
     def test_IMG_LoadLBM_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "surfacetest.lbm"), "rb")
         sf = sdlimage.IMG_LoadLBM_RW(rwops.rw_from_object(fp))
@@ -319,7 +318,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isJPG(imgrw))
             fp.close()
 
-    @unittest.skip("not implemented")
     def test_IMG_isLBM(self):
         fname = "surfacetest.%s"
         for fmt in formats:
