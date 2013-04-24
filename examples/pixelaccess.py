@@ -5,8 +5,8 @@ import sys
 # loaded. In that case, just print the error and exit with a proper
 # error code.
 try:
+    from sdl2 import SDL_QUIT, SDL_MOUSEBUTTONDOWN
     import sdl2.ext as sdl2ext
-    import sdl2.events as sdlevents
 except ImportError:
     import traceback
     traceback.print_exc()
@@ -51,6 +51,7 @@ def draw_horizontal_stripes(surface, x1, x2, y1, y2):
     # automatically at the time the PixelView is garbage-collected.
     del pixelview
 
+
 # as draw_horizontal_stripes(), but vertical
 def draw_vertical_stripes(surface, x1, x2, y1, y2):
     sdl2ext.fill(surface, BLACK)
@@ -90,10 +91,10 @@ def run():
     while running:
         events = sdl2ext.get_events()
         for event in events:
-            if event.type == sdlevents.SDL_QUIT:
+            if event.type == SDL_QUIT:
                 running = False
                 break
-            if event.type == sdlevents.SDL_MOUSEBUTTONDOWN:
+            if event.type == SDL_MOUSEBUTTONDOWN:
                 curindex += 1
                 if curindex >= len(functions):
                     curindex = 0

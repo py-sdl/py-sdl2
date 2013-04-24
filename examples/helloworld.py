@@ -2,10 +2,9 @@
 # We'll use sys to properly exit with an error code.
 import sys
 
-# Try to import the video system. Since mule.video makes use of
-# mule.sdl, the import might fail, if the SDL DLL could not be
-# loaded. In that case, just print the error and exit with a proper
-# error code.
+# Try to import the video system. Since sdl2.ext makes use of sdl2, the
+# import might fail, if the SDL DLL could not be loaded. In that case, just
+# print the error and exit with a proper error code.
 try:
     import sdl2.ext as sdl2ext
 except ImportError:
@@ -17,9 +16,7 @@ except ImportError:
 # resource, we bundle with our application. We are using the current
 # file's location and define the "resources" subdirectory as the
 # location, in which we keep all data.
-from sdl2.ext import Resources
-RESOURCES = Resources(__file__, "resources")
-
+RESOURCES = sdl2ext.Resources(__file__, "resources")
 
 
 def run():
@@ -46,7 +43,7 @@ def run():
     else:
         print("Using software rendering")
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
-    
+
     # Creates a simple rendering system for the Window. The
     # SpriteRenderer can draw Sprite objects on the window.
     spriterenderer = factory.create_sprite_renderer(window)

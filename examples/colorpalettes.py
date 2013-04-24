@@ -5,8 +5,8 @@ try:
     # Try to import SDL2. The import might fail, if the SDL2 DLL could not be
     # loaded. In that case, just print the error and exit with a proper
     # error code.
+    from sdl2 import SDL_QUIT, SDL_MOUSEBUTTONDOWN
     import sdl2.ext as sdl2ext
-    from sdl2 import events as sdlevents
     # Import the pre-defined color palettes
     import sdl2.ext.colorpalettes as colorpalettes
 except ImportError:
@@ -120,7 +120,7 @@ def run():
             # application, just as you are used to closing an editor.
             # If the user wants to quit the application, we should let him do
             # so. This is done by breaking out of the while loop.
-            if event.type == sdlevents.SDL_QUIT:
+            if event.type == SDL_QUIT:
                 running = False
                 break
 
@@ -128,7 +128,7 @@ def run():
             # type, the user pressed the mouse button, but did not necesarily
             # release  it. As such, it is not a typical click, but only 50% of
             # it, which is sufficient for our case here.
-            if event.type == sdlevents.SDL_MOUSEBUTTONDOWN:
+            if event.type == SDL_MOUSEBUTTONDOWN:
                 # If the user pressed the button, we want to draw the next
                 # palette and update the window title accordingly. We do this
                 # by increasing the storage variable and - in case it reached
