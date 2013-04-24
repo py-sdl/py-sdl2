@@ -1,15 +1,14 @@
 .. module:: sdl2.ext
-   :synopsis: Video and graphics routines
+   :synopsis: Python extensions for SDL2
 
-sdl2.ext - Extended video and graphics routines
-===============================================
-The :mod:`sdl2.ext` module contains various classes and methods
-for creating, processing and manipulating on-screen graphics.
+sdl2.ext - Python extensions for SDL2
+=====================================
+The :mod:`sdl2.ext` package provides advanced functionality for creating
+applications using SDL2 and Python. It offers a rich set of modules, classes
+and functions, such as easy image loading, basic user interface elements,
+resource management and sprite and (on-screen) scene systems. 
 
-Submodules
-----------
-All classes and methods of the modules below are directly included in
-the :mod:`sdl2.ext` module.
+Learn more about
 
 .. toctree::
    :maxdepth: 1

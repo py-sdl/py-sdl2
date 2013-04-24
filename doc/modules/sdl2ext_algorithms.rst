@@ -1,9 +1,7 @@
-.. module:: sdl2.ext.algorithms
-   :synopsis: Common algorithms
-.. currentmodule:: sdl2.ext.algorithms
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.algorithms - Common algorithms
-=======================================
+Common algorithms
+=================
 
 .. function:: cohensutherland(left : int, top : int, right : int, \
    bottom : int, x1 : int, y1 : int, x2 : int, y2 : int) -> int, int, int, int

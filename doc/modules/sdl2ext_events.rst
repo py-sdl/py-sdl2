@@ -1,8 +1,7 @@
-.. module:: sdl2.ext.events
-   :synopsis: General purpose event handling routines.
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.events - General purpose event handling routines
-=========================================================
+General purpose event handling routines
+=======================================
 
 .. class:: EventHandler(sender)
 

@@ -17,6 +17,23 @@ Other Python versions or Python implementations might work, but are
 (currently) not officially tested or supported by the PySDL2
 distribution.
 
+You need to have a working SDL2 library on your target system. You can obtain
+the source code (to build it yourself) or a prebuilt version at
+http://www.libsdl.org.
+
+PySDL2 also offers support for the SDL_image and SDL_ttf libraries, which you
+can get from http://www.libsdl.org/projects/SDL_image/ and
+http://www.libsdl.org/projects/SDL_ttf/. Those are optional though and only
+necessary, if you want to use :mod:`sdl2.sdlimage` and :mod:`sdl2.sdlttf`.
+
+.. note::
+
+   Neither SDL2 nor the related versions for SDL_image and SDL_ttf are
+   officially released yet. Thus, a binary version is not available. You can
+   obtain a set of unofficial binaries (based on the current development
+   version of those projects) from http://bitbucket.org/marcusva/py-sdl2/downloads.
+
+
 Installation
 ------------
 You can either use the python way of installing the package or the make
@@ -58,6 +75,12 @@ it so far and if your environment settings do not define it.
 
    If you are using IronPython, use ``IRONPYTHONPATH`` instead of
    ``PYTHONPATH``.
+
+.. note::
+
+   If you did not install SDL2 using preferred way for your operation system,
+   please read the information about :ref:`importing-pysdl2` in the section
+   :doc:`integration`.
 
 Notes on Mercurial usage
 ^^^^^^^^^^^^^^^^^^^^^^^^

@@ -10,9 +10,11 @@ before he can use your software. Alternatively, you can just copy the
 whole package into your project to ship it within your own project
 bundle.
 
+.. _importing-pysdl2:
+
 Importing
 ---------
-The :mod:`sdl2` module relies on an external SDL2 library which it can
+The :mod:`sdl2` package relies on an external SDL2 library which it can
 access for creating the wrapper functions. This means that the user
 needs to have SDL2 installed or that you ship a SDL2 library with
 your project.

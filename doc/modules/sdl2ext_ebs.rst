@@ -1,9 +1,9 @@
-.. module:: sdl2.ext.ebs
-   :synopsis: A component-based entity system framework.
+.. currentmodule:: sdl2.ext
+.. _ref-ebs:
 
-sdl2.ext.ebs - A component-based entity system framework
-========================================================
-This module loosely follows a component oriented pattern to separate
+Working with component-based entities
+=====================================
+:mod:`sdl2.ext` supports a component oriented pattern to separate
 object instances, carried data and processing logic within applications
 or games. It uses an entity based approach, in which object instances are
 unique identifiers, while their data is managed within components, which
@@ -164,11 +164,11 @@ Component-based design with sdl2.ext.ebs
 .. note::
 
    This section will deal with the specialities of COP patterns and
-   :class:`sdl2.ext.ebs` and provide the bare minimum of information.
-   If you are just starting with such a design, it is recommended to
-   read through the :ref:`pong-tutorial` tutorial.
+   provide the bare minimum of information. If you are just starting with
+   such a design, it is recommended to read through the :ref:`pong-tutorial`
+   tutorial.
 
-:mod:`sdl2.ext.ebs` provides a :class:`World` class in which all other objects
+:mod:`sdl2.ext` provides a :class:`World` class in which all other objects
 will reside. The :class:`World` will maintain both, :class:`Entity` and
 component items, and allows you to set up the processing logic via
 the :class:`System` and :class:`Applicator` classes. ::
@@ -288,28 +288,28 @@ API
 
   .. function:: process(world : World, componentsets : iterable)
 
-      Processes tuples of component items. ``componentsets`` will
-      contain object tuples, that match the :attr:`componenttypes`
-      of the :class:`Applicator`. If, for example, the :class:`Applicator`
-      is defined as ::
+     Processes tuples of component items. ``componentsets`` will
+     contain object tuples, that match the :attr:`componenttypes`
+     of the :class:`Applicator`. If, for example, the :class:`Applicator`
+     is defined as ::
 
         class MyApplicator(Applicator):
             def __init__(self):
                 self.componenttypes = (Foo, Bar)
 
-      its process method will receive ``(Foo, Bar)`` tuples ::
+     its process method will receive ``(Foo, Bar)`` tuples ::
 
-            def process(self, world, componentsets):
-                for foo_item, bar_item in componentsets:
-                    ...
+         def process(self, world, componentsets):
+             for foo_item, bar_item in componentsets:
+                 ...
 
-      Additionally, the :class:`Applicator` will not process all possible
-      combinations of valid components, but only those, which are associated
-      with the same :class:`Entity`. That said, an :class:`Entity` *must*
-      contain a ``Foo`` as well as a ``Bar`` component in order to
-      have them both processed by the :class:`Applicator` (while a
-      :class:`System` with the same ``componenttypes`` would pick either of
-      them, depending on their availability).
+     Additionally, the :class:`Applicator` will not process all possible
+     combinations of valid components, but only those, which are associated
+     with the same :class:`Entity`. That said, an :class:`Entity` *must*
+     contain a ``Foo`` as well as a ``Bar`` component in order to
+     have them both processed by the :class:`Applicator` (while a
+     :class:`System` with the same ``componenttypes`` would pick either of
+     them, depending on their availability).
 
 .. class:: System()
 

@@ -1,8 +1,7 @@
-.. module:: sdl2.ext.image
-   :synopsis: Image loaders
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.image - Image loaders
-==============================
+Image loaders
+=============
 
 .. function:: get_image_formats() -> (str, str, ...)
 
@@ -23,5 +22,5 @@ sdl2.ext.image - Image loaders
 
    .. note::
 
-      This will call :func:`sdl2.sdlimage.init()` implicitly with the
+      This will call :func:`sdl2.sdlimage.IMG_Init()` implicitly with the
       default arguments, if the module is available.

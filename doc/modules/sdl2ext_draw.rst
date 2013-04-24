@@ -1,17 +1,15 @@
-.. module:: sdl2.ext.draw
-   :synopsis: 2D drawing routines for software surfaces
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.draw - 2D drawing routines for software surfaces
-=========================================================
+2D drawing routines for software surfaces
+=========================================
 
 .. function:: prepare_color(color : object, target : object) -> int
 
    Prepares the passed *color* for a specific *target*. *color* can be any
    object type that can be processed by
-   :func:`sdl2.ext.color.convert_to_color()`. *target* can be any
+   :func:`convert_to_color()`. *target* can be any
    :class:`sdl2.pixels.SDL_PixelFormat`,
-   :class:`sdl2.surface.SDL_Surface` or
-   :class:`sdl2.ext.sprite.SoftwareSprite` instance.
+   :class:`sdl2.surface.SDL_Surface` or :class:`SoftwareSprite` instance.
 
    The returned integer will be a color value matching the target's pixel
    format.
@@ -26,7 +24,7 @@ sdl2.ext.draw - 2D drawing routines for software surfaces
    to fill with the color.
 
    *target* can be any :class:`sdl2.surface.SDL_Surface` or
-   :class:`sdl2.ext.sprite.SoftwareSprite` instance.
+   :class:`SoftwareSprite` instance.
 
 .. function:: line(target : object, color : object[, width=1]) -> None
 
@@ -36,4 +34,4 @@ sdl2.ext.draw - 2D drawing routines for software surfaces
    at once, e.g. ``(x1, y1, x2, y2, x3, y3, x4, y4, ...)``.
 
    *target* can be any :class:`sdl2.surface.SDL_Surface` or
-   :class:`sdl2.ext.sprite.SoftwareSprite` instance.
+   :class:`SoftwareSprite` instance.

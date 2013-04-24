@@ -1,8 +1,7 @@
-.. module:: sdl2.ext.array
-   :synopsis: Conversion routines for sequences.
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.array - Converting sequences
-=====================================
+Converting sequences
+====================
 This module provides various functions and classes to access sequences and
 buffer-style objects in different ways. It also provides conversion routines
 to improve the interoperability of sequences with :mod:`ctypes` data types.
@@ -73,7 +72,6 @@ widths. ::
 
 Accessing data over multiple dimensions
 ---------------------------------------
-
 The second class, :class:`MemoryView` provides an interface to access
 data over multiple dimensions. You can layout and access a simple
 byte stream over e.g. two or more axes, providing a greater flexibility

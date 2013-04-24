@@ -1,8 +1,7 @@
-.. module:: sdl2.ext.font
-   :synopsis: text rendering routines
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.font - Text rendering routines
-=======================================
+Text rendering routines
+=======================
 
 .. class:: BitmapFont(surface : Sprite, size : iterable[, mapping=None)
 

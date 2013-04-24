@@ -8,13 +8,13 @@ of a simple Pong game implementation here.
 
 Getting started
 ---------------
-We start with creating the basic window and add a small event loop, so
-we are able to close the window and game. ::
+We start with creating the window and add a small event loop, so we are able
+to close the window and game. ::
 
     import sys
     try:
+        from sdl2 import *
         import sdl2.ext as sdl2ext
-        import sdl2.events as sdlevents
     except ImportError:
         import traceback
         traceback.print_exc()
@@ -26,9 +26,9 @@ we are able to close the window and game. ::
         window.show()
         running = True
         while running:
-            evnets = sdl2ext.get_events()
+            events = sdl2ext.get_events()
             for event in events:
-                if event.type == sdlevents.SDL_QUIT:
+                if event.type == SDL_QUIT:
                     running = False
                     break
             window.refresh()
@@ -38,14 +38,17 @@ we are able to close the window and game. ::
         sys.exit(run())
 
 The import statements, video initialisation and window creation were
-discussed previously in the :ref:`hello_world` tutorial. Instead of some
-integrated event processor, a new code fragment is introduced, though. ::
+discussed previously in the :ref:`hello_world` tutorial. We import everything
+from the :mod:`sdl2` package here, too, to have all SDL2 functions available.
+
+Instead of some integrated event processor, a new code fragment is
+introduced, though. ::
 
     running = True
     while running:
         events = sdl2ext.get_events()
         for event in events:
-            if event.type == sdlevents.SDL_QUIT:
+            if event.type == SDL_QUIT:
                 running = False
                 break
         window.refresh()
@@ -56,27 +59,22 @@ window, such as mouse movements, key strokes, resizing operations and so
 on. SDL handles a lot for us when it comes to events, so all we need to
 do is to check, if there are any events, retrieve each event one by
 one, and handle it, if necessary. For now, we will just handle the
-``SDL_QUIT`` event, which is raised when the window is closed.
+``SDL_QUIT`` event, which is raised when the window is about to be closed.
 
 In any other case we will just refresh the window's graphics buffer, so
 it is updated and visible on-screen.
 
 Adding the game world
 ---------------------
-The window is available and basically working. Now let's take care of
-creating the game world, which will manage the player paddles, ball,
-visible elements and anything else. We are going to use an
-implementation layout loosely based on a COP pattern, which separates
-data structures and functionality from each other. This allows us to
-change or enhance functional parts easily without having to refactor all
-classes we are implementing.
+The window is available and working. Now let's take care of creating the
+game world, which will manage the player paddles, ball, visible elements
+and everything else. We are going to use an implementation layout loosely
+based on a COP [#f1]_ pattern, which separates data structures and
+functionality from each other. This allows us to change or enhance functional
+parts easily without having to refactor all classes we are implementing.
 
 We start with creating the two player paddles and the rendering engine
 that will display them. ::
-
-    [...]
-
-    from sdl2.ext.ebs import *
 
     [...]
 
@@ -89,7 +87,7 @@ that will display them. ::
             super(SoftwareRenderer, self).render(components)
 
 
-    class Player(Entity):
+    class Player(sdl2ext.Entity):
         def __init__(self, world, sprite, posx=0, posy=0):
             self.sprite = sprite
             self.sprite.position = posx, posy
@@ -98,7 +96,7 @@ that will display them. ::
     def run():
         ...
 
-        world = World()
+        world = sdl2ext.World()
 
         spriterenderer = SoftwareRenderer(window)
         world.add_system(spriterenderer)
@@ -114,7 +112,7 @@ that will display them. ::
         while running:
             events = sdl2ext.get_events()
             for event in events:
-                if event.type == sdlevents.SDL_QUIT:
+                if event.type == SDL_QUIT:
                     running = False
                     break
             world.process()
@@ -123,22 +121,22 @@ that will display them. ::
         sys.exit(run())
 
 The first thing to do is to enhance the
-:class:`sdl2.ext.sprite.SoftwareSpriteRenderer` so that it will paint
+:class:`sdl2.ext.SoftwareSpriteRenderer` so that it will paint
 the whole window sceeen black on every drawing cycle, before drawing all
 sprites on the window.
 
 Afterwards, the player paddles will be implemented, based on an
-:class:`sdl2.ext.ebs.Entity` data container. The player paddles are
+:class:`sdl2.ext.Entity` data container. The player paddles are
 simple rectangular sprites that can be positioned anywhere on the
 window.
 
 In the main program function, we put those things together by creating a
-:class:`sdl2.ext.ebs.World`, in which the player paddles and the renderer
+:class:`sdl2.ext.World`, in which the player paddles and the renderer
 can live and operate.
 
 Within the main event loop, we allow the world to process all attached
 systems, which causes it to invoke the ``process()`` methods for all
-:class:`sdl2.ext.ebs.System` instances added to it.
+:class:`sdl2.ext.System` instances added to it.
 
 Moving the ball
 ---------------
@@ -147,10 +145,10 @@ our window. The next thing to do is to add a ball that can move around
 within the window boundaries. ::
 
     [...]
-    class MovementSystem(Applicator):
+    class MovementSystem(sdl2ext.Applicator):
         def __init__(self, minx, miny, maxx, maxy):
             super(MovementSystem, self).__init__()
-            self.componenttypes = (Velocity, video.Sprite)
+            self.componenttypes = (Velocity, Sprite)
             self.minx = minx
             self.miny = miny
             self.maxx = maxx
@@ -180,13 +178,13 @@ within the window boundaries. ::
             self.vy = 0
 
 
-    class Player(Entity):
+    class Player(sdl2ext.Entity):
         def __init__(self, world, posx=0, posy=0):
             [...]
             self.velocity = Velocity()
 
 
-    class Ball(Entity):
+    class Ball(sdl2ext.Entity):
         def __init__(self, world, sprite, posx=0, posy=0):
             self.sprite = sprite
             self.sprite.position = posx, posy
@@ -223,28 +221,28 @@ velocity attribute to them, which is a ``Velocity`` component instance.
 
 .. note::
 
-   The naming is important here. The :mod:`sdl2.ext.ebs` implementation
-   requires every in-application or in-game item attribute bound to a
-   :class:`sdl2.ext.ebs.Entity` to be the lowercase class name of its
+   The naming is important here. The EBS implementation as described in
+   :ref:`ref-ebs` requires every in-application or in-game item attribute
+   bound to a :class:`sdl2.ext.Entity` to be the lowercase class name of its
    related component. ::
 
-     Player.vel = Velocity(10, 10)
+      Player.vel = Velocity(10, 10)
 
-   for example would raise an Exception, since the system expects
+   for example would raise an exception, since the system expects
    ``Player.vel`` to be an instance of a ``Vel`` component.
 
-The ``MovementSystem`` is a specialised :class:`sdl2.ext.ebs.System`, a
-:class:`sdl2.ext.ebs.Applicator`, which can operate on combined sets of
-data. When the :meth:`sdl2.ext.ebs.Applicator.process()` method is
+The ``MovementSystem`` is a specialised :class:`sdl2.ext.System`, a
+:class:`sdl2.ext.Applicator`, which can operate on combined sets of
+data. When the :meth:`sdl2.ext.Applicator.process()` method is
 called, the passed ``componentsets`` iterable will contain tuples of
 objects that belong to an instance and feature a certain type. The
 ``MovementSystem``'s ``process()`` implementation hence will loop over
 sets of ``Velocity`` and ``Sprite`` instances that belong to the same
-:class:`sdl2.ext.ebs.Entity`. Since we have a ball and two players
+:class:`sdl2.ext.Entity`. Since we have a ball and two players
 currently available, it typically would loop over three tuples, two for
 the individual players and one for the ball.
 
-The :class:`sdl2.ext.ebs.Applicator` thus enables us to process combined
+The :class:`sdl2.ext.Applicator` thus enables us to process combined
 data of our in-game items, without creating complex data structures.
 
 .. note::
@@ -254,11 +252,10 @@ data of our in-game items, without creating complex data structures.
    ``Velocity`` component, it would not be processed by the
    ``MovementSystem``.
 
-Why do we use this approach? The :class:`sdl2.ext.sprite.Sprite`
-objects carry a position, which defines the location at which
-they should be rendered, when processed by the ``SoftwareRenderer``. If they
-should move around (which is a change in the position), we need to apply the
-velocity to them.
+Why do we use this approach? The :class:`sdl2.ext.Sprite` objects carry a
+position, which defines the location at which they should be rendered, when
+processed by the ``SoftwareRenderer``. If they should move around (which is
+a change in the position), we need to apply the velocity to them.
 
 We also define some more things within the ``MovementSystem``, such as a
 simple boundary check, so that the players and ball cannot leave the
@@ -279,17 +276,10 @@ simple collision system, which causes the ball to change its direction
 on colliding with the walls or the player paddles. ::
 
     [...]
-    try:
-        import sdl2.ext as sdl2ext
-        import sdl2.events as sdlevents
-        import sdl2.timer as sdltimer
-    except ImportError:
-        [...]
-
-    class CollisionSystem(Applicator):
+    class CollisionSystem(sdl2ext.Applicator):
         def __init__(self, minx, miny, maxx, maxy):
             super(CollisionSystem, self).__init__()
-            self.componenttypes = (Velocity, video.Sprite)
+            self.componenttypes = (Velocity, Sprite)
             self.ball = None
             self.minx = minx
             self.miny = miny
@@ -332,10 +322,10 @@ on colliding with the walls or the player paddles. ::
         while running:
             events = sdl2ext.get_events()
             for event in events:
-                if event.type == sdlevents.SDL_QUIT:
+                if event.type == SDL_QUIT:
                     running = False
                     break
-            sdltimer.delay(10)
+            SDL_Delay(10)
             world.process()
 
     if __name__ == "__main__":
@@ -352,59 +342,49 @@ direction (velocity) should be inverted, so that it *bounces* back.
 
 Additionally, we won't run at the full processor speed anymore in the
 main loop, but instead add a short delay, using the
-:mod:`sdl2.timer` module. This reduces the overall load on the
+:func:`sdl2.SDL_Delay` function. This reduces the overall load on the
 CPU and makes the game a bit slower.
 
 Reacting on player input
 ------------------------
 We have a moving ball that bounces from side to side. The next step
-would be to allow moving one of the paddles around, if the player
-presses a key. As stated in the beginning, the :mod:`sdl2.events`
-module allows us to deal with a huge variety of user and system events
-that could occur for our application.
-
-Right now we are only interested in key strokes for the Up and Down keys
-to move one of the player paddles up or down. ::
+would be to allow moving one of the paddles around, if the player presses a
+key. The SDL event routines allow us to deal with a huge variety of user and 
+ystem events that could occur for our application, but right now we are only
+interested in key strokes for the Up and Down keys to move one of the player
+paddles up or down. ::
 
     [...]
-    try:
-        import sdl2.ext as sdlext
-        import sdl2.events as sdlevents
-        import sdl2.timer as sdltimer
-        import sdl2.keycode as sdlkc
-    except ImportError:
-        [...]
-
     def run():
         [...]
         running = True
         while running:
             events = sdl2ext.get_events()
             for event in events:
-                if event.type == sdlevents.SDL_QUIT:
+                if event.type == SDL_QUIT:
                     running = False
                     break
-                if event.type == sdlevents.SDL_KEYDOWN:
-                    if event.key.keysym.sym == sdlkc.SDLK_UP:
+                if event.type == SDL_KEYDOWN:
+                    if event.key.keysym.sym == SDLK_UP:
                         player1.velocity.vy = -3
-                    elif event.key.keysym.sym == sdlkc.SDLK_DOWN:
+                    elif event.key.keysym.sym == SDLK_DOWN:
                         player1.velocity.vy = 3
-                elif event.type == sdlevents.SDL_KEYUP:
-                    if event.key.keysym.sym in (sdlkc.SDLK_UP, sdlkc.SDLK_DOWN):
+                elif event.type == SDL_KEYUP:
+                    if event.key.keysym.sym in (SDLK_UP, SDLK_DOWN):
                         player1.velocity.vy = 0
-            sdltimer.delay(10)
+            SDL_Delay(10)
             world.process()
 
     if __name__ == "__main__":
         sys.exit(run())
 
-Every event that can occur and that is supported by SDL2 can be
-identified by a static event type code. This allows us to check for
-e.g. a key stroke. First, we have to check for ``SDL_KEYDOWN`` and ``SDL_KEYUP``
-events, so we can start and stop the paddle movement on demand.
-Once we identified such events, we need to check, whether the pressed
-or released key is actually the Up or Down key, so that we do not start
-or stop moving the paddle, if the user presses R or G or whatever.
+Every event that can occur and that is supported by SDL2 can be identified
+by a static event type code. This allows us to check for a key stroke, mouse
+button press, and so on. First, we have to check for ``SDL_KEYDOWN`` and
+``SDL_KEYUP`` events, so we can start and stop the paddle movement on demand.
+Once we identified such events, we need to check, whether the pressed or
+released key is actually the Up or Down key, so that we do not start or
+stop moving the paddle, if the user presses R or G or whatever.
 
 Whenever the Up or Down key are pressed down, we allow the left player
 paddle to move by changing its velocity information for the vertical
@@ -414,7 +394,7 @@ the paddle.
 Improved bouncing
 -----------------
 We have a moving paddle and we have a ball that bounces from one side to
-another, which makes the game quite boring. If you played Pong before,
+another, which makes the game ... quite boring. If you played Pong before,
 you know that most variations of it will cause the ball to bounce in a
 certain angle, if it collides with a paddle. Most of those
 implementations achieve this by implementing the paddle collision as if
@@ -424,7 +404,7 @@ the center, it will bounce back with a pointed angle and on the corners
 of the paddle it will bounce back with some angle close to 90 degrees to
 its initial movement direction. ::
 
-    class CollisionSystem(Applicator):
+    class CollisionSystem(sdl2ext.Applicator):
         [...]
 
         def process(self, world, componentsets):
@@ -450,7 +430,7 @@ its initial movement direction. ::
 The reworked processing code above simulates a curved paddle by
 creating segmented areas, which cause the ball to be reflected in
 different angles. Instead of doing some complex trigonometry to
-calculate an accurate angle and transform it ona x/y plane, we simply
+calculate an accurate angle and transform it on a x/y plane, we simply
 check, where the ball collided with the paddle and adjust the vertical
 velocity.
 
@@ -478,10 +458,10 @@ velocity for two people playing against each other. We also could
 create a simple computer-controlled player that tries to hit the ball
 back to us, which sounds more interesting. ::
 
-    class TrackingAIController(Applicator):
+    class TrackingAIController(sdl2ext.Applicator):
         def __init__(self, miny, maxy):
             super(TrackingAIController, self).__init__()
-            self.componenttypes = (PlayerData, Velocity, video.Sprite)
+            self.componenttypes = (PlayerData, Velocity, Sprite)
             self.miny = miny
             self.maxy = maxy
             self.ball = None
@@ -516,7 +496,7 @@ back to us, which sounds more interesting. ::
             self.ai = False
 
 
-    class Player(Entity):
+    class Player(sdl2ext.Entity):
         def __init__(self, world, sprite, posx=0, posy=0, ai=False):
             self.sprite = sprite
             self.sprite.position = posx, posy
@@ -552,6 +532,11 @@ trying to hit it at its center, if the ball moves into the direction of
 the AI-controlled paddle. As soon as the ball moves away from the
 paddle, the paddle will move back to the vertical center.
 
+.. tip::
+
+   Add ``True`` as last parameter to the first ```Player()`` constructor to
+   see two AIs playing against each other.
+
 Next steps
 ----------
 We created the basics of a Pong game, which can be found in the
@@ -579,11 +564,11 @@ complex as it sounds.
     small processor that keeps track of the ball only and processes only
     the ``PlayerData`` and ``video.SoftSprite`` objects of each player for
     adding points). Alternatively, you could use the
-    :class:`sdl2.ext.events.EventHandler` class to raise a score count
+    :class:`sdl2.ext.EventHandler` class to raise a score count
     function within the ``CollisionSystem``, if the ball collides with
     one of the paddles.
 
-  * write an own Renderer, based on :class:`sdl2.ext.ebs.Applicator`,
+  * write an own Renderer, based on :class:`sdl2.ext.Applicator`,
     which takes care of position and sprite sets ::
 
        StaticRepeatingSprite(Entity):
@@ -593,3 +578,7 @@ complex as it sounds.
 
   * draw some simple images for 0-9 and render them as sprites,
     depending on the points a player made.
+
+.. rubric:: Footnotes
+
+.. [#f1]  Component-Oriented Programming   

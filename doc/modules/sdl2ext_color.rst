@@ -1,8 +1,7 @@
-.. module:: sdl2.ext.color
-   :synopsis: RGB-based color handling.
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.color - Color handling
-===============================
+Color handling
+==============
 
 .. class:: Color(r=255, g=255, b=255, a=255)
 

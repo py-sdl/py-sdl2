@@ -1,10 +1,8 @@
-.. module:: sdl2.ext.common
-   :synopsis: Video and graphics routines
-
-sdl2.ext.common - Initialization routines
-=========================================
-The :mod:`sdl2.ext.common` module contains various classes and methods
-for creating, processing and manipulating on-screen graphics.
+.. currentmodule:: sdl2.ext
+   
+Initialization routines
+=======================
+TODO
 
 API
 ---
