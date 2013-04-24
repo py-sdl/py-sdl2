@@ -1,17 +1,13 @@
-.. module:: sdl2.ext.resources
-   :synopsis: Resource management.
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.resources - Resource management
-========================================
+Resource management
+===================
 Every application usually ships with various resources, such as image and data
 files, configuration files and so on. Accessing those files in the folder
-hierarchy or in a bundled format for various platforms can become a comple
-task, for which the :mod:`sdl2.ext.resources` module can provide ideal
-supportive application components.
-
-The :class:`Resources` class allows you to manage different application data
-in a certain directory, providing a dictionary-style access functionality for
-your in-application resources.
+hierarchy or in a bundled format for various platforms can become a complex
+task. The :class:`Resources` class allows you to manage different application
+data in a certain directory, providing a dictionary-style access functionality
+for your in-application resources.
 
 Let's assume, your application has the following installation layout ::
 
@@ -164,12 +160,12 @@ API
 
 .. function:: open_url(filename : string[, basepath=None]) -> file object
 
-    Opens and reads a certain file from a web or remote location. This
-    function utilizes the :mod:`urllib2` module for Python 2.7 and
-    :mod:`urllib` for Python 3.x, which means that it is restricted to
-    the types of remote locations supported by the module.
+   Opens and reads a certain file from a web or remote location. This
+   function utilizes the :mod:`urllib2` module for Python 2.7 and
+   :mod:`urllib` for Python 3.x, which means that it is restricted to
+   the types of remote locations supported by the module.
 
-    *basepath* can be used to supply an additional location prefix.
+   *basepath* can be used to supply an additional location prefix.
 
 .. function:: open_zipfile(archive : string, filename : string \
                            [, directory : string]) -> BytesIO

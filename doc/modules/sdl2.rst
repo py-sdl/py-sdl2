@@ -3,13 +3,99 @@
 
 sdl2 - SDL2 library wrapper
 ===========================
-The :mod:`sdl2` module is a :mod:`ctypes`-based wrapper around
+The :mod:`sdl2` package is a :mod:`ctypes`-based wrapper around
 the SDL2 library. It wraps nearly all publicly accessible structures and
 functions of the SDL2 library to be accessible from Python code.
 
 A detailled documentation about the behaviour of the different functions
 can found within the `SDL2 documentation
 <http://wiki.libsdl.org/moin.cgi/CategoryAPI>`_.
+
+Usage
+-----
+You can use :mod:`sdl2` in nearly exactly the same way as you would do with
+the SDL library and C code.
+
+.. highlight:: c
+
+A brief example in C code::
+
+   #include <SDL.h>
+   
+   int main(int argc, char *argv[]) {
+       int running;
+       SDL_Window *window;
+       SDL_Surface *windowsurface;
+       SDL_Surface *image;
+       SDL_Event event;
+       
+       SDL_Init(SDL_INIT_VIDEO);
+       
+       window = SDL_CreateWindow("Hello World",
+                                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                 592, 460, SDL_WINDOW_SHOWN);
+       windowsurface = SDL_GetWindowSurface(window);
+
+       image = SDL_LoadBMP("exampleimage.bmp");
+       SDL_BlitSurface(image, NULL, windowsurface, NULL);
+       
+       SDL_UpdateWindowSurface(window);
+       SDL_FreeSurface(image);
+       
+       running = 1;
+       while (running) {
+           while (SDL_PollEvent(&event) != 0) {
+               if (event.type == SDL_QUIT) {
+                   running = 0;
+                   break;
+               }
+           }
+       }
+       SDL_DestroyWindow(window);
+       SDL_Quit();
+       return 0;
+    }
+
+.. highlight:: python
+
+Doing the same in Python: ::
+
+    import sys
+    import ctypes
+    from sdl2 import *
+    
+    def main():
+        SDL_Init(SDL_INIT_VIDEO)
+        window = SDL_CreateWindow(b"Hello World",
+                                  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                  592, 460, SDL_WINDOW_SHOWN)
+        windowsurface = SDL_GetWindowSurface(window)
+
+        image = SDL_LoadBMP(b"exampleimage.bmp")
+        SDL_BlitSurface(image, None, windowsurface, None)
+
+        SDL_UpdateWindowSurface(window)
+        SDL_FreeSurface(image)
+
+        running = True
+        event = SDL_Event()
+        while running:
+            while SDL_PollEvent(ctypes.byref(event)) != 0:
+                if event.type == SDL_QUIT:
+                    running = False
+                    break
+
+        SDL_DestroyWindow(window)
+        SDL_Quit()
+        return 0
+
+    if __name__ == "__main__":
+        sys.exit(run())
+
+You can port code in a straightforward manner from one language to the other,
+though it is important to know about the limitations and slight differences
+mentioned below. Also, PySDL2 offers advanced functionality, which also feels
+more *'pythonic'*, via the :mod:`sdl2.ext` package.
 
 Missing interfaces
 ------------------
@@ -19,18 +105,23 @@ available within :mod:`sdl2`.
 * :c:data:`SDL_REVISION` and :c:data:`SDL_REVISION_NUMBER` from ``SDL_revision.h``
 * :c:data:`SDL_NAME()` from ``SDL_name.h``
 * :c:func:`SDL_MostSignificantBitIndex32` from ``SDL_bits.h``
-* Anything from ``SDL_main.h``
-* Anything from ``SDL_system.h``
-* Anything from ``SDL_assert.h``
-* Anything from ``SDL_thread.h``
-* Anything from ``SDL_atomic.h``
-* Anything from ``SDL_opengl.h``
-* Anything from ``SDL_mutex.h`` 
+* Everything from ``SDL_main.h``
+* Everything from ``SDL_system.h``
+* Everything from ``SDL_assert.h``
+* Everything from ``SDL_thread.h``
+* Everything from ``SDL_atomic.h``
+* Everything from ``SDL_opengl.h``
+* Everything from ``SDL_mutex.h`` 
 
 Additional interfaces
 ---------------------
 The following functions, classes, constants and macros are are *not* part of
 SDL2, but were introduced by :mod:`sdl2`.
+
+.. data:: ALL_PIXELFORMATS
+
+   Tuple containing all SDL2 pixel format constants (SDL_PIXELFORMAT_INDEX1LSB,
+   ..., SDL_PIXELFORMAT_RGB565, ...).
 
 .. function:: sdl2.rwops.rw_from_object(obj : object) -> SDL_RWops
 

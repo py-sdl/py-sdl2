@@ -1,18 +1,7 @@
-.. module:: sdl2.ext.sprite
-   :synopsis: Sprite, texture and pixel surface routines
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.sprite - Sprite, texture and pixel surface routines
-============================================================
-
-
-Class layout
-------------
-
-.. inheritance-diagram:: sdl2.ext.sprite
-   :parts: 1
-
-API
----
+Sprite, texture and pixel surface routines
+==========================================
 
 .. class:: Sprite()
 

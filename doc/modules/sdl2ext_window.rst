@@ -1,8 +1,7 @@
-.. module:: sdl2.ext.window
-   :synopsis: Window routines to manage on-screen windows
+.. currentmodule:: sdl2.ext
 
-sdl2.ext.window - Window routines to manage on-screen windows
-=============================================================
+Window routines to manage on-screen windows
+===========================================
 
 .. class:: Window(title : string, size : iterable[, position=None[, flags=None]])
 

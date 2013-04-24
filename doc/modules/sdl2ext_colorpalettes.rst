@@ -4,7 +4,7 @@
 sdl2.ext.colorpalettes - predefined sets of colors
 ==================================================
 Indexed color palettes. Each palette is a tuple of
-:class:`sdl2.ext.color.Color` objects.
+:class:`sdl2.ext.Color` objects.
 
 The following palettes are currently available:
 

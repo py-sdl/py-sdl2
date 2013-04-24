@@ -35,7 +35,7 @@ print the exact error stack information and exit with a failure.
 We also need some resources from the ``resources`` folder, so
 that we have a test image around to display on the window later on. In
 your own applications, it is unlikely that you will ever need to import
-them, but we need them here, so we use the :mod:`sdl2.ext.resources.Resources`
+them, but we need them here, so we use the :mod:`sdl2.ext.Resources`
 class to have them available.
 
 Window creation and image loading
@@ -63,34 +63,34 @@ to the user. ::
 
 First, we initialize the :mod:`sdl2.ext` internals, so we can have
 access to the screen and create windows on top of it. Once done with that,
-:class:`sdl2.ext.window.Window` will create the window for us and we
+:class:`sdl2.ext.Window` will create the window for us and we
 supply a title to be shown on the window's border along with its initial size.
-Since :class:`sdl2.ext.window.Window` instances are not shown by default,
+Since :class:`sdl2.ext.Window` instances are not shown by default,
 we have to tell the operating system and window manager that there is a new
-window to display by calling :meth:`sdl2.ext.window.Window.show()`.
+window to display by calling :meth:`sdl2.ext.Window.show()`.
 
 Afterwards, we get an image from the resources folder and create a
-:class:`sdl2.ext.sprite.Sprite` from it, which can be easily shown later
-on. This is done via a :class:`sdl2.ext.sprite.SpriteFactory`, since the
+:class:`sdl2.ext.Sprite` from it, which can be easily shown later
+on. This is done via a :class:`sdl2.ext.SpriteFactory`, since the
 factory allows us to switch between texture-based, hardware-accelerated, and
 software-based sprites easily.
 
-To display the image, we will use a :class:`sdl2.ext.sprite.SpriteRenderer`,
+To display the image, we will use a :class:`sdl2.ext.SpriteRenderer`,
 which supports the sprite type (texture- or software-based) and can copy the
-image to the window for display. The :class:`sdl2.ext.sprite.SpriteRenderer`
+image to the window for display. The :class:`sdl2.ext.SpriteRenderer`
 needs to know, where to copy to, so we supply the window as target for copy
 and display operations.
 
 All left to do is to actually initiate the copy process by calling
-:class:`sdl2.ext.sprite.SpriteRenderer.render()` with the image we
+:class:`sdl2.ext.SpriteRenderer.render()` with the image we
 created earlier.
 
 .. tip::
 
    You will notice that the sprite used above will always be drawn at the
-   top-left corner of the :class:`sdl2.ext.window.Window`. You can change
+   top-left corner of the :class:`sdl2.ext.Window`. You can change
    the position of where to draw it by changing its
-   :attr:`sdl2.ext.sprite.Sprite.position` value. ::
+   :attr:`sdl2.ext.Sprite.position` value. ::
 
         # will cause the renderer to draw the sprite 10px to the right and
         # 20 px to the bottom
