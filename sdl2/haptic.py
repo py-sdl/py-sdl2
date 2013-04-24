@@ -50,7 +50,7 @@ SDL_HAPTIC_PAUSE = 1 << 15
 SDL_HAPTIC_POLAR = 0
 SDL_HAPTIC_CARTESIAN = 1
 SDL_HAPTIC_SPHERICAL = 2
-SDL_HAPTIC_INFINITY = 4294967295L
+SDL_HAPTIC_INFINITY = 4294967295
 
 class SDL_HapticDirection(Structure):
     _fields_ = [("type", Uint8), ("dir", (Sint32 * 3))]
