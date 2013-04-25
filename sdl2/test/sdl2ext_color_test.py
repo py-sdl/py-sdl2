@@ -14,7 +14,7 @@ all_combos = [(r, g, b, a) for r in combs
 
 def color_combos():
     for x in all_combos:
-        yield color.Color(*x)
+        yield Color(*x)
 
 
 def hex_combos():
@@ -61,16 +61,16 @@ class SDL2ExtColorTest(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
     def test_Color(self):
-        c = color.Color(10, 20, 30, 40)
+        c = Color(10, 20, 30, 40)
         self.assertEqual(c.r, 10)
         self.assertEqual(c.g, 20)
         self.assertEqual(c.b, 30)
         self.assertEqual(c.a, 40)
 
-        self.assertRaises(ValueError, color.Color, 257, 10, 105, 44)
-        self.assertRaises(ValueError, color.Color, 10, 257, 105, 44)
-        self.assertRaises(ValueError, color.Color, 10, 105, 257, 44)
-        self.assertRaises(ValueError, color.Color, 10, 105, 44, 257)
+        self.assertRaises(ValueError, Color, 257, 10, 105, 44)
+        self.assertRaises(ValueError, Color, 10, 257, 105, 44)
+        self.assertRaises(ValueError, Color, 10, 105, 257, 44)
+        self.assertRaises(ValueError, Color, 10, 105, 44, 257)
 
     def test_Color__copy__(self):
         copy_copy = copy.copy
@@ -83,81 +83,81 @@ class SDL2ExtColorTest(unittest.TestCase):
             assertNotEqual(c, c2)
 
     def test_Color__eq__(self):
-        self.assertTrue(color.Color(255, 0, 0, 0) == color.Color(255, 0, 0, 0))
-        self.assertTrue(color.Color(0, 255, 0, 0) == color.Color(0, 255, 0, 0))
-        self.assertTrue(color.Color(0, 0, 255, 0) == color.Color(0, 0, 255, 0))
-        self.assertTrue(color.Color(0, 0, 0, 255) == color.Color(0, 0, 0, 255))
+        self.assertTrue(Color(255, 0, 0, 0) == Color(255, 0, 0, 0))
+        self.assertTrue(Color(0, 255, 0, 0) == Color(0, 255, 0, 0))
+        self.assertTrue(Color(0, 0, 255, 0) == Color(0, 0, 255, 0))
+        self.assertTrue(Color(0, 0, 0, 255) == Color(0, 0, 0, 255))
 
-        self.assertFalse(color.Color(0, 0, 0, 0) == color.Color(255, 0, 0, 0))
-        self.assertFalse(color.Color(0, 0, 0, 0) == color.Color(0, 255, 0, 0))
-        self.assertFalse(color.Color(0, 0, 0, 0) == color.Color(0, 0, 255, 0))
-        self.assertFalse(color.Color(0, 0, 0, 0) == color.Color(0, 0, 0, 255))
+        self.assertFalse(Color(0, 0, 0, 0) == Color(255, 0, 0, 0))
+        self.assertFalse(Color(0, 0, 0, 0) == Color(0, 255, 0, 0))
+        self.assertFalse(Color(0, 0, 0, 0) == Color(0, 0, 255, 0))
+        self.assertFalse(Color(0, 0, 0, 0) == Color(0, 0, 0, 255))
 
-        self.assertTrue(tuple(color.Color(255, 0, 0, 0)) == (255, 0, 0, 0))
-        self.assertTrue(tuple(color.Color(0, 255, 0, 0)) == (0, 255, 0, 0))
-        self.assertTrue(tuple(color.Color(0, 0, 255, 0)) == (0, 0, 255, 0))
-        self.assertTrue(tuple(color.Color(0, 0, 0, 255)) == (0, 0, 0, 255))
+        self.assertTrue(tuple(Color(255, 0, 0, 0)) == (255, 0, 0, 0))
+        self.assertTrue(tuple(Color(0, 255, 0, 0)) == (0, 255, 0, 0))
+        self.assertTrue(tuple(Color(0, 0, 255, 0)) == (0, 0, 255, 0))
+        self.assertTrue(tuple(Color(0, 0, 0, 255)) == (0, 0, 0, 255))
 
-        self.assertFalse(tuple(color.Color(0, 0, 0, 0)) == (255, 0, 0, 0))
-        self.assertFalse(tuple(color.Color(0, 0, 0, 0)) == (0, 255, 0, 0))
-        self.assertFalse(tuple(color.Color(0, 0, 0, 0)) == (0, 0, 255, 0))
-        self.assertFalse(tuple(color.Color(0, 0, 0, 0)) == (0, 0, 0, 255))
+        self.assertFalse(tuple(Color(0, 0, 0, 0)) == (255, 0, 0, 0))
+        self.assertFalse(tuple(Color(0, 0, 0, 0)) == (0, 255, 0, 0))
+        self.assertFalse(tuple(Color(0, 0, 0, 0)) == (0, 0, 255, 0))
+        self.assertFalse(tuple(Color(0, 0, 0, 0)) == (0, 0, 0, 255))
 
-        self.assertTrue(int(color.Color(255, 0, 0, 0)) == 0xff000000)
-        self.assertTrue(int(color.Color(0, 255, 0, 0)) == 0x00ff0000)
-        self.assertTrue(int(color.Color(0, 0, 255, 0)) == 0x0000ff00)
-        self.assertTrue(int(color.Color(0, 0, 0, 255)) == 0x000000ff)
+        self.assertTrue(int(Color(255, 0, 0, 0)) == 0xff000000)
+        self.assertTrue(int(Color(0, 255, 0, 0)) == 0x00ff0000)
+        self.assertTrue(int(Color(0, 0, 255, 0)) == 0x0000ff00)
+        self.assertTrue(int(Color(0, 0, 0, 255)) == 0x000000ff)
 
-        self.assertFalse(int(color.Color(0, 0, 0, 0)) == 0xff000000)
-        self.assertFalse(int(color.Color(0, 0, 0, 0)) == 0x00ff0000)
-        self.assertFalse(int(color.Color(0, 0, 0, 0)) == 0x0000ff00)
-        self.assertFalse(int(color.Color(0, 0, 0, 0)) == 0x000000ff)
+        self.assertFalse(int(Color(0, 0, 0, 0)) == 0xff000000)
+        self.assertFalse(int(Color(0, 0, 0, 0)) == 0x00ff0000)
+        self.assertFalse(int(Color(0, 0, 0, 0)) == 0x0000ff00)
+        self.assertFalse(int(Color(0, 0, 0, 0)) == 0x000000ff)
 
     def test_Color__ne__(self):
-        self.assertTrue(color.Color(0, 0, 0, 0) != color.Color(255, 0, 0, 0))
-        self.assertTrue(color.Color(0, 0, 0, 0) != color.Color(0, 255, 0, 0))
-        self.assertTrue(color.Color(0, 0, 0, 0) != color.Color(0, 0, 255, 0))
-        self.assertTrue(color.Color(0, 0, 0, 0) != color.Color(0, 0, 0, 255))
+        self.assertTrue(Color(0, 0, 0, 0) != Color(255, 0, 0, 0))
+        self.assertTrue(Color(0, 0, 0, 0) != Color(0, 255, 0, 0))
+        self.assertTrue(Color(0, 0, 0, 0) != Color(0, 0, 255, 0))
+        self.assertTrue(Color(0, 0, 0, 0) != Color(0, 0, 0, 255))
 
-        self.assertFalse(color.Color(255, 0, 0, 0) != color.Color(255, 0, 0, 0))
-        self.assertFalse(color.Color(0, 255, 0, 0) != color.Color(0, 255, 0, 0))
-        self.assertFalse(color.Color(0, 0, 255, 0) != color.Color(0, 0, 255, 0))
-        self.assertFalse(color.Color(0, 0, 0, 255) != color.Color(0, 0, 0, 255))
+        self.assertFalse(Color(255, 0, 0, 0) != Color(255, 0, 0, 0))
+        self.assertFalse(Color(0, 255, 0, 0) != Color(0, 255, 0, 0))
+        self.assertFalse(Color(0, 0, 255, 0) != Color(0, 0, 255, 0))
+        self.assertFalse(Color(0, 0, 0, 255) != Color(0, 0, 0, 255))
 
-        self.assertTrue(tuple(color.Color(0, 0, 0, 0)) != (255, 0, 0, 0))
-        self.assertTrue(tuple(color.Color(0, 0, 0, 0)) != (0, 255, 0, 0))
-        self.assertTrue(tuple(color.Color(0, 0, 0, 0)) != (0, 0, 255, 0))
-        self.assertTrue(tuple(color.Color(0, 0, 0, 0)) != (0, 0, 0, 255))
+        self.assertTrue(tuple(Color(0, 0, 0, 0)) != (255, 0, 0, 0))
+        self.assertTrue(tuple(Color(0, 0, 0, 0)) != (0, 255, 0, 0))
+        self.assertTrue(tuple(Color(0, 0, 0, 0)) != (0, 0, 255, 0))
+        self.assertTrue(tuple(Color(0, 0, 0, 0)) != (0, 0, 0, 255))
 
-        self.assertFalse(tuple(color.Color(255, 0, 0, 0)) != (255, 0, 0, 0))
-        self.assertFalse(tuple(color.Color(0, 255, 0, 0)) != (0, 255, 0, 0))
-        self.assertFalse(tuple(color.Color(0, 0, 255, 0)) != (0, 0, 255, 0))
-        self.assertFalse(tuple(color.Color(0, 0, 0, 255)) != (0, 0, 0, 255))
+        self.assertFalse(tuple(Color(255, 0, 0, 0)) != (255, 0, 0, 0))
+        self.assertFalse(tuple(Color(0, 255, 0, 0)) != (0, 255, 0, 0))
+        self.assertFalse(tuple(Color(0, 0, 255, 0)) != (0, 0, 255, 0))
+        self.assertFalse(tuple(Color(0, 0, 0, 255)) != (0, 0, 0, 255))
 
-        self.assertTrue(int(color.Color(0, 0, 0, 0)) != 0xff000000)
-        self.assertTrue(int(color.Color(0, 0, 0, 0)) != 0x00ff0000)
-        self.assertTrue(int(color.Color(0, 0, 0, 0)) != 0x0000ff00)
-        self.assertTrue(int(color.Color(0, 0, 0, 0)) != 0x000000ff)
+        self.assertTrue(int(Color(0, 0, 0, 0)) != 0xff000000)
+        self.assertTrue(int(Color(0, 0, 0, 0)) != 0x00ff0000)
+        self.assertTrue(int(Color(0, 0, 0, 0)) != 0x0000ff00)
+        self.assertTrue(int(Color(0, 0, 0, 0)) != 0x000000ff)
 
-        self.assertFalse(int(color.Color(255, 0, 0, 0)) != 0xff000000)
-        self.assertFalse(int(color.Color(0, 255, 0, 0)) != 0x00ff0000)
-        self.assertFalse(int(color.Color(0, 0, 255, 0)) != 0x0000ff00)
-        self.assertFalse(int(color.Color(0, 0, 0, 255)) != 0x000000ff)
+        self.assertFalse(int(Color(255, 0, 0, 0)) != 0xff000000)
+        self.assertFalse(int(Color(0, 255, 0, 0)) != 0x00ff0000)
+        self.assertFalse(int(Color(0, 0, 255, 0)) != 0x0000ff00)
+        self.assertFalse(int(Color(0, 0, 0, 255)) != 0x000000ff)
 
     def test_Color__repr__(self):
-        c = color.Color(68, 38, 26, 69)
+        c = Color(68, 38, 26, 69)
         c1 = eval(repr(c))
         self.assertEqual(c, c1)
 
     def test_Color__int__(self):
-        c = color.Color(0x00, 0xCC, 0x00, 0xCC)
+        c = Color(0x00, 0xCC, 0x00, 0xCC)
         self.assertEqual(c.r, 0x00)
         self.assertEqual(c.g, 0xCC)
         self.assertEqual(c.b, 0x00)
         self.assertEqual(c.a, 0xCC)
         self.assertEqual(int(c), int(0x00CC00CC))
 
-        c = color.Color(0x72, 0x75, 0x92, 0x33)
+        c = Color(0x72, 0x75, 0x92, 0x33)
         self.assertEqual(c.r, 0x72)
         self.assertEqual(c.g, 0x75)
         self.assertEqual(c.b, 0x92)
@@ -165,14 +165,14 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(int(c), int(0x72759233))
 
     def test_Color__long__(self):
-        c = color.Color(0x00, 0xCC, 0x00, 0xCC)
+        c = Color(0x00, 0xCC, 0x00, 0xCC)
         self.assertEqual(c.r, 0x00)
         self.assertEqual(c.g, 0xCC)
         self.assertEqual(c.b, 0x00)
         self.assertEqual(c.a, 0xCC)
         self.assertEqual(long(c), long(0x00CC00CC))
 
-        c = color.Color(0x72, 0x75, 0x92, 0x33)
+        c = Color(0x72, 0x75, 0x92, 0x33)
         self.assertEqual(c.r, 0x72)
         self.assertEqual(c.g, 0x75)
         self.assertEqual(c.b, 0x92)
@@ -180,14 +180,14 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(long(c), long(0x72759233))
 
     def test_Color__float__(self):
-        c = color.Color(0x00, 0xCC, 0x00, 0xCC)
+        c = Color(0x00, 0xCC, 0x00, 0xCC)
         self.assertEqual(c.r, 0x00)
         self.assertEqual(c.g, 0xCC)
         self.assertEqual(c.b, 0x00)
         self.assertEqual(c.a, 0xCC)
         self.assertEqual(float(c), float(0x00CC00CC))
 
-        c = color.Color(0x72, 0x75, 0x92, 0x33)
+        c = Color(0x72, 0x75, 0x92, 0x33)
         self.assertEqual(c.r, 0x72)
         self.assertEqual(c.g, 0x75)
         self.assertEqual(c.b, 0x92)
@@ -195,14 +195,14 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(float(c), float(0x72759233))
 
     def test_Color__oct__(self):
-        c = color.Color(0x00, 0xCC, 0x00, 0xCC)
+        c = Color(0x00, 0xCC, 0x00, 0xCC)
         self.assertEqual(c.r, 0x00)
         self.assertEqual(c.g, 0xCC)
         self.assertEqual(c.b, 0x00)
         self.assertEqual(c.a, 0xCC)
         self.assertEqual(oct(c), oct(0x00CC00CC))
 
-        c = color.Color(0x72, 0x75, 0x92, 0x33)
+        c = Color(0x72, 0x75, 0x92, 0x33)
         self.assertEqual(c.r, 0x72)
         self.assertEqual(c.g, 0x75)
         self.assertEqual(c.b, 0x92)
@@ -210,14 +210,14 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(oct(c), oct(0x72759233))
 
     def test_Color__hex__(self):
-        c = color.Color(0x00, 0xCC, 0x00, 0xCC)
+        c = Color(0x00, 0xCC, 0x00, 0xCC)
         self.assertEqual(c.r, 0x00)
         self.assertEqual(c.g, 0xCC)
         self.assertEqual(c.b, 0x00)
         self.assertEqual(c.a, 0xCC)
         self.assertEqual(hex(c), hex(0x00CC00CC))
 
-        c = color.Color(0x72, 0x75, 0x92, 0x33)
+        c = Color(0x72, 0x75, 0x92, 0x33)
         self.assertEqual(c.r, 0x72)
         self.assertEqual(c.g, 0x75)
         self.assertEqual(c.b, 0x92)
@@ -225,25 +225,25 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(hex(c), hex(0x72759233))
 
     def test_Color__invert__(self):
-        self.assertEqual(~color.Color(), color.Color(0, 0, 0, 0))
-        self.assertEqual(~color.Color(0, 0, 0, 0), color.Color(255, 255, 255, 255))
-        self.assertEqual(~color.Color(255, 0, 0, 0), color.Color(0, 255, 255, 255))
-        self.assertEqual(~color.Color(0, 255, 0, 0), color.Color(255, 0, 255, 255))
-        self.assertEqual(~color.Color(0, 0, 255, 0), color.Color(255, 255, 0, 255))
-        self.assertEqual(~color.Color(0, 0, 0, 255), color.Color(255, 255, 255, 0))
-        self.assertEqual(~color.Color(127, 127, 127, 0), color.Color(128, 128, 128, 255))
+        self.assertEqual(~Color(), Color(0, 0, 0, 0))
+        self.assertEqual(~Color(0, 0, 0, 0), Color(255, 255, 255, 255))
+        self.assertEqual(~Color(255, 0, 0, 0), Color(0, 255, 255, 255))
+        self.assertEqual(~Color(0, 255, 0, 0), Color(255, 0, 255, 255))
+        self.assertEqual(~Color(0, 0, 255, 0), Color(255, 255, 0, 255))
+        self.assertEqual(~Color(0, 0, 0, 255), Color(255, 255, 255, 0))
+        self.assertEqual(~Color(127, 127, 127, 0), Color(128, 128, 128, 255))
 
-        self.assertEqual(~color.Color(1, 2, 3, 4), color.Color(254, 253, 252, 251))
-        self.assertEqual(~color.Color(127, 127, 127, 0), color.Color(128, 128, 128, 255))
+        self.assertEqual(~Color(1, 2, 3, 4), Color(254, 253, 252, 251))
+        self.assertEqual(~Color(127, 127, 127, 0), Color(128, 128, 128, 255))
 
     def test_Color__mod__(self):
-        c1 = color.Color()
+        c1 = Color()
         self.assertEqual(c1.r, 255)
         self.assertEqual(c1.g, 255)
         self.assertEqual(c1.b, 255)
         self.assertEqual(c1.a, 255)
 
-        c2 = color.Color(2, 4, 8, 16)
+        c2 = Color(2, 4, 8, 16)
         self.assertEqual(c2.r, 2)
         self.assertEqual(c2.g, 4)
         self.assertEqual(c2.b, 8)
@@ -256,13 +256,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c3.a, 15)
 
     def test_Color__div__(self):
-        c1 = color.Color(128, 128, 128, 128)
+        c1 = Color(128, 128, 128, 128)
         self.assertEqual(c1.r, 128)
         self.assertEqual(c1.g, 128)
         self.assertEqual(c1.b, 128)
         self.assertEqual(c1.a, 128)
 
-        c2 = color.Color(2, 4, 8, 16)
+        c2 = Color(2, 4, 8, 16)
         self.assertEqual(c2.r, 2)
         self.assertEqual(c2.g, 4)
         self.assertEqual(c2.b, 8)
@@ -281,13 +281,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c3.a, 0)
 
     def test_Color__mul__(self):
-        c1 = color.Color(1, 1, 1, 1)
+        c1 = Color(1, 1, 1, 1)
         self.assertEqual(c1.r, 1)
         self.assertEqual(c1.g, 1)
         self.assertEqual(c1.b, 1)
         self.assertEqual(c1.a, 1)
 
-        c2 = color.Color(2, 5, 3, 22)
+        c2 = Color(2, 5, 3, 22)
         self.assertEqual(c2.r, 2)
         self.assertEqual(c2.g, 5)
         self.assertEqual(c2.b, 3)
@@ -306,13 +306,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c3.a, 255)
 
     def test_Color__sub__(self):
-        c1 = color.Color(255, 255, 255, 255)
+        c1 = Color(255, 255, 255, 255)
         self.assertEqual(c1.r, 255)
         self.assertEqual(c1.g, 255)
         self.assertEqual(c1.b, 255)
         self.assertEqual(c1.a, 255)
 
-        c2 = color.Color(20, 33, 82, 193)
+        c2 = Color(20, 33, 82, 193)
         self.assertEqual(c2.r, 20)
         self.assertEqual(c2.g, 33)
         self.assertEqual(c2.b, 82)
@@ -331,13 +331,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c3.a, 0)
 
     def test_Color__add__(self):
-        c1 = color.Color(0, 0, 0, 0)
+        c1 = Color(0, 0, 0, 0)
         self.assertEqual(c1.r, 0)
         self.assertEqual(c1.g, 0)
         self.assertEqual(c1.b, 0)
         self.assertEqual(c1.a, 0)
 
-        c2 = color.Color(20, 33, 82, 193)
+        c2 = Color(20, 33, 82, 193)
         self.assertEqual(c2.r, 20)
         self.assertEqual(c2.g, 33)
         self.assertEqual(c2.b, 82)
@@ -356,20 +356,20 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c3.a, 255)
 
     def test_Color__len__(self):
-        c = color.Color(204, 38, 194, 55)
+        c = Color(204, 38, 194, 55)
         self.assertEqual(len(c), 4)
-        self.assertEqual(len(color.Color()), 4)
-        self.assertEqual(len(color.Color(2)), 4)
+        self.assertEqual(len(Color()), 4)
+        self.assertEqual(len(Color(2)), 4)
 
     def test_Color__getitem__(self):
-        c = color.Color(204, 38, 194, 55)
+        c = Color(204, 38, 194, 55)
         self.assertEqual(c[0], 204)
         self.assertEqual(c[1], 38)
         self.assertEqual(c[2], 194)
         self.assertEqual(c[3], 55)
 
     def test_Color__setitem(self):
-        c = color.Color(204, 38, 194, 55)
+        c = Color(204, 38, 194, 55)
         self.assertEqual(c[0], 204)
         self.assertEqual(c[1], 38)
         self.assertEqual(c[2], 194)
@@ -391,13 +391,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c[2], 173)
 
     def test_Color_r(self):
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.r, 100)
 
-        c = color.Color(100, 100, 100, 100)
+        c = Color(100, 100, 100, 100)
         self.assertEqual(c.r, 100)
 
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.r, 100)
         c.r = 200
         self.assertEqual(c.r, 200)
@@ -405,13 +405,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c.r, 222)
 
     def test_Color_g(self):
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.g, 100)
 
-        c = color.Color(100, 100, 100, 100)
+        c = Color(100, 100, 100, 100)
         self.assertEqual(c.g, 100)
 
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.g, 100)
         c.g = 200
         self.assertEqual(c.g, 200)
@@ -419,13 +419,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c.g, 222)
 
     def test_Color_b(self):
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.b, 100)
 
-        c = color.Color(100, 100, 100, 100)
+        c = Color(100, 100, 100, 100)
         self.assertEqual(c.b, 100)
 
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.b, 100)
         c.b = 200
         self.assertEqual(c.b, 200)
@@ -433,13 +433,13 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c.b, 222)
 
     def test_Color_a(self):
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.a, 255)
 
-        c = color.Color(100, 100, 100, 100)
+        c = Color(100, 100, 100, 100)
         self.assertEqual(c.a, 100)
 
-        c = color.Color(100, 100, 100)
+        c = Color(100, 100, 100)
         self.assertEqual(c.a, 255)
         c.a = 200
         self.assertEqual(c.a, 200)
@@ -447,7 +447,7 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertEqual(c.a, 222)
 
     def test_Color_rgba(self):
-        c = color.Color(0)
+        c = Color(0)
         self.assertEqual(c.r, 0)
         self.assertEqual(c.g, 255)
         self.assertEqual(c.b, 255)
@@ -505,7 +505,7 @@ class SDL2ExtColorTest(unittest.TestCase):
             assertTrue(0 <= a <= 100)
 
             for cx in [(0, 0, 0, 0), (255, 255, 255, 255)]:
-                c2 = color.Color(*cx)
+                c2 = Color(*cx)
                 assertEqual(tuple(c2), cx)
 
                 c2.hsva = c.hsva
@@ -529,7 +529,7 @@ class SDL2ExtColorTest(unittest.TestCase):
             assertTrue(0 <= a <= 100)
 
             for cx in [(0, 0, 0, 0), (255, 255, 255, 255)]:
-                c2 = color.Color(*cx)
+                c2 = Color(*cx)
                 assertEqual(tuple(c2), cx)
 
                 c2.hsla = c.hsla
@@ -552,7 +552,7 @@ class SDL2ExtColorTest(unittest.TestCase):
             assertTrue(-0.5 <= i3 <= 0.5)
 
             for cx in [(0, 0, 0, 0), (255, 255, 255, 255)]:
-                c2 = color.Color(*cx)
+                c2 = Color(*cx)
                 assertEqual(tuple(c2), cx)
 
                 c2.i1i2i3 = c.i1i2i3
@@ -574,7 +574,7 @@ class SDL2ExtColorTest(unittest.TestCase):
             assertTrue(0 <= y <= 1)
 
             for cx in [(0, 0, 0, 0), (255, 255, 255, 255)]:
-                c2 = color.Color(*cx)
+                c2 = Color(*cx)
                 assertEqual(tuple(c2), cx)
 
                 c2.cmy = val.cmy
@@ -587,7 +587,7 @@ class SDL2ExtColorTest(unittest.TestCase):
                     "Failed for color '%s' and cx '%s': %s" % (val, cx, c2))
 
     def test_Color_normalize(self):
-        c = color.Color(204, 38, 194, 55)
+        c = Color(204, 38, 194, 55)
         self.assertEqual(c.r, 204)
         self.assertEqual(c.g, 38)
         self.assertEqual(c.b, 194)
@@ -600,16 +600,16 @@ class SDL2ExtColorTest(unittest.TestCase):
         self.assertAlmostEquals(t[2], 0.760784, places=5)
         self.assertAlmostEquals(t[3], 0.215686, places=5)
 
-        c = color.Color(255, 255, 255, 255)
+        c = Color(255, 255, 255, 255)
         self.assertEqual(c.normalize(), (1.0, 1.0, 1.0, 1.0))
-        c = color.Color(0, 0, 0, 0)
+        c = Color(0, 0, 0, 0)
         self.assertEqual(c.normalize(), (0.0, 0.0, 0.0, 0.0))
-        c = color.Color(128, 128, 128, 128)
+        c = Color(128, 128, 128, 128)
         t = c.normalize()
         for v in t:
             self.assertAlmostEquals(v, 0.5, places=2)
 
-        c = color.Color(128, 255, 0, 52)
+        c = Color(128, 255, 0, 52)
         t = c.normalize()
         self.assertAlmostEquals(t[0], 0.5, places=2)
         self.assertEqual(t[1], 1.0)
@@ -678,7 +678,8 @@ class SDL2ExtColorTest(unittest.TestCase):
     def test_string_to_color(self):
         assertEqual = self.assertEqual
         assertRaises = self.assertRaises
-        for method in(color.string_to_color, color.convert_to_color, color.COLOR):
+        for method in(color.string_to_color, color.convert_to_color,
+                      color.COLOR):
             assertEqual(method('#00000000').r, 0x00)
             assertEqual(method('#10000000').r, 0x10)
             assertEqual(method('#20000000').r, 0x20)
@@ -741,7 +742,7 @@ class SDL2ExtColorTest(unittest.TestCase):
                 assertEqual(method(val), cvals[index], "Failed for '%s'" % val)
 
         self.assertRaises(TypeError, color.string_to_color, 0xff000000)
-        self.assertRaises(TypeError, color.string_to_color, color.Color())
+        self.assertRaises(TypeError, color.string_to_color, Color())
 
     def test_convert_to_color(self):
         self.assertEqual(color.COLOR, color.convert_to_color)
@@ -749,22 +750,28 @@ class SDL2ExtColorTest(unittest.TestCase):
 
         assertEqual = self.assertEqual
         for index, val in enumerate(hex_combos()):
-            assertEqual(color.COLOR(val), cvals[index], "Failed for '%s'" % val)
+            assertEqual(color.COLOR(val), cvals[index],
+                        "Failed for '%s'" % val)
 
         for index, val in enumerate(hash_combos()):
-            assertEqual(color.COLOR(val), cvals[index], "Failed for '%s'" % val)
+            assertEqual(color.COLOR(val), cvals[index],
+                        "Failed for '%s'" % val)
 
         for index, val in enumerate(hex_combos()):
-            assertEqual(color.COLOR(val), cvals[index], "Failed for '%s'" % val)
+            assertEqual(color.COLOR(val), cvals[index],
+                        "Failed for '%s'" % val)
 
         for index, val in enumerate(argb_combos()):
-            assertEqual(color.COLOR(val), cvals[index], "Failed for '0x%.8x'" % val)
+            assertEqual(color.COLOR(val), cvals[index],
+                        "Failed for '0x%.8x'" % val)
 
         for index, val in enumerate(color_combos()):
-            assertEqual(color.COLOR(val), cvals[index], "Failed for '%s'" % val)
+            assertEqual(color.COLOR(val), cvals[index],
+                        "Failed for '%s'" % val)
 
         self.assertRaises(ValueError, color.convert_to_color, self)
         self.assertRaises(ValueError, color.convert_to_color, "Test")
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

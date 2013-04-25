@@ -3,6 +3,7 @@ import ctypes
 import unittest
 from .. import version
 
+
 class SDLVersionTest(unittest.TestCase):
     __tags__ = ["sdl"]
 

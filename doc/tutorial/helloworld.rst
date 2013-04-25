@@ -3,8 +3,8 @@
 Hello World
 ===========
 Ahhh, the great tradition of saying "Hello World" in a programming
-language. To whet your appetite, we will do the same with a most simple
-application, which will display a logo. It is not important to understand
+language. To whet your appetite, we will do this with a most simple
+application, which will display an image. It is not important to understand
 everything at once, which will be used by the example. Nearly all parts used
 now are explained in later chapters, so do not hesitate, if the one or other
 explanation is missing.
@@ -43,8 +43,8 @@ Window creation and image loading
 Any graphical application requires access to the screen, mostly in form
 of a window, which basically represents a portion of the screen, the
 application has access to and the application can manipulate. In most cases
-that portion has a border and title bar around it, so the user can move
-it around on the screen and reorganize anything, so it fits his needs.
+that portion has a border and title bar around it, allowing the user to move
+it around on the screen and reorganize everythingin a way to fit his needs.
 
 Once we have imported all necessary parts, let's create a window to have
 access to the screen, so we can display the logo and thus represent it
@@ -61,8 +61,8 @@ to the user. ::
     spriterenderer = factory.create_sprite_renderer(window)
     spriterenderer.render(sprite)
 
-First, we initialize the :mod:`sdl2.ext` internals, so we can have
-access to the screen and create windows on top of it. Once done with that,
+First, we initialize the :mod:`sdl2.ext` internals to gain access to the
+screen and and to be able to create windows on top of it. Once done with that,
 :class:`sdl2.ext.Window` will create the window for us and we
 supply a title to be shown on the window's border along with its initial size.
 Since :class:`sdl2.ext.Window` instances are not shown by default,
@@ -78,10 +78,10 @@ software-based sprites easily.
 To display the image, we will use a :class:`sdl2.ext.SpriteRenderer`,
 which supports the sprite type (texture- or software-based) and can copy the
 image to the window for display. The :class:`sdl2.ext.SpriteRenderer`
-needs to know, where to copy to, so we supply the window as target for copy
-and display operations.
+needs to know, where to copy to, thus we have to supply the window as target
+for copy and display operations.
 
-All left to do is to actually initiate the copy process by calling
+All left to do is to initiate the copy process by calling
 :class:`sdl2.ext.SpriteRenderer.render()` with the image we
 created earlier.
 
@@ -125,17 +125,17 @@ running - will keep the window shown on the screen. ::
 
 Since this is a very first tutorial, we keep things simple here and use a
 dummy class for testing without actually dealing with the event loop magic.
-By calling :meth:`sdl2.ext.TestEventProcessor.run()`, we implicitly start the
-event loop, so that it can take care of everything for us.
+By calling :meth:`sdl2.ext.TestEventProcessor.run()`, we implicitly start an
+event loop, which takes care of the most important parts for us.
 
 And here it ends...
 -------------------
 The window is shown, the image is shown, great! All left to do is to clean up
 everything, once the application finishes. Luckily the
-:class:`sdl2.ext.TestEventProcessor` knows, when the window is closed, so
-it will exit from the event loop. Once it exits, we definitely should clean up
-the video internals, we initialized at the beginning. Thus, a final call to ::
+:class:`sdl2.ext.TestEventProcessor` knows when the window is closed, so
+it will exit from the event loop. Once it exits, we should clean up the
+video internals, we initialized at the beginning. Thus, a final call to ::
 
     sdl2ext.quit()
 
-should definitely be made.
+should be made.

@@ -12,6 +12,7 @@ def mp_do_nothing(sender, *args):
     # Does nothing
     pass
 
+
 class SDL2ExtEventsTest(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
@@ -108,9 +109,12 @@ class SDL2ExtEventsTest(unittest.TestCase):
     @unittest.skipIf(not _HASMP, "multiprocessing is not supported")
     def test_MPEventHandler(self):
         self.assertRaises(TypeError, events.MPEventHandler)
-        self.assertIsInstance(events.MPEventHandler(None), events.MPEventHandler)
-        self.assertIsInstance(events.MPEventHandler(132), events.MPEventHandler)
-        self.assertIsInstance(events.MPEventHandler("Test"), events.MPEventHandler)
+        self.assertIsInstance(events.MPEventHandler(None),
+                              events.MPEventHandler)
+        self.assertIsInstance(events.MPEventHandler(132),
+                              events.MPEventHandler)
+        self.assertIsInstance(events.MPEventHandler("Test"),
+                              events.MPEventHandler)
 
         ev = events.MPEventHandler(None)
         self.assertEqual(ev.sender, None)

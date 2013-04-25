@@ -42,15 +42,24 @@ class SDLEndianTest(unittest.TestCase):
             self.assertEqual(endian.SDL_Swap32, endian.SDL_SwapLE32)
 
     def test_SDL_Swap64(self):
-        self.assertEqual(endian.SDL_Swap64(0xFF00000000000000), 0x00000000000000FF)
-        self.assertEqual(endian.SDL_Swap64(0x00FF000000000000), 0x000000000000FF00)
-        self.assertEqual(endian.SDL_Swap64(0x0000FF0000000000), 0x0000000000FF0000)
-        self.assertEqual(endian.SDL_Swap64(0x000000FF00000000), 0x00000000FF000000)
-        self.assertEqual(endian.SDL_Swap64(0x00000000FF000000), 0x000000FF00000000)
-        self.assertEqual(endian.SDL_Swap64(0x0000000000FF0000), 0x0000FF0000000000)
-        self.assertEqual(endian.SDL_Swap64(0x000000000000FF00), 0x00FF000000000000)
-        self.assertEqual(endian.SDL_Swap64(0x00000000000000FF), 0xFF00000000000000)
-        self.assertEqual(endian.SDL_Swap64(0x0123456789ABCDEF), 0xEFCDAB8967452301)
+        self.assertEqual(endian.SDL_Swap64(0xFF00000000000000),
+                         0x00000000000000FF)
+        self.assertEqual(endian.SDL_Swap64(0x00FF000000000000),
+                         0x000000000000FF00)
+        self.assertEqual(endian.SDL_Swap64(0x0000FF0000000000),
+                         0x0000000000FF0000)
+        self.assertEqual(endian.SDL_Swap64(0x000000FF00000000),
+                         0x00000000FF000000)
+        self.assertEqual(endian.SDL_Swap64(0x00000000FF000000),
+                         0x000000FF00000000)
+        self.assertEqual(endian.SDL_Swap64(0x0000000000FF0000),
+                         0x0000FF0000000000)
+        self.assertEqual(endian.SDL_Swap64(0x000000000000FF00),
+                         0x00FF000000000000)
+        self.assertEqual(endian.SDL_Swap64(0x00000000000000FF),
+                         0xFF00000000000000)
+        self.assertEqual(endian.SDL_Swap64(0x0123456789ABCDEF),
+                         0xEFCDAB8967452301)
         if sys.byteorder == "little":
             self.assertEqual(endian.SDL_Swap64, endian.SDL_SwapBE64)
             self.assertNotEqual(endian.SDL_Swap64, endian.SDL_SwapLE64)

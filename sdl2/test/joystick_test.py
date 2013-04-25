@@ -27,7 +27,8 @@ class SDLJoystickTest(unittest.TestCase):
             name = joystick.SDL_JoystickNameForIndex(index)
             self.assertIn(type(name), (str, bytes))
 
-        # self.assertRaises(sdl.SDLError, joystick.joystick_name, self.jcount + 1)
+        # self.assertRaises(sdl.SDLError, joystick.joystick_name,
+        #                   self.jcount + 1)
         # self.assertRaises(sdl.SDLError, joystick.joystick_name, -10)
         # self.assertRaises(ValueError, joystick.joystick_name, "Test")
         # self.assertRaises(TypeError, joystick.joystick_name, None)
@@ -42,7 +43,8 @@ class SDLJoystickTest(unittest.TestCase):
             joystick.SDL_JoystickClose(stick)
             # self.assertFalse(joystick.joystick_opened(index))
 
-        # self.assertRaises(sdl.SDLError, joystick.joystick_open, self.jcount + 1)
+        # self.assertRaises(sdl.SDLError, joystick.joystick_open,
+        #                   self.jcount + 1)
         # self.assertRaises(sdl.SDLError, joystick.joystick_open, -10)
         # self.assertRaises(ValueError, joystick.joystick_open, "Test")
         # self.assertRaises(TypeError, joystick.joystick_open, None)

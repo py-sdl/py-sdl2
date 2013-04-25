@@ -5,6 +5,7 @@ from .. import log
 
 _ISIPY = sys.platform == "cli"
 
+
 @unittest.skipIf(_ISIPY, "IronPython does not handle exceptions correctly")
 class SDLLogTest(unittest.TestCase):
     __tags__ = ["sdl"]
@@ -248,7 +249,8 @@ class SDLLogTest(unittest.TestCase):
         # setUp should have set our output function already.
         origfunc = log.SDL_LogOutputFunction()
         origdata = ctypes.c_void_p(0)
-        log.SDL_LogGetOutputFunction(ctypes.byref(origfunc), ctypes.byref(origdata))
+        log.SDL_LogGetOutputFunction(ctypes.byref(origfunc),
+                                     ctypes.byref(origdata))
         self.assertFalse(origdata)
         logcount = len(self.logdata)
         origfunc(None, 0, 0, b"test_log_get_set_output_function")

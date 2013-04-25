@@ -4,6 +4,7 @@ import ctypes
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from .. import video, shape, surface
 
+
 class SDLShapeTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
@@ -17,14 +18,16 @@ class SDLShapeTest(unittest.TestCase):
     def test_SDL_CreateShapedWindow(self):
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
-            window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10, flag)
+            window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
+                                                  flag)
             self.assertIsInstance(window.contents, video.SDL_Window)
             video.SDL_DestroyWindow(window)
 
     def test_SDL_IsShapedWindow(self):
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
-            window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10, flag)
+            window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
+                                                  flag)
             self.assertIsInstance(window.contents, video.SDL_Window)
             val = shape.SDL_IsShapedWindow(window)
             self.assertTrue(val)
@@ -37,8 +40,11 @@ class SDLShapeTest(unittest.TestCase):
             video.SDL_DestroyWindow(window)
 
     def test_SDL_SetWindowShape(self):
-        sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32, 0xFF000000, 0x00FF0000,
-                                          0x0000FF00, 0x000000FF)
+        sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32,
+                                          0xFF000000,
+                                          0x00FF0000,
+                                          0x0000FF00,
+                                          0x000000FF)
         mode = shape.SDL_WindowShapeMode()
         mode.mode = shape.ShapeModeDefault
         mode.parameters = shape.SDL_WindowShapeParams()
@@ -47,7 +53,8 @@ class SDLShapeTest(unittest.TestCase):
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
             # TODO: find out, how shaping is supposed to work :-)
-            # window = shape.SDL_CreateShapedWindow("Test", 10, 10, 10, 10, flag)
+            # window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
+            #                                       flag)
             # self.assertIsInstance(window, video.SDL_Window)
             # self.assertTrue(shape.SDL_IsShapedWindow(window))
 
@@ -81,12 +88,14 @@ class SDLShapeTest(unittest.TestCase):
     def test_SDL_GetShapedWindowMode(self):
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
-            window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10, flag)
+            window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
+                                                  flag)
             self.assertIsInstance(window.contents, video.SDL_Window)
             mode = shape.SDL_WindowShapeMode()
             ret = shape.SDL_GetShapedWindowMode(window, ctypes.byref(mode))
             self.assertEqual(ret, 0)
             video.SDL_DestroyWindow(window)
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

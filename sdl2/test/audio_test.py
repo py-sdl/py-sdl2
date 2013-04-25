@@ -6,6 +6,7 @@ from .. import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_INIT_AUDIO
 from .. import audio
 
+
 class SDLAudioTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
@@ -72,7 +73,8 @@ class SDLAudioTest(unittest.TestCase):
         # self.assertRaises(SDLError, audio.SDL_GetAudioDriver, -1)
         # self.assertRaises(SDLError, audio.get_audio_driver,
         #                  drivercount + 1)
-        self.assertRaises(ctypes.ArgumentError, audio.SDL_GetAudioDriver, "Test")
+        self.assertRaises(ctypes.ArgumentError, audio.SDL_GetAudioDriver,
+                          "Test")
         self.assertRaises(ctypes.ArgumentError, audio.SDL_GetAudioDriver, None)
 
     def test_SDL_GetCurrentAudioDriver(self):
@@ -145,7 +147,8 @@ class SDLAudioTest(unittest.TestCase):
             spec = audio.SDL_AudioSpec()
             name = audio.SDL_GetAudioDeviceName(x, 0)
             self.assertIsNotNone(name)
-            deviceid = audio.SDL_OpenAudioDevice(None, 0, reqspec, ctypes.byref(spec), 1)
+            deviceid = audio.SDL_OpenAudioDevice(None, 0, reqspec,
+                                                 ctypes.byref(spec), 1)
             self.assertGreaterEqual(deviceid, 2)
             self.assertIsInstance(spec, audio.SDL_AudioSpec)
             self.assertEqual(spec.format, reqspec.format)

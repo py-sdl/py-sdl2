@@ -11,7 +11,7 @@ provide you full access to all of its features.
 You must have at least one of the following Python versions installed:
 
 * Python 2.7, 3.2+     (http://www.python.org)
-* PyPy 1.9.0+          (http://www.pypy.org)
+* PyPy 1.8.0+          (http://www.pypy.org)
 
 Other Python versions or Python implementations might work, but are
 (currently) not officially tested or supported by the PySDL2
@@ -78,9 +78,9 @@ it so far and if your environment settings do not define it.
 
 .. note::
 
-   If you did not install SDL2 using preferred way for your operation system,
-   please read the information about :ref:`importing-pysdl2` in the section
-   :doc:`integration`.
+   If you did not install SDL2 using the preferred way for your operation
+   system, please read the information about :ref:`importing-pysdl2` in the
+   section :doc:`integration`.
 
 Notes on Mercurial usage
 ^^^^^^^^^^^^^^^^^^^^^^^^

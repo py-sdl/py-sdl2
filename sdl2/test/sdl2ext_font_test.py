@@ -26,7 +26,8 @@ class SDL2ExtFontTest(unittest.TestCase):
         sdl2ext.quit()
 
     def test_BitmapFont(self):
-        sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"), "utf-8"))
+        sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
+                                         "utf-8"))
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
         self.assertIsInstance(font, sdl2ext.BitmapFont)
@@ -51,6 +52,7 @@ class SDL2ExtFontTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_BitmapFont_can_render(self):
         pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

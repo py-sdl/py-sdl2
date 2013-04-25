@@ -5,7 +5,7 @@ from .. import surface
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")
 
-formats = [#"bmp",  # Do not use bmp - it's contained in resources.zip
+formats = [  # Do not use bmp - it's contained in resources.zip
            "cur",
            "gif",
            "ico",

@@ -123,11 +123,11 @@ class SDLEventsTest(unittest.TestCase):
         pass
         # state = events.SDL_EventState(events.SDL_USEREVENT, events.SDL_QUERY)
         # self.assertEqual(state, events.SDL_ENABLE)
-        # state = events.SDL_EventState(events.SDL_USEREVENT, events.SDL_IGNORE)
+        # state = events.SDL_EventState(events.SDL_USEREVENT,events.SDL_IGNORE)
         # self.assertEqual(state, events.SDL_ENABLE)
         # state = events.SDL_EventState(events.SDL_USEREVENT, events.SDL_QUERY)
         # self.assertEqual(state, events.SDL_IGNORE)
-        # state = events.SDL_EventState(events.SDL_USEREVENT, events.SDL_ENABLE)
+        # state = events.SDL_EventState(events.SDL_USEREVENT,events.SDL_ENABLE)
         # self.assertEqual(state, events.SDL_IGNORE)
         # state = events.SDL_EventState(events.SDL_USEREVENT, events.SDL_QUERY)
         # self.assertEqual(state, events.SDL_ENABLE)
@@ -138,7 +138,6 @@ class SDLEventsTest(unittest.TestCase):
         # ev.type = events.SDL_USEREVENT
         # ev.user = events.SDL_UserEvent()
         # events.SDL_PushEvent(ev)
-
 
     @unittest.skip("not implemented")
     def test_SDL_GetEventState(self):
@@ -199,6 +198,7 @@ class SDLEventsTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_QuitRequested(self):
         pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

@@ -94,11 +94,12 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                     sprite = factory.create_software_sprite((w, h), bpp)
                     self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
 
-        #self.assertRaises(ValueError, factory.create_software_sprite, (-1, -1))
-        #self.assertRaises(ValueError, factory.create_software_sprite, (-10, 5))
-        #self.assertRaises(ValueError, factory.create_software_sprite, (10, -5))
+        #self.assertRaises(ValueError, factory.create_software_sprite, (-1,-1))
+        #self.assertRaises(ValueError, factory.create_software_sprite, (-10,5))
+        #self.assertRaises(ValueError, factory.create_software_sprite, (10,-5))
         self.assertRaises(TypeError, factory.create_software_sprite, size=None)
-        self.assertRaises(sdl2ext.SDLError, factory.create_software_sprite, bpp= -1)
+        self.assertRaises(sdl2ext.SDLError, factory.create_software_sprite,
+                          bpp=-1)
         self.assertRaises(TypeError, factory.create_software_sprite, masks=5)
         self.assertRaises((ArgumentError, TypeError),
                           factory.create_software_sprite,
@@ -156,8 +157,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         SDL_FreeSurface(sf)
 
         for factory in (tfactory, sfactory):
-            self.assertRaises((sdl2ext.SDLError, AttributeError, ArgumentError, TypeError),
-                              factory.from_surface, None)
+            self.assertRaises((sdl2ext.SDLError, AttributeError, ArgumentError,
+                               TypeError), factory.from_surface, None)
             self.assertRaises((AttributeError, ArgumentError, TypeError),
                               factory.from_surface, "test")
             # TODO: crashes pypy 2.0
@@ -357,6 +358,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
         self.assertEqual(sprite.area, (0, 0, 10, 10))
+
         def setarea(s, v):
             s.area = v
         self.assertRaises(AttributeError, setarea, sprite, (1, 2, 3, 4))

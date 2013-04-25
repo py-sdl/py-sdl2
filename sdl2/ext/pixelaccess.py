@@ -136,7 +136,7 @@ def pixels2d(source):
         raise ValueError("unsupported bpp")
     strides = (psurface.pitch, bpp)
     srcsize = psurface.h * psurface.pitch
-    shape = psurface.h, psurface.w  #surface.pitch // bpp
+    shape = psurface.h, psurface.w   # surface.pitch // bpp
 
     dtypes = {1: numpy.uint8,
               2: numpy.uint16,

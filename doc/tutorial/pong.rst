@@ -2,9 +2,11 @@
 
 The Pong Game
 =============
-The following tutorial will show you some capabilities of the
-component-based approach, PySDL2 features. We will create the basics
-of a simple Pong game implementation here.
+The following tutorial will show you some capabilities of the component-based
+approach, PySDL2 features. We will create the basics of a simple Pong game
+implementation here. The basics of creating an own event loop, dealing with
+user input, moving images around and creating own rendering functions are
+covered in this tutorial.
 
 Getting started
 ---------------

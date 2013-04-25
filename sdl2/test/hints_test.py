@@ -25,7 +25,8 @@ class SDLHintsTest(unittest.TestCase):
         self.assertEqual(hints.SDL_GetHint(b"TEST"), b"32")
         self.assertEqual(hints.SDL_SetHint(hints.SDL_HINT_RENDER_DRIVER,
                                            b"dummy"), 1)
-        self.assertEqual(hints.SDL_GetHint(hints.SDL_HINT_RENDER_DRIVER), b"dummy")
+        self.assertEqual(hints.SDL_GetHint(hints.SDL_HINT_RENDER_DRIVER),
+                         b"dummy")
 
     def test_SDL_SetHint(self):
         self.assertEqual(hints.SDL_SetHint(b"TEST", b"32"), 1)
@@ -55,6 +56,7 @@ class SDLHintsTest(unittest.TestCase):
         #                  "TEST", "123456789", None)
         # self.assertRaises(ValueError, hints.SDL_SetHintWithPriority,
         #                  "TEST", "123456789", "bananas")
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

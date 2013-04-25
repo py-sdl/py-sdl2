@@ -1,7 +1,6 @@
 import sys
 import time
 import unittest
-from ctypes import c_char_p
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_TIMER
 from .. import timer
 
@@ -10,6 +9,7 @@ if sys.version_info[0] >= 3:
     long = int
 
 calls = []
+
 
 class SDLTimerTest(unittest.TestCase):
     __tags__ = ["sdl"]
@@ -53,9 +53,9 @@ class SDLTimerTest(unittest.TestCase):
             start = time.time() * 1000
             timer.SDL_Delay(wait)
             end = time.time() * 1000
-            sum = (end - start)
-            self.assertTrue(abs(wait - sum) <= 3,
-                "%f is not <= 3 for %f and %f" % (abs(wait - sum), wait, sum))
+            sm = (end - start)
+            self.assertTrue(abs(wait - sm) <= 3,
+                "%f is not <= 3 for %f and %f" % (abs(wait - sm), wait, sm))
 
     @unittest.skipIf(hasattr(sys, "pypy_version_info"),
         "PyPy can't access other variables properly from a separate thread")

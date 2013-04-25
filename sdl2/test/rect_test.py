@@ -305,18 +305,22 @@ class SDLRectTest(unittest.TestCase):
     def test_SDL_IntersectRectAndLine(self):
         r = rect.SDL_Rect()
         x1, y1, x2, y2 = c_int(-5), c_int(-5), c_int(5), c_int(5)
-        ret = rect.SDL_IntersectRectAndLine(r, byref(x1), byref(y1), byref(x2), byref(y2))
+        ret = rect.SDL_IntersectRectAndLine(r, byref(x1), byref(y1),
+                                            byref(x2), byref(y2))
         self.assertFalse(ret)
 
         r = rect.SDL_Rect(0, 0, 2, 2)
         x1, y1, x2, y2 = c_int(-1), c_int(-1), c_int(3), c_int(3)
-        ret = rect.SDL_IntersectRectAndLine(r, byref(x1), byref(y1), byref(x2), byref(y2))
+        ret = rect.SDL_IntersectRectAndLine(r, byref(x1), byref(y1),
+                                            byref(x2), byref(y2))
         self.assertTrue(ret)
-        self.assertEqual((x1.value, y1.value, x2.value, y2.value), (0, 0, 1, 1))
+        self.assertEqual((x1.value, y1.value, x2.value, y2.value),
+                         (0, 0, 1, 1))
 
         r = rect.SDL_Rect(-4, -4, 14, 14)
         x1, y1, x2, y2 = c_int(8), c_int(22), c_int(8), c_int(33)
-        ret = rect.SDL_IntersectRectAndLine(r, byref(x1), byref(y1), byref(x2), byref(y2))
+        ret = rect.SDL_IntersectRectAndLine(r, byref(x1), byref(y1),
+                                            byref(x2), byref(y2))
         self.assertFalse(ret)
         # TODO
 
@@ -325,16 +329,19 @@ class SDLRectTest(unittest.TestCase):
         pt2 = rect.SDL_Point(5, 7)
         clip = rect.SDL_Rect(0, 0, 10, 10)
         res = rect.SDL_Rect()
-        ret = rect.SDL_EnclosePoints(to_ctypes([pt1, pt2], rect.SDL_Point), 2, byref(clip), byref(res))
+        ret = rect.SDL_EnclosePoints(to_ctypes([pt1, pt2], rect.SDL_Point), 2,
+                                     byref(clip), byref(res))
         self.assertTrue(ret)
         self.assertEqual(res, rect.SDL_Rect(0, 0, 6, 8))
 
         clip = rect.SDL_Rect(-10, -10, 3, 3)
-        ret = rect.SDL_EnclosePoints(to_ctypes([pt1, pt2], rect.SDL_Point), 2, byref(clip), byref(res))
+        ret = rect.SDL_EnclosePoints(to_ctypes([pt1, pt2], rect.SDL_Point), 2,
+                                     byref(clip), byref(res))
         self.assertFalse(ret)
         self.assertNotEqual(res, rect.SDL_Rect(0, 0, 0, 0))
 
-        ret = rect.SDL_EnclosePoints(to_ctypes([pt1, pt2], rect.SDL_Point), 2, None, byref(res))
+        ret = rect.SDL_EnclosePoints(to_ctypes([pt1, pt2], rect.SDL_Point), 2,
+                                     None, byref(res))
         self.assertTrue(ret)
         self.assertEqual(res, rect.SDL_Rect(0, 0, 6, 8))
 
@@ -345,7 +352,8 @@ class SDLRectTest(unittest.TestCase):
         self.assertRaises(TypeError, rect.SDL_EnclosePoints, None, None)
         if sys.platform != "cli":  # IronPython can't handle this correctly
             self.assertRaises(TypeError, rect.SDL_EnclosePoints, "Test", None)
-            self.assertRaises(TypeError, rect.SDL_EnclosePoints, (1, 2, 3), None)
+            self.assertRaises(TypeError, rect.SDL_EnclosePoints, (1, 2, 3),
+                              None)
             self.assertRaises(TypeError, rect.SDL_EnclosePoints, (None,), None)
 
     def test_SDL_HasIntersection(self):
