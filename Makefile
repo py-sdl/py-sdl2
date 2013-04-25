@@ -8,6 +8,8 @@ SUBDIRS = \
 	$(top_srcdir)/sdl2/test/resources \
 	$(top_srcdir)/sdl2/test/util \
 	$(top_srcdir)/doc \
+	$(top_srcdir)/doc/tutorial \
+	$(top_srcdir)/doc/modules \
 	$(top_srcdir)/examples
 
 INTERPRETERS = python2.7 python3.2 python3.3 pypy2.0
@@ -40,14 +42,11 @@ clean:
 	@rm -rf build dist doc/html
 
 	@for dir in $(SUBDIRS); do \
+		echo "Cleaning up in $$dir ..."; \
 		if test -f $$dir/Makefile; then \
 			make -C $$dir clean; \
-		else \
-			cd $$dir; \
-			echo "Cleaning up in $$dir..."; \
-			rm -f *~ *.cache *.core *.pyc *.orig *py.class; \
-			rm -rf __pycache__; \
-		fi \
+		fi; \
+		cd $$dir && rm -f *.cache *.core *~ MANIFEST *.pyc *.orig; \
 	done
 
 docs:
@@ -65,7 +64,7 @@ runtest:
 
 testall:
 	@for interp in $(INTERPRETERS); do \
-		PYTHONPATH=$(PYTHONPATH) $$interp -B -m sdl2.test.util.runtests; \
+		PYTHONPATH=$(PYTHONPATH) $$interp -B -m sdl2.test.util.runtests || true; \
 	done
 
 # Do not run these in production environments! They are for testing
@@ -83,7 +82,7 @@ installall:
 
 testpackage:
 	@for interp in $(INTERPRETERS); do \
-		$$interp -c "import sdl2.test; sdl2.test.run()"; \
+		$$interp -c "import sdl2.test; sdl2.test.run()" || true \
 	done
 
 purge_installs:
