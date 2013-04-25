@@ -1,7 +1,5 @@
 import sys
-import os
 import unittest
-from ctypes import c_int, byref
 from .. import mouse
 
 

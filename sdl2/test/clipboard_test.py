@@ -1,10 +1,10 @@
 import sys
 import unittest
-from .. import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
-    SDL_INIT_EVERYTHING
+from .. import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_INIT_EVERYTHING
 from .. import clipboard
-from ..stdinc import SDL_TRUE, SDL_FALSE
+from ..stdinc import SDL_TRUE
 from .util.testutils import interactive, doprint
+
 
 def is_win_or_mac():
     return sys.platform in ("win32", "cygwin", "darwin", "cli")
@@ -50,6 +50,7 @@ class SDLClipboardTest(unittest.TestCase):
         self.assertEquals(clipboard.SDL_SetClipboardText(None), 0)
         retval = clipboard.SDL_GetClipboardText()
         self.assertEqual(retval, b"")
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

@@ -8,6 +8,7 @@ try:
 except:
     _HASNUMPY = False
 
+
 class SDL2ExtPixelAccessTest(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
@@ -41,7 +42,6 @@ class SDL2ExtPixelAccessTest(unittest.TestCase):
                                               0x0000FF00, 0x000000FF))
         sdl2ext.fill(sprite, 0xAABBCCDD, (2, 2, 2, 2))
         nparray = sdl2ext.pixels2d(sprite)
-
 
     @unittest.skipIf(not _HASNUMPY, "numpy module is not supported")
     def test_pixels3d(self):

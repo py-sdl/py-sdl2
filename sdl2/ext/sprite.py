@@ -20,7 +20,7 @@ SOFTWARE = 1
 
 class RenderContext(object):
     """SDL2-based rendering context for windows and sprites."""
-    def __init__(self, target, index= -1,
+    def __init__(self, target, index=-1,
                  flags=render.SDL_RENDERER_ACCELERATED):
         """Creates a new RenderContext for the given target.
 
@@ -32,7 +32,8 @@ class RenderContext(object):
         self.renderer = None
         self.rendertaget = None
         if isinstance(target, Window):
-            self.renderer = render.SDL_CreateRenderer(target.window, index, flags)
+            self.renderer = render.SDL_CreateRenderer(target.window, index,
+                                                      flags)
             self.rendertarget = target.window
         elif isinstance(target, video.SDL_Window):
             self.renderer = render.SDL_CreateRenderer(target, index, flags)
@@ -158,7 +159,8 @@ class RenderContext(object):
             if color:
                 tmp = self.color
                 self.color = color
-            ret = render.SDL_RenderDrawPoint(self.renderer, points[0], points[1])
+            ret = render.SDL_RenderDrawPoint(self.renderer, points[0],
+                                             points[1])
             if color:
                 self.color = tmp
             if ret == -1:
@@ -286,7 +288,7 @@ class SoftwareSprite(Sprite):
         super(SoftwareSprite, self).__init__()
         self.free = free
         if not isinstance(imgsurface, surface.SDL_Surface):
-            raise TypeError ("surface must be a SDL_Surface")
+            raise TypeError("surface must be a SDL_Surface")
         self.surface = imgsurface
 
     def __del__(self):
@@ -340,8 +342,8 @@ class TextureSprite(Sprite):
         access = c_int()
         w = c_int()
         h = c_int()
-        ret = render.SDL_QueryTexture(self.texture, byref(flags), byref(access),
-                                      byref(w), byref(h))
+        ret = render.SDL_QueryTexture(self.texture, byref(flags),
+                                      byref(access), byref(w), byref(h))
         if ret == -1:
             raise SDLError()
         static = "True"
@@ -596,8 +598,8 @@ class SoftwareSpriteRenderer(SpriteRenderer):
         x and y are optional arguments that can be used as relative
         drawing location for sprites. If set to None, the location
         information of the sprites are used. If set and sprites is an
-        iterable, such as a list of SoftwareSprite objects, x and y are relative
-        location values that will be added to each individual sprite's
+        iterable, such as a list of SoftwareSprite objects, x and y are
+        relative location values that will be added to each individual sprite's
         position. If sprites is a single SoftwareSprite, x and y denote the
         absolute position of the SoftwareSprite, if set.
         """

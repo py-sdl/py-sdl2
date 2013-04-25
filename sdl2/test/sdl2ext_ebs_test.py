@@ -11,6 +11,7 @@ class Position(object):
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+
 class Movement(object):
     def __init__(self, vx=0, vy=0):
         self.vx = vx
@@ -137,6 +138,7 @@ class SDL2ExtEBSTest(unittest.TestCase):
         class SimpleSystem(object):
             def __init__(self):
                 self.componenttypes = (Position,)
+
             def process(self, world, components):
                 pass
 

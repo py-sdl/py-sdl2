@@ -77,4 +77,3 @@ class TestEventProcessor(object):
                     break
             window.refresh()
             timer.SDL_Delay(10)
-

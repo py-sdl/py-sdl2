@@ -37,7 +37,7 @@ class SDL2ExtParticlesTest(unittest.TestCase):
                 self.assertEqual(p.y, y)
 
     def test_Particle_life(self):
-        for life in range (-100, 100):
+        for life in range(-100, 100):
             p = particles.Particle(0, 0, life)
             self.assertEqual(p.life, life)
 
@@ -62,7 +62,6 @@ class SDL2ExtParticlesTest(unittest.TestCase):
         self.assertRaises(TypeError, setf, engine, None)
         self.assertRaises(TypeError, setf, engine, "Test")
         self.assertRaises(TypeError, setf, engine, 1234)
-
 
     def test_ParticleEngine_deletefunc(self):
         def func(w, c):

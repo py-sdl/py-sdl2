@@ -7,6 +7,7 @@ from ctypes.util import find_library
 
 __all__ = ["get_dll_file"]
 
+
 def _findlib(libnames, path=None):
     """."""
     platform = sys.platform
@@ -79,6 +80,7 @@ class _DLL(object):
 
 
 dll = _DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
+
 
 def get_dll_file():
     """Gets the file name of the loaded SDL2 library."""

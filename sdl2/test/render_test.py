@@ -5,6 +5,7 @@ from .. import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
 from ..stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
 from .. import render, video, surface, pixels, blendmode, rect
 
+
 # TODO: mostly positive tests, improve this!
 class SDLRenderTest(unittest.TestCase):
     __tags__ = ["sdl"]
@@ -87,8 +88,11 @@ class SDLRenderTest(unittest.TestCase):
         video.SDL_DestroyWindow(window)
 
     def test_SDL_CreateSoftwareRenderer(self):
-        sf = surface.SDL_CreateRGBSurface(0, 100, 100, 32, 0xFF000000, 0x00FF0000,
-                                          0x0000FF00, 0x000000FF)
+        sf = surface.SDL_CreateRGBSurface(0, 100, 100, 32,
+                                          0xFF000000,
+                                          0x00FF0000,
+                                          0x0000FF00,
+                                          0x000000FF)
         renderer = render.SDL_CreateSoftwareRenderer(sf)
         self.assertIsInstance(renderer.contents, render.SDL_Renderer)
         render.SDL_DestroyRenderer(renderer)
@@ -134,7 +138,8 @@ class SDLRenderTest(unittest.TestCase):
             self.assertEqual(ret, 0)
             render.SDL_DestroyRenderer(renderer)
 
-            #self.assertRaises(sdl.SDLError, render.SDL_GetRendererInfo, renderer)
+            #self.assertRaises(sdl.SDLError, render.SDL_GetRendererInfo,
+            #                  renderer)
 
         video.SDL_DestroyWindow(window)
         self.assertRaises((AttributeError, TypeError),
@@ -164,7 +169,8 @@ class SDLRenderTest(unittest.TestCase):
             for acc in access:
                 for w in range(1, 300, 5):
                     for h in range(1, 300, 5):
-                        tex = render.SDL_CreateTexture(renderer, fmt, acc, w, h)
+                        tex = render.SDL_CreateTexture(renderer, fmt, acc,
+                                                       w, h)
                         self.assertIsInstance(tex.contents, render.SDL_Texture)
                         render.SDL_DestroyTexture(tex)
 
@@ -229,10 +235,13 @@ class SDLRenderTest(unittest.TestCase):
             for acc in access:
                 for w in range(1, 300, 5):
                     for h in range(1, 300, 5):
-                        tex = render.SDL_CreateTexture(renderer, fmt, acc, w, h)
+                        tex = render.SDL_CreateTexture(renderer, fmt, acc,
+                                                       w, h)
                         self.assertIsInstance(tex.contents, render.SDL_Texture)
                         qf, qa, qw, qh = Uint32(), c_int(), c_int(), c_int()
-                        ret = render.SDL_QueryTexture(tex, byref(qf), byref(qa), byref(qw), byref(qh))
+                        ret = render.SDL_QueryTexture(tex, byref(qf),
+                                                      byref(qa), byref(qw),
+                                                      byref(qh))
                         self.assertEqual(ret, 0)
                         self.assertEqual(qf.value, fmt)
                         self.assertEqual(qa.value, acc)
@@ -251,8 +260,10 @@ class SDLRenderTest(unittest.TestCase):
                                              render.SDL_RENDERER_SOFTWARE)
         self.assertIsInstance(renderer.contents, render.SDL_Renderer)
 
-        tex = render.SDL_CreateTexture(renderer, pixels.SDL_PIXELFORMAT_ARGB8888,
-                                       render.SDL_TEXTUREACCESS_STREAMING, 10, 10)
+        tex = render.SDL_CreateTexture(renderer,
+                                       pixels.SDL_PIXELFORMAT_ARGB8888,
+                                       render.SDL_TEXTUREACCESS_STREAMING,
+                                       10, 10)
         self.assertIsInstance(tex.contents, render.SDL_Texture)
         colors = ((16, 22, 185),
                   (32, 64, 128),
@@ -268,7 +279,8 @@ class SDLRenderTest(unittest.TestCase):
             ret = render.SDL_SetTextureColorMod(tex, r, g, b)
             self.assertEqual(ret, 0)
             tr, tg, tb = Uint8(), Uint8(), Uint8()
-            ret = render.SDL_GetTextureColorMod(tex, byref(tr), byref(tg), byref(tb))
+            ret = render.SDL_GetTextureColorMod(tex, byref(tr), byref(tg),
+                                                byref(tb))
             self.assertEqual(ret, 0)
             self.assertEqual((tr.value, tg.value, tb.value), (r, g, b))
 
@@ -288,8 +300,10 @@ class SDLRenderTest(unittest.TestCase):
                                              render.SDL_RENDERER_SOFTWARE)
         self.assertIsInstance(renderer.contents, render.SDL_Renderer)
 
-        tex = render.SDL_CreateTexture(renderer, pixels.SDL_PIXELFORMAT_ARGB8888,
-                                       render.SDL_TEXTUREACCESS_STREAMING, 10, 10)
+        tex = render.SDL_CreateTexture(renderer,
+                                       pixels.SDL_PIXELFORMAT_ARGB8888,
+                                       render.SDL_TEXTUREACCESS_STREAMING,
+                                       10, 10)
         self.assertIsInstance(tex.contents, render.SDL_Texture)
 
         for alpha in range(0, 255):
@@ -316,8 +330,10 @@ class SDLRenderTest(unittest.TestCase):
                                              render.SDL_RENDERER_SOFTWARE)
         self.assertIsInstance(renderer.contents, render.SDL_Renderer)
 
-        tex = render.SDL_CreateTexture(renderer, pixels.SDL_PIXELFORMAT_ARGB8888,
-                                       render.SDL_TEXTUREACCESS_STREAMING, 10, 10)
+        tex = render.SDL_CreateTexture(renderer,
+                                       pixels.SDL_PIXELFORMAT_ARGB8888,
+                                       render.SDL_TEXTUREACCESS_STREAMING,
+                                       10, 10)
         self.assertIsInstance(tex.contents, render.SDL_Texture)
 
         modes = (blendmode.SDL_BLENDMODE_NONE,
@@ -359,8 +375,8 @@ class SDLRenderTest(unittest.TestCase):
         self.assertIsInstance(window.contents, video.SDL_Window)
 
         for i in range(render.SDL_GetNumRenderDrivers()):
-            renderer = render.SDL_CreateRenderer(window, i,
-                                                 render.SDL_RENDERER_ACCELERATED)
+            renderer = render.SDL_CreateRenderer\
+                (window, i, render.SDL_RENDERER_ACCELERATED)
             self.assertIsInstance(renderer.contents, render.SDL_Renderer)
 
             val = render.SDL_RenderTargetSupported(renderer)
@@ -375,8 +391,8 @@ class SDLRenderTest(unittest.TestCase):
 
         skipcount = 0
         for i in range(render.SDL_GetNumRenderDrivers()):
-            renderer = render.SDL_CreateRenderer(window, i,
-                                                 render.SDL_RENDERER_ACCELERATED)
+            renderer = render.SDL_CreateRenderer \
+                (window, i, render.SDL_RENDERER_ACCELERATED)
             self.assertIsInstance(renderer.contents, render.SDL_Renderer)
 
             supported = render.SDL_RenderTargetSupported(renderer)
@@ -395,8 +411,8 @@ class SDLRenderTest(unittest.TestCase):
                                            10, 10)
             ret = render.SDL_SetRenderTarget(renderer, tex)
             self.assertEqual(ret, 0)
-            self.assertIsInstance(render.SDL_GetRenderTarget(renderer).contents,
-                                  render.SDL_Texture)
+            tgt = render.SDL_GetRenderTarget(renderer)
+            self.assertIsInstance(tgt.contents, render.SDL_Texture)
             render.SDL_DestroyTexture(tex)
 
             # TODO: Check in the SDL codebase, why the code below does
@@ -434,8 +450,8 @@ class SDLRenderTest(unittest.TestCase):
         failcount = 0
         port = rect.SDL_Rect()
         for i in range(render.SDL_GetNumRenderDrivers()):
-            renderer = render.SDL_CreateRenderer(window, i,
-                                                 render.SDL_RENDERER_ACCELERATED)
+            renderer = render.SDL_CreateRenderer \
+                (window, i, render.SDL_RENDERER_ACCELERATED)
             self.assertIsInstance(renderer.contents, render.SDL_Renderer)
             ret = render.SDL_RenderSetViewport(renderer, None)
             self.assertEqual(ret, 0)
@@ -464,8 +480,8 @@ seems to fail on creating the second renderer of the window, if any""")
         self.assertIsInstance(window.contents, video.SDL_Window)
 
         for i in range(render.SDL_GetNumRenderDrivers()):
-            renderer = render.SDL_CreateRenderer(window, i,
-                                                 render.SDL_RENDERER_ACCELERATED)
+            renderer = render.SDL_CreateRenderer \
+                (window, i, render.SDL_RENDERER_ACCELERATED)
             self.assertIsInstance(renderer.contents, render.SDL_Renderer)
 
             colors = ((16, 22, 185, 217),
@@ -482,9 +498,12 @@ seems to fail on creating the second renderer of the window, if any""")
                 ret = render.SDL_SetRenderDrawColor(renderer, r, g, b, a)
                 self.assertEqual(ret, 0)
                 dr, dg, db, da = Uint8(), Uint8(), Uint8(), Uint8()
-                ret = render.SDL_GetRenderDrawColor(renderer, byref(dr), byref(dg), byref(db), byref(da))
+                ret = render.SDL_GetRenderDrawColor(renderer, byref(dr),
+                                                    byref(dg), byref(db),
+                                                    byref(da))
                 self.assertEqual(ret, 0)
-                self.assertEqual((dr.value, dg.value, db.value, da.value), (r, g, b, a))
+                self.assertEqual((dr.value, dg.value, db.value, da.value),
+                                 (r, g, b, a))
             render.SDL_DestroyRenderer(renderer)
             #self.assertRaises(sdl.SDLError, render.SDL_SetRenderDrawColor,
             #                  renderer, 10, 20, 30, 40)
@@ -499,8 +518,8 @@ seems to fail on creating the second renderer of the window, if any""")
         self.assertIsInstance(window.contents, video.SDL_Window)
 
         for i in range(render.SDL_GetNumRenderDrivers()):
-            renderer = render.SDL_CreateRenderer(window, i,
-                                                 render.SDL_RENDERER_ACCELERATED)
+            renderer = render.SDL_CreateRenderer \
+                (window, i, render.SDL_RENDERER_ACCELERATED)
             self.assertIsInstance(renderer.contents, render.SDL_Renderer)
 
             modes = (blendmode.SDL_BLENDMODE_NONE,

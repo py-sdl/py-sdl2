@@ -1,11 +1,12 @@
 import sys
 import unittest
 import copy
-import ctypes
+from ctypes import c_int, POINTER, byref, cast, ArgumentError
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from .. import pixels
 from ..pixels import SDL_Color
 from ..stdinc import Uint8, Uint16, Uint32
+
 
 class SDLPixelsTest(unittest.TestCase):
     __tags__ = ["sdl"]
@@ -187,47 +188,74 @@ class SDLPixelsTest(unittest.TestCase):
         self.assertEqual(val, pixels.SDL_PIXELFORMAT_UNKNOWN)
 
     def test_SDL_PixelFormatEnumToMasks(self):
-        bpp, r, g, b, a = ctypes.c_int(), Uint32(), Uint32(), Uint32(), Uint32()
-        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_INDEX1LSB, ctypes.byref(bpp), ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (1, 0, 0, 0, 0))
-        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_INDEX1MSB, ctypes.byref(bpp), ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (1, 0, 0, 0, 0))
+        bpp = c_int()
+        r, g, b, a = Uint32(), Uint32(), Uint32(), Uint32()
+        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_INDEX1LSB,
+                                          byref(bpp), byref(r), byref(g),
+                                          byref(b), byref(a))
+        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                         (1, 0, 0, 0, 0))
+        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_INDEX1MSB,
+                                          byref(bpp), byref(r), byref(g),
+                                          byref(b), byref(a))
+        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                         (1, 0, 0, 0, 0))
 
-        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_RGBA8888, ctypes.byref(bpp), ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
+        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_RGBA8888,
+                                          byref(bpp), byref(r), byref(g),
+                                          byref(b), byref(a))
         if sys.byteorder == "little":
-            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF))
+            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                             (32, 0xFF000000, 0x00FF0000, 0x0000FF00,
+                              0x000000FF))
         else:
-            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000))
-        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_RGBX8888, ctypes.byref(bpp), ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
+            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                             (32, 0x000000FF, 0x0000FF00, 0x00FF0000,
+                              0xFF000000))
+        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_RGBX8888,
+                                          byref(bpp), byref(r),
+                                          byref(g), byref(b),
+                                          byref(a))
         if sys.byteorder == "little":
-            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0))
+            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                             (32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0))
         else:
-            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (32, 0, 0x0000FF00, 0x00FF0000, 0xFF000000))
-        # self.assertRaises(sdl.SDLError, pixels.SDL_PixelFormatEnumToMasks, 99999)
+            self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                             (32, 0, 0x0000FF00, 0x00FF0000, 0xFF000000))
+        # self.assertRaises(sdl.SDLError, pixels.SDL_PixelFormatEnumToMasks,
+        #                   99999)
 
-        pixels.SDL_PixelFormatEnumToMasks(0, ctypes.byref(bpp), ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (0, 0, 0, 0, 0))
-        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_UNKNOWN, ctypes.byref(bpp), ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value), (0, 0, 0, 0, 0))
+        pixels.SDL_PixelFormatEnumToMasks(0, byref(bpp), byref(r), byref(g),
+                                          byref(b), byref(a))
+        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                         (0, 0, 0, 0, 0))
+        pixels.SDL_PixelFormatEnumToMasks(pixels.SDL_PIXELFORMAT_UNKNOWN,
+                                          byref(bpp), byref(r), byref(g),
+                                          byref(b), byref(a))
+        self.assertEqual((bpp.value, r.value, g.value, b.value, a.value),
+                         (0, 0, 0, 0, 0))
 
     def test_SDL_AllocFreeFormat(self):
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_RGBA8888)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
-        self.assertEqual(pformat.contents.format, pixels.SDL_PIXELFORMAT_RGBA8888)
+        self.assertEqual(pformat.contents.format,
+                         pixels.SDL_PIXELFORMAT_RGBA8888)
         self.assertEqual(pformat.contents.BitsPerPixel, 32)
         self.assertEqual(pformat.contents.BytesPerPixel, 4)
         pixels.SDL_FreeFormat(pformat)
 
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_INDEX1LSB)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
-        self.assertEqual(pformat.contents.format, pixels.SDL_PIXELFORMAT_INDEX1LSB)
+        self.assertEqual(pformat.contents.format,
+                         pixels.SDL_PIXELFORMAT_INDEX1LSB)
         self.assertEqual(pformat.contents.BitsPerPixel, 1)
         self.assertEqual(pformat.contents.BytesPerPixel, 1)
         pixels.SDL_FreeFormat(pformat)
 
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_INDEX4MSB)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
-        self.assertEqual(pformat.contents.format, pixels.SDL_PIXELFORMAT_INDEX4MSB)
+        self.assertEqual(pformat.contents.format,
+                         pixels.SDL_PIXELFORMAT_INDEX4MSB)
         self.assertEqual(pformat.contents.BitsPerPixel, 4)
         self.assertEqual(pformat.contents.BytesPerPixel, 1)
         pixels.SDL_FreeFormat(pformat)
@@ -238,8 +266,9 @@ class SDLPixelsTest(unittest.TestCase):
         #                   pixels.SDL_PIXELFORMAT_YUY2)
 
     def test_SDL_AllocFreePalette(self):
-        self.assertRaises(ctypes.ArgumentError, pixels.SDL_AllocPalette, None)
-        self.assertRaises(ctypes.ArgumentError, pixels.SDL_AllocPalette, "Test")
+        self.assertRaises(ArgumentError, pixels.SDL_AllocPalette, None)
+        self.assertRaises(ArgumentError, pixels.SDL_AllocPalette,
+                          "Test")
         # self.assertRaises(ValueError, pixels.SDL_AllocPalette, -5)
 
         palette = pixels.SDL_AllocPalette(10)
@@ -265,19 +294,19 @@ class SDLPixelsTest(unittest.TestCase):
         self.assertRaises(TypeError, pixels.SDL_CalculateGammaRamp, 7)
         self.assertRaises(TypeError, pixels.SDL_CalculateGammaRamp, -0.00002)
         vals = (Uint16 * 256)()
-        pixels.SDL_CalculateGammaRamp(0, ctypes.cast(vals, ctypes.POINTER(Uint16)))
+        pixels.SDL_CalculateGammaRamp(0, cast(vals, POINTER(Uint16)))
         self.assertEqual(len(vals), 256)
         for x in vals:
             self.assertEqual(x, 0)
         vals = (Uint16 * 256)()
-        pixels.SDL_CalculateGammaRamp(1, ctypes.cast(vals, ctypes.POINTER(Uint16)))
+        pixels.SDL_CalculateGammaRamp(1, cast(vals, POINTER(Uint16)))
         self.assertEqual(len(vals), 256)
         p = 0
         for x in vals:
             self.assertEqual(x, p)
             p += 257
         vals = (Uint16 * 256)()
-        pixels.SDL_CalculateGammaRamp(0.5, ctypes.cast(vals, ctypes.POINTER(Uint16)))
+        pixels.SDL_CalculateGammaRamp(0.5, cast(vals, POINTER(Uint16)))
         self.assertEqual(len(vals), 256)
         p, step = 0, 1
         for x in vals:
@@ -293,13 +322,13 @@ class SDLPixelsTest(unittest.TestCase):
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_RGBA8888)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
         r, g, b = Uint8(), Uint8(), Uint8()
-        pixels.SDL_GetRGB(0xFFAA8811, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b))
+        pixels.SDL_GetRGB(0xFFAA8811, pformat, byref(r), byref(g), byref(b))
         self.assertEqual((r.value, g.value, b.value), (0xFF, 0xAA, 0x88))
-        pixels.SDL_GetRGB(0x00000000, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b))
+        pixels.SDL_GetRGB(0x00000000, pformat, byref(r), byref(g), byref(b))
         self.assertEqual((r.value, g.value, b.value), (0x00, 0x00, 0x00))
-        pixels.SDL_GetRGB(0xFFFFFFFF, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b))
+        pixels.SDL_GetRGB(0xFFFFFFFF, pformat, byref(r), byref(g), byref(b))
         self.assertEqual((r.value, g.value, b.value), (0xFF, 0xFF, 0xFF))
-        pixels.SDL_GetRGB(0x11223344, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b))
+        pixels.SDL_GetRGB(0x11223344, pformat, byref(r), byref(g), byref(b))
         self.assertEqual((r.value, g.value, b.value), (0x11, 0x22, 0x33))
         pixels.SDL_FreeFormat(pformat)
         fmts = (pixels.SDL_PIXELFORMAT_INDEX1LSB,
@@ -307,9 +336,11 @@ class SDLPixelsTest(unittest.TestCase):
         for fmt in fmts:
             pformat = pixels.SDL_AllocFormat(fmt)
             self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
-            pixels.SDL_GetRGB(0x11223344, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b))
+            pixels.SDL_GetRGB(0x11223344, pformat, byref(r), byref(g),
+                              byref(b))
             self.assertEqual((r.value, g.value, b.value), (0xFF, 0xFF, 0xFF))
-            pixels.SDL_GetRGB(0x00000000, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b))
+            pixels.SDL_GetRGB(0x00000000, pformat, byref(r), byref(g),
+                              byref(b))
             # TODO: Seems to be always (0xFF, 0xFF, 0xFF)???
             # self.assertEqual(rgb,(0x00, 0x00, 0x00))
             pixels.SDL_FreeFormat(pformat)
@@ -326,23 +357,34 @@ class SDLPixelsTest(unittest.TestCase):
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_RGBA8888)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
         r, g, b, a = Uint8(), Uint8(), Uint8(), Uint8()
-        pixels.SDL_GetRGBA(0xFFAA8811, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((r.value, g.value, b.value, a.value), (0xFF, 0xAA, 0x88, 0x11))
-        pixels.SDL_GetRGBA(0x00000000, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((r.value, g.value, b.value, a.value), (0x00, 0x00, 0x00, 0x00))
-        pixels.SDL_GetRGBA(0xFFFFFFFF, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((r.value, g.value, b.value, a.value), (0xFF, 0xFF, 0xFF, 0xFF))
-        pixels.SDL_GetRGBA(0x11223344, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-        self.assertEqual((r.value, g.value, b.value, a.value), (0x11, 0x22, 0x33, 0x44))
+        pixels.SDL_GetRGBA(0xFFAA8811, pformat, byref(r), byref(g), byref(b),
+                           byref(a))
+        self.assertEqual((r.value, g.value, b.value, a.value),
+                         (0xFF, 0xAA, 0x88, 0x11))
+        pixels.SDL_GetRGBA(0x00000000, pformat, byref(r), byref(g), byref(b),
+                           byref(a))
+        self.assertEqual((r.value, g.value, b.value, a.value),
+                         (0x00, 0x00, 0x00, 0x00))
+        pixels.SDL_GetRGBA(0xFFFFFFFF, pformat, byref(r), byref(g), byref(b),
+                           byref(a))
+        self.assertEqual((r.value, g.value, b.value, a.value),
+                         (0xFF, 0xFF, 0xFF, 0xFF))
+        pixels.SDL_GetRGBA(0x11223344, pformat, byref(r), byref(g), byref(b),
+                           byref(a))
+        self.assertEqual((r.value, g.value, b.value, a.value),
+                         (0x11, 0x22, 0x33, 0x44))
         pixels.SDL_FreeFormat(pformat)
         fmts = (pixels.SDL_PIXELFORMAT_INDEX1LSB,
                 pixels.SDL_PIXELFORMAT_INDEX1MSB)
         for fmt in fmts:
             pformat = pixels.SDL_AllocFormat(fmt)
             self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
-            pixels.SDL_GetRGBA(0x11223344, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
-            self.assertEqual((r.value, g.value, b.value, a.value), (0xFF, 0xFF, 0xFF, 0xFF))
-            pixels.SDL_GetRGBA(0x00000000, pformat, ctypes.byref(r), ctypes.byref(g), ctypes.byref(b), ctypes.byref(a))
+            pixels.SDL_GetRGBA(0x11223344, pformat, byref(r), byref(g),
+                               byref(b), byref(a))
+            self.assertEqual((r.value, g.value, b.value, a.value),
+                             (0xFF, 0xFF, 0xFF, 0xFF))
+            pixels.SDL_GetRGBA(0x00000000, pformat, byref(r), byref(g),
+                               byref(b), byref(a))
             # TODO: Seems to be always(0xFF, 0xFF, 0xFF) ???
             # self.assertEqual(rgb,(0x00, 0x00, 0x00))
             pixels.SDL_FreeFormat(pformat)
@@ -365,7 +407,8 @@ class SDLPixelsTest(unittest.TestCase):
 
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_UNKNOWN)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
-        self.assertEqual(pformat.contents.format, pixels.SDL_PIXELFORMAT_UNKNOWN)
+        self.assertEqual(pformat.contents.format,
+                         pixels.SDL_PIXELFORMAT_UNKNOWN)
         val = pixels.SDL_MapRGB(pformat, 0xFF, 0xAA, 0x88)
         self.assertEqual(val, 0x0)
         pixels.SDL_FreeFormat(pformat)
@@ -381,7 +424,8 @@ class SDLPixelsTest(unittest.TestCase):
 
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_UNKNOWN)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
-        self.assertEqual(pformat.contents.format, pixels.SDL_PIXELFORMAT_UNKNOWN)
+        self.assertEqual(pformat.contents.format,
+                         pixels.SDL_PIXELFORMAT_UNKNOWN)
         val = pixels.SDL_MapRGBA(pformat, 0xFF, 0xAA, 0x88, 0x11)
         self.assertEqual(val, 0x0)
         pixels.SDL_FreeFormat(pformat)

@@ -2,9 +2,10 @@ import sys
 import unittest
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_VIDEO
 from .. import rect, keyboard, scancode, keycode, video
-import ctypes
+from ctypes import c_int, cast, POINTER
 
 byteify = lambda x: x.encode("utf-8")
+
 
 class SDLKeyboardTest(unittest.TestCase):
     __tags__ = ["sdl"]
@@ -54,8 +55,8 @@ class SDLKeyboardTest(unittest.TestCase):
         # self.assertEqual(window, None)
 
     def test_SDL_GetKeyboardState(self):
-        states = (ctypes.c_int * scancode.SDL_NUM_SCANCODES)()
-        keyboard.SDL_GetKeyboardState(ctypes.cast(states, ctypes.POINTER(ctypes.c_int)))
+        states = (c_int * scancode.SDL_NUM_SCANCODES)()
+        keyboard.SDL_GetKeyboardState(cast(states, POINTER(c_int)))
         self.assertEqual(len(states), scancode.SDL_NUM_SCANCODES)
         # TODO: x
         # for state in states:

@@ -23,10 +23,10 @@ class SDLPowerTest(unittest.TestCase):
         elif retval == power.SDL_POWERSTATE_CHARGED:
             state = "Battery charged"
         output = "Power Status: %s" % state + os.linesep
-        output += "Minutes left (-1 = undetermined): %d" % (secs.value / 60) + \
-            os.linesep
-        output += "Percent left (-1 = undetermined): %d" % percent.value + \
-            os.linesep
+        output += "Minutes left (-1 = undetermined): %d" % (secs.value / 60)
+        output += os.linesep
+        output += "Percent left (-1 = undetermined): %d" % percent.value
+        output += os.linesep
         doprint(output)
 
 

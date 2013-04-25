@@ -66,6 +66,7 @@ def _mp_callback(args):
     fargs = args[2]
     return args[0](args[1], *fargs)
 
+
 class MPEventHandler(EventHandler):
     """An asynchronous event handling class in which callbacks are
     executed in parallel.

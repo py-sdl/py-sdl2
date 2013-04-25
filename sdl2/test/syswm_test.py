@@ -4,6 +4,7 @@ import ctypes
 from ..stdinc import SDL_TRUE
 from .. import video, syswm, version
 
+
 class SDLSysWMTest(unittest.TestCase):
     __tags__ = ["sdl"]
 

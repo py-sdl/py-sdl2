@@ -1,6 +1,6 @@
 import sys
 from ctypes.util import find_library
-from ctypes import c_int, byref, cast, POINTER
+from ctypes import c_int, byref, cast, POINTER, py_object
 import unittest
 from .util.testutils import interactive, doprint
 from ..stdinc import SDL_FALSE, SDL_TRUE
@@ -297,7 +297,8 @@ class SDLVideoTest(unittest.TestCase):
             self.assertTrue(0 <= dindex <= numdisplays,
                             "Invalid display index")
             video.SDL_DestroyWindow(window)
-            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowDisplay, window)
+            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowDisplay,
+            #                  window)
 
     def test_SDL_GetWindowDisplayMode(self):
         flags = (video.SDL_WINDOW_BORDERLESS,
@@ -372,15 +373,13 @@ class SDLVideoTest(unittest.TestCase):
             video.SDL_GetWindowSize(window2, byref(px2), byref(px2))
             self.assertEqual((px1.value, py1.value), (px2.value, py2.value))
 
-    @unittest.skip("currently fails for whatever reason...")
     def test_SDL_GetWindowFlags(self):
         flags = (video.SDL_WINDOW_BORDERLESS,
                  video.SDL_WINDOW_BORDERLESS | video.SDL_WINDOW_HIDDEN,
-                 video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
+                 video.SDL_WINDOW_RESIZABLE)
         for flag in flags:
             window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10, flag)
             wflags = video.SDL_GetWindowFlags(window)
-            # TODO: this constantly fails - why?
             self.assertEqual((wflags & flag), flag)
 
     def test_SDL_GetSetWindowTitle(self):
@@ -409,27 +408,27 @@ class SDLVideoTest(unittest.TestCase):
         #self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_SetWindowIcon, window, 123456)
 
-    @unittest.skip("not implemented")
     @unittest.skipIf(sys.platform == "cli",
                      "IronPython's ctypes fails with access violations")
+    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
+                     "PyPy can't create proper py_object() values")
     def test_SDL_GetSetWindowData(self):
         #TODO: fix this
-#        window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10, 0)
-#        self.assertIsInstance(window.contents, video.SDL_Window)
-#        values = {"text": "Teststring",
-#                  "object": self,
-#                  "list": [1, 2, 3, 4],
-#                  "tuple": ("a", 1, self)
-#                  }
-#
-#        for k, v in values.items():
-#            retval = video.SDL_GetWindowData(window, k)
-#            self.assertIsNone(retval)
-#            video.SDL_SetWindowData(window, k, py_object(v))
-#            retval = video.SDL_GetWindowData(window, k)
-#            self.assertEqual(retval.value, v)
-#        video.SDL_DestroyWindow(window)
-        pass
+        window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10, 0)
+        self.assertIsInstance(window.contents, video.SDL_Window)
+        values = {b"text": py_object("Teststring"),
+                  b"object": py_object(self),
+                  b"list": py_object([1, 2, 3, 4]),
+                  b"tuple": py_object(("a", 1, self))
+                  }
+
+        for k, v in values.items():
+            retval = video.SDL_GetWindowData(window, k)
+            self.assertFalse(retval)
+            video.SDL_SetWindowData(window, k, v)
+            retval = video.SDL_GetWindowData(window, k)
+            self.assertEqual(retval.contents.value, v.value)
+        video.SDL_DestroyWindow(window)
 
     def test_SDL_GetSetWindowPosition(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10, 0)
@@ -466,7 +465,8 @@ class SDLVideoTest(unittest.TestCase):
 
     @interactive("Was the window shown?")
     def test_SDL_ShowWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_ShowWindow", 200, 200, 200, 200, 0)
+        window = video.SDL_CreateWindow(b"test_SDL_ShowWindow",
+                                        200, 200, 200, 200, 0)
         video.SDL_ShowWindow(window)
         doprint("""Please check, if a window with the title
 'test_SDL_ShowWindow' is shown""")
@@ -474,7 +474,8 @@ class SDLVideoTest(unittest.TestCase):
 
     @interactive("Did the window vanish from your sight and pop up again?")
     def test_SDL_HideWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_HideWindow", 200, 200, 200, 200, 0)
+        window = video.SDL_CreateWindow(b"test_SDL_HideWindow",
+                                        200, 200, 200, 200, 0)
         video.SDL_ShowWindow(window)
         doprint("""Please check, if a window with the title
 'test_SDL_HideWindow' is shown""")
@@ -487,8 +488,8 @@ class SDLVideoTest(unittest.TestCase):
     @unittest.skip("Seems not to work at the moment")
     @interactive("Did the window raise properly?")
     def test_SDL_RaiseWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_RaiseWindow", 200, 200, 200, 200,
-                                     0)
+        window = video.SDL_CreateWindow(b"test_SDL_RaiseWindow",
+                                        200, 200, 200, 200, 0)
         video.SDL_ShowWindow(window)
         doprint("""Please check, that a window with the title
 'test_SDL_RaiseWindow' is shown""")
@@ -500,7 +501,7 @@ class SDLVideoTest(unittest.TestCase):
     @interactive("Was the window maximized?")
     def test_SDL_MaximizeWindow(self):
         window = video.SDL_CreateWindow(b"test_SDL_MaximizeWindow", 200, 200,
-                                     200, 200, video.SDL_WINDOW_RESIZABLE)
+                                        200, 200, video.SDL_WINDOW_RESIZABLE)
         video.SDL_ShowWindow(window)
         doprint("""Please check, that a window with the title
 'test_SDL_MaximizeWindow' is shown""")
@@ -511,7 +512,7 @@ class SDLVideoTest(unittest.TestCase):
     @interactive("Was the window minimized?")
     def test_SDL_MinimizeWindow(self):
         window = video.SDL_CreateWindow(b"test_SDL_MinimizeWindow", 200, 200,
-                                     200, 200, 0)
+                                        200, 200, 0)
         video.SDL_ShowWindow(window)
         doprint("""Please check, that a window with the title
 'test_SDL_MinimizeWindow' is shown""")
@@ -523,7 +524,7 @@ class SDLVideoTest(unittest.TestCase):
     @interactive("Was the window maximized and restored properly?")
     def test_SDL_RestoreWindow(self):
         window = video.SDL_CreateWindow(b"test_SDL_RestoreWindow", 200, 200,
-                                     200, 200, video.SDL_WINDOW_RESIZABLE)
+                                        200, 200, video.SDL_WINDOW_RESIZABLE)
         video.SDL_ShowWindow(window)
         doprint("""Please check, that a window with the title
 'test_SDL_RestoreWindow' is shown""")
@@ -560,7 +561,8 @@ class SDLVideoTest(unittest.TestCase):
             sf = video.SDL_GetWindowSurface(window)
             self.assertIsInstance(sf.contents, surface.SDL_Surface)
             video.SDL_DestroyWindow(window)
-            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowSurface, window)
+            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowSurface,
+            #                  window)
 
     def test_SDL_UpdateWindowSurface(self):
         flags = (video.SDL_WINDOW_BORDERLESS,
@@ -583,7 +585,8 @@ class SDLVideoTest(unittest.TestCase):
                  video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
         for flag in flags:
             window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flag)
-            #self.assertRaises(sdl.SDLError, video.SDL_UpdateWindowSurfaceRects,
+            #self.assertRaises(sdl.SDLError,
+            #                  video.SDL_UpdateWindowSurfaceRects,
             #                  window, rectlist)
             sf = surface.SDL_Surface()
             video.SDL_GetWindowSurface(window, byref(sf))
@@ -637,7 +640,8 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_GL_UnloadLibrary()
 
         if has_opengl_lib():
-            self.assertEqual(video.SDL_GL_LoadLibrary(get_opengl_path().encode("utf-8")), 0)
+            fpath = get_opengl_path().encode("utf-8")
+            self.assertEqual(video.SDL_GL_LoadLibrary(fpath), 0)
             video.SDL_GL_UnloadLibrary()
 
         #self.assertRaises(sdl.SDLError, video.SDL_GL_LoadLibrary, "Test")
@@ -800,6 +804,7 @@ class SDLVideoTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_gl_swap_window(self):
         pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

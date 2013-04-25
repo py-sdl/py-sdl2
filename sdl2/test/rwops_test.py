@@ -12,23 +12,21 @@ else:
     byteify = lambda x, enc: x.encode(enc)
     stringify = lambda x, enc: str(x)
 
+testfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "resources", "rwopstest.txt")
+
+
 # TODO: extended checks for r/w operations outside of buffer ranges, invalid
 # values, etc.!
 class SDLRWopsTest(unittest.TestCase):
     __tags__ = ["sdl"]
-
-    def setUp(self):
-        self.testfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "rwopstest.txt")
-
-    def tearDown(self):
-        pass
 
     def test_SDL_RWops(self):
         rw = rwops.SDL_RWops()
         self.assertIsInstance(rw, rwops.SDL_RWops)
 
     def test_SDL_RWFromFile(self):
-        rw = rwops.SDL_RWFromFile(self.testfile.encode("utf-8"), b"r")
+        rw = rwops.SDL_RWFromFile(testfile.encode("utf-8"), b"r")
         self.assertIsInstance(rw.contents, rwops.SDL_RWops)
         # Read the first 36 bytes(sic!). It should be:
         # 'This is a test file for sdl2.rwops!'
