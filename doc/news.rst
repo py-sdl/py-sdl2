@@ -6,8 +6,8 @@ This describes the latest changes between the PySDL2 releases.
 -----
 Released on 2013-XX-XX.
 
-* TODO
-* TODO
+* fixed sdl2.haptic module usage for Python 3
+* sdl2 imports all submodules now
 
 0.1.0
 -----
