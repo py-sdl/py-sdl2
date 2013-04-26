@@ -30,7 +30,7 @@ class SDL2ExtFontTest(unittest.TestCase):
                                          "utf-8"))
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
-        self.assertIsInstance(font, sdl2ext.BitmapFont)
+        self.assertIsInstance(font,sdl 2ext.BitmapFont)
 
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
         self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
@@ -45,13 +45,28 @@ class SDL2ExtFontTest(unittest.TestCase):
     def test_BitmapFont_render_on(self):
         pass
 
-    @unittest.skip("not implemented")
     def test_BitmapFont_contains(self):
-        pass
+        sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
+                                         "utf-8"))
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
+        self.assertIsInstance(font, sdl2ext.BitmapFont)
 
-    @unittest.skip("not implemented")
+        for ch in "abcde12345.-,+":
+            self.assertTrue(font.contains(ch))
+        for ch in "äöüß":
+            self.assertFalse(font.contains(ch))
+
     def test_BitmapFont_can_render(self):
-        pass
+        sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
+                                         "utf-8"))
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
+        self.assertIsInstance(font, sdl2ext.BitmapFont)
+
+        self.assertTrue(font.can_render("text"))
+        self.assertTrue(font.can_render("473285435hfsjadfhriuewtrhefd"))
+        self.assertFalse(font.can_render("testä"))
 
 
 if __name__ == '__main__':

@@ -3,6 +3,14 @@
 Sprite, texture and pixel surface routines
 ==========================================
 
+.. data:: TEXTURE
+
+   Indicates that texture-based rendering or sprite creation is wanted.
+   
+.. data:: SOFTWARE
+
+   Indicates that software-based rendering or sprite creation is wanted.
+
 .. class:: Sprite()
 
    A simple 2D object, implemented as abstract base class.
@@ -107,7 +115,7 @@ Sprite, texture and pixel surface routines
    the *window* as drawing context, so that GL operations, such as
    texture handling or the usage of SDL renderers is not possible.
 
-   *window* can be either a :class:`sdl2.ext.window.Window` or
+   *window* can be either a :class:`sdl2.ext.Window` or
    :class:`sdl2.video.SDL_Window` instance.
 
    .. attribute:: window
@@ -123,7 +131,7 @@ Sprite, texture and pixel surface routines
    .. method:: render(sprites : object[, x=None[, y=None]]) -> None
 
       Draws the passed *sprites* on the
-      :class:`sdl2.ext.window.Window` surface. *x* and *y* are
+      :class:`sdl2.ext.Window` surface. *x* and *y* are
       optional arguments that can be used as relative drawing location
       for *sprites*. If set to ``None``, the location information of the
       *sprites* are used. If set and *sprites* is an iterable, such as a
@@ -140,14 +148,11 @@ Sprite, texture and pixel surface routines
    :class:`sdl2.render.SDL_Renderer` as drawing device to display
    :class:`Sprite` surfaces.
 
-   *target* can be a :class:`sdl2.ext.window.Window`,
-   :class:`sdl2.video.SDL_Window`, a
-   :class:`sdl2.ext.sprite.RenderContext` or a
-   :class:`sdl2.render.SDL_Renderer`. If it is a
-   :class:`sdl2.ext.window.Window` or
-   :class:`sdl2.video.SDL_Window` instance, it will try to
-   create a :class:`sdl2.render.SDL_Renderer` with hardware
-   acceleration for it.
+   *target* can be a :class:`sdl2.ext.Window`, :class:`sdl2.video.SDL_Window`,
+   a:class:`sdl2.ext.RenderContext` or a :class:`sdl2.render.SDL_Renderer`.
+   If it is a :class:`sdl2.ext.Window` or :class:`sdl2.video.SDL_Window`
+   instance, it will try to create a :class:`sdl2.render.SDL_Renderer` with
+   hardware acceleration for it.
 
    .. attribute:: renderer
 
@@ -240,7 +245,7 @@ Sprite, texture and pixel surface routines
    .. method:: from_image(fname : str) -> Sprite
 
       Creates a :class:`Sprite` from an image file. The image must be
-      loadable via :func:`sdl2.ext.image.load_image()`.
+      loadable via :func:`sdl2.ext.load_image()`.
 
    .. method:: from_object(obj: object) -> Sprite
 
@@ -259,12 +264,11 @@ Sprite, texture and pixel surface routines
    A rendering context for windows and sprites that can use hardware or
    software-accelerated graphics drivers.
 
-   If target is a :class:`sdl2.ext.window.Window` or
-   :class:`sdl2.video.SDL_Window`, *index* and *flags* are passed
-   to the relevant :class:`sdl2.render.create_renderer()`
-   call. If *target* is a :class:`SoftwareSprite` or
-   :class:`sdl2.surface.SDL_Surface`, the *index* and *flags*
-   arguments are ignored.
+   If target is a :class:`sdl2.ext.Window` or :class:`sdl2.video.SDL_Window`,
+   *index* and *flags* are passed to the relevant
+   :class:`sdl2.render.SDL_CreateRenderer()` call. If *target* is a
+   :class:`SoftwareSprite` or :class:`sdl2.surface.SDL_Surface`, the *index*
+   and *flags* arguments are ignored.
 
    .. attribute:: renderer
 
@@ -296,7 +300,10 @@ Sprite, texture and pixel surface routines
 
     .. method:: copy(src : obj[, srcrect=None[, dstrect=None]]) -> None
 
-       TODO
+       Copies (blits) the passed *src*, which can be a :class:`TextureSprite`
+       or :class:`sdl2.render.SDL_Texture`, to the target of the
+       :class:`RenderContext`. *srcrect* is the source rectangle to be used for
+       clipping portions of *src*. *dstrect* is the destination rectangle.
 
     .. method:: draw_line(points : iterable[, color=None]) -> None
 
