@@ -139,9 +139,11 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             self.assertRaises((AttributeError, IOError, sdl2ext.SDLError),
                               factory.from_image, 12345)
 
-    @unittest.skip("not implemented")
     def test_SpriteFactory_from_object(self):
-        pass
+        window = sdl2ext.Window("Test", size=(1, 1))
+        renderer = sdl2ext.RenderContext(window)
+        tfactory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
 
     def test_SpriteFactory_from_surface(self):
         window = sdl2ext.Window("Test", size=(1, 1))

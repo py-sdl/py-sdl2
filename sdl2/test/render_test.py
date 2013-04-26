@@ -202,17 +202,18 @@ class SDLRenderTest(unittest.TestCase):
         #                  pixels.SDL_PIXELFORMAT_RGB555, 1, 10, 10)
         video.SDL_DestroyWindow(window)
 
-    @unittest.skip("not implemented")
     def test_SDL_CreateTextureFromSurface(self):
-        sf = surface.SDL_CreateRGBSurface(100, 100, 32, 0xFF000000, 0x00FF0000,
-                                          0x0000FF00, 0x000000FF)
-        self.assertIsInstance(sf, surface.SDL_Surface)
+        sf = surface.SDL_CreateRGBSurface(0, 100, 100, 32, 0xFF000000,
+                                          0x00FF0000, 0x0000FF00, 0x000000FF)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
                                         video.SDL_WINDOW_HIDDEN)
         self.assertIsInstance(window.contents, video.SDL_Window)
         renderer = render.SDL_CreateRenderer(window, -1,
                                              render.SDL_RENDERER_SOFTWARE)
         self.assertIsInstance(renderer.contents, render.SDL_Renderer)
+        tex = render.SDL_CreateTextureFromSurface(renderer, sf)
+        self.assertIsInstance(tex.contents, render.SDL_Texture)
 
     def test_SDL_QueryTexture(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,

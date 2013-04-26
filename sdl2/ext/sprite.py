@@ -354,7 +354,7 @@ class TextureSprite(Sprite):
 
 
 class SpriteFactory(object):
-    """A factory class for creating Sprite objects."""
+    """A factory class for creating Sprite components."""
     def __init__(self, sprite_type=TEXTURE, **kwargs):
         """Creates a new SpriteFactory.
 
