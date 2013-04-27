@@ -73,9 +73,9 @@ General purpose event handling routines
 
    .. method:: __call__(*args) -> AsyncResult
 
-      Executes all connected callbacks within a :class:`multiprocessing.Pool`,
-      passing the :attr:`sender` as first argument and the optional *args* as
-      second, third, ... argument to them.
+      Executes all connected callbacks within a
+      :class:`multiprocessing.pool.Pool`, passing the :attr:`sender` as first
+      argument and the optional *args* as second, third, ... argument to them.
       
       This will return a :class:`multiprocessing.pool.AsyncResult` containing
       the return values of the callbacks in the order of their execution.

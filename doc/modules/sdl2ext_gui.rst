@@ -5,7 +5,7 @@ User interface elements
 User interface elements within :mod:`sdl2.ext` are simple
 :class:`Sprite` objects, which are enhanced by certain input hooks; as such,
 they are not classes on their own, but implemented as mixins. The user input
-itself is handled by an :class:`UIProcessor` object, which take care of
+itself is handled by an :class:`UIProcessor` object, which takes care of
 delegating input events, such as mouse movements, clicks and keyboard input,
 to the correct UI element.
 
@@ -188,8 +188,8 @@ API
    .. method:: from_object(uitype : int, obj: object) -> Sprite
 
       Creates a UI element from an object. The object will be passed through
-      :func:`sdl2.rwops.rwops_from_object()` in
-      order to try to load image data from it.
+      :func:`sdl2.rwops_from_object()` in order to try to load image data from
+      it.
 
       *uitype* must be one of the supported :ref:`ui-elem-types` classifying
       the type of UI element to be created.
@@ -272,6 +272,6 @@ API
 
    .. method:: process(world : World, components : iterable) -> None
 
-      The :class:`UIProcessor` class does not implement the process()``
+      The :class:`UIProcessor` class does not implement the `process()`
       method by default. Instead it uses :meth:`dispatch()` to send events
       around to components. :meth:`process()` does nothing.

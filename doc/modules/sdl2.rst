@@ -123,7 +123,7 @@ SDL2, but were introduced by :mod:`sdl2`.
    Tuple containing all SDL2 pixel format constants (SDL_PIXELFORMAT_INDEX1LSB,
    ..., SDL_PIXELFORMAT_RGB565, ...).
 
-.. function:: sdl2.rwops.rw_from_object(obj : object) -> SDL_RWops
+.. function:: sdl2.rw_from_object(obj : object) -> SDL_RWops
 
    Creates a SDL_RWops from any Python object. The Python object must at least
    support the following methods:
@@ -168,5 +168,5 @@ SDL2, but were introduced by :mod:`sdl2`.
         The write() method is optional and only necessary, if the passed
         object should be able to write data.
 
-   The returned :class:`sdl2.rwops.SDL_RWops` is a pure Python object and
-   **must not** be freed via :func:`sdl2.rwops.SDL_FreeRW()`.
+   The returned :class:`sdl2.SDL_RWops` is a pure Python object and
+   **must not** be freed via :func:`sdl2.SDL_FreeRW()`.

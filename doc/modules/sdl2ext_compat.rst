@@ -61,7 +61,7 @@ releases.
 
 .. function:: deprecation(message : string) -> None
 
-   Prints a deprecation message using the :meth:`warnings.warn()` method.
+   Prints a deprecation message using the :func:`warnings.warn()` function.
 
 .. exception:: UnsupportedError(obj : object[, msg=None])
 

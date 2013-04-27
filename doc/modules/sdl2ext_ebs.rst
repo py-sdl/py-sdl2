@@ -3,11 +3,11 @@
 
 Working with component-based entities
 =====================================
-:mod:`sdl2.ext` supports a component oriented pattern to separate
+:mod:`sdl2.ext` supports a component oriented programming pattern to separate
 object instances, carried data and processing logic within applications
 or games. It uses an entity based approach, in which object instances are
 unique identifiers, while their data is managed within components, which
-are separately stored. For each individual component type a processing
+are stored separately. For each individual component type a processing
 system will take care of all necessary updates on running the application.
 
 Component-based patterns
@@ -18,7 +18,7 @@ data bags are separated from any application logic.
 
 Behavioural design
 ^^^^^^^^^^^^^^^^^^
-Imagine a car game class in traditional OOP, which might look like ::
+Imagine a car class in traditional OOP, which might look like ::
 
    class Car:
        def __init__(self):
@@ -150,16 +150,16 @@ only operate on the position and velocity component of the car entity. It does
 not know anything about the the car's sprite or sounds that the car makes,
 since *this is nothing it has to deal with*.
 
-To display the car on the screen, a ``RenderSystem`` might pick up the sprite
-component of the car, maybe along with the position information (so it know,
-where to place the sprite) and render it on the screen.
+To display the car on the screen, a ``RenderingSystem`` might pick up the
+sprite component of the car, maybe along with the position information (so it
+knows, where to place the sprite) and render it on the screen.
 
 If you want the car to play sounds, you would add an audio playback system,
 that can perform the task. Afterwards you can add the necessary audio
 information via a sound component to the car and it will make noise.
 
-Component-based design with sdl2.ext.ebs
-----------------------------------------
+Component-based design with sdl2.ext
+------------------------------------
 
 .. note::
 
@@ -177,7 +177,7 @@ the :class:`System` and :class:`Applicator` classes. ::
 
 Components can be created from any class that inherits from the
 :class:`object` type and represent the data bag of information for the
-entity. and application world. Ideally, they should avoid any
+entity and application world. Ideally, they should avoid any
 application logic (except from getter and setter properties). ::
 
    class Position2D(object):
@@ -252,7 +252,7 @@ API
     identifier label for data that is maintained in the application
     world itself.
 
-    As such, it is an composition of components, which would not exist
+    As such, it is a composition of components, which would not exist
     without the entity identifier. The entity itself is non-existent to
     the application world as long as it does not carry any data that can
     be processed by a system within the application world.
@@ -286,30 +286,30 @@ API
       A tuple of class identifiers that shall be processed by the
       :class:`Applicator`.
 
-  .. function:: process(world : World, componentsets : iterable)
+   .. function:: process(world : World, componentsets : iterable)
 
-     Processes tuples of component items. ``componentsets`` will
-     contain object tuples, that match the :attr:`componenttypes`
-     of the :class:`Applicator`. If, for example, the :class:`Applicator`
-     is defined as ::
+      Processes tuples of component items. *componentsets* will
+      contain object tuples, that match the :attr:`componenttypes`
+      of the :class:`Applicator`. If, for example, the :class:`Applicator`
+      is defined as ::
 
-        class MyApplicator(Applicator):
-            def __init__(self):
-                self.componenttypes = (Foo, Bar)
+          class MyApplicator(Applicator):
+              def __init__(self):
+                  self.componenttypes = (Foo, Bar)
 
-     its process method will receive ``(Foo, Bar)`` tuples ::
+      its process method will receive ``(Foo, Bar)`` tuples ::
 
-         def process(self, world, componentsets):
-             for foo_item, bar_item in componentsets:
-                 ...
+          def process(self, world, componentsets):
+              for foo_item, bar_item in componentsets:
+                  ...
 
-     Additionally, the :class:`Applicator` will not process all possible
-     combinations of valid components, but only those, which are associated
-     with the same :class:`Entity`. That said, an :class:`Entity` *must*
-     contain a ``Foo`` as well as a ``Bar`` component in order to
-     have them both processed by the :class:`Applicator` (while a
-     :class:`System` with the same ``componenttypes`` would pick either of
-     them, depending on their availability).
+      Additionally, the :class:`Applicator` will not process all possible
+      combinations of valid components, but only those, which are associated
+      with the same :class:`Entity`. That said, an :class:`Entity` *must*
+      contain a ``Foo`` as well as a ``Bar`` component in order to
+      have them both processed by the :class:`Applicator` (while a
+      :class:`System` with the same ``componenttypes`` would pick either of
+      them, depending on their availability).
 
 .. class:: System()
 

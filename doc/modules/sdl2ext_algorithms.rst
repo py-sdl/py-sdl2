@@ -7,9 +7,9 @@ Common algorithms
    bottom : int, x1 : int, y1 : int, x2 : int, y2 : int) -> int, int, int, int
 
    This implements the Cohen-Sutherland line clipping
-   algorithm. ``left``, ``top``, ``right`` and ``bottom`` denote the
-   clipping area, into which the line defined by ``x1``, ``y1`` (start
-   point) and ``x2``, ``y2`` (end point) will be clipped.
+   algorithm. *left*, *top*, *right* and *bottom* denote the
+   clipping area, into which the line defined by *x1*, *y1* (start
+   point) and *x2*, *y2* (end point) will be clipped.
 
    If the line does not intersect with the rectangular clipping area,
    four ``None`` values will be returned as tuple. Otherwise a tuple of
@@ -19,10 +19,10 @@ Common algorithms
 .. function:: liangbarsky(left : int, top : int, right : int, \
    bottom : int, x1 : int, y1 : int, x2 : int, y2 : int) -> int, int, int, int
 
-   This implements the Liang-Barsky line clipping algorithm. ``left``,
-   ``top``, ``right`` and ``bottom`` denote the clipping area, into
-   which the line defined by ``x1``, ``y1`` (start point) and ``x2``,
-   ``y2`` (end point) will be clipped.
+   This implements the Liang-Barsky line clipping algorithm. *left*,
+   *top*, *right* and *bottom* denote the clipping area, into
+   which the line defined by *x1*, *y1* (start point) and *x2*,
+   *y2* (end point) will be clipped.
 
    If the line does not intersect with the rectangular clipping area,
    four ``None`` values will be returned as tuple. Otherwise a tuple of
