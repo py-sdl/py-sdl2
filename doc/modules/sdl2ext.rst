@@ -28,6 +28,5 @@ Learn more about
    sdl2ext_particles.rst
    sdl2ext_pixelaccess.rst
    sdl2ext_resources.rst
-   sdl2ext_scene.rst
    sdl2ext_sprite.rst
    sdl2ext_window.rst

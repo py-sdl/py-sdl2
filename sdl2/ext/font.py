@@ -146,9 +146,8 @@ class BitmapFont(object):
         """Checks, whether all characters in the passed text can be rendered.
         """
         lines = text.split(os.linesep)
-        has_key = self.offsets.has_key
         for line in lines:
             for c in line:
-                if not has_key(c):
+                if c not in self.offsets:
                     return False
         return True
