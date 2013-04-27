@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 import unittest
 from .. import ext as sdl2ext
@@ -30,7 +31,7 @@ class SDL2ExtFontTest(unittest.TestCase):
                                          "utf-8"))
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
-        self.assertIsInstance(font,sdl 2ext.BitmapFont)
+        self.assertIsInstance(font, sdl2ext.BitmapFont)
 
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
         self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
