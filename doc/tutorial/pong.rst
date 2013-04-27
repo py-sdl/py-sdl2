@@ -536,7 +536,7 @@ paddle, the paddle will move back to the vertical center.
 
 .. tip::
 
-   Add ``True`` as last parameter to the first ```Player()`` constructor to
+   Add ``True`` as last parameter to the first ``Player()`` constructor to
    see two AIs playing against each other.
 
 Next steps

@@ -6,7 +6,7 @@ Sprite, texture and pixel surface routines
 .. data:: TEXTURE
 
    Indicates that texture-based rendering or sprite creation is wanted.
-   
+
 .. data:: SOFTWARE
 
    Indicates that software-based rendering or sprite creation is wanted.
@@ -56,7 +56,7 @@ Sprite, texture and pixel surface routines
 
    .. attribute:: surface
 
-      The :class:`sdl2.surface.SDL_Surface` containing the pixel data.
+      The :class:`sdl2.SDL_Surface` containing the pixel data.
 
    .. attribute:: size
 
@@ -74,21 +74,21 @@ Sprite, texture and pixel surface routines
 
    .. attribute:: texture
 
-      The :class:`sdl2.render.SDL_Texture` containing the texture data.
+      The :class:`sdl2.SDL_Texture` containing the texture data.
 
 .. class:: SpriteRenderer()
 
    A rendering system for :class:`Sprite` components. This is a base class for
    rendering systems capable of drawing and displaying :class:`Sprite` based
-   objects. Inheriting classes need to implement the rendering
-   capability by overriding the render() method.
+   objects. Inheriting classes need to implement the rendering capability by
+   overriding the render() method.
 
    .. attribute:: sortfunc
 
       Sort function for the component processing order. The default sort order
       is based on the depth attribute of every sprite. Lower depth values will
-      cause sprites to be drawn below sprites with higher depth values.
-      If :attr:`sortfunc` shall be overriden, it must match thre callback
+      cause sprites to be drawn below sprites with higher depth values.  If
+      :attr:`sortfunc` shall be overriden, it must match thre callback
       requirements for :func:`sorted()`.
 
    .. method:: process(world : World, components : iterable) -> None
@@ -109,55 +109,49 @@ Sprite, texture and pixel surface routines
 .. class:: SoftwareSpriteRenderer(window : object)
 
    A rendering system for :class:`SoftwareSprite` components. The
-   :class:`SoftwareSpriteRenderer` class uses a
-   :class:`sdl2.video.SDL_Window` as drawing device to display
-   :class:`SoftwareSprite` surfaces. It uses the internal SDL surface of
-   the *window* as drawing context, so that GL operations, such as
-   texture handling or the usage of SDL renderers is not possible.
+   :class:`SoftwareSpriteRenderer` class uses a :class:`sdl2.SDL_Window` as
+   drawing device to display :class:`SoftwareSprite` surfaces. It uses the
+   internal SDL surface of the *window* as drawing context, so that GL
+   operations, such as texture handling or the usage of SDL renderers is not
+   possible.
 
    *window* can be either a :class:`sdl2.ext.Window` or
-   :class:`sdl2.video.SDL_Window` instance.
+   :class:`sdl2.SDL_Window` instance.
 
    .. attribute:: window
 
-      The :class:`sdl2.video.SDL_Window` that is used as drawing
-      device.
+      The :class:`sdl2.SDL_Window` that is used as drawing device.
 
    .. attribute:: surface
 
-      The :class:`sdl2.surface.SDL_Surface` that acts as drawing
-      context for :attr:`window`.
+      The :class:`sdl2.SDL_Surface` that acts as drawing context for
+      :attr:`window`.
 
    .. method:: render(sprites : object[, x=None[, y=None]]) -> None
 
-      Draws the passed *sprites* on the
-      :class:`sdl2.ext.Window` surface. *x* and *y* are
-      optional arguments that can be used as relative drawing location
-      for *sprites*. If set to ``None``, the location information of the
-      *sprites* are used. If set and *sprites* is an iterable, such as a
+      Draws the passed *sprites* on the :class:`sdl2.ext.Window` surface. *x*
+      and *y* are optional arguments that can be used as relative drawing
+      location for *sprites*. If set to ``None``, the location information of
+      the *sprites* are used. If set and *sprites* is an iterable, such as a
       list of :class:`SoftwareSprite` objects, *x* and *y* are relative
       location values that will be added to each individual sprite's
-      position. If *sprites* is a single :class:`SoftwareSprite`, *x*
-      and *y* denote the absolute position of the
-      :class:`SoftwareSprite`, if set.
+      position. If *sprites* is a single :class:`SoftwareSprite`, *x* and *y*
+      denote the absolute position of the :class:`SoftwareSprite`, if set.
 
 .. class:: TextureSpriteRenderer(target : object)
 
    A rendering system for :class:`TextureSprite` components. The
-   :class:`TextureSpriteRenderer` class uses a
-   :class:`sdl2.render.SDL_Renderer` as drawing device to display
-   :class:`Sprite` surfaces.
+   :class:`TextureSpriteRenderer` class uses a :class:`sdl2.SDL_Renderer` as
+   drawing device to display :class:`Sprite` surfaces.
 
-   *target* can be a :class:`sdl2.ext.Window`, :class:`sdl2.video.SDL_Window`,
-   a:class:`sdl2.ext.RenderContext` or a :class:`sdl2.render.SDL_Renderer`.
-   If it is a :class:`sdl2.ext.Window` or :class:`sdl2.video.SDL_Window`
-   instance, it will try to create a :class:`sdl2.render.SDL_Renderer` with
-   hardware acceleration for it.
+   *target* can be a :class:`sdl2.ext.Window`, :class:`sdl2.SDL_Window`,
+   a:class:`sdl2.ext.RenderContext` or a :class:`sdl2.SDL_Renderer`. If it is a
+   :class:`sdl2.ext.Window` or :class:`sdl2.SDL_Window` instance, it will try
+   to create a :class:`sdl2.SDL_Renderer` with hardware acceleration for it.
 
    .. attribute:: renderer
 
-      The :class:`sdl2.render.SDL_Renderer` that is used as drawing
-      context.
+      The :class:`sdl2.SDL_Renderer` that is used as drawing context.
 
    .. attribute:: rendertarget
 
@@ -227,7 +221,7 @@ Sprite, texture and pixel surface routines
       Otherwise a :class:`SoftwareSpriteRenderer` is created and *args*
       and *kwargs* are passed to it.
 
-   .. method:: create_texture_sprite(renderer : object, size=(0, 0), pformat=sdl2.pixels.SDL_PIXELFORMAT_RGBA8888, static=True) -> TextureSprite
+   .. method:: create_texture_sprite(renderer : object, size=(0, 0), pformat=sdl2.SDL_PIXELFORMAT_RGBA8888, static=True) -> TextureSprite
 
       Creates a texture sprite. A *size* tuple containing the width and
       height of the sprite needs to be provided.
@@ -250,29 +244,29 @@ Sprite, texture and pixel surface routines
    .. method:: from_object(obj: object) -> Sprite
 
       Creates a :class:`Sprite` from an object. The object will be
-      passed through :func:`sdl2.rwops.rwops_from_object()` in
+      passed through :func:`sdl2.rwops_from_object()` in
       order to try to load image data from it.
 
    .. method:: from_surface(surface : SDL_Surface[, free=False]) -> Sprite
 
       Creates a :class:`Sprite` from the passed
-      :class:`sdl2.surface.SDL_Surface`. If *free* is set to
+      :class:`sdl2.SDL_Surface`. If *free* is set to
       ``True``, the passed *surface* will be freed automatically.
 
-.. class:: RenderContext(target : obj[, index=-1[, flags=sdl2.render.SDL_RENDERER_ACCELERATED]])
+.. class:: RenderContext(target : obj[, index=-1[, flags=sdl2.SDL_RENDERER_ACCELERATED]])
 
    A rendering context for windows and sprites that can use hardware or
    software-accelerated graphics drivers.
 
-   If target is a :class:`sdl2.ext.Window` or :class:`sdl2.video.SDL_Window`,
+   If target is a :class:`sdl2.ext.Window` or :class:`sdl2.SDL_Window`,
    *index* and *flags* are passed to the relevant
-   :class:`sdl2.render.SDL_CreateRenderer()` call. If *target* is a
-   :class:`SoftwareSprite` or :class:`sdl2.surface.SDL_Surface`, the *index*
+   :class:`sdl2.SDL_CreateRenderer()` call. If *target* is a
+   :class:`SoftwareSprite` or :class:`sdl2.SDL_Surface`, the *index*
    and *flags* arguments are ignored.
 
    .. attribute:: renderer
 
-      The underlying :class:`sdl2.render.SDL_Renderer`.
+      The underlying :class:`sdl2.SDL_Renderer`.
 
    .. attribute:: rendertarget
 
@@ -280,8 +274,7 @@ Sprite, texture and pixel surface routines
 
    .. attribute:: color
 
-      The :class:`sdl2.ext.color.Color` to use for draw and fill
-      operations.
+      The :class:`sdl2.ext.Color` to use for draw and fill operations.
 
    .. attribute:: blendmode
 
@@ -293,31 +286,36 @@ Sprite, texture and pixel surface routines
       * ``SDL_BLENDMODE_ADD`` for additive color blending
       * ``SDL_BLENDMODE_MOD`` for multiplied color blending
 
-    .. method:: clear([color=None])
+   .. method:: clear([color=None])
 
-       Clears the rendering context with the currently set or passed
-       *color*.
+      Clears the rendering context with the currently set or passed
+      *color*.
 
-    .. method:: copy(src : obj[, srcrect=None[, dstrect=None]]) -> None
+   .. method:: copy(src : obj[, srcrect=None[, dstrect=None]]) -> None
 
-       Copies (blits) the passed *src*, which can be a :class:`TextureSprite`
-       or :class:`sdl2.render.SDL_Texture`, to the target of the
-       :class:`RenderContext`. *srcrect* is the source rectangle to be used for
-       clipping portions of *src*. *dstrect* is the destination rectangle.
+      Copies (blits) the passed *src*, which can be a :class:`TextureSprite` or
+      :class:`sdl2.SDL_Texture`, to the target of the
+      :class:`RenderContext`. *srcrect* is the source rectangle to be used for
+      clipping portions of *src*. *dstrect* is the destination rectangle.
 
-    .. method:: draw_line(points : iterable[, color=None]) -> None
+   .. method:: draw_line(points : iterable[, color=None]) -> None
 
-       Draws one or multiple lines on the rendering context.
+      Draws one or multiple lines on the rendering context.
 
-    .. method:: draw_point(points : iterable[, color=None]) -> None
+   .. method:: draw_point(points : iterable[, color=None]) -> None
 
-       Draws one or multiple points on the rendering context.
+      Draws one or multiple points on the rendering context.
 
-    .. method:: draw_rect(rects : iterable[, color=None]) -> None
+   .. method:: draw_rect(rects : iterable[, color=None]) -> None
 
-       Draws one or multiple rectangles on the rendering context.
+      Draws one or multiple rectangles on the rendering context.
 
-    .. method:: fill(rects : iterable[, color=None]) -> None
+   .. method:: fill(rects : iterable[, color=None]) -> None
 
-       Fills one or multiple rectangular areas on the rendering context
-       with the current set or passed *color*.
+      Fills one or multiple rectangular areas on the rendering context
+      with the current set or passed *color*.
+
+   .. method:: present() -> None
+
+      Refreshes the rendering context, causing changes to the render buffers
+      to be shown.

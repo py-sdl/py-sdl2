@@ -1,11 +1,12 @@
 Integrating PySDL2
 ==================
-PySDL2 consists of a single package, :mod:`sdl2`, which is a plain 1:1 API
-wrapper around the SDL2 API.
+PySDL2 consists of two packages, :mod:`sdl2`, which is a plain 1:1 API
+wrapper around the SDL2 API, and :mod:`sdl2.ext`, which offers enhanced
+functionality for :mod:`sdl2`.
 
-The package is implemented in a way that shall make it easy for you to
-integrate and deploy it with your own software projects. You can rely on
-PySDL2 as third-party package, so that the user needs to install it
+The :mod:`sdl2` package is implemented in a way that shall make it easy for
+you to integrate and deploy it with your own software projects. You can rely
+on PySDL2 as third-party package, so that the user needs to install it
 before he can use your software. Alternatively, you can just copy the
 whole package into your project to ship it within your own project
 bundle.
@@ -14,10 +15,9 @@ bundle.
 
 Importing
 ---------
-The :mod:`sdl2` package relies on an external SDL2 library which it can
-access for creating the wrapper functions. This means that the user
-needs to have SDL2 installed or that you ship a SDL2 library with
-your project.
+The :mod:`sdl2` package relies on an external SDL2 library for creating the
+wrapper functions. This means that the user needs to have SDL2 installed or
+that you ship a SDL2 library with your project.
 
 If the user has a SDL2 library installed on the target system, the
 :mod:`ctypes` hooks of :mod:`sdl2` try to find it in the OS-specific
@@ -30,10 +30,9 @@ directory of the SDL2 library.
 .. note::
 
    :envvar:`PYSDL2_DLL_PATH` is preferred over the standard
-   mechanism. That said, if the module finds a SDL2 library in
-   :envvar:`PYSDL2_DLL_PATH`, it will try to use that one in the first
-   place, before using any SDL2 library installed on the target
-   system.
+   mechanism. If the module finds a SDL2 library in :envvar:`PYSDL2_DLL_PATH`,
+   it will try to use that one in the first place, before using any SDL2
+   library installed on the target system.
 
 Let's assume, you ship your own library *SDL2.dll* within your project
 location *fancy_project/third_party*. You can set the environment

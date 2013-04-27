@@ -27,13 +27,11 @@ Text rendering routines
 
    .. attribute:: surface
 
-      The :class:`sdl2.surface.SDL_Surface` containing the
-      character bitmaps.
+      The :class:`sdl2.SDL_Surface` containing the character bitmaps.
 
    .. attribute:: offsets
 
-      A dict containing the character offsets on the
-      :attr:`surface`.
+      A dict containing the character offsets on the :attr:`surface`.
 
    .. attribute:: mapping
 

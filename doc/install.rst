@@ -64,7 +64,7 @@ to define the ``PYTHONPATH`` on a command shell. On Linux/Unix, use ::
 
    export PYTHONPATH=/path/to/pysdl2:$PYTHONPATH
 
-For bourne shell compatibles or ::
+for bourne shell compatibles or ::
 
    setenv PYTHONPATH /path/to/pysdl2:$PYTHONPATH
 

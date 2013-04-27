@@ -21,11 +21,11 @@ Window routines to manage on-screen windows
    *flags* parameter. The default flags for creating Window instances
    can be adjusted through the ``DEFAULTFLAGS`` class variable. ::
 
-     Window.DEFAULTFLAGS = sdl2.video.SDL_WINDOW_SHOWN
+     Window.DEFAULTFLAGS = sdl2.SDL_WINDOW_SHOWN
 
    .. attribute:: window
 
-      The used :class:`sdl2.video.SDL_Window`.
+      The used :class:`sdl2.SDL_Window`.
 
    .. attribute:: title
 
@@ -62,8 +62,8 @@ Window routines to manage on-screen windows
 
    .. method:: get_surface() -> SDL_Surface
 
-      Gets the :class:`sdl2.surface.SDL_Surface` used by the
-      :class:`Window` to display 2D pixel data.
+      Gets the :class:`sdl2.SDL_Surface` used by the :class:`Window` to
+      display 2D pixel data.
 
       .. note::
 

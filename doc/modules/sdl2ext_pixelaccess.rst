@@ -6,7 +6,7 @@
 .. class:: PixelView(source : object)
 
    2D :class:`MemoryView` for :class:`SoftwareSprite` and 
-   :class:`sdl2.surface.SDL_surface` pixel access.
+   :class:`sdl2.SDL_surface` pixel access.
   
    .. note::
 
@@ -20,7 +20,7 @@
     
     .. note:: 
     
-       :class`PixelView` is implemented on top of the :class:`MemoryView`
+       :class:`PixelView` is implemented on top of the :class:`MemoryView`
        class. As such it makes heavy use of recursion to access rows and
        columns and can be considered as slow in contrast to optimised
        ndim-array solutions such as :mod:`numpy`.
@@ -29,8 +29,8 @@
 
    Creates a 2D pixel array, based on ``numpy.ndarray``, from the passed
    *source*. *source* can be a :class:`SoftwareSprite` or
-   :class:`sdl2.surface.SDL_Surface`. The ``SDL_Surface`` of the *source*
-   will be locked and unlocked automatically.
+   :class:`sdl2.SDL_Surface`. The ``SDL_Surface`` of the *source* will be
+   locked and unlocked automatically.
 
    The *source* pixels will be accessed and manipulated directly.
 
@@ -44,7 +44,7 @@
 
    Creates a 3D pixel array, based on ``numpy.ndarray``, from the passed
    *source*. *source* can be a :class:`SoftwareSprite`
-   or :class:`sdl2.surface.SDL_Surface`. The ``SDL_Surface`` of the *source*
+   or :class:`sdl2.SDL_Surface`. The ``SDL_Surface`` of the *source*
    will be locked and unlocked automatically.
 
    The *source* pixels will be accessed and manipulated directly.

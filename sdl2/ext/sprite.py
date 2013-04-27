@@ -99,19 +99,20 @@ class RenderContext(object):
             raise SDLError()
 
     def copy(self, src, srcrect=None, dstrect=None):
-        """TODO"""
+        """Copies (blits) the passed source to the target of the
+        RenderContext,"""
         if isinstance(src, TextureSprite):
             texture = src.texture
         elif isinstance(src, render.SDL_Texture):
             texture = src
         else:
             raise TypeError("src must be a TextureSprite or SDL_Texture")
-        ret = render.SDL_RenderCopy(texture, srcrect, dstrect)
+        ret = render.SDL_RenderCopy(self.renderer, texture, srcrect, dstrect)
         if ret == -1:
             raise SDLError()
 
     def present(self):
-        """TODO"""
+        """Refreshes the target of the RenderContext,"""
         render.SDL_RenderPresent(self.renderer)
 
     def draw_line(self, points, color=None):

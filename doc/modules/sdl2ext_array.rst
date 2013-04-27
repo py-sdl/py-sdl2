@@ -42,8 +42,7 @@ value, *I* to something else. ::
     >>> print(text)
     aello, I am a simple ASCII string!"
     >>> ctview.to_uint16()[3] = 0x6554
-    >>> print(text)
-    aello,Te am a simple ASCII string!"
+    >>> print(text)    aello,Te am a simple ASCII string!"
 
 If the encapsuled object does not provide a (writeable) :func:`buffer`
 interface, but is iterable, the :class:`CTypesView` will create an
