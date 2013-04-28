@@ -13,8 +13,6 @@ def _findlib(libnames, path=None):
     platform = sys.platform
     if platform in ("win32", "cli"):
         suffix = ".dll"
-        if path:
-            os.environ["PATH"] += ";%s" % path
     elif platform == "darwin":
         suffix = ".dylib"
     else:
@@ -62,6 +60,9 @@ class _DLL(object):
                 warnings.warn(repr(exc), ImportWarning)
         if self._dll is None:
             raise RuntimeError("could not load any library for %s" % libinfo)
+        if path is not None and sys.platform in ("win32", "cli") and \
+            path in self._libfile:
+            os.environ["PATH"] += ";%s" % path
 
     def bind_function(self, funcname, args=None, returns=None, optfunc=None):
         """Binds the passed argument and return value types to the specified
