@@ -1,9 +1,12 @@
 import sys
 import unittest
-from ctypes import ArgumentError
+from ctypes import ArgumentError, POINTER, byref
 from ..ext.resources import Resources
 from .. import ext as sdl2ext
 from ..surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
+from sdl2.video import SDL_Window, SDL_WINDOW_HIDDEN, SDL_DestroyWindow
+from sdl2.render import SDL_Renderer, SDL_CreateWindowAndRenderer, \
+    SDL_DestroyRenderer, SDL_CreateTexture, SDL_Texture
 
 RESOURCES = Resources(__file__, "resources")
 
@@ -99,7 +102,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         #self.assertRaises(ValueError, factory.create_software_sprite, (10,-5))
         self.assertRaises(TypeError, factory.create_software_sprite, size=None)
         self.assertRaises(sdl2ext.SDLError, factory.create_software_sprite,
-                          bpp=-1)
+                          bpp= -1)
         self.assertRaises(TypeError, factory.create_software_sprite, masks=5)
         self.assertRaises((ArgumentError, TypeError),
                           factory.create_software_sprite,
@@ -139,6 +142,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             self.assertRaises((AttributeError, IOError, sdl2ext.SDLError),
                               factory.from_image, 12345)
 
+    @unittest.skip("not implemented")
     def test_SpriteFactory_from_object(self):
         window = sdl2ext.Window("Test", size=(1, 1))
         renderer = sdl2ext.RenderContext(window)
@@ -287,7 +291,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_TextureSpriteRenderer(self):
         pass
-
+        
     @unittest.skip("not implemented")
     def test_TextureSpriteRenderer_render(self):
         pass
@@ -370,21 +374,71 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         sprite.position = -22, 99
         self.assertEqual(sprite.area, (-22, 99, -12, 109))
 
-    @unittest.skip("not implemented")
     def test_TextureSprite(self):
-        pass
+        window = POINTER(SDL_Window)()
+        renderer = POINTER(SDL_Renderer)()
+        SDL_CreateWindowAndRenderer(10, 10, SDL_WINDOW_HIDDEN,
+                                    byref(window), byref(renderer))
 
-    @unittest.skip("not implemented")
+        tex = SDL_CreateTexture(renderer, 0, 0, 10, 10)
+        self.assertIsInstance(tex.contents, SDL_Texture)
+        sprite = sdl2ext.TextureSprite(tex.contents)
+        self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+        SDL_DestroyRenderer(renderer)
+        SDL_DestroyWindow(window)
+
     def test_TextureSprite_position_xy(self):
-        pass
+        window = POINTER(SDL_Window)()
+        renderer = POINTER(SDL_Renderer)()
+        SDL_CreateWindowAndRenderer(10, 10, SDL_WINDOW_HIDDEN,
+                                    byref(window), byref(renderer))
+        tex = SDL_CreateTexture(renderer, 0, 0, 10, 10)
+        self.assertIsInstance(tex.contents, SDL_Texture)
+        sprite = sdl2ext.TextureSprite(tex.contents)
+        self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+        self.assertEqual(sprite.position, (0, 0))
+        positions = [(x, y) for x in range(-50, 50) for y in range(-50, 50)]
+        for x, y in positions:
+            sprite.position = x, y
+            self.assertEqual(sprite.position, (x, y))
+            sprite.x = x + 1
+            sprite.y = y + 1
+            self.assertEqual(sprite.position, (x + 1, y + 1))
+        SDL_DestroyRenderer(renderer)
+        SDL_DestroyWindow(window)
 
-    @unittest.skip("not implemented")
     def test_TextureSprite_size(self):
-        pass
+        window = POINTER(SDL_Window)()
+        renderer = POINTER(SDL_Renderer)()
+        SDL_CreateWindowAndRenderer(10, 10, SDL_WINDOW_HIDDEN,
+                                    byref(window), byref(renderer))
+        sizes = [(w, h) for w in range(1, 200) for h in range(1, 200)]
+        for w, h in sizes:
+            tex = SDL_CreateTexture(renderer, 0, 0, w, h)
+            sprite = sdl2ext.TextureSprite(tex.contents)
+            self.assertEqual(sprite.size, (w, h))
+        SDL_DestroyRenderer(renderer)
+        SDL_DestroyWindow(window)
 
-    @unittest.skip("not implemented")
     def test_TextureSprite_area(self):
-        pass
+        window = POINTER(SDL_Window)()
+        renderer = POINTER(SDL_Renderer)()
+        SDL_CreateWindowAndRenderer(10, 10, SDL_WINDOW_HIDDEN,
+                                    byref(window), byref(renderer))
+        tex = SDL_CreateTexture(renderer, 0, 0, 10, 20)
+        sprite = sdl2ext.TextureSprite(tex.contents)
+        self.assertEqual(sprite.area, (0, 0, 10, 20))
+
+        def setarea(s, v):
+            s.area = v
+
+        self.assertRaises(AttributeError, setarea, sprite, (1, 2, 3, 4))
+        sprite.position = 7, 3
+        self.assertEqual(sprite.area, (7, 3, 17, 23))
+        sprite.position = -22, 99
+        self.assertEqual(sprite.area, (-22, 99, -12, 119))
+        SDL_DestroyRenderer(renderer)
+        SDL_DestroyWindow(window)
 
     @unittest.skip("not implemented")
     def test_RenderContext(self):

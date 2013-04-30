@@ -6,7 +6,7 @@ from .. import platform
 class SDLPlatformTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def test_get_platform(self):
+    def test_SDL_GetPlatform(self):
         retval = platform.SDL_GetPlatform()
         if sys.platform in ("win32", "cygwin", "cli"):
             self.assertEqual(retval, b"Windows")
@@ -18,6 +18,7 @@ class SDLPlatformTest(unittest.TestCase):
             self.assertEqual(retval, b"Mac OS X")
         # Do not check others atm, since we are unsure about what Python will
         # return here.
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

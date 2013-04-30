@@ -245,7 +245,7 @@ class SDLSurfaceTest(unittest.TestCase):
                         self.assertEqual(ret, 0)
                     surface.SDL_FreeSurface(sf)
 
-    def test_fill_rects(self):
+    def test_SDL_FillRects(self):
         rectlist = to_ctypes([rect.SDL_Rect(0, 0, 0, 0),
                               rect.SDL_Rect(0, 0, 10, 10),
                               rect.SDL_Rect(0, 0, -10, 10),

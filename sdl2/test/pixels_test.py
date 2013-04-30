@@ -138,7 +138,7 @@ class SDLPixelsTest(unittest.TestCase):
         self.assertFalse(isfourcc(pixels.SDL_PIXELFORMAT_ARGB4444))
         self.assertFalse(isfourcc(pixels.SDL_PIXELFORMAT_INDEX8))
 
-    def test_get_pixel_format_name(self):
+    def test_SDL_GetPixelFormatName(self):
         self.assertEqual(pixels.SDL_GetPixelFormatName
                          (pixels.SDL_PIXELFORMAT_INDEX1LSB),
                          b"SDL_PIXELFORMAT_INDEX1LSB")
