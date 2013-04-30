@@ -4,6 +4,7 @@ from ctypes import byref, POINTER, c_int
 from .. import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
 from ..stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
 from .. import render, video, surface, pixels, blendmode, rect
+from ..ext.pixelaccess import PixelView
 
 
 # TODO: mostly positive tests, improve this!
@@ -68,7 +69,7 @@ class SDLRenderTest(unittest.TestCase):
         #self.assertIsInstance(window, video.SDL_Window)
         #self.assertIsInstance(renderer, render.SDL_Renderer)
 
-    def test_create_SDL_DestroyRenderer(self):
+    def test_SDL_CreateDestroyRenderer(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
                                      video.SDL_WINDOW_SHOWN)
         self.assertIsInstance(window.contents, video.SDL_Window)
@@ -359,15 +360,11 @@ class SDLRenderTest(unittest.TestCase):
         video.SDL_DestroyWindow(window)
 
     @unittest.skip("not implemented")
-    def test_update_texture(self):
+    def test_SDL_UpdateTexture(self):
         pass
 
     @unittest.skip("not implemented")
-    def test_lock_texture(self):
-        pass
-
-    @unittest.skip("not implemented")
-    def test_unlock_texture(self):
+    def test_SDL_LockUnlockTexture(self):
         pass
 
     def test_SDL_RenderTargetSupported(self):
@@ -560,7 +557,8 @@ seems to fail on creating the second renderer of the window, if any""")
 #        self.assertRaises((AttributeError, TypeError),
 #                          render.SDL_RenderClear, 123456)
 
-    @unittest.skip("not implemented")
+    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
+                     "PyPy's ctypes can't do byref(value, offset)")
     def test_SDL_RenderDrawPoint(self):
         points = ((-4, -3), (-4, 3), (4, -3),
                   (0, 0), (1, 1), (10, 10), (99, 99),
@@ -580,21 +578,21 @@ seems to fail on creating the second renderer of the window, if any""")
             ret = render.SDL_RenderDrawPoint(renderer, x, y)
             self.assertEqual(ret, 0)
         render.SDL_RenderPresent(renderer)
-        #view = pvid.PixelView(sf)
-        #for x, y in points:
-        #    npx = max(x + 1, w)
-        #    npy = max(y + 1, h)
-        #    ppx = max(x - 1, 0)
-        #    ppy = max(y - 1, 0)
-        #    if x < 0 or x >= w or y < 0 or y >= h:
-        #        continue
-        #    self.assertEqual(hex(view[y][x]), hex(color))
-        #    if (npx, npy) not in points:
-        #        self.assertNotEqual(hex(view[npy][npx]), hex(color))
-        #    if (ppx, ppy) not in points:
-        #        self.assertNotEqual(hex(view[ppy][ppx]), hex(color))
+        view = PixelView(sf.contents)
+        for x, y in points:
+            npx = max(x + 1, w)
+            npy = max(y + 1, h)
+            ppx = max(x - 1, 0)
+            ppy = max(y - 1, 0)
+            if x < 0 or x >= w or y < 0 or y >= h:
+                continue
+            self.assertEqual(hex(view[y][x]), hex(color))
+            if (npx, npy) not in points:
+                self.assertNotEqual(hex(view[npy][npx]), hex(color))
+            if (ppx, ppy) not in points:
+                self.assertNotEqual(hex(view[ppy][ppx]), hex(color))
         render.SDL_DestroyRenderer(renderer)
-        #del view
+        del view
         surface.SDL_FreeSurface(sf)
 
     @unittest.skip("not implemented")

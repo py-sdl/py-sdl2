@@ -728,7 +728,7 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_DestroyWindow(window)
         video.SDL_GL_UnloadLibrary()
 
-    def test_gl_create_delete_context(self):
+    def test_SDL_GL_CreateDeleteContext(self):
         #self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_GL_CreateContext, None)
         #self.assertRaises((AttributeError, TypeError),
@@ -798,12 +798,21 @@ class SDLVideoTest(unittest.TestCase):
 
         video.SDL_GL_DeleteContext(ctx)
         video.SDL_DestroyWindow(window)
-
         video.SDL_GL_UnloadLibrary()
 
-    @unittest.skip("not implemented")
-    def test_gl_swap_window(self):
-        pass
+    def test_SDL_GL_SwapWindow(self):
+        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
+                                        video.SDL_WINDOW_OPENGL)
+        ctx = video.SDL_GL_CreateContext(window)
+        video.SDL_GL_MakeCurrent(window, ctx)
+        video.SDL_GL_SwapWindow(window)
+        video.SDL_GL_SwapWindow(window)
+        video.SDL_GL_SwapWindow(window)
+        video.SDL_GL_SwapWindow(window)
+        video.SDL_GL_DeleteContext(ctx)
+        video.SDL_DestroyWindow(window)
+        video.SDL_GL_UnloadLibrary()
 
 
 if __name__ == '__main__':

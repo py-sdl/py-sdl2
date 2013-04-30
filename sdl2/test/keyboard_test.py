@@ -181,11 +181,11 @@ class SDLKeyboardTest(unittest.TestCase):
 
     @unittest.skip("not implemented")
     def test_SDL_StartTextInput(self):
-        pass
+        keyboard.SDL_StartTextInput()
 
     @unittest.skip("not implemented")
     def test_SDL_StopTextInput(self):
-        pass
+        keyboard.SDL_StopTextInput()
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
