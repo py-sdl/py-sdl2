@@ -1,7 +1,10 @@
 @SETLOCAL
+
+@REM Set the PYTHON path variable to your python command, like C:\Python33\python.exe
+@IF "%PYTHON%" == "" echo Warning: PYTHON environment path not set.
+
 @IF "%DLLPATH_X86%" == "" SET DLLPATH_X86=%CD%\..\dlls\32bit
 @IF "%DLLPATH_X64%" == "" SET DLLPATH_X64=%CD%\..\dlls\64bit
-
 @IF "%PYTHONPATH%" == "" SET PYTHONPATH=%CHDIR%
 @IF "%PYTHON27_X86%" == "" SET PYTHON27_X86=c:\Python27-x86\python.exe
 @IF "%PYTHON27_X64%" == "" SET PYTHON27_X64=c:\Python27-x64\python.exe
@@ -20,7 +23,6 @@
 @SET INTERP_X86=%PYTHON27_X86%;%PYTHON32_X86%;%PYTHON33_X86%;%PYPY18%;^
  %PYPY19%;%PYPY20%;%IRONPYTHON27_X86%
 @SET INTERPRETERS=%INTERP_X86%;%INTERP_X64%
-
 
 @IF "%~1" == "" GOTO :all
 @GOTO :%~1
@@ -62,6 +64,7 @@
 @FOR /d /r . %%d in (__pycache__) do @IF EXIST "%%d" RMDIR /S /Q "%%d"
 @DEL /S /Q MANIFEST
 @DEL /S /Q *.pyc
+
 @GOTO :eof
 
 :docs
