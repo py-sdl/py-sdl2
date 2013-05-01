@@ -6,7 +6,7 @@ from ctypes import c_int, byref, cast, POINTER, c_void_p
 from ..ext import CTypesView
 from .. import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
 from ..stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
-from .. import blendmode, pixels, rect, surface, rwops
+from .. import blendmode, pixels, rect, surface, rwops, error
 
 to_ctypes = lambda seq, dtype: (dtype * len(seq))(*seq)
 
@@ -81,28 +81,33 @@ class SDLSurfaceTest(unittest.TestCase):
                 self.assertEqual(val, src.view[index])
 
     def test_SDL_ConvertSurface(self):
-        pfmt = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_RGB444)
-        for fmt in pixels.ALL_PIXELFORMATS:
-            if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+        for idx in pixels.ALL_PIXELFORMATS:
+            if pixels.SDL_ISPIXELFORMAT_FOURCC(idx):
                 continue
-            if fmt in (pixels.SDL_PIXELFORMAT_RGB332,
-                       pixels.SDL_PIXELFORMAT_ARGB2101010):
-                # SDL2 segfault in the DUFFS_LOOOP() macros
-                # http://bugzilla.libsdl.org/show_bug.cgi?id=1534
-                continue
-            bpp = c_int()
-            rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
-            ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
-                                                    byref(rmask), byref(gmask),
-                                                    byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
-            sf = surface.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask, gmask,
-                                              bmask, amask)
-            self.assertIsInstance(sf.contents, surface.SDL_Surface)
-            csf = surface.SDL_ConvertSurface(sf, pfmt, 0)
-            self.assertIsInstance(csf.contents, surface.SDL_Surface)
-            surface.SDL_FreeSurface(sf)
-            surface.SDL_FreeSurface(csf)
+            pfmt = pixels.SDL_AllocFormat(idx)
+            for fmt in pixels.ALL_PIXELFORMATS:
+                if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+                    continue
+                if fmt in (pixels.SDL_PIXELFORMAT_RGB332,
+                           pixels.SDL_PIXELFORMAT_ARGB2101010):
+                    # SDL2 segfault in the DUFFS_LOOOP() macros
+                    # http://bugzilla.libsdl.org/show_bug.cgi?id=1534
+                    continue
+                bpp = c_int()
+                rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
+                ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
+                                                        byref(rmask), byref(gmask),
+                                                        byref(bmask), byref(amask))
+                self.assertEqual(ret, SDL_TRUE)
+                sf = surface.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask, gmask,
+                                                  bmask, amask)
+                self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                csf = surface.SDL_ConvertSurface(sf, pfmt, 0)
+                self.assertTrue(csf, error.SDL_GetError())
+                self.assertIsInstance(csf.contents, surface.SDL_Surface)
+                surface.SDL_FreeSurface(sf)
+                surface.SDL_FreeSurface(csf)
+            pixels.SDL_FreeFormat(pfmt)
 
         #######################################################################
         # sf = surface.create_rgb_surface(10, 10, 32, 0, 0, 0)
@@ -125,28 +130,31 @@ class SDLSurfaceTest(unittest.TestCase):
         pixels.SDL_FreeFormat(pfmt)
 
     def test_SDL_ConvertSurfaceFormat(self):
-        pfmt = pixels.SDL_PIXELFORMAT_RGB444
-        for fmt in pixels.ALL_PIXELFORMATS:
-            if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+        for pfmt in pixels.ALL_PIXELFORMATS:
+            if pixels.SDL_ISPIXELFORMAT_FOURCC(pfmt):
                 continue
-            if fmt in (pixels.SDL_PIXELFORMAT_RGB332,
-                       pixels.SDL_PIXELFORMAT_ARGB2101010):
-                # SDL2 segault in the DUFFS_LOOP() macros
-                # http://bugzilla.libsdl.org/show_bug.cgi?id=1534
-                continue
-            bpp = c_int()
-            rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
-            ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
-                                                    byref(rmask), byref(gmask),
-                                                    byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
-            sf = surface.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask, gmask,
-                                              bmask, amask)
-            self.assertIsInstance(sf.contents, surface.SDL_Surface)
-            csf = surface.SDL_ConvertSurfaceFormat(sf, pfmt, 0)
-            self.assertIsInstance(csf.contents, surface.SDL_Surface)
-            surface.SDL_FreeSurface(sf)
-            surface.SDL_FreeSurface(csf)
+            for fmt in pixels.ALL_PIXELFORMATS:
+                if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+                    continue
+                if fmt in (pixels.SDL_PIXELFORMAT_RGB332,
+                           pixels.SDL_PIXELFORMAT_ARGB2101010):
+                    # SDL2 segault in the DUFFS_LOOP() macros
+                    # http://bugzilla.libsdl.org/show_bug.cgi?id=1534
+                    continue
+                bpp = c_int()
+                rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
+                ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
+                                                        byref(rmask), byref(gmask),
+                                                        byref(bmask), byref(amask))
+                self.assertEqual(ret, SDL_TRUE)
+                sf = surface.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask, gmask,
+                                                  bmask, amask)
+                self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                csf = surface.SDL_ConvertSurfaceFormat(sf, pfmt, 0)
+                self.assertTrue(csf, error.SDL_GetError())
+                self.assertIsInstance(csf.contents, surface.SDL_Surface)
+                surface.SDL_FreeSurface(sf)
+                surface.SDL_FreeSurface(csf)
 
     def test_SDL_CreateRGBSurface(self):
         for w in range(1, 100, 5):

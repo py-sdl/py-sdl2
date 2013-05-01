@@ -8,6 +8,10 @@ from sdl2.video import SDL_Window, SDL_WINDOW_HIDDEN, SDL_DestroyWindow
 from sdl2.render import SDL_Renderer, SDL_CreateWindowAndRenderer, \
     SDL_DestroyRenderer, SDL_CreateTexture, SDL_Texture
 
+_ISPYPY = hasattr(sys, "pypy_version_info")
+if _ISPYPY:
+    import gc
+
 RESOURCES = Resources(__file__, "resources")
 
 
@@ -88,6 +92,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                     continue
                 sprite = tfactory.create_sprite(size=(w, h))
                 self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+            if _ISPYPY and (w % 50) == 0:
+                gc.collect()
 
     def test_SpriteFactory_create_software_sprite(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -96,6 +102,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                 for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
                     sprite = factory.create_software_sprite((w, h), bpp)
                     self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
+            if _ISPYPY and (w % 50) == 0:
+                gc.collect()
 
         #self.assertRaises(ValueError, factory.create_software_sprite, (-1,-1))
         #self.assertRaises(ValueError, factory.create_software_sprite, (-10,5))
@@ -119,7 +127,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             for h in range(1, 100):
                 sprite = factory.create_texture_sprite(renderer, size=(w, h))
                 self.assertIsInstance(sprite, sdl2ext.TextureSprite)
-                #del sprite
+            if _ISPYPY and (w % 50) == 0:
+                gc.collect()
 
     def test_SpriteFactory_from_image(self):
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -291,7 +300,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_TextureSpriteRenderer(self):
         pass
-        
+
     @unittest.skip("not implemented")
     def test_TextureSpriteRenderer_render(self):
         pass
@@ -316,13 +325,13 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             self.assertEqual(sprite.position, (x + 1, y + 1))
 
     def test_Sprite_area(self):
-        sizes = [(w, h) for w in range(0, 200) for h in range(0, 200)]
-        for w, h in sizes:
-            sprite = MSprite(w, h)
-            self.assertEqual(sprite.size, (w, h))
-            self.assertEqual(sprite.area, (0, 0, w, h))
-            sprite.position = w, h
-            self.assertEqual(sprite.area, (w, h, 2 * w, 2 * h))
+        for w in range(0, 200):
+            for h in range(0, 200):
+                sprite = MSprite(w, h)
+                self.assertEqual(sprite.size, (w, h))
+                self.assertEqual(sprite.area, (0, 0, w, h))
+                sprite.position = w, h
+                self.assertEqual(sprite.area, (w, h, 2 * w, 2 * h))
 
     def test_SoftwareSprite(self):
         self.assertRaises(TypeError, sdl2ext.SoftwareSprite, None, None)
@@ -354,11 +363,13 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             self.assertEqual(sprite.position, (x + 1, y + 1))
 
     def test_SoftwareSprite_size(self):
-        sizes = [(w, h) for w in range(0, 200) for h in range(0, 200)]
-        for w, h in sizes:
-            sf = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0)
-            sprite = sdl2ext.SoftwareSprite(sf.contents, True)
-            self.assertEqual(sprite.size, (w, h))
+        for w in range(0, 200):
+            for h in range(0, 200):
+                sf = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0)
+                sprite = sdl2ext.SoftwareSprite(sf.contents, True)
+                self.assertEqual(sprite.size, (w, h))
+            if _ISPYPY and (w % 50) == 0:
+                gc.collect()
 
     def test_SoftwareSprite_area(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
@@ -412,11 +423,13 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         renderer = POINTER(SDL_Renderer)()
         SDL_CreateWindowAndRenderer(10, 10, SDL_WINDOW_HIDDEN,
                                     byref(window), byref(renderer))
-        sizes = [(w, h) for w in range(1, 200) for h in range(1, 200)]
-        for w, h in sizes:
-            tex = SDL_CreateTexture(renderer, 0, 0, w, h)
-            sprite = sdl2ext.TextureSprite(tex.contents)
-            self.assertEqual(sprite.size, (w, h))
+        for w in range(1, 200):
+            for h in range(1, 200):
+                tex = SDL_CreateTexture(renderer, 0, 0, w, h)
+                sprite = sdl2ext.TextureSprite(tex.contents)
+                self.assertEqual(sprite.size, (w, h))
+            if _ISPYPY and (w % 50) == 0:
+                gc.collect()
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
 
