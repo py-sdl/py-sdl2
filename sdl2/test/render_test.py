@@ -6,6 +6,10 @@ from ..stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
 from .. import render, video, surface, pixels, blendmode, rect
 from ..ext.pixelaccess import PixelView
 
+_ISPYPY = hasattr(sys, "pypy_version_info")
+if _ISPYPY:
+    import gc
+
 
 # TODO: mostly positive tests, improve this!
 class SDLRenderTest(unittest.TestCase):
@@ -174,6 +178,8 @@ class SDLRenderTest(unittest.TestCase):
                                                        w, h)
                         self.assertIsInstance(tex.contents, render.SDL_Texture)
                         render.SDL_DestroyTexture(tex)
+                    if _ISPYPY and (w % 50) == 0:
+                        gc.collect()
 
         #self.assertRaises(sdl.SDLError, render.SDL_CreateTexture, renderer,
         #                  pixels.SDL_PIXELFORMAT_RGB555, 1, -10, 10)
@@ -250,6 +256,8 @@ class SDLRenderTest(unittest.TestCase):
                         self.assertEqual(qw.value, w)
                         self.assertEqual(qh.value, h)
                         render.SDL_DestroyTexture(tex)
+                    if _ISPYPY and (w % 50) == 0:
+                        gc.collect()
 
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
