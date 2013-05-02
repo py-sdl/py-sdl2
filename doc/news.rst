@@ -10,6 +10,8 @@ Released on 2013-XX-XX.
 * fixed sdl2.haptic module usage for Python 3
 * fixed sdl2.SDL_WindowGetData() and sdl2.SDL_WindowSetData() wrappers
 * fixed sdl2.ext.RenderContext.copy()
+* fixed sdl2.ext.font module usage for Python 3
+* fixed sdl2.ext.draw.line()
 * sdl2 imports all submodules now
 * improved documentation
 
