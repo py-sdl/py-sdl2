@@ -1,3 +1,4 @@
+import sys
 from ctypes import Structure, c_int, c_char_p, c_double, c_void_p, CFUNCTYPE, \
     POINTER
 from .dll import _bind
@@ -105,6 +106,13 @@ class SDL_AudioCVT(Structure):
     pass
 
 SDL_AudioFilter = CFUNCTYPE(POINTER(SDL_AudioCVT), SDL_AudioFormat)
+# HACK: hack for an IronPython 2.7.2.1+ issue:
+#    ptrarray = (CFUNCTYPE() * int)
+# is not supported properly
+if sys.platform == "cli":
+    _X_SDL_AudioFilter = POINTER(SDL_AudioFilter)
+else:
+    _X_SDL_AudioFilter = SDL_AudioFilter
 
 SDL_AudioCVT._fields_ = [("needed", c_int),
                          ("src_format", SDL_AudioFormat),
@@ -115,7 +123,7 @@ SDL_AudioCVT._fields_ = [("needed", c_int),
                          ("len_cvt", c_int),
                          ("len_mult", c_int),
                          ("len_ratio", c_double),
-                         ("filters", (SDL_AudioFilter * 10)),
+                         ("filters", (_X_SDL_AudioFilter * 10)),
                          ("filter_index", c_int)
                          ]
 
