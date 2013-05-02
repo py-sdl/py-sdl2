@@ -96,10 +96,11 @@ def line(target, color, dline, width=1):
     fillrect = surface.SDL_FillRect
 
     pitch = rtarget.pitch
-    bpp = rtarget.format.BytesPerPixel
+    bpp = rtarget.format.contents.BytesPerPixel
+    frac = pitch / bpp
     clip_rect = rtarget.clip_rect
-    left, right = clip_rect.x, clip_rect.x + clip_rect.w
-    top, bottom = clip_rect.y, clip_rect.y + clip_rect.h
+    left, right = clip_rect.x, clip_rect.x + clip_rect.w - 1
+    top, bottom = clip_rect.y, clip_rect.y + clip_rect.h - 1
 
     if bpp == 3:
         raise UnsupportedError("24bpp are currently not supported")
@@ -129,31 +130,26 @@ def line(target, color, dline, width=1):
         if width == 1:
             # Bresenham
             x1, y1, x2, y2 = clipline(left, top, right, bottom, x1, y1, x2, y2)
+            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
             if x1 is None:
                 # not to be drawn
                 continue
             dx = abs(x2 - x1)
-            dy = abs(y2 - y1)
-            err = dx - dy
+            dy = -abs(y2 - y1)
+            err = dx + dy
             sx, sy = 1, 1
             if x1 > x2:
                 sx = -sx
             if y1 > y2:
                 sy = -sy
-            mx = sx
-            my = sy * pitch / bpp
-
-            pxoff = y1 * pitch / bpp + x1
             while True:
-                pxbuf[pxoff] = color
+                pxbuf[int(y1 * frac + x1)] = color
                 if x1 == x2 and y1 == y2:
                     break
-                de = 2 * err
-                if de > -dy:
-                    err -= dy
+                e2 = err * 2
+                if e2 > dy:
+                    err += dy
                     x1 += sx
-                    pxoff += mx
-                if de < dx:
+                if e2 < dx:
                     err += dx
                     y1 += sy
-                    pxoff += my
