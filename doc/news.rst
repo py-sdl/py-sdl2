@@ -4,7 +4,7 @@ This describes the latest changes between the PySDL2 releases.
 
 0.2.0
 -----
-Released on 2013-XX-XX.
+Released on 2013-05-03.
 
 * removed sdl2.ext.scene; it now lives in python-utils
 * fixed sdl2.haptic module usage for Python 3
