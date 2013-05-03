@@ -58,5 +58,5 @@ You also can set the environment variable within Python using
    If you aim to integrate :mod:`sdl` directly into your software and do
    not want or are not allowed to change the environment variables, you
    can also change the ``os.getenv("PYSDL2_DLL_PATH")`` query within the
-   *sdl/dll.py* file to point to the directory, in which you keep
-   the DLL.
+   *sdl2/dll.py* (or *sdl2/sdlimage.py*, *sdl2/sdlttf.py*, *sdl2/sdlgfx.py*)
+   file to point to the directory, in which you keep the DLL.
