@@ -285,7 +285,7 @@ def run():
     window = sdl2ext.Window("sdlgfx drawing examples", size=(800, 600))
     window.show()
 
-    # Create a rendering context for the window. The sdlgfx module require it.
+    # Create a rendering context for the window. The sdlgfx module requires it.
     context = sdl2ext.RenderContext(window)
 
     # We implement the functionality as it was done in colorpalettes.py and

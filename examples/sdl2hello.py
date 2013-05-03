@@ -5,6 +5,7 @@ import ctypes
 
 from sdl2 import *
 
+
 def run():
     SDL_Init(SDL_INIT_VIDEO)
     window = SDL_CreateWindow(b"Hello World",
@@ -29,6 +30,7 @@ def run():
     SDL_DestroyWindow(window)
     SDL_Quit()
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(run())

@@ -436,7 +436,7 @@ class SpriteFactory(object):
             s = SoftwareSprite(imgsurface.contents, True)
         return s
 
-    def from_color(self, color, size=(0, 0), bpp=32, masks=None):
+    def from_color(self, color, size, bpp=32, masks=None):
         """Creates a sprite with a certain color.
         """
         color = convert_to_color(color)
@@ -475,7 +475,7 @@ class SpriteFactory(object):
         else:
             return self.create_software_sprite(**args)
 
-    def create_software_sprite(self, size=(0, 0), bpp=32, masks=None):
+    def create_software_sprite(self, size, bpp=32, masks=None):
         """Creates a software sprite.
 
         A size tuple containing the width and height of the sprite and a
@@ -492,7 +492,7 @@ class SpriteFactory(object):
             raise SDLError()
         return SoftwareSprite(imgsurface.contents, True)
 
-    def create_texture_sprite(self, renderer, size=(0, 0),
+    def create_texture_sprite(self, renderer, size,
                                pformat=pixels.SDL_PIXELFORMAT_RGBA8888,
                                static=True):
         """Creates a texture sprite.

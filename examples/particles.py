@@ -185,6 +185,9 @@ def run():
     window = sdl2ext.Window("Particles", size=(800, 600))
     window.show()
 
+    # Create a hardware-accelerated sprite factory. The sprite factory requires
+    # a rendering context, which enables it to create the underlying textures
+    # that serve as the visual parts for the sprites.
     renderer = sdl2ext.RenderContext(window)
     factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
 

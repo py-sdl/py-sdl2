@@ -188,7 +188,7 @@ Sprite, texture and pixel surface routines
 
       The default arguments to use for creating new sprites.
 
-   .. method:: create_software_sprite(size=(0, 0), bpp=32, masks=None) -> SoftwareSprite
+   .. method:: create_software_sprite(size, bpp=32, masks=None) -> SoftwareSprite
 
       Creates a software sprite. A *size* tuple containing the width and
       height of the sprite and a *bpp* value, indicating the bits per
@@ -221,7 +221,7 @@ Sprite, texture and pixel surface routines
       Otherwise a :class:`SoftwareSpriteRenderer` is created and *args*
       and *kwargs* are passed to it.
 
-   .. method:: create_texture_sprite(renderer : object, size=(0, 0), pformat=sdl2.SDL_PIXELFORMAT_RGBA8888, static=True) -> TextureSprite
+   .. method:: create_texture_sprite(renderer : object, size, pformat=sdl2.SDL_PIXELFORMAT_RGBA8888, static=True) -> TextureSprite
 
       Creates a texture sprite. A *size* tuple containing the width and
       height of the sprite needs to be provided.
@@ -232,7 +232,7 @@ Sprite, texture and pixel surface routines
       data frequently, *static* can be set to ``False`` to allow a
       streaming access on the underlying texture pixel buffer.
 
-   .. method:: from_color(color : object , size=(0, 0), bpp=32, masks=None) -> Sprite
+   .. method:: from_color(color : object , size, bpp=32, masks=None) -> Sprite
 
       Creates a :class:`Sprite` with a certain color.
 

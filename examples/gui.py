@@ -17,6 +17,8 @@ except ImportError:
 # Define some global color constants
 WHITE = sdl2ext.Color(255, 255, 255)
 GREY = sdl2ext.Color(200, 200, 200)
+RED = sdl2ext.Color(255, 0, 0)
+GREEN = sdl2ext.Color(0, 255, 0)
 
 # Create a resource, so we have easy access to the example images.
 RESOURCES = sdl2ext.Resources(__file__, "resources")
@@ -44,6 +46,24 @@ def onedit(entry, event):
           (event.text.text, event.text.start, event.text.length))
 
 
+def oncheck(button, event):
+    if button.checked:
+        color = GREEN
+    else:
+        color = RED
+    if button.factory.sprite_type == sdl2ext.SOFTWARE:
+        sdl2ext.fill(button.surface, color)
+    else:
+        # SDL textures do not support color manipulation operation as easy
+        # as software surface (since the texture is ideally stored somwhere
+        # on the GPU memory in a GPU-specific layout [or not]). To circumvent
+        # this, we create a temporary sprite (texture) and exchange the button
+        # texture with it.
+        tmpsprite = button.factory.from_color(color, button.size)
+        button.texture, tmpsprite.texture = tmpsprite.texture, button.texture
+        del tmpsprite
+
+
 def run():
     # You know those from the helloworld.py example.
     # Initialize the video subsystem, create a window and make it visible.
@@ -51,40 +71,44 @@ def run():
     window = sdl2ext.Window("UI Elements", size=(800, 600))
     window.show()
 
-    spritefactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
-    # If you want hardware-accelerated rendering, use video.TEXTURE instead
-    # and pass a renderer along:
-    #
-    # renderer = video.RenderContext(window)
-    # factory = video.SpriteFactory(video.TEXTURE, renderer=renderer)
-    #
+    # Create a sprite factory that allows us to create visible 2D elements
+    # easily. Depending on what the user chosses, we either create a factory
+    # that supports hardware-accelerated sprites or software-based ones.
+    # The hardware-accelerated SpriteFactory requres a rendering context
+    # (or SDL_Renderer), which will create the underlying textures for us.
+    if "-hardware" in sys.argv:
+        print("Using hardware acceleration")
+        renderer = sdl2ext.RenderContext(window)
+        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+    else:
+        print("Using software rendering")
+        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
 
     # Create a UI factory, which will handle several defaults for
     # us. Also, the UIFactory can utilises software-based UI elements as
     # well as hardware-accelerated ones; this allows us to keep the UI
     # creation code clean.
-    uifactory = sdl2ext.UIFactory(spritefactory)
+    uifactory = sdl2ext.UIFactory(factory)
 
     # Create a simple Button sprite, which reacts on mouse movements and
     # button presses and fill it with a white color. All UI elements
     # inherit directly from the TextureSprite (for TEXTURE) or SoftwareSprite
     # (for SOFTWARE), so everything you can do with those classes is also
     # possible for the UI elements.
-    button = uifactory.from_image \
-        (sdl2ext.BUTTON, RESOURCES.get_path("button.bmp"))
+    button = uifactory.from_image(sdl2ext.BUTTON,
+                                   RESOURCES.get_path("button.bmp"))
     button.position = 50, 50
 
     # Create a TextEntry sprite, which reacts on keyboard presses and
     # text input.
-    entry = uifactory.from_image \
-        (sdl2ext.TEXTENTRY, RESOURCES.get_path("textentry.bmp"))
+    entry = uifactory.from_image(sdl2ext.TEXTENTRY,
+                                 RESOURCES.get_path("textentry.bmp"))
     entry.position = 50, 200
 
     # Create a CheckButton sprite. The CheckButton is a specialised
     # Button, which can switch its state, identified by the 'checked'
     # attribute by clicking.
-    checkbutton = uifactory.from_image \
-        (sdl2ext.CHECKBUTTON, RESOURCES.get_path("button.bmp"))
+    checkbutton = uifactory.from_color(sdl2ext.CHECKBUTTON, RED, size=(50, 50))
     checkbutton.position = 200, 50
 
     # Bind some actions to the button's event handlers. Whenever a click
@@ -108,10 +132,13 @@ def run():
     entry.input += oninput
     entry.editing += onedit
 
+    checkbutton.click += oncheck
+    checkbutton.factory = factory
+
     # Since all gui elements are sprites, we can use the
     # SpriteRenderer class, we learned about in helloworld.py, to
     # draw them on the Window.
-    spriterenderer = spritefactory.create_sprite_renderer(window)
+    spriterenderer = factory.create_sprite_renderer(window)
 
     # Create a new UIProcessor, which will handle the user input events
     # and pass them on to the relevant user interface elements.
