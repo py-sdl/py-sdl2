@@ -181,4 +181,3 @@ SDL_HapticRumbleSupported = _bind("SDL_HapticRumbleSupported", [POINTER(SDL_Hapt
 SDL_HapticRumbleInit = _bind("SDL_HapticRumbleInit", [POINTER(SDL_Haptic)], c_int)
 SDL_HapticRumblePlay = _bind("SDL_HapticRumblePlay", [POINTER(SDL_Haptic), c_float, Uint32], c_int)
 SDL_HapticRumbleStop = _bind("SDL_HapticRumbleStop", [POINTER(SDL_Haptic)], c_int)
-
