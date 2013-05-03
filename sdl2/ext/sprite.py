@@ -89,11 +89,11 @@ class RenderContext(object):
     def clear(self, color=None):
         """Clears the rendering context with the currently set or passed
         color."""
-        if color:
+        if color is not None:
             tmp = self.color
             self.color = color
         ret = render.SDL_RenderClear(self.renderer)
-        if color:
+        if color is not None:
             self.color = tmp
         if ret == -1:
             raise SDLError()
@@ -122,12 +122,12 @@ class RenderContext(object):
         if (pcount % 4) != 0:
             raise ValueError("points does not contain a valid set of points")
         if pcount == 4:
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             x1, y1, x2, y2 = points
             ret = render.SDL_RenderDrawLine(self.renderer, x1, y1, x2, y2)
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
@@ -140,12 +140,12 @@ class RenderContext(object):
                 ptlist[off] = SDL_Point(points[x], points[x + 1])
                 x += 2
                 off += 1
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             ptr = cast(ptlist, POINTER(SDL_Point))
             ret = render.SDL_RenderDrawLines(self.renderer, ptr, pcount / 2)
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
@@ -157,12 +157,12 @@ class RenderContext(object):
         if (pcount % 2) != 0:
             raise ValueError("points does not contain a valid set of points")
         if pcount == 2:
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             ret = render.SDL_RenderDrawPoint(self.renderer, points[0],
                                              points[1])
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
@@ -175,12 +175,12 @@ class RenderContext(object):
                 ptlist[off] = SDL_Point(points[x], points[x + 1])
                 x += 2
                 off += 1
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             ptr = cast(ptlist, POINTER(SDL_Point))
             ret = render.SDL_RenderDrawPoints(self.renderer, ptr)
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
@@ -190,12 +190,12 @@ class RenderContext(object):
         # ((x, y, w, h), ...)
         if type(rects[0]) == int:
             # single rect
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             x, y, w, h = rects
             ret = render.SDL_RenderDrawRect(self.renderer, x, y, w, h)
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
@@ -205,12 +205,12 @@ class RenderContext(object):
             rlist = (SDL_Rect * len(rects))()
             for idx, r in enumerate(rects):
                 rlist[idx] = SDL_Rect(r[0], r[1], r[2], r[3])
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             ptr = cast(rlist, SDL_Rect)
             ret = render.SDL_RenderDrawRects(self.renderer, ptr)
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
@@ -221,12 +221,12 @@ class RenderContext(object):
         # ((x, y, w, h), ...)
         if type(rects[0]) == int:
             # single rect
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             x, y, w, h = rects
             ret = render.SDL_RenderFillRect(self.renderer, x, y, w, h)
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
@@ -236,12 +236,12 @@ class RenderContext(object):
             rlist = (SDL_Rect * len(rects))()
             for idx, r in enumerate(rects):
                 rlist[idx] = SDL_Rect(r[0], r[1], r[2], r[3])
-            if color:
+            if color is not None:
                 tmp = self.color
                 self.color = color
             ptr = cast(rlist, SDL_Rect)
             ret = render.SDL_RenderFillRects(self.renderer, ptr)
-            if color:
+            if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()

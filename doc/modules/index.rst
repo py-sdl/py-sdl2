@@ -9,6 +9,7 @@ function, use the :ref:`genindex` or :ref:`search`.
    :maxdepth: 2
 
    sdl2.rst
+   sdl2_sdlgfx.rst
    sdl2_sdlimage.rst
    sdl2_sdlttf.rst
    sdl2ext.rst

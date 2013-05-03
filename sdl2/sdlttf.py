@@ -5,10 +5,10 @@ from .version import SDL_version
 from .rwops import SDL_RWops
 from .stdinc import Uint16, Uint32
 from .pixels import SDL_Color
-from .surface import SDL_Surface 
+from .surface import SDL_Surface
 from .error import SDL_GetError, SDL_SetError
 
-__all__= ["get_dll_file", "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION",
+__all__ = ["get_dll_file", "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION",
           "SDL_TTF_PATCHLEVEL", "SDL_TTF_VERSION", "TTF_MAJOR_VERSION",
           "TTF_MINOR_VERSION", "TTF_PATCHLEVEL", "TTF_VERSION",
           "TTF_Linked_Version", "UNICODE_BOM_NATIVE", "UNICODE_BOM_SWAPPED",
@@ -39,8 +39,9 @@ __all__= ["get_dll_file", "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION",
 dll = _DLL("SDL2_ttf", ["SDL2_ttf", "SDL2_ttf-2.0"],
            os.getenv("PYSDL2_DLL_PATH"))
 
+
 def get_dll_file():
-    """Gets the file name of the loaded SDL2 library."""
+    """Gets the file name of the loaded SDL2_ttf library."""
     return dll.libfile
 
 _bind = dll.bind_function
@@ -48,6 +49,7 @@ _bind = dll.bind_function
 SDL_TTF_MAJOR_VERSION = 2
 SDL_TTF_MINOR_VERSION = 0
 SDL_TTF_PATCHLEVEL = 12
+
 
 def SDL_TTF_VERSION(x):
     x.major = SDL_TTF_MAJOR_VERSION
@@ -64,6 +66,7 @@ UNICODE_BOM_NATIVE = 0xFEFF
 UNICODE_BOM_SWAPPED = 0xFFFE
 
 TTF_ByteSwappedUNICODE = _bind("TTF_ByteSwappedUNICODE", [c_int])
+
 
 class TTF_Font(Structure):
     pass

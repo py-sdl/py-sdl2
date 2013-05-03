@@ -83,6 +83,7 @@ def run():
     # A storage variable for the function we are currently on, so that we know
     # which function to execute next.
     curindex = 0
+    draw_horizontal_stripes(windowsurface, 300, 500, 200, 400)
 
     # The event loop is nearly the same as we used in colorpalettes.py. If you
     # do not know, what happens here, take a look at colorpalettes.py for a
