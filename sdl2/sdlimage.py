@@ -28,8 +28,9 @@ __all__ = ["SDL_IMAGE_MAJOR_VERSION", "SDL_IMAGE_MINOR_VERSION", \
 dll = _DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],
            os.getenv("PYSDL2_DLL_PATH"))
 
+
 def get_dll_file():
-    """Gets the file name of the loaded SDL2 library."""
+    """Gets the file name of the loaded SDL2_image library."""
     return dll.libfile
 
 _bind = dll.bind_function
@@ -37,6 +38,7 @@ _bind = dll.bind_function
 SDL_IMAGE_MAJOR_VERSION = 2
 SDL_IMAGE_MINOR_VERSION = 0
 SDL_IMAGE_PATCHLEVEL = 0
+
 
 def SDL_IMAGE_VERSION(x):
     x.major = SDL_IMAGE_MAJOR_VERSION

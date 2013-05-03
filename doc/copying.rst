@@ -8,7 +8,7 @@ License
    software, this software can be licensed under the zlib lincese as
    stated below:
 
-   Copyright (C) 2012 Marcus von Appen <marcus@sysfault.org>
+   Copyright (C) 2012-2013 Marcus von Appen <marcus@sysfault.org>
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any damages
