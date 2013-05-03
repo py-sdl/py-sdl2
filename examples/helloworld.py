@@ -36,6 +36,11 @@ def run():
     # after creation. Thus we need to tell it to be shown now.
     window.show()
 
+    # Create a sprite factory that allows us to create visible 2D elements
+    # easily. Depending on what the user chosses, we either create a factory
+    # that supports hardware-accelerated sprites or software-based ones.
+    # The hardware-accelerated SpriteFactory requres a rendering context
+    # (or SDL_Renderer), which will create the underlying textures for us.
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
         renderer = sdl2ext.RenderContext(window)

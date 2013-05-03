@@ -9,11 +9,11 @@ itself is handled by an :class:`UIProcessor` object, which takes care of
 delegating input events, such as mouse movements, clicks and keyboard input,
 to the correct UI element.
 
-Depending on the event type (e.g. moving the mouse cursor), the UIProcessor
-will execute its matching method (e.g. ``mousemotion()``) with only those UI
+Depending on the event type (e.g. pressing a mouse button), the UIProcessor
+will execute its matching method (e.g. ``mousdown()``) with only those UI
 elements, which support the event type.
 
-TODO
+.. image:: images/uiprocessing.png
 
 .. _ui-elem-types:
 
@@ -176,6 +176,13 @@ API
       *kwargs* are the arguments to be passed for the sprite
       construction and can vary depending on the sprite type.
       See :meth:`SpriteFactory.create_sprite()` for further details.
+
+   .. method:: from_color(color : object , size) -> Sprite
+
+      Creates a UI element with a specific color.
+
+      *uitype* must be one of the supported :ref:`ui-elem-types` classifying
+      the type of UI element to be created.
 
    .. method:: from_image(uitype : int, fname : str) -> Sprite
 

@@ -106,6 +106,7 @@ class UIFactory(object):
         elif uitype == TEXTENTRY:
             _compose_textentry(sprite)
         else:
+            del sprite
             raise ValueError("uitype must be a valid UI type identifier")
         return sprite
 
@@ -119,6 +120,7 @@ class UIFactory(object):
         elif uitype == TEXTENTRY:
             _compose_textentry(sprite)
         else:
+            del sprite
             raise ValueError("uitype must be a valid UI type identifier")
         return sprite
 
@@ -132,6 +134,21 @@ class UIFactory(object):
         elif uitype == TEXTENTRY:
             _compose_textentry(sprite)
         else:
+            del sprite
+            raise ValueError("uitype must be a valid UI type identifier")
+        return sprite
+
+    def from_color(self, uitype, color, size):
+        """Creates a new UI element using a certain color."""
+        sprite = self.spritefactory.from_color(color, size)
+        if uitype == BUTTON:
+            _compose_button(sprite)
+        elif uitype == CHECKBUTTON:
+            _compose_checkbutton(sprite)
+        elif uitype == TEXTENTRY:
+            _compose_textentry(sprite)
+        else:
+            del sprite
             raise ValueError("uitype must be a valid UI type identifier")
         return sprite
 
