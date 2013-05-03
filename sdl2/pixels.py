@@ -245,7 +245,7 @@ class SDL_Color(Structure):
     def __eq__(self, color):
         return self.r == color.r and self.g == color.g and \
             self.b == color.b and self.a == color.a
-    
+
     def __ne__(self, color):
         return self.r != color.r or self.g != color.g or self.b != color.b or \
             self.a != color.a
