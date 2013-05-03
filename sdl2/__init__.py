@@ -61,5 +61,5 @@ SDL_QuitSubSystem = _bind("SDL_QuitSubSystem", [Uint32])
 SDL_WasInit = _bind("SDL_WasInit", [Uint32], Uint32)
 SDL_Quit = _bind("SDL_Quit")
 
-__version__ = "0.2.0"
-version_info = (0, 2, 0, "")
+__version__ = "0.3.0"
+version_info = (0, 3, 0, "")
