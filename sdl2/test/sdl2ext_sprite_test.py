@@ -110,13 +110,13 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         #self.assertRaises(ValueError, factory.create_software_sprite, (10,-5))
         self.assertRaises(TypeError, factory.create_software_sprite, size=None)
         self.assertRaises(sdl2ext.SDLError, factory.create_software_sprite,
-                          bpp= -1)
+                          size=(10, 10), bpp=-1)
         self.assertRaises(TypeError, factory.create_software_sprite, masks=5)
         self.assertRaises((ArgumentError, TypeError),
-                          factory.create_software_sprite,
+                          factory.create_software_sprite, size=(10, 10),
                           masks=(None, None, None, None))
         self.assertRaises((ArgumentError, TypeError),
-                          factory.create_software_sprite,
+                          factory.create_software_sprite, size=(10, 10),
                           masks=("Test", 1, 2, 3))
 
     def test_SpriteFactory_create_texture_sprite(self):

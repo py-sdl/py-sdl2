@@ -9,7 +9,7 @@ Released on 2013-XX-XX.
 * new :mod:`sdl2.sdlgfx` module, which provides access to the SDL2_gfx library
 * fixed color argument bugs in :class:`sdl2.ext.RenderContext` methods
 * new :mod:`sdl2.ext.UIFactory.from_color` method; it creates UI-supportive
-  sprite from a color
+  sprites from a color
 
 0.2.0
 -----
