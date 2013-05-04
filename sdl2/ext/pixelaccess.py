@@ -2,7 +2,8 @@
 import ctypes
 from .compat import UnsupportedError, experimental
 from .array import MemoryView
-from .. import surface
+from ..surface import SDL_MUSTLOCK, SDL_LockSurface, SDL_UnlockSurface, \
+    SDL_Surface
 from ..stdinc import Uint8
 from .sprite import SoftwareSprite
 from .draw import prepare_color
@@ -34,13 +35,13 @@ class PixelView(MemoryView):
             self._surface = source.surface
             # keep a reference, so the Sprite's not GC'd
             self._sprite = source
-        elif isinstance(source, surface.SDL_Surface):
+        elif isinstance(source, SDL_Surface):
             self._surface = source
         else:
             raise TypeError("source must be a Sprite or SDL_Surface")
 
-        if surface.SDL_MUSTLOCK(self._surface):
-            surface.SDL_LockSurface(self._surface)
+        if SDL_MUSTLOCK(self._surface):
+            SDL_LockSurface(self._surface)
 
         pxbuf = ctypes.cast(self._surface.pixels, ctypes.POINTER(Uint8))
         itemsize = self._surface.format.contents.BytesPerPixel
@@ -83,8 +84,8 @@ class PixelView(MemoryView):
 
     def __del__(self):
         if self._surface is not None:
-            if surface.SDL_MUSTLOCK(self._surface):
-                surface.SDL_UnlockSurface(self._surface)
+            if SDL_MUSTLOCK(self._surface):
+                SDL_UnlockSurface(self._surface)
 
 _HASNUMPY = True
 try:
@@ -112,8 +113,8 @@ try:
 
         def __del__(self):
             if self._surface:
-                if surface.SDL_MUSTLOCK(self._surface):
-                    surface.SDL_UnlockSurface(self._surface)
+                if SDL_MUSTLOCK(self._surface):
+                    SDL_UnlockSurface(self._surface)
 
 except ImportError:
     _HASNUMPY = False
@@ -126,7 +127,7 @@ def pixels2d(source):
         raise UnsupportedError(pixels2d, "numpy module could not be loaded")
     if isinstance(source, SoftwareSprite):
         psurface = source.surface
-    elif isinstance(source, surface.SDL_Surface):
+    elif isinstance(source, SDL_Surface):
         psurface = source
     else:
         raise TypeError("source must be a Sprite or SDL_Surface")
@@ -144,8 +145,8 @@ def pixels2d(source):
               4: numpy.uint32
               }
 
-    if surface.SDL_MUSTLOCK(psurface):
-        surface.SDL_LockSurface(psurface)
+    if SDL_MUSTLOCK(psurface):
+        SDL_LockSurface(psurface)
     pxbuf = ctypes.cast(psurface.pixels,
                         ctypes.POINTER(ctypes.c_ubyte * srcsize)).contents
     return SurfaceArray(shape, dtypes[bpp], pxbuf, 0, strides, "C", source,
@@ -160,7 +161,7 @@ def pixels3d(source):
         raise UnsupportedError(pixels3d, "numpy module could not be loaded")
     if isinstance(source, SoftwareSprite):
         psurface = source.surface
-    elif isinstance(source, surface.SDL_Surface):
+    elif isinstance(source, SDL_Surface):
         psurface = source
     else:
         raise TypeError("source must be a Sprite or SDL_Surface")
@@ -172,8 +173,8 @@ def pixels3d(source):
     srcsize = psurface.h * psurface.pitch
     shape = psurface.h, psurface.w, bpp
 
-    if surface.SDL_MUSTLOCK(psurface):
-        surface.SDL_LockSurface(psurface)
+    if SDL_MUSTLOCK(psurface):
+        SDL_LockSurface(psurface)
     pxbuf = ctypes.cast(psurface.pixels,
                         ctypes.POINTER(ctypes.c_ubyte * srcsize)).contents
     return SurfaceArray(shape, numpy.uint8, pxbuf, 0, strides, "C", source,
