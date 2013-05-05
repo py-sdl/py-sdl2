@@ -9,7 +9,7 @@
 
 usage()
 {
-    echo "usage: `basename $0` [-f|-r|-s] file ..."
+    echo "usage: `basename $0` [-f|-r|-s] module ..."
 }
 
 while getopts frs arg; do
@@ -36,5 +36,5 @@ if [ $# -eq 0 ]; then
 fi
 
 for f in $@; do
-    $VALGRIND $DEFARGS $PYDEBUG -B $f
+    $VALGRIND $DEFARGS $PYDEBUG -B -m $f
 done

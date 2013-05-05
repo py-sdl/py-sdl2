@@ -28,6 +28,7 @@ __all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
            "SDL_RenderTargetSupported", "SDL_SetRenderTarget",
            "SDL_GetRenderTarget", "SDL_RenderSetLogicalSize",
            "SDL_RenderGetLogicalSize", "SDL_RenderSetViewport",
+           "SDL_RenderGetClipRect", "SDL_RenderSetClipRect",
            "SDL_RenderGetViewport", "SDL_RenderSetScale", "SDL_RenderGetScale",
            "SDL_SetRenderDrawColor", "SDL_GetRenderDrawColor",
            "SDL_SetRenderDrawBlendMode", "SDL_GetRenderDrawBlendMode",
@@ -99,6 +100,8 @@ SDL_RenderSetLogicalSize = _bind("SDL_RenderSetLogicalSize", [POINTER(SDL_Render
 SDL_RenderGetLogicalSize = _bind("SDL_RenderGetLogicalSize", [POINTER(SDL_Renderer), POINTER(c_int), POINTER(c_int)])
 SDL_RenderSetViewport = _bind("SDL_RenderSetViewport", [POINTER(SDL_Renderer), POINTER(SDL_Rect)], c_int)
 SDL_RenderGetViewport = _bind("SDL_RenderGetViewport", [POINTER(SDL_Renderer), POINTER(SDL_Rect)])
+SDL_RenderGetClipRect = _bind("SDL_RenderGetClipRect", [POINTER(SDL_Renderer), POINTER(SDL_Rect)])
+SDL_RenderSetClipRect = _bind("SDL_RenderSetClipRect", [POINTER(SDL_Renderer), POINTER(SDL_Rect)], c_int)
 SDL_RenderSetScale = _bind("SDL_RenderSetScale", [POINTER(SDL_Renderer), c_float, c_float], c_int)
 SDL_RenderGetScale = _bind("SDL_RenderGetScale", [POINTER(SDL_Renderer), POINTER(c_float), POINTER(c_float)])
 SDL_SetRenderDrawColor = _bind("SDL_SetRenderDrawColor", [POINTER(SDL_Renderer), Uint8, Uint8, Uint8, Uint8], c_int)
