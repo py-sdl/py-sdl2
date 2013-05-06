@@ -6,7 +6,7 @@ import random
 # not be loaded. In that case, just print the error and exit with a
 # proper error code.
 try:
-    from sdl2 import SDL_QUIT, SDL_MOUSEMOTION, SDL_FlushEvent, \
+    from sdl2 import SDL_QUIT, SDL_MOUSEMOTION, SDL_FlushEvent, SDL_Delay, \
         SDL_WarpMouseInWindow, SDL_ShowCursor, SDL_Rect, SDL_RenderCopy
     import sdl2.ext as sdl2ext
 except ImportError:
@@ -24,7 +24,7 @@ RESOURCES = sdl2ext.Resources(__file__, "resources")
 
 # The Particle class offered by sdl2.ext.particles only contains the life
 # time information of the particle, which will be decreased by one each
-# time the particle engine processes it as well as a x- and
+# time the particle engine processes it, as well as a x- and
 # y-coordinate. This is not enough for us, since we want them to have a
 # velocity as well to make moving them around easier. Also, each
 # particle can look different for us, so we also store some information
@@ -82,7 +82,7 @@ def updateparticles(world, particles):
         p.y += p.vy
 
 
-# A callback function for deleting particles. It is neede by the
+# A callback function for deleting particles. It is needed by the
 # ParticleEngine and the requirements are explained below.
 def deleteparticles(world, deadones):
     # As written in the comment for the CParticle class, we will use the
@@ -92,9 +92,8 @@ def deleteparticles(world, deadones):
 
 
 # Create a simple rendering system for particles. This is somewhat
-# similar to the TextureSprinteRenderer from mule.video. Since we
-# operate on particles rather than sprites, we need to provide our own
-# rendering logic.
+# similar to the TextureSprinteRenderer from sdl2.ext. Since we operate on
+# particles rather than sprites, we need to provide our own rendering logic.
 class ParticleRenderer(sdl2ext.System):
     def __init__(self, renderer, images):
         # Create a new particle renderer. The surface argument will be
@@ -144,6 +143,7 @@ class ParticleRenderer(sdl2ext.System):
             # Render (or blit) the particle by using the designated image.
             dorender(sdlrenderer, img.texture, None, r)
         self.renderer.present()
+
 
 def run():
     # Create the environment, in which our particles will exist.
@@ -238,6 +238,7 @@ def run():
                 SDL_FlushEvent(SDL_MOUSEMOTION)
                 break
         world.process()
+        SDL_Delay(1)
 
     sdl2ext.quit()
     return 0
