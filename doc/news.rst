@@ -4,12 +4,16 @@ This describes the latest changes between the PySDL2 releases.
 
 0.3.0
 -----
-Released on 2013-XX-XX.
+Released on 2013-05-07.
 
 * new :mod:`sdl2.sdlgfx` module, which provides access to the SDL2_gfx library
 * new :mod:`sdl2.ext.UIFactory.from_color` method; it creates UI-supportive
   sprites from a color
 * fixed color argument bugs in :class:`sdl2.ext.RenderContext` methods
+* fixed a module namespace issues in :mod:`sdl2.ext.pixelaccess`
+* :mod:`sdl2.ext.SpriteFactory` methods do not use a default ``size`` argument
+  anymore; it has to provided by the caller
+
 
 0.2.0
 -----
