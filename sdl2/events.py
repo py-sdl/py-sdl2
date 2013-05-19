@@ -7,7 +7,10 @@ from .joystick import SDL_JoystickID
 from .touch import SDL_FingerID, SDL_TouchID
 from .gesture import SDL_GestureID
 
-__all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_WINDOWEVENT", "SDL_SYSWMEVENT",
+__all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING",
+           "SDL_APP_LOWMEMORY", "SDL_APP_WILLENTERBACKGROUND",
+           "SDL_APP_DIDENTERBACKGROUND", "SDL_APP_WILLENTERFOREGROUND",
+           "SDL_APP_DIDENTERFOREGROUND", "SDL_WINDOWEVENT", "SDL_SYSWMEVENT",
            "SDL_KEYDOWN", "SDL_KEYUP", "SDL_TEXTEDITING", "SDL_TEXTINPUT",
            "SDL_MOUSEMOTION", "SDL_MOUSEBUTTONDOWN", "SDL_MOUSEBUTTONUP",
            "SDL_MOUSEWHEEL", "SDL_JOYAXISMOTION", "SDL_JOYBALLMOTION",
@@ -43,6 +46,12 @@ __all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_WINDOWEVENT", "SDL_SYSWMEVENT",
 
 SDL_FIRSTEVENT = 0
 SDL_QUIT = 0x100
+SDL_APP_TERMINATING = 0x101
+SDL_APP_LOWMEMORY = 0x102
+SDL_APP_WILLENTERBACKGROUND = 0x103
+SDL_APP_DIDENTERBACKGROUND = 0x104
+SDL_APP_WILLENTERFOREGROUND = 0x105
+SDL_APP_DIDENTERFOREGROUND = 0x106
 SDL_WINDOWEVENT = 0x200
 SDL_SYSWMEVENT = 0x201
 SDL_KEYDOWN = 0x300
@@ -280,6 +289,11 @@ class SDL_DropEvent(Structure):
                 ]
 
 class SDL_QuitEvent(Structure):
+    _fields_ = [("type", Uint32),
+                ("timestamp", Uint32)
+                ]
+
+class SDL_OSEvent(Structure):
     _fields_ = [("type", Uint32),
                 ("timestamp", Uint32)
                 ]
