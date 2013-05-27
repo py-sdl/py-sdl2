@@ -2,6 +2,12 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.4.0
+-----
+Released on 2013-XX-XX.
+
+* issue #1: fixed libc loading for cases where libc.so is a ld script
+
 0.3.0
 -----
 Released on 2013-05-07.
