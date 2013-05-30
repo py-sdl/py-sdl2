@@ -655,6 +655,9 @@ seems to fail on creating the second renderer of the window, if any""")
     def test_SDL_RenderGetSetClipRect(self):
         pass
 
+    @unittest.skip("not implemented")
+    def test_SDL_GetRendererOutputSize(self):
+        pass
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

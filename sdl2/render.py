@@ -81,6 +81,7 @@ SDL_CreateRenderer = _bind("SDL_CreateRenderer", [POINTER(SDL_Window), c_int, Ui
 SDL_CreateSoftwareRenderer = _bind("SDL_CreateSoftwareRenderer", [POINTER(SDL_Surface)], POINTER(SDL_Renderer))
 SDL_GetRenderer = _bind("SDL_GetRenderer", [POINTER(SDL_Window)], POINTER(SDL_Renderer))
 SDL_GetRendererInfo = _bind("SDL_GetRendererInfo", [POINTER(SDL_Renderer), POINTER(SDL_RendererInfo)], c_int)
+SDL_GetRendererOutputSize = _bind("SDL_GetRendererOutputSize", [POINTER(SDL_Renderer), POINTER(c_int), POINTER(c_int)], c_int)
 SDL_CreateTexture = _bind("SDL_CreateTexture", [POINTER(SDL_Renderer), Uint32, c_int, c_int, c_int], POINTER(SDL_Texture))
 SDL_CreateTextureFromSurface = _bind("SDL_CreateTextureFromSurface", [POINTER(SDL_Renderer), POINTER(SDL_Surface)], POINTER(SDL_Texture))
 SDL_QueryTexture = _bind("SDL_QueryTexture", [POINTER(SDL_Texture), POINTER(Uint32), POINTER(c_int), POINTER(c_int), POINTER(c_int)], c_int)
