@@ -2,15 +2,6 @@
 from .dll import get_dll_file, _bind
 from ctypes import c_int as _cint
 
-
-#__all__ = ["SDL_INIT_TIMER", "SDL_INIT_AUDIO", "SDL_INIT_VIDEO",
-#           "SDL_INIT_JOYSTICK", "SDL_INIT_HAPTIC", "SDL_INIT_GAMECONTROLLER",
-#           "SDL_INIT_NOPARACHUTE", "SDL_INIT_EVERYTHING", "SDL_Init",
-#           "SDL_InitSubSystem", "SDL_QuitSubSystem", "SDL_WasInit", "SDL_Quit",
-#           "version_info"
-#           ]
-
-
 from .audio import *
 from .blendmode import *
 from .clipboard import *
@@ -61,5 +52,5 @@ SDL_QuitSubSystem = _bind("SDL_QuitSubSystem", [Uint32])
 SDL_WasInit = _bind("SDL_WasInit", [Uint32], Uint32)
 SDL_Quit = _bind("SDL_Quit")
 
-__version__ = "0.3.0"
-version_info = (0, 3, 0, "")
+__version__ = "0.4.0"
+version_info = (0, 4, 0, "")

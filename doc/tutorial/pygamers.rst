@@ -23,7 +23,6 @@ wrapping 3rd party libraries with CPython API interfaces. PySDL2 in
 contrast is written in pure Python, using :mod:`ctypes` to interface
 with the C interfaces of 3rd party libraries.
 
-
 API differences
 ---------------
 
@@ -32,18 +31,16 @@ pygame
 ======================= =================================================
 pygame                  sdl2
 ======================= =================================================
-``init()``              :func:`sdl2.init()` where appropriate
-``quit()``              :func:`sdl2.quit()` where appropriate
+``init()``              :func:`sdl2.SDL_init()` where appropriate
+``quit()``              :func:`sdl2.SDL_quit()` where appropriate
 ``error``               No equivalent
-``get_error()``         :func:`sdl2.get_error()`
-``set_error()``         :func:`sdl2.set_error()`
-``get_sdl_version()``   :func:`sdl2.version.get_version()`
-``get_sdl_byteorder()`` :data:`sdl2.endian.SDL_BYTEORDER`
+``get_error()``         :func:`sdl2.SDL_GetError()`
+``set_error()``         :func:`sdl2.SDL_SetError()`
+``get_sdl_version()``   :func:`sdl2.SDL_GetVersion()`
+``get_sdl_byteorder()`` :data:`sdl2.SDL_BYTEORDER`
 ``register_quit()``     No equivalent planned
-``encode_string()``     Encoding and decoding strings is done implicitly,
-                        where necessary
-``encode_file_path()``  Encoding and decoding strings is done implicitly,
-                        where necessary
+``encode_string()``     No equivalent planned
+``encode_file_path()``  No equivalent planned
 ======================= =================================================
 
 pygame.cdrom
@@ -68,64 +65,53 @@ pygame.display          sdl2
 ``init()``              :func:`sdl2.ext.init()`
 ``quit()``              :func:`sdl2.ext.quit()`
 ``get_init()``          :func:`sdl2.SDL_WasInit()`
-``set_mode()``          :class:`mule.video.window.Window`
-``get_surface()``       :meth:`mule.video.window.Window.get_surface()`
-``flip()``              :meth:`mule.video.window.Window.refresh()`
-``update()``            :meth:`mule.sdl2.video.update_window_surface_rects()`
-``get_driver()``        :func:`mule.sdl2.video.get_current_video_driver()`
-``Info``                No equivalent yet
-``get_wm_info()``       :func:`mule.sdl2.syswm.get_window_wm_info()`
-``list_modes()``        :func:`mule.sdl2.video.get_num_display_modes()`
-``mode_ok()``           :func:`mule.sdl2.video.get_closest_display_mode()`
-``gl_get_attribute()``  :func:`mule.sdl2.video.gl_get_attribute()`
-``gl_set_attribute()``  :func:`mule.sdl2.video.gl_set_attribute()`
-``get_active()``        No equivalent yet
-``iconify()``           :meth:`mule.video.window.Window.minimize()`
-``toggle_fullscreen()`` :func:`mule.sdl2.video.set_window_fullscreen()`
-``set_gamma()``         :func:`mule.sdl2.video.set_window_brightness()`
-``set_gamma_ramp()``    :func:`mule.sdl2.video.set_window_gamma_ramp()`
-``set_icon()``          :func:`mule.sdl2.video.set_window_icon()`
-``set_caption()``       :attr:`mule.video.window.Window.title`
-``get_caption()``       :attr:`mule.video.window.Window.title`
-``set_palette()``       :func:`mule.sdl2.surface.set_surface_palette()`
+``set_mode()``          :class:`sdl2.ext.Window`
+``get_surface()``       :meth:`sdl2.ext.Window.get_surface()`
+``flip()``              :meth:`sdl2.ext.Window.refresh()`
+``update()``            :meth:`sdl2.ext.Window.refresh()`
+``get_driver()``        :func:`sdl2.SDL_GetCurrentVideoDriver()`
+``Info``                No equivalent
+``get_wm_info()``       :func:`sdl2.SDL_GetWindowWMInfo()`
+``list_modes()``        :func:`sdl2.SDL_GetNumDisplayModes()`
+``mode_ok()``           :func:`sdl2.SDL_GetClosestDisplayMode()`
+``gl_get_attribute()``  :func:`sdl2.SDL_GL_GetAttribute()`
+``gl_set_attribute()``  :func:`sdl2.SDL_GL_SetAttribute()`
+``get_active()``        No equivalent
+``iconify()``           :meth:`sdl2.ext.Window.minimize()`
+``toggle_fullscreen()`` :func:`sdl2.SDL_SetWindowFullscreen()`
+``set_gamma()``         :func:`sdl2.SDL_SetWindowBrightness()`
+``set_gamma_ramp()``    :func:`sdl2.SDL_SetWindowGammaRamp.()`
+``set_icon()``          :func:`sdl2.SDL_SetWindowIcon()`
+``set_caption()``       :attr:`sdl2.ext.Window.title`
+``get_caption()``       :attr:`sdl2.ext.Window.title`
+``set_palette()``       :func:`sdl2.SDL_SetSurfacePalette()`
 ======================= =================================================
 
 pygame.draw
 ^^^^^^^^^^^
-============== =================================================
-pygame.draw    mule
-============== =================================================
-``rect()``     :func:`mule.sdl2.render.render_draw_rect()`,
-               :func:`mule.video.draw.fill()`
-``polygon()``  No equivalent yet
-``circle()``   No equivalent yet
-``ellipse()``  No equivalent yet
-``arc()``      No equivalent yet
-``lines()``    :func:`mule.sdl2.render.render_draw_lines()`,
-               :func:`mule.video.draw.line()`
-``aaline()``   No equivalent yet
-``aalines()``  No equivalent yet
-============== =================================================
+Drawing primitives can be accessed through either the
+``sdl2.SDL_RenderDraw*()`` and ``sdl2.SDL_RenderFill*()`` functions or
+the more powerful :mod:`sdl2.sdlgfx` module,
 
 pygame.event
 ^^^^^^^^^^^^
 ================= =================================================
 pygame.event      mule
 ================= =================================================
-``pump()``        :func:`mule.sdl2.events.pump_events()`
-``get()``         :func:`mule.sdl2.events.poll_event()`
-``poll()``        :func:`mule.sdl2.events.poll_event()`
-``wait()``        :func:`mule.sdl2.events.wait_event()`
-``peek()``        :func:`mule.sdl2.events.peep_events()`
-``clear()``       :func:`mule.sdl2.events.flush_events()`
-``event_name()``  No equivalent planned
-``set_blocked()`` :func:`mule.sdl2.events.event_state()`
-``get_blocked()`` :func:`mule.sdl2.events.event_state()`
-``set_allowed()`` :func:`mule.sdl2.events.event_state()`
-``set_grab()``    :func:`mule.sdl2.video.set_window_grab()`
-``get_grab()``    :func:`mule.sdl2.video.get_window_grab()`
-``post()``        :func:`mule.sdl2.events.peep_events()`
-``Event``         :class:`mule.sdl2.events.SDL_Event`
+``pump()``        :func:`sdl2.SDL_PumpEvents()`
+``get()``         :func:`sdl2.SDL_PollEvent()` or :func:`sdl2.ext.get_events()`
+``poll()``        :func:`sdl2.SDL_PollEvent()`
+``wait()``        :func:`sdl2.SDL_WaitEvent()`
+``peek()``        :func:`sdl2.SDL_PeepEvents()`
+``clear()``       :func:`sdl2.SDL_FlushEvents()`
+``event_name()``  No equivalent
+``set_blocked()`` :func:`sdl2.SDL_EventState()`
+``get_blocked()`` :func:`sdl2.SDL_EventState()`
+``set_allowed()`` :func:`sdl2.SDL_EventState()`
+``set_grab()``    :func:`sdl2.SDL_SetWindowGrab()`
+``get_grab()``    :func:`sdl2.SDL_GetWindowGrab()`
+``post()``        :func:`sdl2.SDL_PeepEvents()`
+``Event``         :class:`sdl2.SDL_Event`
 ================= =================================================
 
 pygame.font
@@ -145,11 +131,11 @@ pygame.font            mule
 
 pygame.freetype
 ^^^^^^^^^^^^^^^
-mule does not feature direct FreeType support at the moment.
+PySDL2 does not feature direct FreeType support.
 
 pygame.gfxdraw
 ^^^^^^^^^^^^^^
-mule does not feature SDL_gfx support at the moment.
+PySDL2 offers SDL_gfx support through the :mod:`sdl2.sdlgfx` module.
 
 pygame.image
 ^^^^^^^^^^^^
