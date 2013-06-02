@@ -4,7 +4,7 @@
 sd2.sdlttf - SDL2_ttf library wrapper
 =====================================
 The :mod:`sdl2.sdlttf` module is a :mod:`ctypes`-based wrapper
-around the SDL2_image library. It wraps nearly all publicly accessible
+around the SDL2_ttf library. It wraps nearly all publicly accessible
 structures and functions of the SDL2_ttf library to be accessible from
 Python code.
 

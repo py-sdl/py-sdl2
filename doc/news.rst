@@ -6,6 +6,8 @@ This describes the latest changes between the PySDL2 releases.
 -----
 Released on 2013-XX-XX.
 
+* new :mod:`sdl2.sdlmixer` module, which provides access to the
+  SDL2_mixer library
 * issue #1: fixed libc loading for cases where libc.so is a ld script
 
 0.3.0
@@ -19,7 +21,6 @@ Released on 2013-05-07.
 * fixed a module namespace issues in :mod:`sdl2.ext.pixelaccess`
 * :mod:`sdl2.ext.SpriteFactory` methods do not use a default ``size`` argument
   anymore; it has to provided by the caller
-
 
 0.2.0
 -----
