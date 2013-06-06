@@ -12,15 +12,15 @@ __all__ = ["SDL_IMAGE_MAJOR_VERSION", "SDL_IMAGE_MINOR_VERSION", \
            "IMG_InitFlags", "IMG_INIT_JPG", "IMG_INIT_PNG", "IMG_INIT_TIF",
            "IMG_INIT_WEBP", "IMG_Init", "IMG_Quit", "IMG_LoadTyped_RW",
            "IMG_Load", "IMG_Load_RW", "IMG_LoadTexture", "IMG_LoadTexture_RW",
-           "IMG_LoadTextureTyped_RW", "IMG_InvertAlpha", "IMG_isICO",
-           "IMG_isCUR", "IMG_isBMP", "IMG_isGIF", "IMG_isJPG", "IMG_isLBM",
-           "IMG_isPNG", "IMG_isPNM", "IMG_isPCX", "IMG_isTIF", "IMG_isXCF",
-           "IMG_isXV", "IMG_isWEBP", "IMG_LoadBMP_RW", "IMG_LoadCUR_RW",
-           "IMG_LoadCUR_RW", "IMG_LoadGIF_RW", "IMG_LoadICO_RW",
-           "IMG_LoadJPG_RW", "IMG_LoadLBM_RW", "IMG_LoadPCX_RW",
-           "IMG_LoadPNM_RW", "IMG_LoadPNG_RW", "IMG_LoadTGA_RW",
-           "IMG_LoadTIF_RW", "IMG_LoadXCF_RW", "IMG_LoadWEBP_RW",
-           "IMG_LoadXPM_RW", "IMG_LoadXV_RW", "IMG_ReadXPMFromArray",
+           "IMG_LoadTextureTyped_RW", "IMG_isICO", "IMG_isCUR", "IMG_isBMP",
+           "IMG_isGIF", "IMG_isJPG", "IMG_isLBM", "IMG_isPNG", "IMG_isPNM",
+           "IMG_isPCX", "IMG_isTIF", "IMG_isXCF", "IMG_isXV", "IMG_isWEBP",
+           "IMG_LoadBMP_RW", "IMG_LoadCUR_RW", "IMG_LoadCUR_RW",
+           "IMG_LoadGIF_RW", "IMG_LoadICO_RW", "IMG_LoadJPG_RW",
+           "IMG_LoadLBM_RW", "IMG_LoadPCX_RW", "IMG_LoadPNM_RW",
+           "IMG_LoadPNG_RW", "IMG_LoadTGA_RW", "IMG_LoadTIF_RW",
+           "IMG_LoadXCF_RW", "IMG_LoadWEBP_RW", "IMG_LoadXPM_RW",
+           "IMG_LoadXV_RW", "IMG_ReadXPMFromArray",
            "IMG_GetError", "IMG_SetError",
            "get_dll_file"
            ]
@@ -57,11 +57,10 @@ IMG_Init = _bind("IMG_Init", [c_int], c_int)
 IMG_Quit = _bind("IMG_Quit")
 IMG_LoadTyped_RW = _bind("IMG_LoadTyped_RW", [POINTER(SDL_RWops), c_int, c_char_p], POINTER(SDL_Surface))
 IMG_Load = _bind("IMG_Load", [c_char_p], POINTER(SDL_Surface))
-IMG_Load_RW = _bind("IMG_Load_RW", [POINTER(SDL_RWops), c_int], POINTER(SDL_Surface)) 
+IMG_Load_RW = _bind("IMG_Load_RW", [POINTER(SDL_RWops), c_int], POINTER(SDL_Surface))
 IMG_LoadTexture = _bind("IMG_LoadTexture", [POINTER(SDL_Renderer), c_char_p], POINTER(SDL_Texture))
 IMG_LoadTexture_RW = _bind("IMG_LoadTexture_RW", [POINTER(SDL_Renderer), POINTER(SDL_RWops), c_int], POINTER(SDL_Texture))
 IMG_LoadTextureTyped_RW = _bind("IMG_LoadTextureTyped_RW", [POINTER(SDL_Renderer), POINTER(SDL_RWops), c_int, c_char_p], POINTER(SDL_Texture))
-IMG_InvertAlpha = _bind("IMG_InvertAlpha", [c_int], c_int)
 
 IMG_isICO = _bind("IMG_isICO", [POINTER(SDL_RWops)], c_int)
 IMG_isCUR = _bind("IMG_isCUR", [POINTER(SDL_RWops)], c_int)
@@ -95,5 +94,9 @@ IMG_LoadXV_RW = _bind("IMG_LoadXV_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface
 IMG_LoadWEBP_RW = _bind("IMG_LoadWEBP_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 
 IMG_ReadXPMFromArray = _bind("IMG_ReadXPMFromArray", [POINTER(c_char_p)], POINTER(SDL_Surface))
+
+IMG_SavePNG = _bind("IMG_SavePNG", [POINTER(SDL_Surface), c_char_p], c_int)
+IMG_SavePNG_RW = _bind("IMG_SavePNG_RW", [POINTER(SDL_Surface), POINTER(SDL_RWops), c_int], c_int)
+
 IMG_SetError = SDL_SetError
 IMG_GetError = SDL_GetError
