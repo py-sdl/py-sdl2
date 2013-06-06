@@ -478,6 +478,14 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
+    @unittest.skip("not implemented")
+    def test_IMG_SavePNG(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_IMG_SavePNG_RW(self):
+        pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
