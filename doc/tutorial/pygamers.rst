@@ -12,9 +12,6 @@ within PySDL2.
 
    More details, examples, etc.
 
-Conceptual differences
-----------------------
-TODO
 
 Technical differences
 ---------------------
@@ -46,7 +43,7 @@ pygame                  sdl2
 pygame.cdrom
 ^^^^^^^^^^^^
 PySDL2 does not feature any CD-ROM related interfaces. They were
-removed in SDL2 and mule does not provide its own facilities.
+removed in SDL2 and PySDL2 does not provide its own facilities.
 
 pygame.Color
 ^^^^^^^^^^^^
@@ -96,7 +93,7 @@ the more powerful :mod:`sdl2.sdlgfx` module,
 pygame.event
 ^^^^^^^^^^^^
 ================= =================================================
-pygame.event      mule
+pygame.event      sdl2
 ================= =================================================
 ``pump()``        :func:`sdl2.SDL_PumpEvents()`
 ``get()``         :func:`sdl2.SDL_PollEvent()` or :func:`sdl2.ext.get_events()`
@@ -117,16 +114,16 @@ pygame.event      mule
 pygame.font
 ^^^^^^^^^^^
 ====================== =================================================
-pygame.font            mule
+pygame.font            sdl2
 ====================== =================================================
-``init()``             :func:`mule.sdlttf.init()`
-``quit()``             :func:`mule.sdlttf.quit()`
-``get_init()``         No equivalent planned
-``get_default_font()`` No equivalent planned
-``get_fonts()``        :func:`mule.font.get_fonts()`
-``match_font()``       :func:`mule.font.get_font()`
-``SysFont``            No equivalent planned
-``Font``               No equivalent yet
+``init()``             :func:`sdl2.sdlttf.TTF_Init()`
+``quit()``             :func:`sdl2.sdlttf.TTF_Quit()`
+``get_init()``         :func:`sdl2.sdlttf.TTF_WasInit()`
+``get_default_font()`` No equivalent planned [#f1]_
+``get_fonts()``        No equivalent planned [#f1]_
+``match_font()``       No equivalent planned [#f1]_
+``SysFont``            No equivalent planned [#f1]_
+``Font``               No equivalent planned [#f1]_
 ====================== =================================================
 
 pygame.freetype
@@ -140,12 +137,13 @@ PySDL2 offers SDL_gfx support through the :mod:`sdl2.sdlgfx` module.
 pygame.image
 ^^^^^^^^^^^^
 ================== =================================================
-pygame.image       mule
+pygame.image       sdl2
 ================== =================================================
-``load()``         :func:`mule.sdlimage.load()`,
-                   :func:`mule.video.image.load_image()`
-``save()``         :func:`mule.sdl2.surface.save_bmp()`
-``get_extended()`` :func:`mule.sdlimage.is_bmp()` et al.
+``load()``         :func:`sdl2.sdlimage.IMG_Load()`,
+                   :func:`sdl2.ext.load_image()`
+``save()``         :func:`sdl2.surface.SDL_SaveBMP()`,
+                   :func:`sdl2.sdlimage.IMG_SavePNG()`
+``get_extended()`` :func:`sdl2.sdlimage.IMG_isBMP()` et al.
 ``tostring()``     No equivalent yet
 ``fromstring()``   No equivalent yet
 ``frombuffer()``   No equivalent yet
@@ -154,222 +152,218 @@ pygame.image       mule
 pygame.joystick
 ^^^^^^^^^^^^^^^
 ================== ========================================================
-pygame.joystick    mule
+pygame.joystick    sdl2
 ================== ========================================================
-``init()``         :func:`mule.sdl2.init()`
-``quit()``         :func:`mule.sdl2.quit()`
-``get_init()``     :func:`mule.sdl2.was_init()`
-``get_count()``    :func:`mule.sdl2.joystick.joystick_num_joysticks()`
-``Joystick()``     :class:`mule.sdl2.joystick.SDL_Joystick` and related
+``init()``         :func:`sdl2.SDL_Init()`
+``quit()``         :func:`sdl2.SDL_Quit()`
+``get_init()``     :func:`sdl2.SDL_WasInit()`
+``get_count()``    :func:`sdl2.joystick.SDL_NumJoysticks()`
+``Joystick()``     :class:`sdl2.joystick.SDL_Joystick` and related
                    functions
 ================== ========================================================
 
 pygame.key
 ^^^^^^^^^^
 ================== ========================================================
-pygame.key         mule
+pygame.key         sdl2
 ================== ========================================================
-``get_focused()``  :func:`mule.sdl2.keyboard.get_keyboard_focus()`
-``get_pressed()``  :func:`mule.sdl2.keyboard.get_keyboard_state()`
-``get_mods()``     :func:`mule.sdl2.keyboard.get_mod_state()`
-``set_mods()``     :func:`mule.sdl2.keyboard.set_mod_state()`
+``get_focused()``  :func:`sdl2.keyboard.SDL_GetKeyboardFocus()`
+``get_pressed()``  :func:`sdl2.keyboard.SDL_GetKeyboardState()`
+``get_mods()``     :func:`sdl2.keyboard.SDL_GetModState()`
+``set_mods()``     :func:`sdl2.keyboard.SDL_SetModState()`
 ``set_repeat()``   Based on the OS/WM settings, no equivalent
 ``get_repeat()``   Based on the OS/WM settings, no equivalent
-``name()``         :func:`mule.sdl2.keyboard.get_key_name()`
+``name()``         :func:`sdl2.keyboard.SDL_GetKeyName()`
 ================== ========================================================
 
 pygame.locals
 ^^^^^^^^^^^^^
-Constants in mule are spread across the different packages and
+Constants in PySDL2 are spread across the different packages and
 modules, depending on where they originate from.
 
 pygame.mixer
 ^^^^^^^^^^^^
-SDL_mixer is currently not supported by mule. The focus is set on
-OpenAL usage through :mod:`mule.openal` and :mod:`mule.audio`.
-
 ====================== ====================================================
-pygame.mixer           mule
+pygame.mixer           sdl2
 ====================== ====================================================
-``init()``             No necessity to explicitly initialize
-``quit()``             No necessity to explicitly quit
-``get_init()``         No necessity to explicitly initialize
-``stop()``             ``mule.audio.SoundSource.request = SOURCE_STOP``
-``pause()``            ``mule.audio.SoundSource.request = SOURCE_PAUSE``
-``unpause()``          ``mule.audio.SoundSource.request = SOURCE_PLAY``
-``fadeout()``          No equivalent yet
-``set_num_channels()`` Depends on the :class:`mule.audio.SoundSink`
-                       device and bound
-                       :class:`mule.audio.SoundSource` instances.
-``get_num_channels()`` Depends on the :class:`mule.audio.SoundSink`
-                       device and bound
-                       :class:`mule.audio.SoundSource` instances.
-``set_reserved()``     Depends on the :class:`mule.audio.SoundSink`
-                       device and bound
-                       :class:`mule.audio.SoundSource` instances.
+``init()``             :func:`sdl2.sdlmixer.Mix_Init()`
+``quit()``             :func:`sdl2.sdlmixer.Mix_Quit()`
+``get_init()``         No equivalent planned
+``stop()``             :func:`sdl2.sdlmixer.Mix_HaltChannel()`,
+                       :func:`sdl2.sdlmixer.Mix_HaltGroup()`,
+                       :func:`sdl2.sdlmixer.Mix_HaltMusic()`
+``pause()``            :func:`sdl2.sdlmixer.Mix_Pause()`,
+                       :func:`sdl2.sdlmixer.Mix_PauseMusic()`
+``unpause()``          :func:`sdl2.sdlmixer.Mix_Resume()`,
+                       :func:`sdl2.sdlmixer.Mix_ResumeMusic()`
+``fadeout()``          :func:`sdl2.sdlmixer.Mix_FadeOutChannel()`,
+                       :func:`sdl2.sdlmixer.Mix_FadeOutGroup()`,
+                       :func:`sdl2.sdlmixer.Mix_FadeOutMusic()`
+``set_num_channels()`` :func:`sdl2.sdlmixer.Mix_AllocateChannels()`
+``get_num_channels()`` :func:`sdl2.sdlmixer.Mix_AllocateChannels()`
+``set_reserved()``     :func:`sdl2.sdlmixer.Mix_ReserveChannels()`
 ``find_channel()``     No equivalent planned
-``get_busy()``         No equivalent yet
-``Sound``              :class:`mule.audio.SoundData` for the buffer,
-                       :class:`mule.audio.SoundSource` for the volume
-                       settings and playback
-``Channel``            :class:`mule.audio.SoundSource`
+``get_busy()``         :func:`sdl2.sdlmixer.Mix_ChannelFinished`
+``Sound``              :class:`sdl2.sdlmixer.Mix_Chunk`
+``Channel``            No equivalent, use the channel functions instead
 ====================== ====================================================
 
 pygame.mixer.music
 ^^^^^^^^^^^^^^^^^^
 See `pygame.mixer`_.
 
-
 pygame.mouse
 ^^^^^^^^^^^^
 ================= ====================================================
-pygame.mouse      mule
+pygame.mouse      sdl2
 ================= ====================================================
-``get_pressed()`` :func:`mule.sdl2.mouse.get_mouse_state()`
-``get_pos()``     :func:`mule.sdl2.mouse.get_mouse_state()`
-``get_rel()``     :func:`mule.sdl2.mouse.get_relative_mouse_state()`
-``set_pos()``     :func:`mule.sdl2.mouse.warp_mouse_in_window()`
-``set_visible()`` :func:`mule.sdl2.mouse.show_cursor()`
-``get_focused()`` :func:`mule.sdl2.mouse.get_mouse_focus()`
-``set_cursor()``  :func:`mule.sdl2.mouse.set_cursor()`
-``get_cursor()``  :func:`mule.sdl2.mouse.get_cursor()`
+``get_pressed()`` :func:`sdl2.mouse.SDL_GetMouseState()`
+``get_pos()``     :func:`sdl2.mouse.SDL_GetMouseState()`
+``get_rel()``     :func:`sdl2.mouse.SDL_GetRelativeMouseState()`
+``set_pos()``     :func:`sdl2.mouse.SDL_WarpMouseInWindow()`
+``set_visible()`` :func:`sdl2.mouse.SDL_ShowCursor()`
+``get_focused()`` :func:`sdl2.mouse.SDL_GetMouseFocus()`
+``set_cursor()``  :func:`sdl2.mouse.SDL_GetCursor()`
+``get_cursor()``  :func:`sdl2.mouse.SDL_SetCursor()`
 ================= ====================================================
 
 pygame.movie
 ^^^^^^^^^^^^
-No such module is planned for mule.
+No such module is planned for PySDL2.
 
 pygame.Overlay
 ^^^^^^^^^^^^^^
-You can work with YUV overlays by using the :mod:`mule.sdl2.render`
-with :class:`mule.sdl2.render.SDL_Texture` objects.
+You can work with YUV overlays by using the :mod:`sdl2.render` module
+with :class:`sdl2.render.SDL_Texture` objects.
 
 pygame.PixelArray
 ^^^^^^^^^^^^^^^^^
 You can access pixel data of sprites and surfaces directly via the
-:class:`mule.video.pixelaccess.PixelView` class. It does not feature
-comparision or extractions methods.
+:class:`sdl2.ext.PixelView` class. It does not feature comparision or
+extractions methods.
 
 pygame.Rect
 ^^^^^^^^^^^
-No such functionality is available for mule. Rectangles are represented
-via :class:`mule.sdl2.rect.SDL_Rect` for low-level SDL2 wrappers or 4-value
+No such functionality is available for PySDL2. Rectangles are represented
+via :class:`sdl2.rect.SDL_Rect` for low-level SDL2 wrappers or 4-value
 tuples.
 
 pygame.scrap
 ^^^^^^^^^^^^
-mule offers basic text-based clipboard access via the
-:mod:`mule.sdl2.clipboard` module. A feature-rich clipboard API as for
-Pygame does not exist yet.
+PySDL2 offers basic text-based clipboard access via the
+:mod:`sdl2.clipboard` module. A feature-rich clipboard API as for Pygame
+does not exist yet.
 
 pygame.sndarray
 ^^^^^^^^^^^^^^^
-No such module is available for mule yet.
+No such module is available for PySDL2 yet.
 
 pygame.sprite
 ^^^^^^^^^^^^^
-mule uses a different approach of rendering and managing sprite
-objects via a component-based system and the
-:class:`mule.video.sprite.Sprite` class. A sprite module as for Pygame is
-not planned.
+PySDL2 uses a different approach of rendering and managing sprite
+objects via a component-based system and the :class:`sdl2.ext.Sprite`
+class. A sprite module as for Pygame is not planned.
 
 pygame.Surface
 ^^^^^^^^^^^^^^
 ======================= =====================================================
-pygame.Surface          mule
+pygame.Surface          sdl2
 ======================= =====================================================
-``blit()``              :meth:`mule.video.sprite.SpriteRenderer.render()`,
-                        :func:`mule.sdl2.surface.blit_surface()`
-``convert()``           :func:`mule.sdl2.surface.convert_surface()`
-``convert_alpha()``     :func:`mule.sdl2.surface.convert_surface()`
-``copy()``              :func:`mule.sdl2.surface.convert_surface()`
-``fill()``              :func:`mule.video.draw.fill()`,
-                        :func:`mule.sdl2.surface.fill_rect()`,
-                        :func:`mule.sdl2.surface.fill_rects()`
-``scroll()``            No equivalent yet
-``set_colorkey()``      :func:`mule.sdl2.surface.set_color_key()`
-``get_colorkey()``      :func:`mule.sdl2.surface.get_color_key()`
-``set_alpha()``         :func:`mule.sdl2.surface.set_surface_alpha_mod()`
-``get_alpha()``         :func:`mule.sdl2.surface.get_surface_alpha_mod()`
-``lock()``              :func:`mule.sdl2.surface.lock_surface()`
-``unlock()``            :func:`mule.sdl2.surface.unlock_surface()`
-``mustlock()``          :func:`mule.sdl2.surface.SDL_MUSTLOCK()`
-``get_locked()``        :attr:`mule.sdl2.surface.SDL_Surface.locked`
+``blit()``              :meth:`sdl2.surface.SDL_BlitSurface()`,
+                        :class:`sdl2.ext.SpriteRenderer`
+``convert()``           :func:`sdl2.surface.SDL_ConvertSurface()`
+``convert_alpha()``     :func:`sdl2.surface.SDL_ConvertSurface()`
+``copy()``              :func:`sdl2.surface.SDL_ConvertSurface()`
+``fill()``              :func:`sdl2.surface.SDL_FillRect()`,
+                        :func:`sdl2.surface.SDL_FillRects()`,
+                        :func:`sdl2.ext.fill()`
+``scroll()``            No equivalent planned
+``set_colorkey()``      :func:`sdl2.surface.SDL_SetColorKey()`
+``get_colorkey()``      :func:`sdl2.surface.SDL_GetColorKey()`
+``set_alpha()``         :func:`sdl2.surface.SDL_SetSurfaceAlphaMod()`
+``get_alpha()``         :func:`sdl2.surface.SDL_GetSurfaceAlphaMod()`
+``lock()``              :func:`sdl2.surface.SDL_LockSurface()`
+``unlock()``            :func:`sdl2.surface.SDL_UnlockSurface()`
+``mustlock()``          :func:`sdl2.surface.SDL_MUSTLOCK()`
+``get_locked()``        :attr:`sdl2.surface.SDL_Surface.locked`
 ``get_locks()``         No equivalent planned
 ``get_at()``            Direct access to the pixels for surfaces can be
-                        achieved via the
-                        :class:`mule.video.pixelaccess.PixelView` class
+                        achieved via the :class:`sdl2.ext.PixelView` class
 ``set_at()``            Direct access to the pixels for surfaces can be
-                        achieved via the
-                        :class:`mule.video.pixelaccess.PixelView` class
+                        achieved via the :class:`sdl2.ext.PixelView` class
 ``get_at_mapped()``     No equivalent planned
-``get_palette()``       via :attr:`mule.sdl2.surface.SDL_Surface.format`
-                        and the
-                        :attr:`mule.sdl2.pixels.SDL_PixelFormat.palette`
-                        attribute.
-``get_palette_at()``    ``mule.sdl2.pixels.SDL_Palette.colors[offset]``
-``set_palette()``       :func:`mule.sdl2.surface.set_surface_palette()`
-``set_palette_at()``    ``mule.sdl2.pixels.SDL_Palette.colors[offset]``
-``map_rgb()``           :func:`mule.sdl2.pixels.map_rgb()`
-``unmap_rgb()``         :func:`mule.sdl2.pixels.get_rgb()`
-``set_clip()``          :func:`mule.sdl2.surface.set_clip_rect()`
-``get_clip()``          :func:`mule.sdl2.surface.get_clip_rect()`
+``get_palette()``       via :attr:`sdl2.surface.SDL_Surface.format` and the
+                        :attr:`sdl2.pixels.SDL_PixelFormat.palette`
+                        attribute
+``get_palette_at()``    ``sdl2.pixels.SDL_Palette.colors[offset]``
+``set_palette()``       :func:`sdl2.surface.SDL_SetSurfacePalette()`
+``set_palette_at()``    ``sdl2.pixels.SDL_Palette.colors[offset]``
+``map_rgb()``           :func:`sdl2.pixels.SDL_MapRGB()`
+``unmap_rgb()``         :func:`sdl2.pixels.SDL_GetRGB()`
+``set_clip()``          :func:`sdl2.surface.SDL_SetClipRect()`
+``get_clip()``          :func:`sdl2.surface.SDL_GetClipRect()`
 ``subsurface``          No equivalent yet
 ``get_parent()``        As for ``subsurface``
 ``get_abs_parent()``    As for ``subsurface``
 ``get_offset()``        As for ``subsurface``
 ``get_abs_offset()``    As for ``subsurface``
-``get_size()``          :attr:`mule.video.sprite.Sprite.size`,
-                        :attr:`mule.sdl2.surface.SDL_Surface.size`
-``get_width()``         ``mule.video.sprite.Sprite.size[0]``,
-                        ``mule.sdl2.surface.SDL_Surface.size[0]``
-``get_height()``        ``mule.video.sprite.Sprite.size[1]``,
-                        ``mule.sdl2.surface.SDL_Surface.size[1]``
-``get_rect()``          :attr:`mule.video.sprite.Sprite.area`
-``get_bitsize()``       :attr:`mule.sdl2.pixels.SDL_PixelFormat.BitsPerPixel`
-``get_bytesize()``      :attr:`mule.sdl2.pixels.SDL_PixelFormat.BytesPerPixel`
-``get_flags()``         :attr:`mule.sdl2.surface.SDL_Surface.flags`
-``get_pitch()``         :attr:`mule.sdl2.surface.SDL_Surface.pitch`
-``get_masks()``         :attr:`mule.sdl2.pixels.SDL_PixelFormat.Rmask`, ...
-``get_shifts()``        :attr:`mule.sdl2.pixels.SDL_PixelFormat.Rshift`, ...
-``get_losses()``        :attr:`mule.sdl2.pixels.SDL_PixelFormat.Rloss`, ...
-``get_bounding_rect()`` No equivalent yet
-``get_view()``          :class:`mule.video.pixelaccess.PixelView`
-``get_buffer()``        :class:`mule.video.pixelaccess.PixelView` or
-                        :attr:`mule.sdl2.surface.SDL_Surface.pixels`
+``get_size()``          :attr:`sdl2.ext.Sprite.size`,
+                        :attr:`sdl2.surface.SDL_Surface.w`,
+                        :attr:`sdl2.surface.SDL_Surface.h`
+``get_width()``         ``sdl2.ext.Sprite.size[0]``,
+                        :attr:`sdl2.surface.SDL_Surface.w`,
+``get_height()``        ``sdl2.ext.Sprite.size[1]``,
+                        :attr:`sdl2.surface.SDL_Surface.h`
+``get_rect()``          No equivalent planned
+``get_bitsize()``       :attr:`sdl2.pixels.SDL_PixelFormat.BitsPerPixel`
+``get_bytesize()``      :attr:`sdl2.pixels.SDL_PixelFormat.BytesPerPixel`
+``get_flags()``         :attr:`sdl2.surface.SDL_Surface.flags`
+``get_pitch()``         :attr:`sdl2.surface.SDL_Surface.pitch`
+``get_masks()``         :attr:`sdl2.pixels.SDL_PixelFormat.Rmask`, ...
+``get_shifts()``        :attr:`sdl2.pixels.SDL_PixelFormat.Rshift`, ...
+``get_losses()``        :attr:`sdl2.pixels.SDL_PixelFormat.Rloss`, ...
+``get_bounding_rect()`` No equivalent planned
+``get_view()``          :class:`sdl2.ext.PixelView`
+``get_buffer()``        :class:`sdl2.ext.PixelView` or
+                        :attr:`sdl2.surface.SDL_Surface.pixels`
 ======================= =====================================================
 
 pygame.surfarray
 ^^^^^^^^^^^^^^^^
 2D and 3D pixel access can be achieved via the
-:class:`mule.video.pixelaccess.PixelView` class in environments without
+:class:`sdl2.ext.PixelView` class in environments without
 numpy. Simplified numpy-array creation with direct pixel access (similar
 to ``pygame.surfarray.pixels2d()`` and ``pygame.surfarray.pixels3d()``)
-is available via :func:`mule.video.pixelaccess.pixels2d()` and
-:func:`mule.video.pixelaccess.pixels3d()`.
+is available via :func:`sdl2.ext.pixels2d()` and
+:func:`sdl2.ext.pixels3d()`.
 
 pygame.time
 ^^^^^^^^^^^
 =============== =================================================
-pygame.time     mule
+pygame.time     sdl2
 =============== =================================================
-``get_ticks()`` :func:`mule.sdl2.timer.get_ticks()`
-``wait()``      :func:`mule.sdl2.timer.delay()`
-``delay()``     :func:`mule.sdl2.timer.delay()`
-``Clock``       No equivalent yet
+``get_ticks()`` :func:`sdl2.timer.SDL_GetTicks()`
+``wait()``      :func:`sdl2.timer.SDL_Delay()`
+``delay()``     :func:`sdl2.timer.SDL_Delay()`
+``Clock``       No equivalent planned
 =============== =================================================
 
 pygame.transform
 ^^^^^^^^^^^^^^^^
-The are no transformation helpers in mule at moment. Those might be
+The are no transformation helpers in PySDL2 at moment. Those might be
 implemented later on via numpy helpers, the Python Imaging Library or
 other 3rd party packages.
 
 pygame.version
 ^^^^^^^^^^^^^^
 =============== =================================================
-pygame.version  mule
+pygame.version  sdl2
 =============== =================================================
-``ver``         :attr:`mule.__version__`
-``vernum``      :attr:`mule.version_info`
+``ver``         :attr:`sdl2.__version__`
+``vernum``      :attr:`sdl2.version_info`
 =============== =================================================
+
+.. rubric:: Footnotes
+
+.. [#f1] Check https://bitbucket.org/marcusva/python-utils for an easy
+         to use system font detection module

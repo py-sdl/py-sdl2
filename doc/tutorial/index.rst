@@ -14,3 +14,4 @@ instead show you the most noteworthy features.
 
   helloworld.rst
   pong.rst
+  pygamers.rst
