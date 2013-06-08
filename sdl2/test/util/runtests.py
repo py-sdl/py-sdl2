@@ -233,12 +233,12 @@ def run():
                 writer.writeline("execution timed out")
             elif retval != 0:
                 writer.writeline("ERROR")
-                writer.write(proc.stdout.read())
+                writer.write(proc.stdout.read().decode("utf-8"))
                 writer.writeline()
             else:
                 writer.writeline("OK")
                 if options.verbose:
-                    writer.write(proc.stdout.read())
+                    writer.write(proc.stdout.read().decode("utf-8"))
                     writer.writeline()
         return 0
 
