@@ -37,6 +37,11 @@ from .video import *
 from .keycode import *
 from .scancode import *
 
+# At least Win32 platforms need this now.
+_SDL_SetMainReady = _bind("SDL_SetMainReady")
+_SDL_SetMainReady()
+
+
 SDL_INIT_TIMER = 0x00000001
 SDL_INIT_AUDIO = 0x00000010
 SDL_INIT_VIDEO = 0x00000020
