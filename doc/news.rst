@@ -4,11 +4,13 @@ This describes the latest changes between the PySDL2 releases.
 
 0.4.0
 -----
-Released on 2013-XX-XX.
+Released on 2013-06-08.
 
 * new :mod:`sdl2.sdlmixer` module, which provides access to the
   SDL2_mixer library
 * issue #1: fixed libc loading for cases where libc.so is a ld script
+* updated :mod:`sdl2` and :mod:`sdl2.sdlimage` to include the latest
+  changes of the libraries, they wrap
 
 0.3.0
 -----
