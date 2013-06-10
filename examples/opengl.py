@@ -13,7 +13,7 @@ except ImportError:
 
 def run():
     if SDL_Init(SDL_INIT_VIDEO) != 0:
-        print SDL_GetError()
+        print(SDL_GetError())
         return -1
 
     window = SDL_CreateWindow(b"OpenGL demo", SDL_WINDOWPOS_UNDEFINED,
