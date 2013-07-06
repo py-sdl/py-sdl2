@@ -218,6 +218,7 @@ class RenderContext(object):
     def fill(self, rects, color=None):
         """Fills one or multiple rectangular areas on the rendering
         context."""
+        SDL_Rect = rect.SDL_Rect
         # ((x, y, w, h), ...)
         if type(rects[0]) == int:
             # single rect
@@ -225,14 +226,13 @@ class RenderContext(object):
                 tmp = self.color
                 self.color = color
             x, y, w, h = rects
-            ret = render.SDL_RenderFillRect(self.renderer, x, y, w, h)
+            ret = render.SDL_RenderFillRect(self.renderer, SDL_Rect(x, y, w, h))
             if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
         else:
             x = 0
-            SDL_Rect = rect.SDL_Rect
             rlist = (SDL_Rect * len(rects))()
             for idx, r in enumerate(rects):
                 rlist[idx] = SDL_Rect(r[0], r[1], r[2], r[3])
