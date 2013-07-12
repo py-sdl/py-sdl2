@@ -88,11 +88,6 @@ class SDLSurfaceTest(unittest.TestCase):
             for fmt in pixels.ALL_PIXELFORMATS:
                 if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
                     continue
-                if fmt == pixels.SDL_PIXELFORMAT_ARGB2101010 or \
-                   idx == pixels.SDL_PIXELFORMAT_ARGB2101010:
-                    # segfault in the DUFFS_LOOP() and DISEMBLE_RGBA() macros
-                    # http://bugzilla.libsdl.org/show_bug.cgi?id=1534
-                    continue
                 bpp = c_int()
                 rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
                 ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
@@ -135,11 +130,6 @@ class SDLSurfaceTest(unittest.TestCase):
                 continue
             for fmt in pixels.ALL_PIXELFORMATS:
                 if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
-                    continue
-                if fmt == pixels.SDL_PIXELFORMAT_ARGB2101010 or \
-                   pfmt == pixels.SDL_PIXELFORMAT_ARGB2101010:
-                    # segfault in the DUFFS_LOOP() and DISEMBLE_RGBA() macros
-                    # http://bugzilla.libsdl.org/show_bug.cgi?id=1534
                     continue
                 bpp = c_int()
                 rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
