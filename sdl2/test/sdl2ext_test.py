@@ -1,7 +1,8 @@
 import sys
 import unittest
 from .. import ext as sdl2ext
-from .. import SDL_WasInit, SDL_INIT_VIDEO
+from .. import SDL_WasInit, SDL_INIT_VIDEO, SDL_FlushEvent, SDL_USEREVENT, \
+    SDL_FIRSTEVENT, SDL_LASTEVENT, SDL_Event, SDL_UserEvent, SDL_PushEvent
 
 
 class SDL2ExtTest(unittest.TestCase):
@@ -26,6 +27,19 @@ class SDL2ExtTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_get_events(self):
         pass
+
+    def test_get_events_issue_6(self):
+        sdl2ext.init()
+        SDL_FlushEvent(SDL_FIRSTEVENT, SDL_LASTEVENT)
+        for x in range(12):
+            event = SDL_Event()
+            event.type = SDL_USEREVENT + x
+            event.user = SDL_UserEvent(type=event.type, timestamp=0,
+                                       windowID=0, code=0)
+            SDL_PushEvent(event)
+        results = sdl2ext.get_events()
+        for idx, r in enumerate(results):
+            self.assertEqual(idx, r.type - SDL_USEREVENT)
 
     def test_TestEventProcessor(self):
         proc = sdl2ext.TestEventProcessor()
