@@ -1,4 +1,4 @@
-from ctypes import c_int, c_char_p
+from ctypes import CFUNCTYPE, c_int, c_char_p, c_void_p
 from .dll import _bind
 from .stdinc import SDL_bool
 
@@ -31,6 +31,7 @@ SDL_HINT_XINPUT_ENABLED = b"SDL_XINPUT_ENABLED"
 SDL_HINT_GAMECONTROLLERCONFIG = b"SDL_GAMECONTROLLERCONFIG"
 SDL_HINT_ALLOW_TOPMOST = b"SDL_ALLOW_TOPMOST"
 SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS = b"SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"
+SDL_HINT_TIMER_RESOLUTION = b"SDL_TIMER_RESOLUTION"
 
 SDL_HINT_DEFAULT = 0
 SDL_HINT_NORMAL = 1
@@ -40,3 +41,6 @@ SDL_SetHintWithPriority = _bind("SDL_SetHintWithPriority", [c_char_p, c_char_p, 
 SDL_SetHint = _bind("SDL_SetHint", [c_char_p, c_char_p], SDL_bool)
 SDL_GetHint = _bind("SDL_GetHint", [c_char_p], c_char_p)
 SDL_ClearHints = _bind("SDL_ClearHints")
+SDL_HintCallback = CFUNCTYPE(None, c_void_p, c_char_p, c_char_p, c_char_p)
+SDL_AddHintCallback = _bind("SDL_AddHintCallback", [c_char_p, SDL_HintCallback, c_void_p])
+SDL_DelHintCallback = _bind("SDL_DelHintCallback",[c_char_p, SDL_HintCallback, c_void_p])
