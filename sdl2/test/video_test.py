@@ -204,13 +204,7 @@ class SDLVideoTest(unittest.TestCase):
                                               dmode.refresh_rate)
                 closest = video.SDL_DisplayMode()
                 video.SDL_GetClosestDisplayMode(index, cmode, byref(closest))
-                # TODO: refresh_rate not correctly set anymore
-                # http://bugzilla.libsdl.org/show_bug.cgi?id=1956
-                # self.assertEqual(closest, dmode)
-                self.assertEqual(closest.format, dmode.format)
-                self.assertEqual(closest.w, dmode.w)
-                self.assertEqual(closest.h, dmode.h)
-
+                self.assertEqual(closest, dmode)
 
     def test_SDL_VideoInit(self):
         video.SDL_VideoInit(None)
