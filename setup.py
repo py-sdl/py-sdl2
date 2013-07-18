@@ -27,6 +27,7 @@ if __name__ == "__main__":
         "author_email": "marcus@sysfault.org",
         "license": "Public Domain / zlib",
         "url": "http://bitbucket.org/marcusva/py-sdl2",
+        "download_url": "http://bitbucket.org/marcusva/py-sdl2/downloads",
         "package_dir": {"sdl2.examples": "examples"},
         "package_data": {"sdl2.test": ["resources/*.*"]},
         "packages": ["sdl2",
