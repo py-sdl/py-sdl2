@@ -229,8 +229,9 @@ Sprite, texture and pixel surface routines
       :class:`TextureSprite` objects are assumed to be static by
       default, making it impossible to access their pixel buffer in
       favour for faster copy operations. If you need to update the pixel
-      data frequently, *static* can be set to ``False`` to allow a
-      streaming access on the underlying texture pixel buffer.
+      data frequently or want to use the texture as target for rendering
+      operations, *access* can be set to the relevant
+      SDL_TEXTUREACCESS_* flag.
 
    .. method:: from_color(color : object , size, bpp=32, masks=None) -> Sprite
 

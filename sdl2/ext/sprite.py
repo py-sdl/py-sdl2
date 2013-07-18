@@ -347,11 +347,8 @@ class TextureSprite(Sprite):
                                       byref(access), byref(w), byref(h))
         if ret == -1:
             raise SDLError()
-        static = "True"
-        if access == render.SDL_TEXTUREACCESS_STREAMING:
-            static = "False"
-        return "TextureSprite(format=%d, static=%s, size=%s)" % \
-            (flags.value, static, (w.value, h.value))
+        return "TextureSprite(format=%d, access=%d, size=%s)" % \
+            (flags.value, access.value, (w.value, h.value))
 
 
 class SpriteFactory(object):
@@ -493,8 +490,8 @@ class SpriteFactory(object):
         return SoftwareSprite(imgsurface.contents, True)
 
     def create_texture_sprite(self, renderer, size,
-                               pformat=pixels.SDL_PIXELFORMAT_RGBA8888,
-                               static=True):
+                              pformat=pixels.SDL_PIXELFORMAT_RGBA8888,
+                              access=render.SDL_TEXTUREACCESS_STATIC):
         """Creates a texture sprite.
 
         A size tuple containing the width and height of the sprite needs
@@ -503,8 +500,9 @@ class SpriteFactory(object):
         TextureSprite objects are assumed to be static by default,
         making it impossible to access their pixel buffer in favour for
         faster copy operations. If you need to update the pixel data
-        frequently, static can be set to False to allow a streaming
-        access on the underlying texture pixel buffer.
+        frequently or want to use the texture as target for rendering
+        operations, access can be set to the relevant
+        SDL_TEXTUREACCESS_* flag.
         """
         if isinstance(renderer, render.SDL_Renderer):
             sdlrenderer = renderer
@@ -512,9 +510,6 @@ class SpriteFactory(object):
             sdlrenderer = renderer.renderer
         else:
             raise TypeError("renderer must be a Renderer or SDL_Renderer")
-        access = render.SDL_TEXTUREACCESS_STATIC
-        if not static:
-            access = render.SDL_TEXTUREACCESS_STREAMING
         texture = render.SDL_CreateTexture(sdlrenderer, pformat, access,
                                            size[0], size[1])
         if not texture:

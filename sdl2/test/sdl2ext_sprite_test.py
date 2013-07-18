@@ -6,7 +6,9 @@ from .. import ext as sdl2ext
 from ..surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.video import SDL_Window, SDL_WINDOW_HIDDEN, SDL_DestroyWindow
 from sdl2.render import SDL_Renderer, SDL_CreateWindowAndRenderer, \
-    SDL_DestroyRenderer, SDL_CreateTexture, SDL_Texture
+    SDL_DestroyRenderer, SDL_CreateTexture, SDL_Texture, \
+    SDL_TEXTUREACCESS_STATIC, SDL_TEXTUREACCESS_STREAMING, \
+    SDL_TEXTUREACCESS_TARGET
 
 _ISPYPY = hasattr(sys, "pypy_version_info")
 if _ISPYPY:
@@ -129,6 +131,13 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                 self.assertIsInstance(sprite, sdl2ext.TextureSprite)
             if _ISPYPY and (w % 50) == 0:
                 gc.collect()
+
+        # Test different access flags
+        for flag in (SDL_TEXTUREACCESS_STATIC, SDL_TEXTUREACCESS_STREAMING,
+                     SDL_TEXTUREACCESS_TARGET, 22):
+            sprite = factory.create_texture_sprite(renderer, size=(64, 64),
+                                                   access=flag)
+            self.assertIsInstance(sprite, sdl2ext.TextureSprite)
 
     def test_SpriteFactory_from_image(self):
         window = sdl2ext.Window("Test", size=(1, 1))
