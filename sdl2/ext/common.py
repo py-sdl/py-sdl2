@@ -58,9 +58,11 @@ def get_events():
         evarray = (events.SDL_Event * 10)()
         ptr = ctypes.cast(evarray, ctypes.POINTER(events.SDL_Event))
         ret = SDL_PeepEvents(ptr, 10, op, first, last)
-        if ret == 0:
+        if ret <= 0:
             break
         evlist += list(evarray)[:ret]
+        if ret < 10:
+            break
     return evlist
 
 
