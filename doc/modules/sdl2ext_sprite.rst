@@ -221,7 +221,7 @@ Sprite, texture and pixel surface routines
       Otherwise a :class:`SoftwareSpriteRenderer` is created and *args*
       and *kwargs* are passed to it.
 
-   .. method:: create_texture_sprite(renderer : object, size, pformat=sdl2.SDL_PIXELFORMAT_RGBA8888, static=True) -> TextureSprite
+   .. method:: create_texture_sprite(renderer : object, size, pformat=sdl2.SDL_PIXELFORMAT_RGBA8888, access=sdl2.SDL_TEXTUREACCESS_STATIC) -> TextureSprite
 
       Creates a texture sprite. A *size* tuple containing the width and
       height of the sprite needs to be provided.
