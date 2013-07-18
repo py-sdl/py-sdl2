@@ -69,7 +69,14 @@ class _DLL(object):
         function."""
         func = getattr(self._dll, funcname, None)
         if not func:
-            func = optfunc
+            if optfunc:
+                warnings.warn\
+                    ("function '%s' not found in %r, using replacement" %
+                     (funcname, self._dll))
+                func = optfunc
+            else:
+                raise ValueError("could not find function '%s' in %r" %
+                                 (funcname, self._dll))
         func.argtypes = args
         func.restype = returns
         return func
