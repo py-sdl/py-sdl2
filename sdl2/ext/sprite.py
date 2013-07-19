@@ -187,6 +187,7 @@ class RenderContext(object):
 
     def draw_rect(self, rects, color=None):
         """Draws one or multiple rectangles on the rendering context."""
+        SDL_Rect = rect.SDL_Rect
         # ((x, y, w, h), ...)
         if type(rects[0]) == int:
             # single rect
@@ -194,14 +195,13 @@ class RenderContext(object):
                 tmp = self.color
                 self.color = color
             x, y, w, h = rects
-            ret = render.SDL_RenderDrawRect(self.renderer, x, y, w, h)
+            ret = render.SDL_RenderDrawRect(self.renderer, SDL_Rect(x, y, w, h))
             if color is not None:
                 self.color = tmp
             if ret == -1:
                 raise SDLError()
         else:
             x = 0
-            SDL_Rect = rect.SDL_Rect
             rlist = (SDL_Rect * len(rects))()
             for idx, r in enumerate(rects):
                 rlist[idx] = SDL_Rect(r[0], r[1], r[2], r[3])
