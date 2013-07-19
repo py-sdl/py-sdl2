@@ -4,14 +4,14 @@ The Pong Game
 =============
 The following tutorial will show you some capabilities of the component-based
 approach, PySDL2 features. We will create the basics of a simple Pong game
-implementation here. The basics of creating an own event loop, dealing with
-user input, moving images around and creating own rendering functions are
+implementation here. The basics of creating a event loop, dealing with
+user input, moving images around and creating a rendering function are
 covered in this tutorial.
 
 Getting started
 ---------------
 We start with creating the window and add a small event loop, so we are able
-to close the window and game. ::
+to close the window and exit the game. ::
 
     import sys
     try:
@@ -80,12 +80,14 @@ that will display them. ::
 
     [...]
 
+    WHITE = sdl2ext.Color(255, 255, 255)
+
     class SoftwareRenderer(sdl2ext.SoftwareSpriteRenderer):
         def __init__(self, window):
             super(SoftwareRenderer, self).__init__(window)
 
         def render(self, components):
-            sdl2ext.fill(self.surface, Color(0, 0, 0))
+            sdl2ext.fill(self.surface, sdl2ext.Color(0, 0, 0))
             super(SoftwareRenderer, self).render(components)
 
 
