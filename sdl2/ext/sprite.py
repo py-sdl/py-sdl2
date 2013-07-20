@@ -308,7 +308,7 @@ class SoftwareSprite(Sprite):
 
     def __repr__(self):
         return "SoftwareSprite(size=%s, bpp=%d)" % \
-            (self.size, self.surface.format.BitsPerPixel)
+            (self.size, self.surface.format.contents.BitsPerPixel)
 
 
 class TextureSprite(Sprite):
