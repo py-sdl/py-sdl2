@@ -358,6 +358,11 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         # self.assertEqual(sprite.surface, sf.contents)
         self.assertTrue(sprite.free)
 
+    def test_SoftwareSprite_repr(self):
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+        sprite = sdl2ext.SoftwareSprite(sf.contents, True)
+        self.assertEqual(repr(sprite), "SoftwareSprite(size=(10, 10), bpp=32)")
+
     def test_SoftwareSprite_position_xy(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
