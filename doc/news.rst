@@ -2,6 +2,30 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.4.1
+-----
+Released on 2013-07-26.
+
+* updated :mod:`sdl2` to include the latest changes of SDL2
+* improved DLL detection for DLLs not being in a library path
+* fixed a bug in :meth:`sdl2.ext.RenderContext.draw_rect()` for drawing
+  a single rect
+* fixed a bug in the :func:`repr` call for :class:`sdl2.ext.SoftwareSprite`
+* issue #4: fixed a bug in :meth:`sdl2.ext.RenderContext.fill()` for filling
+  a single rect
+* issue #5: fixed pip installation support
+* issue #6: fixed a bug in :func:`sdl2.ext.get_events()`, which did not handle
+  more than 10 events in the queue correctly
+* issue #8: :meth:`sdl2.ext.SpriteFactory.create_texture_sprite` can
+  create sprites to be used as rendering targets now
+* issue #9: improved error messages on trying to bind non-existent library
+  functions via ctypes
+* minor documentation fixes
+
+Thanks to Steven Johnson, Todd Rovito, Bil Bas and Dan McCombs for
+providing fixes and improvements.
+
+
 0.4.0
 -----
 Released on 2013-06-08.

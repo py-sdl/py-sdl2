@@ -47,7 +47,7 @@ removed in SDL2 and PySDL2 does not provide its own facilities.
 
 pygame.Color
 ^^^^^^^^^^^^
-You can find a similar class in :class:`sdl2.ext.color.Color`. It does
+You can find a similar class in :class:`sdl2.ext.Color`. It does
 not feature a ``set_length()`` or ``correct_gamma()`` method, though.
 
 pygame.cursors
