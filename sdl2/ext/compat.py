@@ -20,13 +20,14 @@ if sys.version_info[0] < 3:
     stringify = lambda x, enc: str(x)
     ISPYTHON2 = True
 else:
-    __all__ += ["long", "unichr", "callable"]
+    __all__ += ["long", "unichr", "callable", "unicode"]
     byteify = bytes
     stringify = lambda x, enc: x.decode(enc)
     long = int
     unichr = chr
     callable = lambda x: isinstance(x, collections.Callable)
     ISPYTHON3 = True
+    unicode = str
 
 isiterable = lambda x: isinstance(x, collections.Iterable)
 
