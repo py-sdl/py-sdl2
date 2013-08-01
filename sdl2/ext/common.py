@@ -3,6 +3,17 @@ import ctypes
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_WasInit, \
     SDL_INIT_VIDEO, error, events, timer
 
+_HASSDLTTF = True
+try:
+    from .. import sdlttf
+except ImportError:
+    _HASSDLTTF = False
+_HASSDLIMAGE = True
+try:
+    from .. import sdlimage
+except ImportError:
+    _HASSDLIMAGE = False
+
 __all__ = ["SDLError", "init", "quit", "get_events", "TestEventProcessor"]
 
 
@@ -36,10 +47,15 @@ def init():
 def quit():
     """Quits the SDL2 video subysystem.
 
-    If no other subsystems are active, this will also call sdl2.SDL_Quit().
+    If no other subsystems are active, this will also call
+    sdl2.SDL_Quit(), sdlttf.TTF_Quit() and sdlimage.IMG_Quit().
     """
     SDL_QuitSubSystem(SDL_INIT_VIDEO)
     if SDL_WasInit(0) != 0:
+        if _HASSDLTTF and sdlttf.TTF_WasInit() == 1:
+            sdlttf.TTF_Quit()
+        if _HASSDLIMAGE:
+            sdlimage.IMG_Quit()
         SDL_Quit()
 
 

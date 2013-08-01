@@ -43,15 +43,13 @@ class SDLTest(unittest.TestCase):
         self.assertEqual(ret, SDL_INIT_JOYSTICK)
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
 
+    @unittest.skipIf(sys.platform.startswith("freebsd"),
+                     "FreeBSD des not support haptic input yet")
     def test_SDL_INIT_HAPTIC(self):
         ret = SDL_Init(SDL_INIT_HAPTIC)
         self.assertEqual(ret, 0, SDL_GetError())
         ret = SDL_WasInit(SDL_INIT_HAPTIC)
-        if sys.platform.startswith("freebsd"):
-            # not supported yet
-            self.assertNotEqual(ret, SDL_INIT_HAPTIC)
-        else:
-            self.assertEqual(ret, SDL_INIT_HAPTIC)
+        self.assertEqual(ret, SDL_INIT_HAPTIC)
         SDL_QuitSubSystem(SDL_INIT_HAPTIC)
 
 

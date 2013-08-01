@@ -189,6 +189,29 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             #self.assertRaises((AttributeError, ArgumentError, TypeError),
             #                  factory.from_surface, 1234)
 
+    def test_SpriteFactory_from_text(self):
+        sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+        fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
+
+        # No Fontmanager passed
+        self.assertRaises(KeyError, sfactory.from_text, "Test")
+
+        # Passing various keywords arguments
+        sprite = sfactory.from_text("Test", fontmanager = fm)
+        self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
+
+        sprite = sfactory.from_text("Test", fontmanager = fm, alias="tuffy")
+        self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
+
+        # Get text from a texture sprite factory
+        window = sdl2ext.Window("Test", size=(1, 1))
+        renderer = sdl2ext.RenderContext(window)
+        tfactory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE,
+                                         renderer=renderer,
+                                         fontmanager=fm)
+        sprite = tfactory.from_text("Test", alias="tuffy")
+        self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+
     def test_SpriteRenderer(self):
         renderer = sdl2ext.SpriteRenderer()
         self.assertIsInstance(renderer, sdl2ext.SpriteRenderer)

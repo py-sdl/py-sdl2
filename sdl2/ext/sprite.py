@@ -457,6 +457,14 @@ class SpriteFactory(object):
             raise SDLError()
         return self.from_surface(sf, True)
 
+    def from_text(self, text, **kwargs):
+        """Creates a Sprite from a string of text."""
+        args = self.default_args.copy()
+        args.update(kwargs)
+        fontmanager = args['fontmanager']
+        surface = fontmanager.render(text, **args)
+        return self.from_surface(surface, free=True)
+
     def create_sprite(self, **kwargs):
         """Creates an empty Sprite.
 
@@ -466,7 +474,6 @@ class SpriteFactory(object):
         """
         args = self.default_args.copy()
         args.update(kwargs)
-
         if self.sprite_type == TEXTURE:
             return self.create_texture_sprite(**args)
         else:
