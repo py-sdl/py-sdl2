@@ -159,4 +159,4 @@ SDL_UnlockAudio = _bind("SDL_UnlockAudio")
 SDL_UnlockAudioDevice = _bind("SDL_UnlockAudioDevice", [SDL_AudioDeviceID])
 SDL_CloseAudio = _bind("SDL_CloseAudio")
 SDL_CloseAudioDevice = _bind("SDL_CloseAudioDevice", [SDL_AudioDeviceID])
-# SDL_AudioDeviceConnected = _bind("SDL_AudioDeviceConnected", [SDL_AudioDeviceID])
+
