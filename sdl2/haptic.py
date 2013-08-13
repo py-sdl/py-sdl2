@@ -4,28 +4,29 @@ from .stdinc import Uint8, Uint16, Uint32, Sint16, Sint32
 from .joystick import SDL_Joystick
 
 __all__ = ["SDL_Haptic", "SDL_HAPTIC_CONSTANT", "SDL_HAPTIC_SINE",
-           "SDL_HAPTIC_SQUARE", "SDL_HAPTIC_TRIANGLE", "SDL_HAPTIC_SAWTOOTHUP",
-           "SDL_HAPTIC_SAWTOOTHDOWN", "SDL_HAPTIC_RAMP", "SDL_HAPTIC_SPRING",
-           "SDL_HAPTIC_DAMPER", "SDL_HAPTIC_INERTIA", "SDL_HAPTIC_FRICTION",
-           "SDL_HAPTIC_CUSTOM", "SDL_HAPTIC_GAIN", "SDL_HAPTIC_AUTOCENTER",
-           "SDL_HAPTIC_STATUS", "SDL_HAPTIC_PAUSE", "SDL_HAPTIC_POLAR",
-           "SDL_HAPTIC_CARTESIAN", "SDL_HAPTIC_SPHERICAL", "SDL_HAPTIC_INFINITY",
+           "SDL_HAPTIC_LEFTRIGHT", "SDL_HAPTIC_TRIANGLE",
+           "SDL_HAPTIC_SAWTOOTHUP", "SDL_HAPTIC_SAWTOOTHDOWN",
+           "SDL_HAPTIC_RAMP", "SDL_HAPTIC_SPRING", "SDL_HAPTIC_DAMPER",
+           "SDL_HAPTIC_INERTIA", "SDL_HAPTIC_FRICTION", "SDL_HAPTIC_CUSTOM",
+           "SDL_HAPTIC_GAIN", "SDL_HAPTIC_AUTOCENTER", "SDL_HAPTIC_STATUS",
+           "SDL_HAPTIC_PAUSE", "SDL_HAPTIC_POLAR", "SDL_HAPTIC_CARTESIAN",
+           "SDL_HAPTIC_SPHERICAL", "SDL_HAPTIC_INFINITY",
            "SDL_HapticDirection", "SDL_HapticConstant", "SDL_HapticPeriodic",
            "SDL_HapticCondition", "SDL_HapticRamp", "SDL_HapticCustom",
-           "SDL_HapticEffect", "SDL_NumHaptics", "SDL_HapticName",
-           "SDL_HapticOpen", "SDL_HapticOpened", "SDL_HapticIndex",
-           "SDL_MouseIsHaptic", "SDL_HapticOpenFromMouse",
+           "SDL_HapticLeftRight", "SDL_HapticEffect", "SDL_NumHaptics",
+           "SDL_HapticName", "SDL_HapticOpen", "SDL_HapticOpened",
+           "SDL_HapticIndex", "SDL_MouseIsHaptic", "SDL_HapticOpenFromMouse",
            "SDL_JoystickIsHaptic", "SDL_HapticOpenFromJoystick",
            "SDL_HapticClose", "SDL_HapticNumEffects",
-           "SDL_HapticNumEffectsPlaying", "SDL_HapticQuery", "SDL_HapticNumAxes",
-           "SDL_HapticEffectSupported", "SDL_HapticNewEffect",
-           "SDL_HapticUpdateEffect", "SDL_HapticRunEffect",
-           "SDL_HapticStopEffect", "SDL_HapticDestroyEffect",
-           "SDL_HapticGetEffectStatus", "SDL_HapticSetGain",
-           "SDL_HapticSetAutocenter", "SDL_HapticPause", "SDL_HapticUnpause",
-           "SDL_HapticStopAll", "SDL_HapticRumbleSupported",
-           "SDL_HapticRumbleInit", "SDL_HapticRumblePlay",
-           "SDL_HapticRumbleStop"
+           "SDL_HapticNumEffectsPlaying", "SDL_HapticQuery",
+           "SDL_HapticNumAxes", "SDL_HapticEffectSupported",
+           "SDL_HapticNewEffect", "SDL_HapticUpdateEffect",
+           "SDL_HapticRunEffect", "SDL_HapticStopEffect",
+           "SDL_HapticDestroyEffect", "SDL_HapticGetEffectStatus",
+           "SDL_HapticSetGain", "SDL_HapticSetAutocenter", "SDL_HapticPause",
+           "SDL_HapticUnpause", "SDL_HapticStopAll",
+           "SDL_HapticRumbleSupported", "SDL_HapticRumbleInit",
+           "SDL_HapticRumblePlay", "SDL_HapticRumbleStop"
            ]
 
 class SDL_Haptic(Structure):
@@ -33,7 +34,7 @@ class SDL_Haptic(Structure):
 
 SDL_HAPTIC_CONSTANT = 1 << 0
 SDL_HAPTIC_SINE = 1 << 1
-SDL_HAPTIC_SQUARE = 1 << 2
+SDL_HAPTIC_LEFTRIGHT = 1 << 2
 SDL_HAPTIC_TRIANGLE = 1 << 3
 SDL_HAPTIC_SAWTOOTHUP = 1 << 4
 SDL_HAPTIC_SAWTOOTHDOWN = 1 << 5
@@ -120,6 +121,15 @@ class SDL_HapticRamp(Structure):
                 ("fade_length", Uint16),
                 ("fade_level", Uint16),
                 ]
+
+
+class SDL_HapticLeftRight(Structure):
+    """A left-right effect."""
+    _fields_ = [("type", Uint16),
+                ("length", Uint32),
+                ("large_magnitude", Uint16),
+                ("small_magnitude", Uint16)
+            ]
 
 
 class SDL_HapticCustom(Structure):
