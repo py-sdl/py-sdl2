@@ -291,7 +291,7 @@ on colliding with the walls or the player paddles. ::
             self.maxy = maxy
 
         def _overlap(self, item):
-            pos, sprite = item[0], item[2]
+            pos, sprite = item[0], item[1]
             if sprite == self.ball.sprite:
                 return False
 
