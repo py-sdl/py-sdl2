@@ -152,7 +152,7 @@ within the window boundaries. ::
     class MovementSystem(sdl2ext.Applicator):
         def __init__(self, minx, miny, maxx, maxy):
             super(MovementSystem, self).__init__()
-            self.componenttypes = (Velocity, Sprite)
+            self.componenttypes = (Velocity, sdl2ext.Sprite)
             self.minx = minx
             self.miny = miny
             self.maxx = maxx
@@ -283,7 +283,7 @@ on colliding with the walls or the player paddles. ::
     class CollisionSystem(sdl2ext.Applicator):
         def __init__(self, minx, miny, maxx, maxy):
             super(CollisionSystem, self).__init__()
-            self.componenttypes = (Velocity, Sprite)
+            self.componenttypes = (Velocity, sdl2ext.Sprite)
             self.ball = None
             self.minx = minx
             self.miny = miny
@@ -465,7 +465,7 @@ back to us, which sounds more interesting. ::
     class TrackingAIController(sdl2ext.Applicator):
         def __init__(self, miny, maxy):
             super(TrackingAIController, self).__init__()
-            self.componenttypes = (PlayerData, Velocity, Sprite)
+            self.componenttypes = (PlayerData, Velocity, sdl2ext.Sprite)
             self.miny = miny
             self.maxy = maxy
             self.ball = None
