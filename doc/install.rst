@@ -32,15 +32,6 @@ Those are optional though and only necessary, if you want to use
 :mod:`sdl2.sdlimage`, :mod:`sdl2.sdlmixer`, :mod:`sdl2.sdlttf` or
 :mod:`sdl2.sdlgfx`.
 
-.. note::
-
-   Neither SDL2 nor the related versions for SDL_image, SDL_mixer,
-   SDL_ttf or SDL_gfx are officially released yet. Thus, a binary
-   version is not available. You can obtain a set of unofficial binaries
-   (based on the current development version of those projects) from
-   http://bitbucket.org/marcusva/py-sdl2/downloads.
-
-
 Installation
 ------------
 You can either use the python way of installing the package or the make

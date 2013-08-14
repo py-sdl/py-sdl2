@@ -2,6 +2,24 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.5.0
+-----
+Released on 2013-08-14.
+
+* new :class:`sdl2.ext.FontManager` class, which provides simple TTF font
+  rendering.
+* new :meth:`sdl2.ext.SpriteFactory.from_text()` method, which creates
+  text sprites
+* put the SDL2 dll path at the beginning of PATH, if a PYSDL2_DLL_PATH
+  is provided to avoid loading issues for third party DLLs on Win32
+  platforms
+* minor documentation fixes
+
+Thanks to Dan Gillett for providing the FontManager and from_text()
+enhancements and his patience regarding all the small change requests.
+Thanks to Mihail Latyshov for providing fixes to the documentation.
+
+
 0.4.1
 -----
 Released on 2013-07-26.
