@@ -167,13 +167,9 @@ class FontManager(object):
                  color=Color(255, 255, 255), bg_color=Color(0, 0, 0)):
         """Initialize the FontManager
 
-        One font path must be given to initialize the FontManager.
-        A list or tuple of font paths can also be given. In this
-        case, the alias is applied to the first entry. The other
-        fonts will have a default alias. The size is given to all
-        fonts.  The default_font will be set to this font.
-        text_color and bg_color will give the FontManager a default
-        color.
+        One font path must be given to initialize the FontManager. The
+        default_font will be set to this font. color and bg_color
+        will give the FontManager a default color.
         """
         if not _HASSDLTTF:
             raise UnsupportedError("FontManager requires sdlttf support")
@@ -278,7 +274,7 @@ class FontManager(object):
 
     @default_font.setter
     def default_font(self, value):
-        """default must be a tuple with a font alias and a size: (alias, size)
+        """value must be a tuple with a font alias and a size: (alias, size)
 
         Set the default_font to the given font name alias and size,
         provided it's loaded in the font manager.
@@ -294,7 +290,7 @@ class FontManager(object):
 
     def render(self, text, alias=None, size=16, width=None, color=None,
                bg_color=None, **kwargs):
-        """Renders the text to a surface.
+        """Renders text to a surface.
 
         This method uses the font designated by the alias or the
         default_font.  A size can be passed even if the font was not
