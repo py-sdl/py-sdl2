@@ -62,7 +62,7 @@ class _DLL(object):
             raise RuntimeError("could not load any library for %s" % libinfo)
         if path is not None and sys.platform in ("win32", "cli") and \
             path in self._libfile:
-            os.environ["PATH"] += ";%s" % path
+            os.environ["PATH"] = "%s;%s" % (path, os.environ["PATH"])
 
     def bind_function(self, funcname, args=None, returns=None, optfunc=None):
         """Binds the passed argument and return value types to the specified
