@@ -20,8 +20,9 @@ API
 
 .. function:: quit() -> None
 
-   Quits the underlying SDL2 video subysystem. If no other SDL2 subsystems are
-   active, this will also call :func:`quit()`.
+   Quits the underlying SDL2 video subysystem. If no other SDL2
+   subsystems are active, this will also call :func:`quit()`,
+   :func:`sdl2.sdlttf.TTF_Quit()` and :func:`sdl2.sdlimage.IMG_Quit()`.
 
 .. function:: get_events() -> [SDL_Event, SDL_Event, ...]
 

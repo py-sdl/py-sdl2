@@ -254,6 +254,12 @@ Sprite, texture and pixel surface routines
       :class:`sdl2.SDL_Surface`. If *free* is set to
       ``True``, the passed *surface* will be freed automatically.
 
+   .. method:: from_text(text : str[, **kwargs]) -> Sprite
+
+      Creates a :class:`Sprite` from a string of text. This method
+      requires a :class:`sdl2.ext.FontManager` to be in *kwargs* or
+      :attr:`default_args`.
+
 .. class:: RenderContext(target : obj[, index=-1[, flags=sdl2.SDL_RENDERER_ACCELERATED]])
 
    A rendering context for windows and sprites that can use hardware or
