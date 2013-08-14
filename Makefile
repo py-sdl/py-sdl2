@@ -12,7 +12,7 @@ SUBDIRS = \
 	$(top_srcdir)/doc/modules \
 	$(top_srcdir)/examples
 
-INTERPRETERS = python2.7 python3.2 python3.3 pypy2.0
+INTERPRETERS = python2.7 python3.2 python3.3 pypy
 
 all: clean build
 
@@ -37,7 +37,7 @@ install:
 
 clean:
 	@echo "Cleaning up in $(top_srcdir)/ ..."
-	@rm -f *.cache *.core *~ MANIFEST *.pyc *.orig
+	@rm -f *.cache *.core *~ MANIFEST *.pyc *.orig *.rej
 	@rm -rf __pycache__
 	@rm -rf build dist doc/html
 
@@ -46,7 +46,7 @@ clean:
 		if test -f $$dir/Makefile; then \
 			make -C $$dir clean; \
 		fi; \
-		cd $$dir && rm -f *.cache *.core *~ MANIFEST *.pyc *.orig; \
+		cd $$dir && rm -f *.cache *.core *~ MANIFEST *.pyc *.orig *.rej; \
 	done
 
 docs:
