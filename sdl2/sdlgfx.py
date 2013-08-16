@@ -33,8 +33,11 @@ __all__ = ["get_dll_file", "FPS_UPPER_LIMIT", "FPS_LOWER_LIMIT", "FPS_DEFAULT",
            "rotateSurface90Degrees"
            ]
 
-dll = _DLL("SDL2_gfx", ["SDL2_gfx", "SDL2_gfx-1.0"],
-           os.getenv("PYSDL2_DLL_PATH"))
+try:
+    dll = _DLL("SDL2_gfx", ["SDL2_gfx", "SDL2_gfx-1.0"],
+               os.getenv("PYSDL2_DLL_PATH"))
+except RuntimeError as exc:
+    raise ImportError(exc)
 
 
 def get_dll_file():

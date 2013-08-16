@@ -86,9 +86,10 @@ class _DLL(object):
         """Gets the filename of the loaded library."""
         return self._libfile
 
-
-dll = _DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
-
+try:
+    dll = _DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
+except RuntimeError as exc:
+    raise ImportError(exc)
 
 def get_dll_file():
     """Gets the file name of the loaded SDL2 library."""
