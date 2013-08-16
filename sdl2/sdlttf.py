@@ -36,9 +36,11 @@ __all__ = ["get_dll_file", "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION",
           "TTF_GetFontKerningSize", "TTF_SetError", "TTF_GetError"
           ]
 
-dll = _DLL("SDL2_ttf", ["SDL2_ttf", "SDL2_ttf-2.0"],
-           os.getenv("PYSDL2_DLL_PATH"))
-
+try:
+    dll = _DLL("SDL2_ttf", ["SDL2_ttf", "SDL2_ttf-2.0"],
+               os.getenv("PYSDL2_DLL_PATH"))
+except RuntimeError as exc:
+    raise ImportError(exc)
 
 def get_dll_file():
     """Gets the file name of the loaded SDL2_ttf library."""

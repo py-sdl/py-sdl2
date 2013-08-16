@@ -25,8 +25,11 @@ __all__ = ["SDL_IMAGE_MAJOR_VERSION", "SDL_IMAGE_MINOR_VERSION", \
            "get_dll_file"
            ]
 
-dll = _DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],
-           os.getenv("PYSDL2_DLL_PATH"))
+try:
+    dll = _DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],
+               os.getenv("PYSDL2_DLL_PATH"))
+except RuntimeError as exc:
+    raise ImportError(exc)
 
 
 def get_dll_file():

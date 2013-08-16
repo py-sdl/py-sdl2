@@ -49,9 +49,11 @@ __all__ = ["get_dll_file", "SDL_MIXER_MAJOR_VERSION", "SDL_MIXER_MINOR_VERSION",
            "Mix_CloseAudio", "Mix_SetError", "Mix_GetError"
           ]
 
-
-dll = _DLL("SDL2_mixer", ["SDL2_mixer", "SDL2_mixer-2.0"],
-           os.getenv("PYSDL2_DLL_PATH"))
+try:
+    dll = _DLL("SDL2_mixer", ["SDL2_mixer", "SDL2_mixer-2.0"],
+               os.getenv("PYSDL2_DLL_PATH"))
+except RuntimeError as exc:
+    raise ImportError(exc)
 
 
 def get_dll_file():
