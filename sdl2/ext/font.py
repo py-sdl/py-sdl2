@@ -196,12 +196,13 @@ class FontManager(object):
         self.fonts = {}
         self.aliases = {}
 
-    def add(self, font_path, alias=None, size=16):
+    def add(self, font_path, alias=None, size=None):
         """Add a font to the Font Manager.
 
         alias is by default the font name. But another name can be
         passed. Returns the font pointer stored in self.fonts.
         """
+        size = size or self.default_font[1]
         if alias is None:
             # If no alias given, take the font name as alias
             basename = os.path.basename(font_path)
@@ -288,7 +289,7 @@ class FontManager(object):
             size = list(self.fonts[alias].keys())[0]
         self._default_font = self.fonts[alias][size]
 
-    def render(self, text, alias=None, size=16, width=None, color=None,
+    def render(self, text, alias=None, size=None, width=None, color=None,
                bg_color=None, **kwargs):
         """Renders text to a surface.
 
@@ -298,6 +299,8 @@ class FontManager(object):
         If no bg_color or color are given, it will default to the
         FontManager's bg_color and color.
         """
+        alias = alias or self.default_font[0]
+        size = size or self.default_font[1]
         if bg_color is None:
             bg_color = self._bgcolor
         elif not isinstance(bg_color, pixels.SDL_Color):
@@ -309,14 +312,13 @@ class FontManager(object):
             c = convert_to_color(color)
             bg_color = pixels.SDL_Color(c.r, c.g, c.b, c.a)
         if len(self.fonts) == 0:
-            raise TypeError("There are no font selected.")
+            raise TypeError("There are no fonts selected.")
         font = self._default_font
-        if alias is not None:
-            if alias not in self.aliases:
-                raise KeyError("Font %s not loaded" % font)
-            elif size not in self.fonts[alias]:
-                self._change_font_size(alias, size)
-            font = self.fonts[alias][size]
+        if alias not in self.aliases:
+            raise KeyError("Font %s not loaded" % font)
+        elif size not in self.fonts[alias]:
+            self._change_font_size(alias, size)
+        font = self.fonts[alias][size]
         text = byteify(text, "utf-8")
         if width:
             surface = sdlttf.TTF_RenderUTF8_Blended_Wrapped(font, text,
