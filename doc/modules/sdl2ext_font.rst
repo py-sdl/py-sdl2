@@ -63,7 +63,7 @@ Text rendering routines
 
       Checks, whether all characters in the passed *text* can be rendered.
 
-.. class:: FontManager(font_path : str[, alias=None[, color=Color(255, 255, 255)[, bg_color=Color(0, 0, 0)]]])
+.. class:: FontManager(font_path : str[, alias=None[, size=16[, color=Color(255, 255, 255)[, bg_color=Color(0, 0, 0)]]]])
 
    Manage font and rendering of text.
 
@@ -86,17 +86,18 @@ Text rendering routines
       the value must be a tuple with a font alias and a size: ``(alias,
       size)``.
 
-   .. method:: add(font_path : str[, alias=None[, size=16]]) -> sdl2.sdlttf.TTF_Font
+   .. method:: add(font_path : str[, alias=None[, size=None]]) -> sdl2.sdlttf.TTF_Font
 
       Add a font to the :class:`FontManager`. *alias* is by default the
       font name, any other name can be passed, *size* is the font size
-      in pixels. though. Returns the font pointer stored in :attr:`fonts`.
+      in pixels and defaults to the :attr:`default_font` size. Returns the
+      font pointer stored in :attr:`fonts`.
 
    .. method:: close()
 
       Closes all fonts used by the :class:`FontManager`.
 
-   .. method:: render(text : str[, alias=None[, size=16[, width=None[, color=None[, bg_color=None[, **kwargs]]]]]]) -> sdl2.SDL_Surface
+   .. method:: render(text : str[, alias=None[, size=None[, width=None[, color=None[, bg_color=None[, **kwargs]]]]]]) -> sdl2.SDL_Surface
 
       Renders text to a surface. This method uses the font designated by
       the passed *alias* or, if *alias* is omitted, by the set
