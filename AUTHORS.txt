@@ -1,0 +1,2 @@
+Authors and contributors:
+Marcus von Appen <marcus@sysfault.org>
