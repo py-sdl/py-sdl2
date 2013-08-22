@@ -101,12 +101,19 @@ class RenderContext(object):
     def copy(self, src, srcrect=None, dstrect=None):
         """Copies (blits) the passed source to the target of the
         RenderContext,"""
+        SDL_Rect = rect.SDL_Rect
         if isinstance(src, TextureSprite):
             texture = src.texture
         elif isinstance(src, render.SDL_Texture):
             texture = src
         else:
             raise TypeError("src must be a TextureSprite or SDL_Texture")
+        if srcrect is not None:
+            x, y, w, h = srcrect
+            srcrect = SDL_Rect(x, y, w, h)
+        if dstrect is not None:
+            x, y, w, h = dstrect
+            dstrect = SDL_Rect(x, y, w, h)
         ret = render.SDL_RenderCopy(self.renderer, texture, srcrect, dstrect)
         if ret == -1:
             raise SDLError()
