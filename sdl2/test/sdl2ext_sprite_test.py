@@ -3,6 +3,7 @@ import unittest
 from ctypes import ArgumentError, POINTER, byref
 from ..ext.resources import Resources
 from .. import ext as sdl2ext
+from ..rect import SDL_Rect
 from ..surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.video import SDL_Window, SDL_WINDOW_HIDDEN, SDL_DestroyWindow
 from sdl2.render import SDL_Renderer, SDL_CreateWindowAndRenderer, \
@@ -506,9 +507,18 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_RenderContext_clear(self):
         pass
 
-    @unittest.skip("not implemented")
     def test_RenderContext_copy(self):
-        pass
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.RenderContext(surface)
+        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        w, h = 32, 32
+        sp = factory.from_color(0xFF0000, (w, h))
+        sp.x, sp.y = 40, 50
+        renderer.copy(sp, SDL_Rect(0, 0, w, h), SDL_Rect(sp.x, sp.y, w, h))
+        view = sdl2ext.PixelView(surface)
+        self.check_pixels(view, 128, 128, sp, 0xFF0000, (0x0,))
+        del view
 
     @unittest.skip("not implemented")
     def test_RenderContext_draw_line(self):
@@ -522,9 +532,18 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_RenderContext_draw_rect(self):
         pass
 
-    @unittest.skip("not implemented")
     def test_RenderContext_fill(self):
-        pass
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.RenderContext(surface)
+        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        w, h = 32, 32
+        sp = factory.from_color(0xFF0000, (w, h))
+        sp.x, sp.y = 40, 50
+        renderer.fill((sp.x, sp.y, w, h), 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_pixels(view, 128, 128, sp, 0x0000FF, (0x0,))
+        del view
 
 
 if __name__ == '__main__':
