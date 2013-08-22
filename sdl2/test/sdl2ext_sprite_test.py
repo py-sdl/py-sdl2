@@ -3,7 +3,6 @@ import unittest
 from ctypes import ArgumentError, POINTER, byref
 from ..ext.resources import Resources
 from .. import ext as sdl2ext
-from ..rect import SDL_Rect
 from ..surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.video import SDL_Window, SDL_WINDOW_HIDDEN, SDL_DestroyWindow
 from sdl2.render import SDL_Renderer, SDL_CreateWindowAndRenderer, \
@@ -515,7 +514,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         w, h = 32, 32
         sp = factory.from_color(0xFF0000, (w, h))
         sp.x, sp.y = 40, 50
-        renderer.copy(sp, SDL_Rect(0, 0, w, h), SDL_Rect(sp.x, sp.y, w, h))
+        renderer.copy(sp, (0, 0, w, h), (sp.x, sp.y, w, h))
         view = sdl2ext.PixelView(surface)
         self.check_pixels(view, 128, 128, sp, 0xFF0000, (0x0,))
         del view
