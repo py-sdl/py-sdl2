@@ -68,8 +68,9 @@ Text rendering routines
    Manage font and rendering of text.
 
    One font path must be given to initialize the FontManager.
-   :attr:`default_font` will be set to this font. *color* and *bg_color*
-   will give the FontManager a default color.
+   :attr:`default_font` will be set to this font. *size* is the default
+   font size in pixels. *color* and *bg_color* will give the FontManager
+   a default color.
 
    .. attribute:: bg_color
 
@@ -81,17 +82,20 @@ Text rendering routines
 
    .. attribute:: default_font
 
-      Returns the name and size of the current default font being used
-      by the :class:`FontManager`. On assigning :attr:`default_font`,
-      the value must be a tuple with a font alias and a size: ``(alias,
-      size)``.
+      Returns the name of the current default font being used by the
+      :class:`FontManager`. On assigning :attr:`default_font`,
+      the value must be a loaded font alias.
+
+   .. attribute:: size
+
+      The font size in pixels.
 
    .. method:: add(font_path : str[, alias=None[, size=None]]) -> sdl2.sdlttf.TTF_Font
 
       Add a font to the :class:`FontManager`. *alias* is by default the
       font name, any other name can be passed, *size* is the font size
-      in pixels and defaults to the :attr:`default_font` size. Returns the
-      font pointer stored in :attr:`fonts`.
+      in pixels and defaults to :attr:`size`. Returns the font pointer
+      stored in :attr:`fonts`.
 
    .. method:: close()
 

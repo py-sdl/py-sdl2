@@ -169,7 +169,8 @@ class FontManager(object):
 
         One font path must be given to initialize the FontManager. The
         default_font will be set to this font. color and bg_color
-        will give the FontManager a default color.
+        will give the FontManager a default color. size is the default
+        font size in pixels.
         """
         if not _HASSDLTTF:
             raise UnsupportedError("FontManager requires sdlttf support")
@@ -181,7 +182,8 @@ class FontManager(object):
         self._bgcolor = pixels.SDL_Color(255, 255, 255)
         self.color = color
         self.bg_color = bg_color
-        self._default_font = self.add(font_path, alias, size)
+        self.size = size
+        self._default_font = self.add(font_path, alias)
 
     def __del__(self):
         """Close all opened fonts."""
@@ -202,7 +204,7 @@ class FontManager(object):
         alias is by default the font name. But another name can be
         passed. Returns the font pointer stored in self.fonts.
         """
-        size = size or self.default_font[1]
+        size = size or self.size
         if alias is None:
             # If no alias given, take the font name as alias
             basename = os.path.basename(font_path)
@@ -266,21 +268,32 @@ class FontManager(object):
         self._bgcolor = pixels.SDL_Color(c.r, c.g, c.b, c.a)
 
     @property
+    def size(self):
+        """The font size in pixels."""
+        return self._size
+
+    @size.setter
+    def size(self, value):
+        """The font size in pixels."""
+        self._size = value
+
+    @property
     def default_font(self):
-        """Returns the name and size of the current default_font."""
+        """Returns the name of the current default_font."""
         for alias in self.fonts:
             for size, font in self.fonts[alias].items():
                 if font == self._default_font:
-                    return alias, size
+                    return alias
 
     @default_font.setter
     def default_font(self, value):
-        """value must be a tuple with a font alias and a size: (alias, size)
+        """value must be a font alias
 
-        Set the default_font to the given font name alias and size,
+        Set the default_font to the given font name alias,
         provided it's loaded in the font manager.
         """
-        alias, size = value
+        alias = value
+        size = self.size
         if alias not in self.fonts:
             raise ValueError("Font %s not loaded in FontManager" % alias)
         # Check if size is already loaded, otherwise do it.
@@ -299,8 +312,8 @@ class FontManager(object):
         If no bg_color or color are given, it will default to the
         FontManager's bg_color and color.
         """
-        alias = alias or self.default_font[0]
-        size = size or self.default_font[1]
+        alias = alias or self.default_font
+        size = size or self.size
         if bg_color is None:
             bg_color = self._bgcolor
         elif not isinstance(bg_color, pixels.SDL_Color):

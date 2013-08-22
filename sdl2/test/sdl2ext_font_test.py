@@ -73,19 +73,25 @@ class SDL2ExtFontTest(unittest.TestCase):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"),
                                  bg_color=(100, 0, 0))
         self.assertIsInstance(fm, sdl2ext.FontManager)
-        self.assertEqual(fm.default_font, ("tuffy", 16))
+        self.assertEqual(fm.default_font, "tuffy")
+        self.assertEqual(fm.size, 16)
         self.assertEqual(fm.bg_color, sdl2ext.Color(100, 0, 0, 0))
 
     def test_FontManager_default_font(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
-        self.assertEqual(fm.default_font, ("tuffy", 16))
+        self.assertEqual(fm.default_font, "tuffy")
+        self.assertEqual(fm.size, 16)
         with self.assertRaises(ValueError):
-            fm.default_font = "Inexistent Alias", 16
+            fm.default_font = "Inexistent Alias"
         fm.add(RESOURCES.get_path("tuffy.copy.ttf"), size = 10)
-        fm.default_font = ("tuffy.copy", 10)
-        self.assertEqual(fm.default_font, ("tuffy.copy", 10))
-        fm.default_font = ("tuffy.copy", 16)
-        self.assertEqual(fm.default_font, ("tuffy.copy", 16))
+        fm.default_font = "tuffy.copy"
+        fm.size = 10
+        self.assertEqual(fm.default_font, "tuffy.copy")
+        self.assertEqual(fm.size, 10)
+        fm.default_font = "tuffy.copy"
+        fm.size = 16
+        self.assertEqual(fm.default_font, "tuffy.copy")
+        self.assertEqual(fm.size, 16)
 
     def test_FontManager_add(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
