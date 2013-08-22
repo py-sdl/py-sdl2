@@ -65,7 +65,7 @@ Text rendering routines
 
 .. class:: FontManager(font_path : str[, alias=None[, size=16[, color=Color(255, 255, 255)[, bg_color=Color(0, 0, 0)]]]])
 
-   Manage font and rendering of text.
+   Manage fonts and rendering of text.
 
    One font path must be given to initialize the FontManager.
    :attr:`default_font` will be set to this font. *size* is the default
