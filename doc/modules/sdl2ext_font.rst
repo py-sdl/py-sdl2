@@ -88,7 +88,7 @@ Text rendering routines
 
    .. attribute:: size
 
-      The font size in pixels.
+      The default font size in pixels.
 
    .. method:: add(font_path : str[, alias=None[, size=None]]) -> sdl2.sdlttf.TTF_Font
 
