@@ -268,16 +268,6 @@ class FontManager(object):
         self._bgcolor = pixels.SDL_Color(c.r, c.g, c.b, c.a)
 
     @property
-    def size(self):
-        """The font size in pixels."""
-        return self._size
-
-    @size.setter
-    def size(self, value):
-        """The font size in pixels."""
-        self._size = value
-
-    @property
     def default_font(self):
         """Returns the name of the current default_font."""
         for alias in self.fonts:
