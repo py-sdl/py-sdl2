@@ -24,20 +24,14 @@ Uint32 = c_uint32
 Sint64 = c_int64
 Uint64 = c_uint64
 
-_libc = None
-if sys.platform in ("win32", "cli"):
-    _libc = cdll.msvcrt
-else:
-    _libc = cdll.LoadLibrary(find_library("c"))
-
-SDL_malloc = _bind("SDL_malloc", [c_size_t], c_void_p, _libc.free)
-SDL_calloc = _bind("SDL_calloc", [c_size_t, c_size_t], c_void_p, _libc.calloc)
-SDL_realloc = _bind("SDL_realloc", [c_void_p, c_size_t], c_void_p, _libc.realloc)
-SDL_free = _bind("SDL_free", [c_void_p], None, _libc.free)
-SDL_getenv = _bind("SDL_getenv", [c_char_p], c_char_p, _libc.getenv)
+SDL_malloc = _bind("SDL_malloc", [c_size_t], c_void_p)
+SDL_calloc = _bind("SDL_calloc", [c_size_t, c_size_t], c_void_p)
+SDL_realloc = _bind("SDL_realloc", [c_void_p, c_size_t], c_void_p)
+SDL_free = _bind("SDL_free", [c_void_p], None)
+SDL_getenv = _bind("SDL_getenv", [c_char_p], c_char_p)
 SDL_setenv = _bind("SDL_setenv", [c_char_p, c_char_p, c_int], c_int)
 SDL_abs = abs
 SDL_min = min
 SDL_max = max
-SDL_memset = _bind("SDL_memset", [c_void_p, c_int, c_size_t], c_void_p, _libc.memset)
-SDL_memcpy = _bind("SDL_memcpy", [c_void_p, c_void_p, c_size_t], c_void_p, _libc.memcpy)
+SDL_memset = _bind("SDL_memset", [c_void_p, c_int, c_size_t], c_void_p)
+SDL_memcpy = _bind("SDL_memcpy", [c_void_p, c_void_p, c_size_t], c_void_p)
