@@ -17,7 +17,6 @@ def _findlib(libnames, path=None):
         pattern = "lib%s.dylib"
     else:
         pattern = "lib%s.so"
-
     searchfor = libnames
     if type(libnames) is dict:
         # different library names for the platforms
@@ -73,7 +72,7 @@ class _DLL(object):
                 warnings.warn\
                     ("function '%s' not found in %r, using replacement" %
                      (funcname, self._dll))
-                func = optfunc
+                func = _nonexistent(funcname, optfunc)
             else:
                 raise ValueError("could not find function '%s' in %r" %
                                  (funcname, self._dll))
@@ -86,10 +85,24 @@ class _DLL(object):
         """Gets the filename of the loaded library."""
         return self._libfile
 
+def _nonexistent(funcname, func):
+    """A simple wrapper to mark functions and methods as nonexistent."""
+    def wrapper(*fargs, **kw):
+        warnings.warn("%s does not exist" % funcname,
+                      category=RuntimeWarning, stacklevel=2)
+        return func(*fargs, **kw)
+    wrapper.__name__ = func.__name__
+    return wrapper
+
+
 try:
     dll = _DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
 except RuntimeError as exc:
     raise ImportError(exc)
+
+def nullfunc(*args):
+    """A simple no-op function to be used as dll replacement."""
+    return
 
 def get_dll_file():
     """Gets the file name of the loaded SDL2 library."""

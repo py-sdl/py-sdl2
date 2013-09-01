@@ -9,6 +9,7 @@ from .cpuinfo import *
 from .endian import *
 from .error import *
 from .events import *
+from .filesystem import *
 from .gamecontroller import *
 from .gesture import *
 from .haptic import *
