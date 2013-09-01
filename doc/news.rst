@@ -2,6 +2,24 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.6.0
+-----
+Released on 2013-09-01.
+
+* new :attr:`sdl2.ext.FontManager.size` attribute, which gives a default size
+  to be used for adding fonts or rendering text
+* updated :mod:`sdl2` to include the latest changes of SDL2
+* :meth:`sdl2.ext.RenderContext.copy()` accepts any 4-value sequence as source
+  or destination rectangle now
+* issue #11: throw an :exc:`ImportError` instead of a
+  :exc:`RuntimeError`, if a third-party DLL could not be imported
+  properly
+* fixed a bug in the installation code, which caused :mod:`sdl2.examples` not
+  to install the required resources
+
+Thanks to Steven Johnson for his enhancements to the FontManager class.
+Thanks to Marcel Rodrigues for the improvements to RenderContext.copy().
+
 0.5.0
 -----
 Released on 2013-08-14.
