@@ -506,6 +506,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_RenderContext_clear(self):
         pass
 
+    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
+                     "PyPy's ctypes can't do byref(value, offset)")
     def test_RenderContext_copy(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
@@ -531,6 +533,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_RenderContext_draw_rect(self):
         pass
 
+    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
+                     "PyPy's ctypes can't do byref(value, offset)")
     def test_RenderContext_fill(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
