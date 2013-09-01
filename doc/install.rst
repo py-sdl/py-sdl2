@@ -23,10 +23,10 @@ http://www.libsdl.org.
 
 PySDL2 also offers support for the following SDL-related libraries:
 
-* SDL_image             (http://www.libsdl.org/projects/SDL_image/)
-* SDL_mixer             (http://www.libsdl.org/projects/SDL_mixer/)
-* SDL_ttf               (http://www.libsdl.org/projects/SDL_ttf/)
-* SDL_gfx               (http://www.ferzkopp.net/Software/SDL_gfx-2.0/)
+* SDL2_image             (http://www.libsdl.org/projects/SDL_image/)
+* SDL2_mixer             (http://www.libsdl.org/projects/SDL_mixer/)
+* SDL2_ttf               (http://www.libsdl.org/projects/SDL_ttf/)
+* SDL2_gfx               (http://www.ferzkopp.net/Software/SDL_gfx-2.0/)
 
 Those are optional though and only necessary, if you want to use
 :mod:`sdl2.sdlimage`, :mod:`sdl2.sdlmixer`, :mod:`sdl2.sdlttf` or
