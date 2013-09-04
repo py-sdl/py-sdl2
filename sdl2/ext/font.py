@@ -313,7 +313,7 @@ class FontManager(object):
             color = self._textcolor
         elif not isinstance(color, pixels.SDL_Color):
             c = convert_to_color(color)
-            bg_color = pixels.SDL_Color(c.r, c.g, c.b, c.a)
+            color = pixels.SDL_Color(c.r, c.g, c.b, c.a)
         if len(self.fonts) == 0:
             raise TypeError("There are no fonts selected.")
         font = self._default_font
