@@ -14,6 +14,7 @@ Contents
    integration.rst
    tutorial/index.rst
    modules/index.rst
+   faq.rst
    news.rst
 
 Further readings:
