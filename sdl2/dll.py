@@ -46,8 +46,10 @@ class _DLL(object):
     def __init__(self, libinfo, libnames, path=None):
         self._dll = None
         foundlibs = _findlib(libnames, path)
+        dllmsg = "PYSDL2_DLL_PATH: %s" % (os.getenv("PYSDL2_DLL_PATH") or "unset")
         if len(foundlibs) == 0:
-            raise RuntimeError("could not find any library for %s" % libinfo)
+            raise RuntimeError("could not find any library for %s (%s)" %
+                               (libinfo, dllmsg))
         for libfile in foundlibs:
             try:
                 self._dll = CDLL(libfile)
@@ -58,7 +60,8 @@ class _DLL(object):
                 # to the next one.
                 warnings.warn(repr(exc), ImportWarning)
         if self._dll is None:
-            raise RuntimeError("could not load any library for %s" % libinfo)
+            raise RuntimeError("found %s, but it's not usable for the libary %s" %
+                               (foundlibs, libinfo))
         if path is not None and sys.platform in ("win32", "cli") and \
             path in self._libfile:
             os.environ["PATH"] = "%s;%s" % (path, os.environ["PATH"])
@@ -71,7 +74,7 @@ class _DLL(object):
             if optfunc:
                 warnings.warn\
                     ("function '%s' not found in %r, using replacement" %
-                     (funcname, self._dll))
+                     (funcname, self._dll), ImportWarning)
                 func = _nonexistent(funcname, optfunc)
             else:
                 raise ValueError("could not find function '%s' in %r" %
