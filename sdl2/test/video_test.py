@@ -408,8 +408,6 @@ class SDLVideoTest(unittest.TestCase):
         #self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_SetWindowIcon, window, 123456)
 
-    @unittest.skipIf(sys.platform == "cli",
-                     "IronPython's ctypes fails with access violations")
     @unittest.skipIf(hasattr(sys, "pypy_version_info"),
                      "PyPy can't create proper py_object() values")
     def test_SDL_GetSetWindowData(self):
@@ -485,7 +483,6 @@ class SDLVideoTest(unittest.TestCase):
         doprint("Please check, if the window is shown again")
         video.SDL_DestroyWindow(window)
 
-    @unittest.skip("Seems not to work at the moment")
     @interactive("Did the window raise properly?")
     def test_SDL_RaiseWindow(self):
         window = video.SDL_CreateWindow(b"test_SDL_RaiseWindow",
@@ -520,7 +517,6 @@ class SDLVideoTest(unittest.TestCase):
         doprint("Please check, if the window was minimized properly")
         video.SDL_DestroyWindow(window)
 
-    @unittest.skip("seems not to work correctly at the moment")
     @interactive("Was the window maximized and restored properly?")
     def test_SDL_RestoreWindow(self):
         window = video.SDL_CreateWindow(b"test_SDL_RestoreWindow", 200, 200,

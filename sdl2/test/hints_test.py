@@ -34,8 +34,10 @@ class SDLHintsTest(unittest.TestCase):
         self.assertEqual(hints.SDL_GetHint(b"TEST"), b"32")
         self.assertEqual(hints.SDL_SetHint(b"TEST", b"abcdef"), 1)
         self.assertEqual(hints.SDL_GetHint(b"TEST"), b"abcdef")
-        self.assertEqual(hints.SDL_SetHint(b"", b""), 1)
-        self.assertEqual(hints.SDL_GetHint(b""), b"")
+        if sys.platform != "cli":
+            # TODO: Check on next IronPython version (>2.7.4)
+            self.assertEqual(hints.SDL_SetHint(b"", b""), 1)
+            self.assertEqual(hints.SDL_GetHint(b""), b"")
 
     def test_SDL_SetHintWithPriority(self):
         self.assertEqual(hints.SDL_SetHintWithPriority
@@ -44,9 +46,11 @@ class SDLHintsTest(unittest.TestCase):
         self.assertEqual(hints.SDL_SetHintWithPriority
                          (b"TEST", b"abcdef", hints.SDL_HINT_NORMAL), 1)
         self.assertEqual(hints.SDL_GetHint(b"TEST"), b"abcdef")
-        self.assertEqual(hints.SDL_SetHintWithPriority
-                         (b"", b"", hints.SDL_HINT_OVERRIDE), 1)
-        self.assertEqual(hints.SDL_GetHint(b""), b"")
+        if sys.platform != "cli":
+            # TODO: Check on next IronPython version (>2.7.4)
+            self.assertEqual(hints.SDL_SetHintWithPriority
+                             (b"", b"", hints.SDL_HINT_OVERRIDE), 1)
+            self.assertEqual(hints.SDL_GetHint(b""), b"")
 
 
         # self.assertRaises(ValueError, hints.SDL_SetHintWithPriority,

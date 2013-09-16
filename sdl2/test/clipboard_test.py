@@ -17,7 +17,6 @@ class SDLClipboardTest(unittest.TestCase):
         SDL_Init(SDL_INIT_EVERYTHING)
 
     def tearDown(self):
-        SDL_InitSubSystem(SDL_INIT_EVERYTHING)
         SDL_Quit()
 
     @unittest.skipIf(not is_win_or_mac(), "we would need a SDL window")
@@ -39,9 +38,11 @@ class SDLClipboardTest(unittest.TestCase):
         retval = clipboard.SDL_GetClipboardText()
         self.assertEqual(retval, b"Test content")
 
-        self.assertEquals(clipboard.SDL_SetClipboardText(b""), 0)
-        retval = clipboard.SDL_GetClipboardText()
-        self.assertEqual(retval, b"")
+        if sys.platform != "cli":
+            # TODO: Check next IronPython version (>2.7.4)
+            self.assertEquals(clipboard.SDL_SetClipboardText(b""), 0)
+            retval = clipboard.SDL_GetClipboardText()
+            self.assertEqual(retval, b"")
 
         self.assertEquals(clipboard.SDL_SetClipboardText(b"Test content"), 0)
         retval = clipboard.SDL_GetClipboardText()

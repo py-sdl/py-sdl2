@@ -151,8 +151,6 @@ class SDLPixelsTest(unittest.TestCase):
         self.assertEqual(pixels.SDL_GetPixelFormatName(99999),
                          b"SDL_PIXELFORMAT_UNKNOWN")
 
-    @unittest.skipIf(sys.platform == "cli",
-                     "IronPython's ctypes can't handle long values correctly")
     def test_SDL_MasksToPixelFormatEnum(self):
         if sys.byteorder == "little":
             val = pixels.SDL_MasksToPixelFormatEnum(32,
@@ -266,8 +264,9 @@ class SDLPixelsTest(unittest.TestCase):
         #                   pixels.SDL_PIXELFORMAT_YUY2)
 
     def test_SDL_AllocFreePalette(self):
-        self.assertRaises(ArgumentError, pixels.SDL_AllocPalette, None)
-        self.assertRaises(ArgumentError, pixels.SDL_AllocPalette,
+        self.assertRaises((ArgumentError, TypeError), pixels.SDL_AllocPalette,
+                          None)
+        self.assertRaises((ArgumentError, TypeError), pixels.SDL_AllocPalette,
                           "Test")
         # self.assertRaises(ValueError, pixels.SDL_AllocPalette, -5)
 

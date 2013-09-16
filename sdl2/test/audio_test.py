@@ -73,9 +73,10 @@ class SDLAudioTest(unittest.TestCase):
         # self.assertRaises(SDLError, audio.SDL_GetAudioDriver, -1)
         # self.assertRaises(SDLError, audio.get_audio_driver,
         #                  drivercount + 1)
-        self.assertRaises(ctypes.ArgumentError, audio.SDL_GetAudioDriver,
-                          "Test")
-        self.assertRaises(ctypes.ArgumentError, audio.SDL_GetAudioDriver, None)
+        self.assertRaises((ctypes.ArgumentError, TypeError),
+                          audio.SDL_GetAudioDriver, "Test")
+        self.assertRaises((ctypes.ArgumentError, TypeError),
+                          audio.SDL_GetAudioDriver, None)
 
     def test_SDL_GetCurrentAudioDriver(self):
         success = 0

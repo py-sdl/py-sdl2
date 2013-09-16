@@ -15,6 +15,7 @@ class SDL2ExtDrawTest(unittest.TestCase):
 
     @unittest.skipIf(hasattr(sys, "pypy_version_info"),
                      "PyPy's ctypes can't do byref(value, offset)")
+    @unittest.skipIf(sys.platform=="cli", "IronPython can't cast correctly")
     def test_fill(self):
         # TODO: add exceptions and more bounding tests.
         rects = ((0, 0, 3, 2),
@@ -42,6 +43,8 @@ class SDL2ExtDrawTest(unittest.TestCase):
                     else:
                         self.assertEqual(col, 0, "color mismatch at (x, y)")
 
+    @unittest.skipIf(sys.platform=="cli",
+                     "IronPython does not convert int values correctly")
     def test_prepare_color(self):
         rcolors = (Color(0, 0, 0, 0),
                    Color(255, 255, 255, 255),

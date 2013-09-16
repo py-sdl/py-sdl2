@@ -43,7 +43,7 @@ class SDLKeyboardTest(unittest.TestCase):
         window = keyboard.SDL_GetKeyboardFocus()
         # TODO: x
         # self.assertEqual(window, None)
-        rwin = video.SDL_CreateWindow(b"", 10, 10, 10, 10, 0)
+        rwin = video.SDL_CreateWindow(b"test", 10, 10, 10, 10, 0)
         window = keyboard.SDL_GetKeyboardFocus()
         if window:
             self.assertEqual(video.SDL_GetWindowID(window),
@@ -131,6 +131,8 @@ class SDLKeyboardTest(unittest.TestCase):
         # self.assertRaises(ValueError, keyboard.get_scancode_from_key, "Test")
         # self.assertRaises(TypeError, keyboard.get_scancode_from_key, self)
 
+    @unittest.skipIf(sys.platform=="cli",
+                     "IronPython can't pass empty bytes() to ctypes")
     def test_SDL_GetScancodeFromName(self):
         codes = range(scancode.SDL_SCANCODE_A, scancode.SDL_SCANCODE_Z)
         xoff = 0
