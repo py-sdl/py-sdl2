@@ -60,3 +60,14 @@ You also can set the environment variable within Python using
    can also change the ``os.getenv("PYSDL2_DLL_PATH")`` query within the
    *sdl2/dll.py* (or *sdl2/sdlimage.py*, *sdl2/sdlttf.py*, *sdl2/sdlgfx.py*)
    file to point to the directory, in which you keep the DLL.
+
+Using different SDL2 versions
+-----------------------------
+PySDL2 tries to provide interfaces to the most recent versions of the
+SDL2 libraries. Sometimes this means that PySDL2 tries to test for
+functions that might not be available for your very own project or that
+are not available on the target system due to an version of the specific
+library. To check, if the SDL2 libraries do not provide certain
+functions, you can enable the specific warnings for them.
+
+>>> python -W"module"::ImportWarning:sdl2.dll yourfile.py

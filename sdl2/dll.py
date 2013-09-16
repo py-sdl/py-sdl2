@@ -70,6 +70,9 @@ class _DLL(object):
         """Binds the passed argument and return value types to the specified
         function."""
         func = getattr(self._dll, funcname, None)
+        warnings.warn\
+            ("function '%s' not found in %r, using replacement" %
+             (funcname, self._dll), ImportWarning)
         if not func:
             if optfunc:
                 warnings.warn\
