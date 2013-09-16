@@ -324,6 +324,8 @@ class SDLRectTest(unittest.TestCase):
         self.assertFalse(ret)
         # TODO
 
+    @unittest.skipIf(sys.platform=="cli",
+                     "IronPython does not convert arrays to POINTER objects")
     def test_SDL_EnclosePoints(self):
         pt1 = rect.SDL_Point(0, 0)
         pt2 = rect.SDL_Point(5, 7)

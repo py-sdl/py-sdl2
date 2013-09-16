@@ -56,6 +56,8 @@ class SDLTTFTest(unittest.TestCase):
         #self.assertRaises(ValueError, sdlttf.open_font_index, filename, 10,-2)
         #self.assertRaises(sdl.SDLError, sdlttf.open_font_index, "test", 10, 0)
 
+    @unittest.skipIf(sys.platform=="cli",
+                     "IronPython can't handle RW objects")
     def test_TTF_OpenFontRW(self):
         fp = open(fontfile, "rb")
         fontrw = rwops.rw_from_object(fp)
@@ -70,6 +72,8 @@ class SDLTTFTest(unittest.TestCase):
         #                  sdlttf.open_font_rw, None, False, 10)
         #self.assertRaises(TypeError, sdlttf.open_font_rw, fontrw, False, None)
 
+    @unittest.skipIf(sys.platform=="cli",
+                     "IronPython can't handle RW objects")
     def test_TTF_OpenFontIndexRW(self):
         fp = open(fontfile, "rb")
         fontrw = rwops.rw_from_object(fp)
