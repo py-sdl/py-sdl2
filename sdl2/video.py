@@ -1,6 +1,6 @@
 from ctypes import Structure, POINTER, c_int, c_void_p, c_char_p, c_float, \
     py_object
-from .dll import _bind
+from .dll import _bind, nullfunc
 from .stdinc import Uint16, Uint32, SDL_bool
 from .rect import SDL_Rect
 from .surface import SDL_Surface
@@ -250,5 +250,5 @@ SDL_GL_SetSwapInterval = _bind("SDL_GL_SetSwapInterval", [c_int], c_int)
 SDL_GL_GetSwapInterval = _bind("SDL_GL_GetSwapInterval", None, c_int)
 SDL_GL_SwapWindow = _bind("SDL_GL_SwapWindow", [POINTER(SDL_Window)])
 SDL_GL_DeleteContext = _bind("SDL_GL_DeleteContext", [SDL_GLContext])
-SDL_GL_GetDrawableSize = _bind("SDL_GL_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)])
+SDL_GL_GetDrawableSize = _bind("SDL_GL_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)], optfunc=nullfunc)
 

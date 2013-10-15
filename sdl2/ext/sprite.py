@@ -624,8 +624,11 @@ class SoftwareSpriteRenderer(SpriteRenderer):
                 r.y = y + sp.y
                 blit_surface(sp.surface, None, imgsurface, r)
         else:
-            r.x = x or sprites.x
-            r.y = y or sprites.y
+            r.x = sprites.x
+            r.y = sprites.y
+            if x is not None and y is not None:
+                r.x = x
+                r.y = y
             surface.SDL_BlitSurface(sprites.surface, None, self.surface, r)
         video.SDL_UpdateWindowSurface(self.window)
 
@@ -682,9 +685,11 @@ class TextureSpriteRenderer(SpriteRenderer):
                 if rcopy(renderer, sp.texture, None, r) == -1:
                     raise SDLError()
         else:
-            if x is None or y is None:
-                r.x = sprites.x
-                r.y = sprites.y
-                r.w, r.h = sprites.size
+            r.x = sprites.x
+            r.y = sprites.y
+            r.w, r.h = sprites.size
+            if x is not None and y is not None:
+                r.x = x
+                r.y = y
             render.SDL_RenderCopy(self.sdlrenderer, sprites.texture, None, r)
         render.SDL_RenderPresent(self.sdlrenderer)
