@@ -1,11 +1,11 @@
 from ctypes import c_int
-from .dll import _bind
+from .dll import _bind, nullfunc
 from .stdinc import SDL_bool
 
 __all__ = ["SDL_CACHELINE_SIZE", "SDL_GetCPUCount", "SDL_GetCPUCacheLineSize",
            "SDL_HasRDTSC", "SDL_HasAltiVec", "SDL_HasMMX", "SDL_Has3DNow",
            "SDL_HasSSE", "SDL_HasSSE2", "SDL_HasSSE3", "SDL_HasSSE41",
-           "SDL_HasSSE42"
+           "SDL_HasSSE42", "SDL_GetSystemRAM"
            ]
 
 SDL_CACHELINE_SIZE = 128
@@ -20,3 +20,4 @@ SDL_HasSSE2 = _bind("SDL_HasSSE2", None, SDL_bool)
 SDL_HasSSE3 = _bind("SDL_HasSSE3", None, SDL_bool)
 SDL_HasSSE41 = _bind("SDL_HasSSE41", None, SDL_bool)
 SDL_HasSSE42 = _bind("SDL_HasSSE42", None, SDL_bool)
+SDL_GetSystemRAM = _bind("SDL_GetSystemRAM", None, c_int, nullfunc)
