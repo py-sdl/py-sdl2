@@ -1,6 +1,6 @@
 from ctypes import Structure, POINTER, c_int, c_char_p, c_void_p, c_float, \
     c_double
-from .dll import _bind
+from .dll import _bind, nullfunc
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
 from .rect import SDL_Point, SDL_Rect
@@ -37,7 +37,7 @@ __all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
            "SDL_RenderDrawRects", "SDL_RenderFillRect", "SDL_RenderFillRects",
            "SDL_RenderCopy", "SDL_RenderCopyEx", "SDL_RenderReadPixels",
            "SDL_RenderPresent", "SDL_DestroyTexture", "SDL_DestroyRenderer",
-           "SDL_GL_BindTexture", "SDL_GL_UnbindTexture"
+           "SDL_UpdateYUVTexture", "SDL_GL_BindTexture", "SDL_GL_UnbindTexture"
            ]
 
 SDL_RendererFlags = c_int
@@ -126,3 +126,5 @@ SDL_DestroyTexture = _bind("SDL_DestroyTexture", [POINTER(SDL_Texture)])
 SDL_DestroyRenderer = _bind("SDL_DestroyRenderer", [POINTER(SDL_Renderer)])
 SDL_GL_BindTexture = _bind("SDL_GL_BindTexture", [POINTER(SDL_Texture), POINTER(c_float), POINTER(c_float)], c_int)
 SDL_GL_UnbindTexture = _bind("SDL_GL_UnbindTexture", [POINTER(SDL_Texture)], c_int)
+SDL_UpdateYUVTexture = _bind("SDL_UpdateYUVTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(Uint8), c_int, POINTER(Uint8), c_int, POINTER(Uint8), c_int], c_int, nullfunc)
+
