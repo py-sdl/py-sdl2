@@ -17,3 +17,7 @@ SDL_TimerID = c_int
 
 SDL_AddTimer = _bind("SDL_AddTimer", [Uint32, SDL_TimerCallback, c_void_p], SDL_TimerID)
 SDL_RemoveTimer = _bind("SDL_RemoveTimer", [SDL_TimerID], SDL_bool)
+
+def SDL_TICKS_PASSED(A, B):
+    return (B - A) <= 0
+
