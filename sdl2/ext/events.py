@@ -79,7 +79,8 @@ class MPEventHandler(EventHandler):
     """
     def __init__(self, sender, maxprocs=None):
         if not _HASMP:
-            raise UnsupportedError("no multiprocessing support found")
+            raise UnsupportedError(MPEventHandler,
+                                   "no multiprocessing support found")
         super(MPEventHandler, self).__init__(sender)
         self.maxprocs = maxprocs
 
