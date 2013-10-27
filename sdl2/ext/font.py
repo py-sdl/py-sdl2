@@ -173,7 +173,8 @@ class FontManager(object):
         font size in pixels.
         """
         if not _HASSDLTTF:
-            raise UnsupportedError("FontManager requires sdlttf support")
+            raise UnsupportedError(FontManager,
+                                   "FontManager requires sdlttf support")
         if sdlttf.TTF_WasInit() == 0 and sdlttf.TTF_Init() != 0:
             raise SDLError()
         self.fonts = {}  # fonts = {alias: {size:font_ptr}}

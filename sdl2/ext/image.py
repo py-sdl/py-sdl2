@@ -47,10 +47,13 @@ def load_image(fname, enforce=None):
     if enforce is not None and enforce not in ("PIL", "SDL"):
         raise ValueError("enforce must be either 'PIL' or 'SDL', if set")
 
+    if not _HASPIL and not _HASSDLIMAGE:
+        raise UnsupportedError(load_image,
+                               "cannot use PIL or SDL for image loading")
     if enforce == "PIL" and not _HASPIL:
-        raise UnsupportedError("PIL loading")
+        raise UnsupportedError(load_image, "cannot use PIL (not found)")
     if enforce == "SDL" and not _HASSDLIMAGE:
-        raise UnsupportedError("SDL loading")
+        raise UnsupportedError(load_image, "cannot use SDL_image (not found)")
 
     imgsurface = None
     if enforce != "PIL" and _HASSDLIMAGE:
