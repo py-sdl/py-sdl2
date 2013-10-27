@@ -2,6 +2,23 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.7.0
+-----
+Released on 2013-10-27.
+
+* updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.1)
+* fixed a bug in :meth:`sdl2.ext.FontManager.render()`, which did not apply
+  the text color correctly
+* issue #14: improved the error messages on failing DLL imports
+* issue #19: the :meth:`sdl2.ext.TextureSpriteRenderer.render()` and
+  :meth:`sdl2.ext.SoftwareSpriteRenderer.render()` methods do not
+  misinterpret x and y aguments anymore, if set to 0
+* issue #21: :func:`sdl2.ext.load_image()` raises a proper
+  :exc:`UnsupportedError`, if neither SDL_image nor PIL are usable
+
+Thanks to Marcel Rodrigues, Roger Flores and otus for providing fixes
+and improvement ideas.
+
 0.6.0
 -----
 Released on 2013-09-01.
@@ -60,7 +77,6 @@ Released on 2013-07-26.
 
 Thanks to Steven Johnson, Todd Rovito, Bil Bas and Dan McCombs for
 providing fixes and improvements.
-
 
 0.4.0
 -----
