@@ -3,7 +3,7 @@ import os
 import sys
 from distutils.core import setup
 
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 
 if __name__ == "__main__":
 
