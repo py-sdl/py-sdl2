@@ -45,7 +45,7 @@ SDL_RWFromFP = _bind("SDL_RWFromFP", [c_void_p, SDL_bool], POINTER(SDL_RWops))
 SDL_RWFromMem = _bind("SDL_RWFromMem", [c_void_p, c_int], POINTER(SDL_RWops))
 SDL_RWFromConstMem = _bind("SDL_RWFromConstMem", [c_void_p, c_int], POINTER(SDL_RWops))
 SDL_AllocRW = _bind("SDL_AllocRW", None, POINTER(SDL_RWops))
-SDL_FreeRW = _bind("SDL_AllocRW", [POINTER(SDL_RWops)])
+SDL_FreeRW = _bind("SDL_FreeRW", [POINTER(SDL_RWops)])
 
 RW_SEEK_SET = 0
 RW_SEEK_CUR = 1
