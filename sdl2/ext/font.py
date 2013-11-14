@@ -109,7 +109,10 @@ class BitmapFont(object):
             x = 0
             for c in line:
                 dstr.x = x
-                blit_surface(fontsf, offsets[c], target, dstr)
+                if c in offsets:
+                    blit_surface(fontsf, offsets[c], target, dstr)
+                #elif c != ' ':
+                #    TODO: raise an exception for unknown char?
                 x += w
             y += h
         return imgsurface
@@ -145,14 +148,17 @@ class BitmapFont(object):
             x = offset[0]
             for c in line:
                 dstr.x = x
-                blit_surface(fontsf, offsets[c], target, dstr)
+                if c in offsets:
+                    blit_surface(fontsf, offsets[c], target, dstr)
+                #elif c != ' ':
+                #    TODO: raise an exception for unknown char?
                 x += w
             y += h
         return (offset[0], offset[1], x + w, y + h)
 
     def contains(self, c):
         """Checks, whether a certain character exists in the font."""
-        return c in self.offsets
+        return c == ' ' or c in self.offsets
 
     def can_render(self, text):
         """Checks, whether all characters in the passed text can be rendered.
@@ -160,7 +166,7 @@ class BitmapFont(object):
         lines = text.split(os.linesep)
         for line in lines:
             for c in line:
-                if c not in self.offsets:
+                if c != ' ' and c not in self.offsets:
                     return False
         return True
 
