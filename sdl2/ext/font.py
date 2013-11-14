@@ -103,12 +103,12 @@ class BitmapFont(object):
         fontsf = self.surface
         offsets = self.offsets
 
-        srcr = rect.SDL_Rect(0, 0, 0, 0)
+        dstr = rect.SDL_Rect(0, 0, 0, 0)
         for line in lines:
             for c in line:
-                srcr.x = x
-                srcr.y = y
-                blit_surface(target, srcr, fontsf, offsets[c])
+                dstr.x = x
+                dstr.y = y
+                blit_surface(fontsf, offsets[c], target, dstr)
                 x += w
             y += h
         return imgsurface
@@ -138,12 +138,12 @@ class BitmapFont(object):
         fontsf = self.surface
         offsets = self.offsets
 
-        srcr = rect.SDL_Rect(0, 0, 0, 0)
+        dstr = rect.SDL_Rect(0, 0, 0, 0)
         for line in lines:
             for c in line:
-                srcr.x = x
-                srcr.y = y
-                blit_surface(target, srcr, fontsf, offsets[c])
+                dstr.x = x
+                dstr.y = y
+                blit_surface(fontsf, offsets[c], target, dstr)
                 x += w
             y += h
         return (offset[0], offset[1], x + w, y + h)
