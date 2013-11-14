@@ -94,7 +94,7 @@ class BitmapFont(object):
             th += h
 
         if bpp is None:
-            bpp = self.surface.format.BitsPerPixel
+            bpp = self.surface.format.contents.BitsPerPixel
         imgsurface = SoftwareSprite(tw, th, bpp)
         target = imgsurface.surface
         blit_surface = surface.SDL_BlitSurface
