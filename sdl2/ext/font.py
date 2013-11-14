@@ -84,7 +84,6 @@ class BitmapFont(object):
 
     def render(self, text, bpp=None):
         """Renders the passed text on a new Sprite and returns it."""
-        x, y = 0, 0
         tw, th = 0, 0
         w, h = self.size
         # TODO
@@ -104,10 +103,12 @@ class BitmapFont(object):
         offsets = self.offsets
 
         dstr = rect.SDL_Rect(0, 0, 0, 0)
+        y = 0
         for line in lines:
+            dstr.y = y
+            x = 0
             for c in line:
                 dstr.x = x
-                dstr.y = y
                 blit_surface(fontsf, offsets[c], target, dstr)
                 x += w
             y += h
@@ -120,7 +121,6 @@ class BitmapFont(object):
         The top-left start position of the text will be the passed offset and
         4-value tuple with the changed area will be returned.
         """
-        x, y = offset
         w, h = self.size
 
         target = None
@@ -139,10 +139,12 @@ class BitmapFont(object):
         offsets = self.offsets
 
         dstr = rect.SDL_Rect(0, 0, 0, 0)
+        y = offset[1]
         for line in lines:
+            dstr.y = y
+            x = offset[0]
             for c in line:
                 dstr.x = x
-                dstr.y = y
                 blit_surface(fontsf, offsets[c], target, dstr)
                 x += w
             y += h
