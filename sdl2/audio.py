@@ -89,7 +89,7 @@ class SDL_AudioSpec(Structure):
                 ("samples", Uint16),
                 ("padding", Uint16),
                 ("size", Uint32),
-                ("callback", c_void_p),
+                ("callback", SDL_AudioCallback),
                 ("userdata", c_void_p)
                 ]
     def __init__(self, freq, aformat, channels, samples,
