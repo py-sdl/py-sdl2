@@ -126,7 +126,7 @@ that will display them. ::
 
 The first thing to do is to enhance the
 :class:`sdl2.ext.SoftwareSpriteRenderer` so that it will paint
-the whole window sceeen black on every drawing cycle, before drawing all
+the whole window screen black on every drawing cycle, before drawing all
 sprites on the window.
 
 Afterwards, the player paddles will be implemented, based on an
@@ -144,7 +144,7 @@ systems, which causes it to invoke the ``process()`` methods for all
 
 Moving the ball
 ---------------
-We have two static paddles centered vertically on the left and right of
+We have two static paddles centred vertically on the left and right of
 our window. The next thing to do is to add a ball that can move around
 within the window boundaries. ::
 
@@ -214,7 +214,7 @@ within the window boundaries. ::
 
 Two new classes are introduced here, ``Velocity`` and
 ``MovementSystem``. The ``Velocity`` class is a simple data bag. It
-does not contain any application logic, but consists of the relvant
+does not contain any application logic, but consists of the relevant
 information to represent the movement in a certain direction. This
 allows us to mark in-game items as being able to move around.
 
@@ -353,8 +353,8 @@ Reacting on player input
 ------------------------
 We have a moving ball that bounces from side to side. The next step
 would be to allow moving one of the paddles around, if the player presses a
-key. The SDL event routines allow us to deal with a huge variety of user and 
-ystem events that could occur for our application, but right now we are only
+key. The SDL event routines allow us to deal with a huge variety of user and
+system events that could occur for our application, but right now we are only
 interested in key strokes for the Up and Down keys to move one of the player
 paddles up or down. ::
 
@@ -585,4 +585,4 @@ complex as it sounds.
 
 .. rubric:: Footnotes
 
-.. [#f1]  Component-Oriented Programming   
+.. [#f1]  Component-Oriented Programming

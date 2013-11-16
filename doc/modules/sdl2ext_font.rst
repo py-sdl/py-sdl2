@@ -67,7 +67,7 @@ Text rendering routines
 
    Manage fonts and rendering of text.
 
-   One font path must be given to initialize the FontManager.
+   One font path must be given to initialise the FontManager.
    :attr:`default_font` will be set to this font. *size* is the default
    font size in pixels. *color* and *bg_color* will give the FontManager
    a default color.
@@ -109,4 +109,3 @@ Text rendering routines
       not loaded with this size.  A *width* can be given for automatic line
       wrapping.  If no *bg_color* or *color* are given, it will default to
       the FontManager's :attr:`bg_color` and :attr:`color`.
-

@@ -44,7 +44,7 @@ value, *I* to something else. ::
     >>> ctview.to_uint16()[3] = 0x6554
     >>> print(text)    aello,Te am a simple ASCII string!"
 
-If the encapsuled object does not provide a (writeable) :func:`buffer`
+If the encapsuled object does not provide a (writable) :func:`buffer`
 interface, but is iterable, the :class:`CTypesView` will create an
 internal copy of the object data using Python's :mod:`array` module and
 perform all operations on that copy. ::

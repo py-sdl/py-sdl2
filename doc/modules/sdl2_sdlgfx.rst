@@ -8,6 +8,6 @@ around the SDL2_gfx library. It wraps nearly all publicly accessible
 structures and functions of the SDL2_gfx library to be accessible from
 Python code.
 
-A detailled documentation about the behaviour of the different functions
+A detailed documentation about the behaviour of the different functions
 can found on the `SDL2_gfx project website
 <http://www.ferzkopp.net/Software/SDL_gfx-2.0/>`_.

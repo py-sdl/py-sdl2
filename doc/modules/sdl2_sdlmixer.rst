@@ -8,6 +8,6 @@ the SDL2_mixer library. It wraps nearly all publicly accessible
 structures and functions of the SDL2_mixer library to be accessible from
 Python code.
 
-A detailled documentation about the behaviour of the different functions
+A detailed documentation about the behaviour of the different functions
 can found within the `SDL2_mixer documentation
 <http://www.libsdl.org/projects/SDL_mixer/docs/index.html>`_.

@@ -10,7 +10,7 @@ delegating input events, such as mouse movements, clicks and keyboard input,
 to the correct UI element.
 
 Depending on the event type (e.g. pressing a mouse button), the UIProcessor
-will execute its matching method (e.g. ``mousdown()``) with only those UI
+will execute its matching method (e.g. ``mousedown()``) with only those UI
 elements, which support the event type.
 
 .. image:: images/uiprocessing.png

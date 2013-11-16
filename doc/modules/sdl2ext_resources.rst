@@ -147,7 +147,7 @@ API
    be either **"gz"** for gzip compression or **"bz2"** for bzip2
    compression.
 
-   If the filename could not be found or an error occured on reading it,
+   If the filename could not be found or an error occurred on reading it,
    ``None`` will be returned.
 
    Raises a :exc:`TypeError`, if *archive* is not a valid TAR archive or

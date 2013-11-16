@@ -108,7 +108,7 @@ logic.  That said, if the truck has a color, we can handle it easily, if
 it has not, we will do as usual.
 
 Also, checking for the color of an object (regardless, if it is a truck,
-car, airplane or death star) allows us to apply the same or similar
+car, aeroplane or death star) allows us to apply the same or similar
 behaviour for every object. If the information is available, we will
 process it, if it is not, we will not do anything.
 
@@ -278,9 +278,9 @@ API
    on its set :attr:`System.componenttypes`
 
    .. attribute:: is_applicator
-   
+
       A boolean flag indicating that this class operates on combined data sets.
-   
+
    .. attribute:: componenttypes
 
       A tuple of class identifiers that shall be processed by the
@@ -356,35 +356,35 @@ API
 
       Adds a processing system to the world. The system will be
       added as last item in the processing order.
-      
+
       The passed system does not have to inherit from :class:`System`, but
       must feature a ``componenttypes`` attribute and a ``process()`` method,
       which match the signatures of the :class:`System` class ::
-      
+
         class MySystem(object):
             def __init__(self):
                 # componenttypes can be any iterable as long as it
                 # contains the classes the system should take care of
                 self.componenttypes = [AClass, AnotherClass, ...]
-            
+
             def process(self, world, components):
                 ...
 
       If the system shall operate on combined component sets as specified
       by the :class:`Applicator`, the class instance must contain a
       ``is_applicator`` property, that evaluates to ``True`` ::
-      
+
         class MyApplicator(object):
             def __init__(self):
                 self.is_applicator = True
                 self.componenttypes = [...]
-            
+
             def process(self, world, components):
                 pass
-      
+
       The behaviour can be changed at run-time. The ``is_applicator`` attribute
       is evaluated for every call to :meth:`World.process()`.
-      
+
    .. method:: delete(entity : Entity)
 
       Removes an :class:`Entity` from the World, including all its
