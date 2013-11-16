@@ -23,11 +23,11 @@ window. ::
         import traceback
         traceback.print_exc()
         sys.exit(1)
-    
+
     from sdl2.ext import Resources
     RESOURCES = Resources(__file__, "resources")
 
-At first, we try to import the :mod:`sdl2.ext` module, which is 
+At first, we try to import the :mod:`sdl2.ext` module, which is
 necessary for displaying the window and image. :mod:`sdl2.ext` requires
 :mod:`sdl2`, so in case it could not load the SDL2 bindings, we will
 print the exact error stack information and exit with a failure.
@@ -44,7 +44,7 @@ Any graphical application requires access to the screen, mostly in form
 of a window, which basically represents a portion of the screen, the
 application has access to and the application can manipulate. In most cases
 that portion has a border and title bar around it, allowing the user to move
-it around on the screen and reorganize everythingin a way to fit his needs.
+it around on the screen and reorganise everything in a way to fit his needs.
 
 Once we have imported all necessary parts, let's create a window to have
 access to the screen, so we can display the logo and thus represent it
@@ -61,7 +61,7 @@ to the user. ::
     spriterenderer = factory.create_sprite_renderer(window)
     spriterenderer.render(sprite)
 
-First, we initialize the :mod:`sdl2.ext` internals to gain access to the
+First, we initialise the :mod:`sdl2.ext` internals to gain access to the
 screen and and to be able to create windows on top of it. Once done with that,
 :class:`sdl2.ext.Window` will create the window for us and we
 supply a title to be shown on the window's border along with its initial size.
@@ -134,7 +134,7 @@ The window is shown, the image is shown, great! All left to do is to clean up
 everything, once the application finishes. Luckily the
 :class:`sdl2.ext.TestEventProcessor` knows when the window is closed, so
 it will exit from the event loop. Once it exits, we should clean up the
-video internals, we initialized at the beginning. Thus, a final call to ::
+video internals, we initialised at the beginning. Thus, a final call to ::
 
     sdl2ext.quit()
 

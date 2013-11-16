@@ -12,7 +12,7 @@ Released on 2013-10-27.
 * issue #14: improved the error messages on failing DLL imports
 * issue #19: the :meth:`sdl2.ext.TextureSpriteRenderer.render()` and
   :meth:`sdl2.ext.SoftwareSpriteRenderer.render()` methods do not
-  misinterpret x and y aguments anymore, if set to 0
+  misinterpret x and y arguments anymore, if set to 0
 * issue #21: :func:`sdl2.ext.load_image()` raises a proper
   :exc:`UnsupportedError`, if neither SDL_image nor PIL are usable
 

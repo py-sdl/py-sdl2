@@ -239,7 +239,7 @@ with :class:`sdl2.render.SDL_Texture` objects.
 pygame.PixelArray
 ^^^^^^^^^^^^^^^^^
 You can access pixel data of sprites and surfaces directly via the
-:class:`sdl2.ext.PixelView` class. It does not feature comparision or
+:class:`sdl2.ext.PixelView` class. It does not feature comparison or
 extractions methods.
 
 pygame.Rect

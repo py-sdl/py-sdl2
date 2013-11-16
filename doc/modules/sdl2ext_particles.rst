@@ -43,7 +43,7 @@ sdl2.ext.particles - A simple particle system
             ...
 
    .. method:: process(world : World, components : iterable) -> None
-   
+
       Processes all particle components, decreasing their life by 1.
 
       Once the life of all particle components has been decreased
@@ -70,13 +70,13 @@ sdl2.ext.particles - A simple particle system
       argument. ::
 
         def particle_deletefunc(world, list_of_dead_ones):
-            ...   
+            ...
 
 .. class:: Particle(x, y, life : int)
 
    A simple particle component type. It only contains information about
    a x- and y-coordinate and its current life time. The life time will
-   be decreased by 1, everytime the particle is processed by the
+   be decreased by 1, every time the particle is processed by the
    :class:`ParticleEngine`.
 
    .. attribute:: x

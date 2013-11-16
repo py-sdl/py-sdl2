@@ -1,5 +1,5 @@
 .. currentmodule:: sdl2.ext
-   
+
 Initialization routines
 =======================
 TODO
@@ -14,7 +14,7 @@ API
 
 .. function:: init() -> None
 
-   Initializes the underlying SDL2 video subsystem. Raises a
+   Initialises the underlying SDL2 video subsystem. Raises a
    :exc:`SDLError`, if the SDL2 video subsystem could not be
    initialised.
 

@@ -88,7 +88,7 @@ Sprite, texture and pixel surface routines
       Sort function for the component processing order. The default sort order
       is based on the depth attribute of every sprite. Lower depth values will
       cause sprites to be drawn below sprites with higher depth values.  If
-      :attr:`sortfunc` shall be overriden, it must match thre callback
+      :attr:`sortfunc` shall be overridden, it must match the callback
       requirements for :func:`sorted()`.
 
    .. method:: process(world : World, components : iterable) -> None

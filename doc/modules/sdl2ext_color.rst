@@ -53,7 +53,7 @@ Color handling
       100]. Note that this will not return the absolutely exact HSV
       values for the set RGB values in all cases. Due to the RGB mapping
       from 0-255 and the HSV mapping from 0-100 and 0-360 rounding
-      errors may cause the HSV values todiffer slightly from what you
+      errors may cause the HSV values to differ slightly from what you
       might expect.
 
    .. attribute:: i1i2i3
@@ -67,7 +67,7 @@ Color handling
 
    .. method:: normalize() -> (float, float, float, float)
 
-      Returns the normalized RGBA values of the Color as floating point
+      Returns the normalised RGBA values of the Color as floating point
       values in the range [0, 1].
 
    .. method:: __add__(self, color) -> Color
@@ -76,20 +76,20 @@ Color handling
                __div__(self, color) -> Color
                __truediv__(self, color) -> Color
                __mod__(self, color) -> Color
-   
+
       Basic arithmetic functions for :class:`Color` values. The arithmetic
       operations ``+, -, *, /, %`` are supported by the :class:`Color` class
       and work on a per-channel basis. This means, that the operation ::
-      
+
          color = color1 + color2
-      
+
       is the same as ::
-      
+
          color = Color()
          color.r = min(color1.r + color2.r, 255)
          color.g = min(color1.g + color2.g, 255)
          ...
-      
+
       The operations guarantee that the channel values stay in the allowed
       range of [0, 255].
 

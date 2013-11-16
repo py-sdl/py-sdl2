@@ -16,7 +16,7 @@ Window routines to manage on-screen windows
 
      Window.DEFAULTPOS = (10, 10)
 
-   The created Window is hidden by default, which can be overriden at
+   The created Window is hidden by default, which can be overridden at
    the time of creation by providing other SDL window flags through the
    *flags* parameter. The default flags for creating Window instances
    can be adjusted through the ``DEFAULTFLAGS`` class variable. ::

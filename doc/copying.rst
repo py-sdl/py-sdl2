@@ -5,7 +5,7 @@ License
    This software is distributed under the Public Domain.
 
    In cases, where the law prohibits the recognition of Public Domain
-   software, this software can be licensed under the zlib lincese as
+   software, this software can be licensed under the zlib license as
    stated below:
 
    Copyright (C) 2012-2013 Marcus von Appen <marcus@sysfault.org>
@@ -20,7 +20,7 @@ License
 
    1. The origin of this software must not be misrepresented; you must not
       claim that you wrote the original software. If you use this software
-      in a product, an acknowledgment in the product documentation would be
+      in a product, an acknowledgement in the product documentation would be
       appreciated but is not required.
    2. Altered source versions must be plainly marked as such, and must not be
       misrepresented as being the original software.
