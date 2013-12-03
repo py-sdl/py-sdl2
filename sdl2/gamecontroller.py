@@ -1,5 +1,5 @@
 from ctypes import Structure, Union, c_int, c_char_p, POINTER
-from .dll import _bind
+from .dll import _bind, nullfunc
 from .stdinc import SDL_bool, Sint16, Uint8
 from .joystick import SDL_JoystickGUID, SDL_Joystick
 
@@ -32,7 +32,7 @@ __all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
            "SDL_GameControllerGetButtonFromString",
            "SDL_GameControllerGetStringForButton",
            "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
-           "SDL_GameControllerClose"
+           "SDL_GameControllerClose", "SDL_GameControllerAddMappingsFromFile",
            ]
 
 class SDL_GameController(Structure):
@@ -100,3 +100,4 @@ SDL_GameControllerGetStringForButton = _bind("SDL_GameControllerGetStringForButt
 SDL_GameControllerGetBindForButton = _bind("SDL_GameControllerGetBindForButton", [POINTER(SDL_GameController), SDL_GameControllerButton], SDL_GameControllerButtonBind)
 SDL_GameControllerGetButton = _bind("SDL_GameControllerGetButton", [POINTER(SDL_GameController), SDL_GameControllerButton], Uint8)
 SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameController)])
+SDL_GameControllerAddMappingsFromFile = _bind("SDL_GameControllerAddMappingsFromFile", [c_char_p], c_int, nullfunc)
