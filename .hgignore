@@ -1,0 +1,10 @@
+syntax: glob
+.settings
+*project
+*.pyc
+*~
+*.class
+*.core
+dlls
+build
+doc/html
