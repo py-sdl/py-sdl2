@@ -126,7 +126,6 @@ class SDLSurfaceTest(unittest.TestCase):
         #                   surface.convert_surface, 12345, pfmt, 0)
         # surface.free_surface(sf)
         #######################################################################
-        pixels.SDL_FreeFormat(pfmt)
 
     @unittest.skipIf(sys.platform=="cli",
                      "IronPython crashes for unknown reasons")
