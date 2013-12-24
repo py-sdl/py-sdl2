@@ -658,9 +658,6 @@ class SDLVideoTest(unittest.TestCase):
         procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
         self.assertTrue(procaddr is not None and int(procaddr) != 0)
 
-        procaddr = video.SDL_GL_GetProcAddress(b"glForWhackoPeople")
-        self.assertIsNone(procaddr)
-
         video.SDL_GL_DeleteContext(ctx)
         video.SDL_DestroyWindow(window)
         video.SDL_GL_UnloadLibrary()
