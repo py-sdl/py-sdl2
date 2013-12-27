@@ -151,8 +151,8 @@ class SDL_MouseButtonEvent(Structure):
                 ("which", Uint32),
                 ("button", Uint8),
                 ("state", Uint8),
+                ("clicks", Uint8),
                 ("padding1", Uint8),
-                ("padding2", Uint8),
                 ("x", Sint32),
                 ("y", Sint32)
                 ]
