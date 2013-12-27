@@ -11,8 +11,6 @@ from sdl2.render import SDL_Renderer, SDL_CreateWindowAndRenderer, \
     SDL_TEXTUREACCESS_TARGET
 
 _ISPYPY = hasattr(sys, "pypy_version_info")
-if _ISPYPY:
-    import gc
 
 RESOURCES = Resources(__file__, "resources")
 
@@ -94,8 +92,6 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                     continue
                 sprite = tfactory.create_sprite(size=(w, h))
                 self.assertIsInstance(sprite, sdl2ext.TextureSprite)
-            if _ISPYPY and (w % 50) == 0:
-                gc.collect()
 
     def test_SpriteFactory_create_software_sprite(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -104,8 +100,6 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                 for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
                     sprite = factory.create_software_sprite((w, h), bpp)
                     self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
-            if _ISPYPY and (w % 50) == 0:
-                gc.collect()
 
         #self.assertRaises(ValueError, factory.create_software_sprite, (-1,-1))
         #self.assertRaises(ValueError, factory.create_software_sprite, (-10,5))
@@ -129,8 +123,6 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             for h in range(1, 100):
                 sprite = factory.create_texture_sprite(renderer, size=(w, h))
                 self.assertIsInstance(sprite, sdl2ext.TextureSprite)
-            if _ISPYPY and (w % 50) == 0:
-                gc.collect()
 
         # Test different access flags
         for flag in (SDL_TEXTUREACCESS_STATIC, SDL_TEXTUREACCESS_STREAMING,
@@ -262,8 +254,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertFalse(sdl2ext.Sprite in renderer.componenttypes)
         self.assertTrue(sdl2ext.SoftwareSprite in renderer.componenttypes)
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_SoftwareSpriteRenderer_render(self):
         sf1 = SDL_CreateRGBSurface(0, 12, 7, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
@@ -303,8 +294,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.check_pixels(view, 20, 20, sp2, 0x00FF00, (0x0, 0xFF0000), 1, 2)
         del view
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_SoftwareSpriteRenderer_process(self):
         sf1 = SDL_CreateRGBSurface(0, 5, 10, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
@@ -389,7 +379,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_SoftwareSprite_position_xy(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
-
+        self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
         self.assertEqual(sprite.position, (0, 0))
         positions = [(x, y) for x in range(-50, 50) for y in range(-50, 50)]
         for x, y in positions:
@@ -404,9 +394,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             for h in range(0, 200):
                 sf = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0)
                 sprite = sdl2ext.SoftwareSprite(sf.contents, True)
+                self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
                 self.assertEqual(sprite.size, (w, h))
-            if _ISPYPY and (w % 50) == 0:
-                gc.collect()
 
     def test_SoftwareSprite_area(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
@@ -463,10 +452,11 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         for w in range(1, 200):
             for h in range(1, 200):
                 tex = SDL_CreateTexture(renderer, 0, 0, w, h)
+                self.assertIsInstance(tex.contents, SDL_Texture)
                 sprite = sdl2ext.TextureSprite(tex.contents)
+                self.assertIsInstance(sprite, sdl2ext.TextureSprite)
                 self.assertEqual(sprite.size, (w, h))
-            if _ISPYPY and (w % 50) == 0:
-                gc.collect()
+                del sprite
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
 
@@ -476,7 +466,9 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         SDL_CreateWindowAndRenderer(10, 10, SDL_WINDOW_HIDDEN,
                                     byref(window), byref(renderer))
         tex = SDL_CreateTexture(renderer, 0, 0, 10, 20)
+        self.assertIsInstance(tex.contents, SDL_Texture)
         sprite = sdl2ext.TextureSprite(tex.contents)
+        self.assertIsInstance(sprite, sdl2ext.TextureSprite)
         self.assertEqual(sprite.area, (0, 0, 10, 20))
 
         def setarea(s, v):
@@ -506,8 +498,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_RenderContext_clear(self):
         pass
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_RenderContext_copy(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
@@ -533,8 +524,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_RenderContext_draw_rect(self):
         pass
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_RenderContext_fill(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
