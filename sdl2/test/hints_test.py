@@ -68,8 +68,9 @@ class SDLHintsTest(unittest.TestCase):
             data = cast(userdata, c_char_p)
             calls.append((data.value, name, oldval, newval))
         hintcb = hints.SDL_HintCallback(callback)
+        udata = c_char_p("banana")
         hints.SDL_AddHintCallback(hints.SDL_HINT_ALLOW_TOPMOST, hintcb,
-                                  b"banana")
+                                  udata)
         # SDL_AddHintCallback invokes the callback once.
         self.assertEqual(len(calls), 1)
         self.assertEqual(calls[0], (b"banana", hints.SDL_HINT_ALLOW_TOPMOST,
@@ -79,7 +80,7 @@ class SDLHintsTest(unittest.TestCase):
         self.assertEqual(calls[1], (b"banana", hints.SDL_HINT_ALLOW_TOPMOST,
                                     None, b"true"))
         hints.SDL_DelHintCallback(hints.SDL_HINT_ALLOW_TOPMOST, hintcb,
-                                  b"banana")
+                                  udata)
         hints.SDL_SetHint(hints.SDL_HINT_ALLOW_TOPMOST, b"false")
         self.assertEqual(len(calls), 2)
 
