@@ -68,7 +68,7 @@ class SDLHintsTest(unittest.TestCase):
             data = cast(userdata, c_char_p)
             calls.append((data.value, name, oldval, newval))
         hintcb = hints.SDL_HintCallback(callback)
-        udata = c_char_p("banana")
+        udata = c_char_p(b"banana")
         hints.SDL_AddHintCallback(hints.SDL_HINT_ALLOW_TOPMOST, hintcb,
                                   udata)
         # SDL_AddHintCallback invokes the callback once.
