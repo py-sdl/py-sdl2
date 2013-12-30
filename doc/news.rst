@@ -2,6 +2,25 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.8.0
+-----
+Released on 2013-12-30.
+
+* updated PD information to include the CC0 dedication, since giving
+  software away is not enough anymore
+* updated :mod:`sdl2` to include the latest changes of SDL2 (HG)
+* fixed a wrong C mapping of :func:`sdl2.rwops.SDL_FreeRW()`
+* fixed various issues within the :class:`sdl2.ext.BitmapFont` class
+* issue #26: :attr:`sdl2.SDL_AudioSpec.callback` is a :func:`SDL_AudioCallBack`
+  now
+* issue #30: the SDL_Add/DelHintCallback() unittest works with PyPy now
+* issue #31: :func:`sdl2.sdlmixer.SDL_MIXER_VERSION()` returns the proper
+  version now
+
+Thanks to Sven Eckelmann, Marcel Rodrigues, Michael McCandless,
+Andreas Schiefer and Franz Schrober for providing fixes and
+improvements.
+
 0.7.0
 -----
 Released on 2013-10-27.
