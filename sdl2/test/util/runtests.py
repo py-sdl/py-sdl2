@@ -89,7 +89,7 @@ def create_options():
                          help="Timout for subprocesses before being killed "
                          "(default: 70s per file)")
     optparser.add_option("-v", "--verbose", action="store_true", default=False,
-                         help="be verbose adnd print anything instantly")
+                         help="be verbose and print anything instantly")
     optparser.add_option("-r", "--random", action="store_true", default=False,
                          help="randomize the order of tests")
     optparser.add_option("-S", "--seed", type="int",
@@ -105,6 +105,8 @@ def create_options():
     optparser.add_option("-l", "--listtags", action="callback",
                          callback=list_tags,
                          help="lists all available tags and exits")
+    optparser.add_option("--logfile", type="string",
+                         help="save output to log file")
     optkeys = ["filename",
                "subprocess",
                "timeout",
@@ -191,6 +193,11 @@ def run():
     optparser, optkeys = create_options()
     options, args = optparser.parse_args()
     validate_args(options)
+    if options.logfile:
+        openlog = open(options.logfile, 'wb')
+        # copy stdout and stderr streams to log file
+        sys.stderr = support.TeeOutput(sys.stderr, openlog)
+        sys.stdout = support.TeeOutput(sys.stdout, openlog)
     writer = support.StreamOutput(sys.stdout)
 
     if options.verbose and not options.subprocess:
@@ -314,6 +321,8 @@ def run():
             writer.writeline("FAILURE: %s" % fail[0])
             writer.writeline(HEAVYDELIM)
             writer.writeline(fail[1])
+    if options.logfile:
+        openlog.close()
     if len(errors) > 0 or len(failures) > 0:
         return 1
     return 0
