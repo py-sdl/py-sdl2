@@ -36,3 +36,20 @@ class StreamOutput(object):
             self.stream.write("%s\r" % data)
         self.curoffset = len(data)
         self.stream.flush()
+
+class TeeOutput(object):
+    def __init__(self, stream1, stream2):
+        self.outputs = [stream1, stream2]
+
+    # -- methods from sys.stdout / sys.stderr
+    def write(self, data):
+        for stream in self.outputs:
+            stream.write(data)
+
+    def tell(self):
+        raise IOError
+
+    def flush(self):
+        for stream in self.outputs:
+            stream.flush()
+    # --/ sys.stdout
