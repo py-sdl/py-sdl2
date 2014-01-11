@@ -37,7 +37,8 @@ __all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
            "SDL_RenderDrawRects", "SDL_RenderFillRect", "SDL_RenderFillRects",
            "SDL_RenderCopy", "SDL_RenderCopyEx", "SDL_RenderReadPixels",
            "SDL_RenderPresent", "SDL_DestroyTexture", "SDL_DestroyRenderer",
-           "SDL_UpdateYUVTexture", "SDL_GL_BindTexture", "SDL_GL_UnbindTexture"
+           "SDL_UpdateYUVTexture", "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
+           "SDL_GetRendererOutputSize"
            ]
 
 SDL_RendererFlags = c_int
