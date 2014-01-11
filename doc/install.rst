@@ -3,6 +3,13 @@ Installing PySDL2
 This section provides an overview and guidance for installing PySDL2 on
 various target platforms.
 
+Getting the sources
+-------------------
+You can download the official releases of PySDL2 from
+https://bitbucket.org/marcusva/py-sdl2/downloads. Download the most
+recent release, unpack it and make sure that you installed the relevant
+prerequisites before continuing with the installation.
+
 Prerequisites
 -------------
 PySDL2 relies on some 3rd party packages to be fully usable and to
