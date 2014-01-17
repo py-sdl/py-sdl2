@@ -1,6 +1,7 @@
 """Surface manipulation."""
 from ..surface import SDL_CreateRGBSurfaceFrom
 
+__all__ = ["subsurface"]
 
 def subsurface(surface, area):
     """Creates a surface from a part of another surface.
