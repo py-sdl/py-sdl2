@@ -18,4 +18,5 @@ from .gui import *
 from .image import *
 from .pixelaccess import *
 from .sprite import *
+from .surface import *
 from .window import *
