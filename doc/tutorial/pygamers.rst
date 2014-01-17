@@ -302,11 +302,11 @@ pygame.Surface          sdl2
 ``unmap_rgb()``         :func:`sdl2.pixels.SDL_GetRGB()`
 ``set_clip()``          :func:`sdl2.surface.SDL_SetClipRect()`
 ``get_clip()``          :func:`sdl2.surface.SDL_GetClipRect()`
-``subsurface``          No equivalent yet
-``get_parent()``        As for ``subsurface``
-``get_abs_parent()``    As for ``subsurface``
-``get_offset()``        As for ``subsurface``
-``get_abs_offset()``    As for ``subsurface``
+``subsurface()``        :func:`sdl2.ext.subsurface()`
+``get_parent()``        No equivalent yet
+``get_abs_parent()``    As for ``get_parent``
+``get_offset()``        As for ``get_parent``
+``get_abs_offset()``    As for ``get_parent``
 ``get_size()``          :attr:`sdl2.ext.Sprite.size`,
                         :attr:`sdl2.surface.SDL_Surface.w`,
                         :attr:`sdl2.surface.SDL_Surface.h`
