@@ -307,20 +307,31 @@ Sprite, texture and pixel surface routines
 
    .. method:: draw_line(points : iterable[, color=None]) -> None
 
-      Draws one or multiple lines on the rendering context.
+      Draws one or multiple lines on the rendering context. The *line*
+      argument contains the start and end coordinates of the individual lines
+      in the form ``(line1_x1, line1_y1, line1_x2, line1_y2, line2_x1,
+      line2_y1, ...)``.
 
    .. method:: draw_point(points : iterable[, color=None]) -> None
 
-      Draws one or multiple points on the rendering context.
+      Draws one or multiple points on the rendering context. The *points*
+      argument contains the x and y values of the points as simple sequence in
+      the form ``(point1_x, point1_y, point2_x, point2_y, ...)``.
 
    .. method:: draw_rect(rects : iterable[, color=None]) -> None
 
-      Draws one or multiple rectangles on the rendering context.
+      Draws one or multiple rectangles on the rendering context. *rects*
+      contains sequences of four values denoting the x and y offset and width
+      and height of each individual rectangle in the form ``((x1, y1, w1, h1),
+      (x2, y2, w2, h2), ...)``.
 
    .. method:: fill(rects : iterable[, color=None]) -> None
 
-      Fills one or multiple rectangular areas on the rendering context
-      with the current set or passed *color*.
+      Fills one or multiple rectangular areas on the rendering context with
+      the current set or passed *color*. *rects* contains sequences of four
+      values denoting the x and y offset and width and height of each
+      individual rectangle in the form ``((x1, y1, w1, h1), (x2, y2, w2, h2),
+      ...)``.
 
    .. method:: present() -> None
 
