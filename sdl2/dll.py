@@ -60,7 +60,7 @@ class _DLL(object):
                 # to the next one.
                 warnings.warn(repr(exc), ImportWarning)
         if self._dll is None:
-            raise RuntimeError("found %s, but it's not usable for the libary %s" %
+            raise RuntimeError("found %s, but it's not usable for the library %s" %
                                (foundlibs, libinfo))
         if path is not None and sys.platform in ("win32", "cli") and \
             path in self._libfile:
