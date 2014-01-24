@@ -5,6 +5,7 @@ from .common import SDLError
 from .compat import *
 from .color import convert_to_color
 from .ebs import System
+from .surface import subsurface
 from .window import Window
 from .image import load_image
 from .. import blendmode, surface, rect, video, pixels, render, rwops
@@ -312,6 +313,19 @@ class SoftwareSprite(Sprite):
     def size(self):
         """The size of the SoftwareSprite as tuple."""
         return self.surface.w, self.surface.h
+
+    def subsprite(self, area):
+        """Creates another SoftwareSprite from a part of the SoftwareSprite.
+        
+        The two sprites share pixel data, so if the parent sprite's surface is
+        not managed by the sprite (free is False), you will need to keep it
+        alive while the subsprite exists."""
+        ssurface = subsurface(self.surface, area)
+        ssprite = SoftwareSprite(ssurface, True)
+        # Keeps the parent surface alive until subsprite is freed
+        if self.free:
+            ssprite._parent = self
+        return ssprite
 
     def __repr__(self):
         return "SoftwareSprite(size=%s, bpp=%d)" % \
