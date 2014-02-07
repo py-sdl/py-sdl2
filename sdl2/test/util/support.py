@@ -3,6 +3,9 @@
 # #
 """Utility functions for the tests."""
 import os
+import sys
+
+PY3K = sys.version_info[0] == 3
 
 class StreamOutput(object):
     def __init__(self, stream):
@@ -44,6 +47,9 @@ class TeeOutput(object):
     # -- methods from sys.stdout / sys.stderr
     def write(self, data):
         for stream in self.outputs:
+            if PY3K:
+                if 'b' in stream.mode:
+                    data = data.encode('utf-8')
             stream.write(data)
 
     def tell(self):

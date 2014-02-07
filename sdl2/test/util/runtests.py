@@ -195,6 +195,7 @@ def run():
     validate_args(options)
     if options.logfile:
         openlog = open(options.logfile, 'wb')
+        savedstd = sys.stderr, sys.stdout
         # copy stdout and stderr streams to log file
         sys.stderr = support.TeeOutput(sys.stderr, openlog)
         sys.stdout = support.TeeOutput(sys.stdout, openlog)
@@ -322,6 +323,7 @@ def run():
             writer.writeline(HEAVYDELIM)
             writer.writeline(fail[1])
     if options.logfile:
+        sys.stderr, sys.stdout = savedstd
         openlog.close()
     if len(errors) > 0 or len(failures) > 0:
         return 1
