@@ -7,8 +7,8 @@ from .video import SDL_Window
 
 __all__ = ["SDL_SYSWM_TYPE", "SDL_SYSWM_UNKNOWN", "SDL_SYSWM_WINDOWS",
            "SDL_SYSWM_X11", "SDL_SYSWM_DIRECTFB", "SDL_SYSWM_COCOA",
-           "SDL_SYSWM_UIKIT", "SDL_SysWMmsg", "SDL_SysWMinfo",
-           "SDL_GetWindowWMInfo"
+           "SDL_SYSWM_UIKIT", "SDL_SYSWM_WAYLAND", "SDL_SYSWM_MIR",
+           "SDL_SysWMmsg", "SDL_SysWMinfo", "SDL_GetWindowWMInfo"
            ]
 
 SDL_SYSWM_TYPE = c_int
@@ -18,6 +18,8 @@ SDL_SYSWM_X11 = 2
 SDL_SYSWM_DIRECTFB = 3
 SDL_SYSWM_COCOA = 4
 SDL_SYSWM_UIKIT = 5
+SDL_SYSWM_WAYLAND = 6
+SDL_SYSWM_MIR = 7
 
 # FIXME: Hack around the ctypes "_type_ 'v' not supported" bug - remove
 # once this has been fixed properly in Python 2.7+
@@ -99,6 +101,19 @@ class _uikitinfo(Structure):
     _fields_ = [("window", c_void_p)]
 
 
+class _wl(Structure):
+    """Window information for Wayland."""
+    _fields_ = [("display", c_void_p),
+                ("surface", c_void_p),
+                ("shell_surface", c_void_p)]
+
+
+class _mir(Structure):
+    """Window information for Mir."""
+    _fields_ = [("connection", c_void_p),
+                ("surface", c_void_p)]
+
+
 class _info(Union):
     """The platform-specific information of a window."""
     _fields_ = [("win", _wininfo),
@@ -106,6 +121,8 @@ class _info(Union):
                 ("dfb", _dfbinfo),
                 ("cocoa", _cocoainfo),
                 ("uikit", _uikitinfo),
+                ("wl", _wl),
+                ("mir", _mir),
                 ("dummy", c_int)
                 ]
 

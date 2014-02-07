@@ -807,6 +807,10 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_DestroyWindow(window)
         video.SDL_GL_UnloadLibrary()
 
+    @unittest.skip("not implemented")
+    def test_SDL_GL_ResetAttributes(self):
+        pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
