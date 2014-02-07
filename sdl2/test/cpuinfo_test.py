@@ -59,6 +59,10 @@ class SDLCPUInfoTest(unittest.TestCase):
         ret = cpuinfo.SDL_HasSSE42()
         self.assertIn(ret, (0, 1))
 
+    def test_SDL_HasAVX(self):
+        ret = cpuinfo.SDL_HasAVX()
+        self.assertIn(ret, (0, 1))
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

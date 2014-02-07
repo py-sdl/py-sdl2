@@ -68,7 +68,7 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_ExtensionSupported", "SDL_GL_SetAttribute",
            "SDL_GL_GetAttribute", "SDL_GL_CreateContext", "SDL_GL_MakeCurrent",
            "SDL_GL_SetSwapInterval", "SDL_GL_GetSwapInterval",
-           "SDL_GL_SwapWindow", "SDL_GL_DeleteContext"
+           "SDL_GL_SwapWindow", "SDL_GL_DeleteContext", "SDL_GL_ResetAttributes"
            ]
 
 class SDL_DisplayMode(Structure):
@@ -253,4 +253,5 @@ SDL_GL_GetSwapInterval = _bind("SDL_GL_GetSwapInterval", None, c_int)
 SDL_GL_SwapWindow = _bind("SDL_GL_SwapWindow", [POINTER(SDL_Window)])
 SDL_GL_DeleteContext = _bind("SDL_GL_DeleteContext", [SDL_GLContext])
 SDL_GL_GetDrawableSize = _bind("SDL_GL_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)], optfunc=nullfunc)
+SDL_GL_ResetAttributes = _bind("SDL_GL_ResetAttributes")
 
