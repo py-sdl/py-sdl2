@@ -385,7 +385,7 @@ class SpriteFactory(object):
         """
         if sprite_type == TEXTURE:
             if "renderer" not in kwargs:
-                raise ValueError("you have to provide a renderer= argument")
+                raise ValueError("you have to provide a renderer=<arg> argument")
         elif sprite_type != SOFTWARE:
             raise ValueError("stype must be TEXTURE or SOFTWARE")
         self._spritetype = sprite_type
