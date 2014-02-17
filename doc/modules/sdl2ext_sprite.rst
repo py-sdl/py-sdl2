@@ -62,6 +62,12 @@ Sprite, texture and pixel surface routines
 
       The size of the :class:`SoftwareSprite` as tuple.
 
+   .. method:: subsprite(area : (int, int, int, int)) -> SoftwareSprite
+
+      Creates another :class:`SoftwareSprite` from a part of the
+      :class:`SoftwareSprite`. The two sprites share pixel data, so if the 
+      parent sprite's surface is not managed by the sprite (``free`` is False),
+      you will need to keep it alive while the subsprite exists.
 
 .. class:: TextureSprite()
 
