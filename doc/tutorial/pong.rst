@@ -445,13 +445,19 @@ varying angle, but with the exact angle, it hit the boundary with.
 This means that we just need to invert the vertical velocity, once the
 ball hits the top or bottom. ::
 
-    if self.ball.sprite.y <= self.miny or \
-            self.ball.sprite.y + self.ball.sprite.size[1] >= self.maxy:
-        self.ball.velocity.vy = - self.ball.velocity.vy
+    class CollisionSystem(sdl2ext.Applicator):
+        [...]
 
-    if self.ball.sprite.x <= self.minx or \
-            self.ball.sprite.x + self.ball.sprite.size[0] >= self.maxx:
-        self.ball.velocity.vx = - self.ball.velocity.vx
+        def process(self, world, componentsets):
+            [...]
+
+            if self.ball.sprite.y <= self.miny or \
+                    self.ball.sprite.y + self.ball.sprite.size[1] >= self.maxy:
+                self.ball.velocity.vy = - self.ball.velocity.vy
+
+            if self.ball.sprite.x <= self.minx or \
+                    self.ball.sprite.x + self.ball.sprite.size[0] >= self.maxx:
+                self.ball.velocity.vx = - self.ball.velocity.vx
 
 Creating an enemy
 -----------------
