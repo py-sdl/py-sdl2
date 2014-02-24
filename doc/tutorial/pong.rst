@@ -14,23 +14,18 @@ We start with creating the window and add a small event loop, so we are able
 to close the window and exit the game. ::
 
     import sys
-    try:
-        from sdl2 import *
-        import sdl2.ext as sdl2ext
-    except ImportError:
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+    import sdl2 import
+    import sdl2.ext
 
     def run():
-        sdl2ext.init()
-        window = sdl2ext.Window("The Pong Game", size=(800, 600))
+        sdl2.ext.init()
+        window = sdl2.ext.Window("The Pong Game", size=(800, 600))
         window.show()
         running = True
         while running:
-            events = sdl2ext.get_events()
+            events = sdl2.ext.get_events()
             for event in events:
-                if event.type == SDL_QUIT:
+                if event.type == sdl2.SDL_QUIT:
                     running = False
                     break
             window.refresh()
@@ -48,20 +43,20 @@ introduced, though. ::
 
     running = True
     while running:
-        events = sdl2ext.get_events()
+        events = sdl2.ext.get_events()
         for event in events:
-            if event.type == SDL_QUIT:
+            if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
         window.refresh()
 
-The while loop above is the main event loop of our application. It deals
-with all kinds of input events that can occur when working with the
-window, such as mouse movements, key strokes, resizing operations and so
-on. SDL handles a lot for us when it comes to events, so all we need to
-do is to check, if there are any events, retrieve each event one by
-one, and handle it, if necessary. For now, we will just handle the
-``SDL_QUIT`` event, which is raised when the window is about to be closed.
+The while loop above is the main event loop of our application. It deals with
+all kinds of input events that can occur when working with the window, such as
+mouse movements, key strokes, resizing operations and so on. SDL handles a lot
+for us when it comes to events, so all we need to do is to check, if there are
+any events, retrieve each event one by one, and handle it, if necessary. For
+now, we will just handle the ``sdl2.SDL_QUIT`` event, which is raised when the
+window is about to be closed.
 
 In any other case we will just refresh the window's graphics buffer, so
 it is updated and visible on-screen.
@@ -80,18 +75,18 @@ that will display them. ::
 
     [...]
 
-    WHITE = sdl2ext.Color(255, 255, 255)
+    WHITE = sdl2.ext.Color(255, 255, 255)
 
-    class SoftwareRenderer(sdl2ext.SoftwareSpriteRenderer):
+    class SoftwareRenderer(sdl2.ext.SoftwareSpriteRenderer):
         def __init__(self, window):
             super(SoftwareRenderer, self).__init__(window)
 
         def render(self, components):
-            sdl2ext.fill(self.surface, sdl2ext.Color(0, 0, 0))
+            sdl2ext.fill(self.surface, sdl2.ext.Color(0, 0, 0))
             super(SoftwareRenderer, self).render(components)
 
 
-    class Player(sdl2ext.Entity):
+    class Player(sdl2.ext.Entity):
         def __init__(self, world, sprite, posx=0, posy=0):
             self.sprite = sprite
             self.sprite.position = posx, posy
@@ -100,12 +95,12 @@ that will display them. ::
     def run():
         ...
 
-        world = sdl2ext.World()
+        world = sdl2.ext.World()
 
         spriterenderer = SoftwareRenderer(window)
         world.add_system(spriterenderer)
 
-        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+        factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
         sp_paddle1 = factory.from_color(WHITE, size=(20, 100))
         sp_paddle2 = factory.from_color(WHITE, size=(20, 100))
 
@@ -114,9 +109,9 @@ that will display them. ::
 
         running = True
         while running:
-            events = sdl2ext.get_events()
+            events = sdl2.ext.get_events()
             for event in events:
-                if event.type == SDL_QUIT:
+                if event.type == sdl2.SDL_QUIT:
                     running = False
                     break
             world.process()
@@ -149,10 +144,10 @@ our window. The next thing to do is to add a ball that can move around
 within the window boundaries. ::
 
     [...]
-    class MovementSystem(sdl2ext.Applicator):
+    class MovementSystem(sdl2.ext.Applicator):
         def __init__(self, minx, miny, maxx, maxy):
             super(MovementSystem, self).__init__()
-            self.componenttypes = (Velocity, sdl2ext.Sprite)
+            self.componenttypes = (Velocity, sdl2.ext.Sprite)
             self.minx = minx
             self.miny = miny
             self.maxx = maxx
@@ -182,13 +177,13 @@ within the window boundaries. ::
             self.vy = 0
 
 
-    class Player(sdl2ext.Entity):
+    class Player(sdl2.ext.Entity):
         def __init__(self, world, posx=0, posy=0):
             [...]
             self.velocity = Velocity()
 
 
-    class Ball(sdl2ext.Entity):
+    class Ball(sdl2.ext.Entity):
         def __init__(self, world, sprite, posx=0, posy=0):
             self.sprite = sprite
             self.sprite.position = posx, posy
@@ -280,10 +275,10 @@ simple collision system, which causes the ball to change its direction
 on colliding with the walls or the player paddles. ::
 
     [...]
-    class CollisionSystem(sdl2ext.Applicator):
+    class CollisionSystem(sdl2.ext.Applicator):
         def __init__(self, minx, miny, maxx, maxy):
             super(CollisionSystem, self).__init__()
-            self.componenttypes = (Velocity, sdl2ext.Sprite)
+            self.componenttypes = Velocity, sdl2.ext.Sprite
             self.ball = None
             self.minx = minx
             self.miny = miny
@@ -291,19 +286,19 @@ on colliding with the walls or the player paddles. ::
             self.maxy = maxy
 
         def _overlap(self, item):
-            pos, sprite = item[0], item[1]
+            pos, sprite = item
             if sprite == self.ball.sprite:
                 return False
 
             left, top, right, bottom = sprite.area
             bleft, btop, bright, bbottom = self.ball.sprite.area
 
-            return bleft < right and bright > left and \
-                btop < bottom and bbottom > top
+            return (bleft < right and bright > left and
+                    btop < bottom and bbottom > top)
 
         def process(self, world, componentsets):
             collitems = [comp for comp in componentsets if self._overlap(comp)]
-            if len(collitems) != 0:
+            if collitems:
                 self.ball.velocity.vx = -self.ball.velocity.vx
 
 
@@ -324,12 +319,12 @@ on colliding with the walls or the player paddles. ::
 
         running = True
         while running:
-            events = sdl2ext.get_events()
+            events = sdl2.ext.get_events()
             for event in events:
-                if event.type == SDL_QUIT:
+                if event.type == sdl2.SDL_QUIT:
                     running = False
                     break
-            SDL_Delay(10)
+            sdl2.SDL_Delay(10)
             world.process()
 
     if __name__ == "__main__":
@@ -363,32 +358,32 @@ paddles up or down. ::
         [...]
         running = True
         while running:
-            events = sdl2ext.get_events()
+            events = sdl2.ext.get_events()
             for event in events:
-                if event.type == SDL_QUIT:
+                if event.type == sdl2.SDL_QUIT:
                     running = False
                     break
-                if event.type == SDL_KEYDOWN:
-                    if event.key.keysym.sym == SDLK_UP:
+                if event.type == sdl2.SDL_KEYDOWN:
+                    if event.key.keysym.sym == sdl2.SDLK_UP:
                         player1.velocity.vy = -3
-                    elif event.key.keysym.sym == SDLK_DOWN:
+                    elif event.key.keysym.sym == sdl2.SDLK_DOWN:
                         player1.velocity.vy = 3
-                elif event.type == SDL_KEYUP:
-                    if event.key.keysym.sym in (SDLK_UP, SDLK_DOWN):
+                elif event.type == sdl2.SDL_KEYUP:
+                    if event.key.keysym.sym in (sdl2.SDLK_UP, sdl2.SDLK_DOWN):
                         player1.velocity.vy = 0
-            SDL_Delay(10)
+            sdl2.SDL_Delay(10)
             world.process()
 
     if __name__ == "__main__":
         sys.exit(run())
 
-Every event that can occur and that is supported by SDL2 can be identified
-by a static event type code. This allows us to check for a key stroke, mouse
-button press, and so on. First, we have to check for ``SDL_KEYDOWN`` and
-``SDL_KEYUP`` events, so we can start and stop the paddle movement on demand.
-Once we identified such events, we need to check, whether the pressed or
-released key is actually the Up or Down key, so that we do not start or
-stop moving the paddle, if the user presses R or G or whatever.
+Every event that can occur and that is supported by SDL2 can be identified by a
+static event type code. This allows us to check for a key stroke, mouse button
+press, and so on. First, we have to check for ``sdl2.SDL_KEYDOWN`` and
+``sdl2.SDL_KEYUP`` events, so we can start and stop the paddle movement on
+demand.  Once we identified such events, we need to check, whether the pressed
+or released key is actually the Up or Down key, so that we do not start or stop
+moving the paddle, if the user presses R or G or whatever.
 
 Whenever the Up or Down key are pressed down, we allow the left player
 paddle to move by changing its velocity information for the vertical
@@ -408,12 +403,12 @@ the center, it will bounce back with a pointed angle and on the corners
 of the paddle it will bounce back with some angle close to 90 degrees to
 its initial movement direction. ::
 
-    class CollisionSystem(sdl2ext.Applicator):
+    class CollisionSystem(sdl2.ext.Applicator):
         [...]
 
         def process(self, world, componentsets):
             collitems = [comp for comp in componentsets if self._overlap(comp)]
-            if len(collitems) != 0:
+            if collitems:
                 self.ball.velocity.vx = -self.ball.velocity.vx
 
                 sprite = collitems[0][1]
@@ -445,18 +440,18 @@ varying angle, but with the exact angle, it hit the boundary with.
 This means that we just need to invert the vertical velocity, once the
 ball hits the top or bottom. ::
 
-    class CollisionSystem(sdl2ext.Applicator):
+    class CollisionSystem(sdl2.ext.Applicator):
         [...]
 
         def process(self, world, componentsets):
             [...]
 
-            if self.ball.sprite.y <= self.miny or \
-                    self.ball.sprite.y + self.ball.sprite.size[1] >= self.maxy:
+            if (self.ball.sprite.y <= self.miny or
+                self.ball.sprite.y + self.ball.sprite.size[1] >= self.maxy):
                 self.ball.velocity.vy = - self.ball.velocity.vy
 
-            if self.ball.sprite.x <= self.minx or \
-                    self.ball.sprite.x + self.ball.sprite.size[0] >= self.maxx:
+            if (self.ball.sprite.x <= self.minx or
+                self.ball.sprite.x + self.ball.sprite.size[0] >= self.maxx):
                 self.ball.velocity.vx = - self.ball.velocity.vx
 
 Creating an enemy
@@ -468,10 +463,10 @@ velocity for two people playing against each other. We also could
 create a simple computer-controlled player that tries to hit the ball
 back to us, which sounds more interesting. ::
 
-    class TrackingAIController(sdl2ext.Applicator):
+    class TrackingAIController(sdl2.ext.Applicator):
         def __init__(self, miny, maxy):
             super(TrackingAIController, self).__init__()
-            self.componenttypes = (PlayerData, Velocity, sdl2ext.Sprite)
+            self.componenttypes = PlayerData, Velocity, sdl2.ext.Sprite
             self.miny = miny
             self.maxy = maxy
             self.ball = None
@@ -506,7 +501,7 @@ back to us, which sounds more interesting. ::
             self.ai = False
 
 
-    class Player(sdl2ext.Entity):
+    class Player(sdl2.ext.Entity):
         def __init__(self, world, sprite, posx=0, posy=0, ai=False):
             self.sprite = sprite
             self.sprite.position = posx, posy

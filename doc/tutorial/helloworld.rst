@@ -16,27 +16,14 @@ display a small nice window and to do some basic drawing within that
 window. ::
 
     import sys
+    import sdl2.ext
 
-    try:
-        import sdl2.ext as sdl2ext
-    except ImportError:
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+    RESOURCES = sdl2.ext.Resources(__file__, "resources")
 
-    from sdl2.ext import Resources
-    RESOURCES = Resources(__file__, "resources")
-
-At first, we try to import the :mod:`sdl2.ext` module, which is
-necessary for displaying the window and image. :mod:`sdl2.ext` requires
-:mod:`sdl2`, so in case it could not load the SDL2 bindings, we will
-print the exact error stack information and exit with a failure.
-
-We also need some resources from the ``resources`` folder, so
-that we have a test image around to display on the window later on. In
-your own applications, it is unlikely that you will ever need to import
-them, but we need them here, so we use the :mod:`sdl2.ext.Resources`
-class to have them available.
+We need some resources from the ``resources`` folder, so that we have a test
+image around to display on the window later on. In your own applications, it is
+unlikely that you will ever need to import them, but we need them here, so we
+use the :mod:`sdl2.ext.Resources` class to have them available.
 
 Window creation and image loading
 ---------------------------------
@@ -50,19 +37,19 @@ Once we have imported all necessary parts, let's create a window to have
 access to the screen, so we can display the logo and thus represent it
 to the user. ::
 
-    sdl2ext.init ()
+    sdl2.ext.init()
 
-    window = sdl2ext.Window("Hello World!", size=(640, 480))
+    window = sdl2.ext.Window("Hello World!", size=(640, 480))
     window.show()
 
-    factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+    factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
     sprite = factory.from_image(RESOURCES.get_path("hello.bmp"))
 
     spriterenderer = factory.create_sprite_renderer(window)
     spriterenderer.render(sprite)
 
 First, we initialise the :mod:`sdl2.ext` internals to gain access to the
-screen and and to be able to create windows on top of it. Once done with that,
+screen and to be able to create windows on top of it. Once done with that,
 :class:`sdl2.ext.Window` will create the window for us and we
 supply a title to be shown on the window's border along with its initial size.
 Since :class:`sdl2.ext.Window` instances are not shown by default,
@@ -120,7 +107,7 @@ with certain types of actions happening on the window or while the
 window is focused by the user and - as long as the event loop is
 running - will keep the window shown on the screen. ::
 
-    processor = sdl2ext.TestEventProcessor()
+    processor = sdl2.ext.TestEventProcessor()
     processor.run(window)
 
 Since this is a very first tutorial, we keep things simple here and use a
@@ -136,6 +123,6 @@ everything, once the application finishes. Luckily the
 it will exit from the event loop. Once it exits, we should clean up the
 video internals, we initialised at the beginning. Thus, a final call to ::
 
-    sdl2ext.quit()
+    sdl2.ext.quit()
 
 should be made.
