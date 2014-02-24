@@ -14,8 +14,10 @@ We start with creating the window and add a small event loop, so we are able
 to close the window and exit the game. ::
 
     import sys
-    import sdl2 import
+
+    import sdl2
     import sdl2.ext
+
 
     def run():
         sdl2.ext.init()
