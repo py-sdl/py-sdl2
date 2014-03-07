@@ -84,7 +84,7 @@ that will display them. ::
             super(SoftwareRenderer, self).__init__(window)
 
         def render(self, components):
-            sdl2ext.fill(self.surface, sdl2.ext.Color(0, 0, 0))
+            sdl2.ext.fill(self.surface, sdl2.ext.Color(0, 0, 0))
             super(SoftwareRenderer, self).render(components)
 
 
