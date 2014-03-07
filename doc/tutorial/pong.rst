@@ -149,7 +149,7 @@ within the window boundaries. ::
     class MovementSystem(sdl2.ext.Applicator):
         def __init__(self, minx, miny, maxx, maxy):
             super(MovementSystem, self).__init__()
-            self.componenttypes = (Velocity, sdl2.ext.Sprite)
+            self.componenttypes = Velocity, sdl2.ext.Sprite
             self.minx = minx
             self.miny = miny
             self.maxx = maxx
