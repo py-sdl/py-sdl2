@@ -61,6 +61,15 @@ AUDIO_F32LSB = 0x8120
 AUDIO_F32MSB = 0x9120
 AUDIO_F32 = AUDIO_F32LSB
 
+
+# All of the audio formats should be in this set which is provided as a
+# convenience to the end user for purposes of iteration and validation.
+# (is the provided audio format in the supported set?)
+AUDIO_FORMATS = set([AUDIO_U8, AUDIO_S8, AUDIO_U16LSB, AUDIO_S16LSB,
+                     AUDIO_U16MSB, AUDIO_S16MSB, AUDIO_U16, AUDIO_S16,
+                     AUDIO_S32LSB, AUDIO_S32MSB, AUDIO_S32, AUDIO_F32LSB,
+                     AUDIO_F32MSB, AUDIO_F32])
+
 if SDL_BYTEORDER == SDL_LIL_ENDIAN:
     AUDIO_U16SYS = AUDIO_U16LSB
     AUDIO_S16SYS = AUDIO_S16LSB
