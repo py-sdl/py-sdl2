@@ -21,33 +21,32 @@ class SDLAudioTest(unittest.TestCase):
     def tearDown(self):
         SDL_Quit()
 
-    @unittest.skip("not implemented")
     def test_SDL_AUDIO_BITSIZE(self):
-        pass
+        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U16LSB), 0x0010)
 
-    @unittest.skip("not implemented")
     def test_SDL_AUDIO_ISFLOAT(self):
-        pass
+        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U8))
+        self.assertTrue(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_F32MSB))
 
-    @unittest.skip("not implemented")
     def test_SDL_AUDIO_ISBIGENDIAN(self):
-        pass
+        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U16LSB))
+        self.assertTrue(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S32MSB))
 
-    @unittest.skip("not implemented")
     def test_SDL_AUDIO_ISSIGNED(self):
-        pass
+        self.assertFalse(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U8))
+        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S8))
 
-    @unittest.skip("not implemented")
     def test_SDL_AUDIO_ISINT(self):
-        pass
+        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_U8))
+        self.assertFalse(audio.SDL_AUDIO_ISINT(audio.AUDIO_F32MSB))
 
-    @unittest.skip("not implemented")
     def test_SDL_AUDIO_ISLITTLEENDIAN(self):
-        pass
+        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U16LSB))
+        self.assertFalse(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S32MSB))
 
-    @unittest.skip("not implemented")
     def test_SDL_AUDIO_ISUNSIGNED(self):
-        pass
+        self.assertTrue(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U8))
+        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S8))
 
     @unittest.skip("not implemented")
     def test_SDL_AudioSpec(self):
