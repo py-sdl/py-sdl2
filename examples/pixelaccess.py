@@ -1,21 +1,12 @@
 """Direct pixel access examples."""
 import sys
-
-# Try to import SDL2. The import might fail, if the SDL2 DLL could not be
-# loaded. In that case, just print the error and exit with a proper
-# error code.
-try:
-    from sdl2 import SDL_QUIT, SDL_MOUSEBUTTONDOWN
-    import sdl2.ext as sdl2ext
-except ImportError:
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
+import sdl2
+import sdl2.ext
 
 # Define black and white as global values, so we can access them throughout
 # the code.
-BLACK = sdl2ext.Color(0, 0, 0)
-WHITE = sdl2ext.Color(255, 255, 255)
+BLACK = sdl2.ext.Color(0, 0, 0)
+WHITE = sdl2.ext.Color(255, 255, 255)
 
 
 # This function will use a rectangular area and fill each second horizontal
@@ -24,13 +15,13 @@ def draw_horizontal_stripes(surface, x1, x2, y1, y2):
     # Fill the entire surface with a black color. In contrast to
     # colorpalettes.py we use a Color() value here, just to demonstrate that
     # it really works.
-    sdl2ext.fill(surface, BLACK)
+    sdl2.ext.fill(surface, BLACK)
 
     # Create a 2D view that allows us to directly access each individual pixel
     # of the surface. The PixelView class is quite slow, since it uses an non-
-    # optimised read-write access to each individual pixel and offset. It works
-    # on every platform, though.
-    pixelview = sdl2ext.PixelView(surface)
+    # optimised read-write access to each individual pixel and offset. It
+    # works on every platform, though.
+    pixelview = sdl2.ext.PixelView(surface)
 
     # Loop over the area bounds, considering each fourth line and every column
     # on the 2D view. The PixelView uses a y-x alignment to access pixels.
@@ -54,8 +45,8 @@ def draw_horizontal_stripes(surface, x1, x2, y1, y2):
 
 # as draw_horizontal_stripes(), but vertical
 def draw_vertical_stripes(surface, x1, x2, y1, y2):
-    sdl2ext.fill(surface, BLACK)
-    pixelview = sdl2ext.PixelView(surface)
+    sdl2.ext.fill(surface, BLACK)
+    pixelview = sdl2.ext.PixelView(surface)
     for x in range(x1, x2, 4):
         for y in range(y1, y2):
             pixelview[y][x] = WHITE
@@ -65,8 +56,8 @@ def draw_vertical_stripes(surface, x1, x2, y1, y2):
 def run():
     # You know those from the helloworld.py example.
     # Initialize the video subsystem, create a window and make it visible.
-    sdl2ext.init()
-    window = sdl2ext.Window("Pixel Access", size=(800, 600))
+    sdl2.ext.init()
+    window = sdl2.ext.Window("Pixel Access", size=(800, 600))
     window.show()
 
     # As in colorpalettes.py, explicitly acquire the window's surface to
@@ -90,12 +81,12 @@ def run():
     # detailled description.
     running = True
     while running:
-        events = sdl2ext.get_events()
+        events = sdl2.ext.get_events()
         for event in events:
-            if event.type == SDL_QUIT:
+            if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
-            if event.type == SDL_MOUSEBUTTONDOWN:
+            if event.type == sdl2.SDL_MOUSEBUTTONDOWN:
                 curindex += 1
                 if curindex >= len(functions):
                     curindex = 0
@@ -107,7 +98,7 @@ def run():
                 func(*args)
                 break
         window.refresh()
-    sdl2ext.quit()
+    sdl2.ext.quit()
     return 0
 
 

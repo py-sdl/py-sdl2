@@ -2,28 +2,23 @@
 import sys
 import ctypes
 
-try:
-    from OpenGL import GL, GLU
-    from sdl2 import *
-except ImportError:
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
-
+from OpenGL import GL, GLU
+import sdl2
 
 def run():
-    if SDL_Init(SDL_INIT_VIDEO) != 0:
-        print(SDL_GetError())
+    if sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO) != 0:
+        print(sdl2.SDL_GetError())
         return -1
 
-    window = SDL_CreateWindow(b"OpenGL demo", SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED, 800, 600,
-                              SDL_WINDOW_OPENGL)
+    window = sdl2.SDL_CreateWindow(b"OpenGL demo",
+                                   sdl2.SDL_WINDOWPOS_UNDEFINED,
+                                   sdl2.SDL_WINDOWPOS_UNDEFINED, 800, 600,
+                                   sdl2.SDL_WINDOW_OPENGL)
     if not window:
-        print(SDL_GetError())
+        print(sdl2.SDL_GetError())
         return -1
 
-    context = SDL_GL_CreateContext(window)
+    context = sdl2.SDL_GL_CreateContext(window)
 
     GL.glMatrixMode(GL.GL_PROJECTION | GL.GL_MODELVIEW)
     GL.glLoadIdentity()
@@ -32,11 +27,11 @@ def run():
     x = 0.0
     y = 30.0
 
-    event = SDL_Event()
+    event = sdl2.SDL_Event()
     running = True
     while running:
-        while SDL_PollEvent(ctypes.byref(event)) != 0:
-            if event.type == SDL_QUIT:
+        while sdl2.SDL_PollEvent(ctypes.byref(event)) != 0:
+            if event.type == sdl2.SDL_QUIT:
                 running = False
 
         GL.glClearColor(0, 0, 0, 1)
@@ -51,11 +46,11 @@ def run():
         GL.glVertex2f(x - 90.0, y - 90.0)
         GL.glEnd()
 
-        SDL_GL_SwapWindow(window)
-        SDL_Delay(10)
-    SDL_GL_DeleteContext(context)
-    SDL_DestroyWindow(window)
-    SDL_Quit()
+        sdl2.SDL_GL_SwapWindow(window)
+        sdl2.SDL_Delay(10)
+    sdl2.SDL_GL_DeleteContext(context)
+    sdl2.SDL_DestroyWindow(window)
+    sdl2.SDL_Quit()
     return 0
 
 if __name__ == "__main__":

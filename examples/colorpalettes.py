@@ -1,18 +1,9 @@
 """A simple example for filling rectangular areas."""
 import sys
 
-try:
-    # Try to import SDL2. The import might fail, if the SDL2 DLL could not be
-    # loaded. In that case, just print the error and exit with a proper
-    # error code.
-    from sdl2 import SDL_QUIT, SDL_MOUSEBUTTONDOWN
-    import sdl2.ext as sdl2ext
-    # Import the pre-defined color palettes
-    import sdl2.ext.colorpalettes as colorpalettes
-except ImportError:
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
+import sdl2
+import sdl2.ext
+import sdl2.ext.colorpalettes
 
 
 # This function will draw the passed palette colors onto the window surface.
@@ -24,7 +15,7 @@ def draw_palette(surface, palette):
     # Fill the entire surface with a black color. This is done by simply
     # passing a 0 value to the fill argument. We could also create a
     # Color(0, 0, 0) instance here, but this would be the same.
-    sdl2ext.fill(surface, 0)
+    sdl2.ext.fill(surface, 0)
 
     # Calculate the average width (roughly cut) to be used for each palette
     # value. When running the example, you will notice a black gap on the
@@ -48,15 +39,15 @@ def draw_palette(surface, palette):
     # surface. Instead, the provided area makes sure, that we only fill a
     # certain part.
     for color in palette:
-        sdl2ext.fill(surface, color, rect)
+        sdl2.ext.fill(surface, color, rect)
         rect[0] += rw
 
 
 def run():
     # You know those from the helloworld.py example.
     # Initialize the video subsystem, create a window and make it visible.
-    sdl2ext.init()
-    window = sdl2ext.Window("Color Palettes", size=(800, 600))
+    sdl2.ext.init()
+    window = sdl2.ext.Window("Color Palettes", size=(800, 600))
     window.show()
 
     # Explicitly acquire the window's surface to draw on. We used the
@@ -69,15 +60,15 @@ def run():
     # A simple mapping table for the builtin color palettes. We will use
     # the table to look up the color palette to draw an the title to set below.
     palettes = (
-        ("Mono Palette", colorpalettes.MONOPALETTE),
-        ("2-bit Gray Palette", colorpalettes.GRAY2PALETTE),
-        ("4-bit Gray Palette", colorpalettes.GRAY4PALETTE),
-        ("8-bit Gray Palette", colorpalettes.GRAY8PALETTE),
-        ("3-bit RGB Palette", colorpalettes.RGB3PALETTE),
-        ("CGA Palette", colorpalettes.CGAPALETTE),
-        ("EGA Palette", colorpalettes.EGAPALETTE),
-        ("VGA Palette", colorpalettes.VGAPALETTE),
-        ("Web Palette", colorpalettes.WEBPALETTE),
+        ("Mono Palette", sdl2.ext.colorpalettes.MONOPALETTE),
+        ("2-bit Gray Palette", sdl2.ext.colorpalettes.GRAY2PALETTE),
+        ("4-bit Gray Palette", sdl2.ext.colorpalettes.GRAY4PALETTE),
+        ("8-bit Gray Palette", sdl2.ext.colorpalettes.GRAY8PALETTE),
+        ("3-bit RGB Palette", sdl2.ext.colorpalettes.RGB3PALETTE),
+        ("CGA Palette", sdl2.ext.colorpalettes.CGAPALETTE),
+        ("EGA Palette", sdl2.ext.colorpalettes.EGAPALETTE),
+        ("VGA Palette", sdl2.ext.colorpalettes.VGAPALETTE),
+        ("Web Palette", sdl2.ext.colorpalettes.WEBPALETTE),
         )
 
     # A storage variable for the palette we are currently on, so that we know
@@ -101,7 +92,7 @@ def run():
         # This will check for any events that piled up since the last check.
         # If one or multiple events were  found (such as a click, a mouse
         # movement, keyboard input, etc.), we will retrieve them.
-        events = sdl2ext.get_events()
+        events = sdl2.ext.get_events()
 
         # In case there was no event, we do not need to do anything. This
         # might happen, if  e.g. the user works with another application. Since
@@ -120,7 +111,7 @@ def run():
             # application, just as you are used to closing an editor.
             # If the user wants to quit the application, we should let him do
             # so. This is done by breaking out of the while loop.
-            if event.type == SDL_QUIT:
+            if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
 
@@ -128,7 +119,7 @@ def run():
             # type, the user pressed the mouse button, but did not necesarily
             # release  it. As such, it is not a typical click, but only 50% of
             # it, which is sufficient for our case here.
-            if event.type == SDL_MOUSEBUTTONDOWN:
+            if event.type == sdl2.SDL_MOUSEBUTTONDOWN:
                 # If the user pressed the button, we want to draw the next
                 # palette and update the window title accordingly. We do this
                 # by increasing the storage variable and - in case it reached
@@ -155,9 +146,9 @@ def run():
         # Comment this line out to see what happens!
         window.refresh()
 
-    # As for helloworld.py, we have to call sdl2ext.quit(), since we also
-    # called sdl2ext.init().
-    sdl2ext.quit()
+    # As for helloworld.py, we have to call sdl2.ext.quit(), since we also
+    # called sdl2.ext.init().
+    sdl2.ext.quit()
     return 0
 
 

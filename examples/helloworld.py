@@ -1,22 +1,13 @@
 """The almighty Hello World! example"""
 # We'll use sys to properly exit with an error code.
 import sys
-
-# Try to import the video system. Since sdl2.ext makes use of sdl2, the
-# import might fail, if the SDL DLL could not be loaded. In that case, just
-# print the error and exit with a proper error code.
-try:
-    import sdl2.ext as sdl2ext
-except ImportError:
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
+import sdl2.ext
 
 # Create a resource container, so that we can easily access all
 # resource, we bundle with our application. We are using the current
 # file's location and define the "resources" subdirectory as the
 # location, in which we keep all data.
-RESOURCES = sdl2ext.Resources(__file__, "resources")
+RESOURCES = sdl2.ext.Resources(__file__, "resources")
 
 
 def run():
@@ -25,12 +16,12 @@ def run():
     #
     # You SHOULD call this before using any video related methods or
     # classes.
-    sdl2ext.init()
+    sdl2.ext.init()
 
     # Create a new window (like your browser window or editor window,
     # etc.) and give it a meaningful title and size. We definitely need
     # this, if we want to present something to the user.
-    window = sdl2ext.Window("Hello World!", size=(592, 460))
+    window = sdl2.ext.Window("Hello World!", size=(592, 460))
 
     # By default, every Window is hidden, not shown on the screen right
     # after creation. Thus we need to tell it to be shown now.
@@ -43,11 +34,11 @@ def run():
     # (or SDL_Renderer), which will create the underlying textures for us.
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
-        renderer = sdl2ext.RenderContext(window)
-        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        renderer = sdl2.ext.RenderContext(window)
+        factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
-        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+        factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
 
     # Creates a simple rendering system for the Window. The
     # SpriteRenderer can draw Sprite objects on the window.
@@ -71,7 +62,7 @@ def run():
     # testing purposes and does not do anything meaningful.  Take a look
     # at its code to better understand how the event processing can be
     # done and customized!
-    processor = sdl2ext.TestEventProcessor()
+    processor = sdl2.ext.TestEventProcessor()
 
     # Start the event processing. This will run in an endless loop, so
     # everything following after processor.run() will not be executed
@@ -80,8 +71,8 @@ def run():
 
     # We called video.init(), so we have to call video.quit() as well to
     # release the resources hold by the SDL DLL.
-    sdl2ext.quit()
-
+    sdl2.ext.quit()
+    return 0
 
 if __name__ == "__main__":
     sys.exit(run())
