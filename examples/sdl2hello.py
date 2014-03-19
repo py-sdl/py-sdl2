@@ -2,33 +2,34 @@
 import os
 import sys
 import ctypes
-
-from sdl2 import *
+import sdl2
 
 
 def run():
-    SDL_Init(SDL_INIT_VIDEO)
-    window = SDL_CreateWindow(b"Hello World",
-                              SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              592, 460, SDL_WINDOW_SHOWN)
+    sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+    window = sdl2.SDL_CreateWindow(b"Hello World",
+                                   sdl2.SDL_WINDOWPOS_CENTERED,
+                                   sdl2.SDL_WINDOWPOS_CENTERED,
+                                   592, 460, sdl2.SDL_WINDOW_SHOWN)
     fname = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                          "resources", "hello.bmp")
-    image = SDL_LoadBMP(fname.encode("utf-8"))
-    windowsurface = SDL_GetWindowSurface(window)
-    SDL_BlitSurface(image, None, windowsurface, None)
-    SDL_UpdateWindowSurface(window)
-    SDL_FreeSurface(image)
+    image = sdl2.SDL_LoadBMP(fname.encode("utf-8"))
+    windowsurface = sdl2.SDL_GetWindowSurface(window)
+    sdl2.SDL_BlitSurface(image, None, windowsurface, None)
+    sdl2.SDL_UpdateWindowSurface(window)
+    sdl2.SDL_FreeSurface(image)
 
     running = True
-    event = SDL_Event()
+    event = sdl2.SDL_Event()
     while running:
-        while SDL_PollEvent(ctypes.byref(event)) != 0:
-            if event.type == SDL_QUIT:
+        while sdl2.SDL_PollEvent(ctypes.byref(event)) != 0:
+            if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
+        sdl2.SDL_Delay(10)
 
-    SDL_DestroyWindow(window)
-    SDL_Quit()
+    sdl2.SDL_DestroyWindow(window)
+    sdl2.SDL_Quit()
     return 0
 
 

@@ -1,27 +1,16 @@
 """User interface examples."""
 import sys
-from sdl2.events import SDL_TEXTINPUT
-
-# Try to import SDL2. The import might fail, if the SDL2 DLL could not be
-# loaded. In that case, just print the error and exit with a proper
-# error code.
-try:
-    from sdl2 import SDL_QUIT
-    import sdl2.ext as sdl2ext
-except ImportError:
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
-
+import sdl2
+import sdl2.ext
 
 # Define some global color constants
-WHITE = sdl2ext.Color(255, 255, 255)
-GREY = sdl2ext.Color(200, 200, 200)
-RED = sdl2ext.Color(255, 0, 0)
-GREEN = sdl2ext.Color(0, 255, 0)
+WHITE = sdl2.ext.Color(255, 255, 255)
+GREY = sdl2.ext.Color(200, 200, 200)
+RED = sdl2.ext.Color(255, 0, 0)
+GREEN = sdl2.ext.Color(0, 255, 0)
 
 # Create a resource, so we have easy access to the example images.
-RESOURCES = sdl2ext.Resources(__file__, "resources")
+RESOURCES = sdl2.ext.Resources(__file__, "resources")
 
 
 # A callback for the Button.motion event.
@@ -51,8 +40,8 @@ def oncheck(button, event):
         color = GREEN
     else:
         color = RED
-    if button.factory.sprite_type == sdl2ext.SOFTWARE:
-        sdl2ext.fill(button.surface, color)
+    if button.factory.sprite_type == sdl2.ext.SOFTWARE:
+        sdl2.ext.fill(button.surface, color)
     else:
         # SDL textures do not support color manipulation operation as easy
         # as software surface (since the texture is ideally stored somwhere
@@ -67,8 +56,8 @@ def oncheck(button, event):
 def run():
     # You know those from the helloworld.py example.
     # Initialize the video subsystem, create a window and make it visible.
-    sdl2ext.init()
-    window = sdl2ext.Window("UI Elements", size=(800, 600))
+    sdl2.ext.init()
+    window = sdl2.ext.Window("UI Elements", size=(800, 600))
     window.show()
 
     # Create a sprite factory that allows us to create visible 2D elements
@@ -78,37 +67,37 @@ def run():
     # (or SDL_Renderer), which will create the underlying textures for us.
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
-        renderer = sdl2ext.RenderContext(window)
-        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        renderer = sdl2.ext.RenderContext(window)
+        factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
-        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+        factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
 
     # Create a UI factory, which will handle several defaults for
     # us. Also, the UIFactory can utilises software-based UI elements as
     # well as hardware-accelerated ones; this allows us to keep the UI
     # creation code clean.
-    uifactory = sdl2ext.UIFactory(factory)
+    uifactory = sdl2.ext.UIFactory(factory)
 
     # Create a simple Button sprite, which reacts on mouse movements and
     # button presses and fill it with a white color. All UI elements
     # inherit directly from the TextureSprite (for TEXTURE) or SoftwareSprite
     # (for SOFTWARE), so everything you can do with those classes is also
     # possible for the UI elements.
-    button = uifactory.from_image(sdl2ext.BUTTON,
+    button = uifactory.from_image(sdl2.ext.BUTTON,
                                    RESOURCES.get_path("button.bmp"))
     button.position = 50, 50
 
     # Create a TextEntry sprite, which reacts on keyboard presses and
     # text input.
-    entry = uifactory.from_image(sdl2ext.TEXTENTRY,
+    entry = uifactory.from_image(sdl2.ext.TEXTENTRY,
                                  RESOURCES.get_path("textentry.bmp"))
     entry.position = 50, 200
 
     # Create a CheckButton sprite. The CheckButton is a specialised
     # Button, which can switch its state, identified by the 'checked'
     # attribute by clicking.
-    checkbutton = uifactory.from_color(sdl2ext.CHECKBUTTON, RED, size=(50, 50))
+    checkbutton = uifactory.from_color(sdl2.ext.CHECKBUTTON, RED, size=(50, 50))
     checkbutton.position = 200, 50
 
     # Bind some actions to the button's event handlers. Whenever a click
@@ -142,13 +131,13 @@ def run():
 
     # Create a new UIProcessor, which will handle the user input events
     # and pass them on to the relevant user interface elements.
-    uiprocessor = sdl2ext.UIProcessor()
+    uiprocessor = sdl2.ext.UIProcessor()
 
     running = True
     while running:
-        events = sdl2ext.get_events()
+        events = sdl2.ext.get_events()
         for event in events:
-            if event.type == SDL_QUIT:
+            if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
             # Pass the SDL2 events to the UIProcessor, which takes care of
@@ -158,7 +147,7 @@ def run():
         # Render all user interface elements on the window.
         spriterenderer.render((button, entry, checkbutton))
 
-    sdl2ext.quit()
+    sdl2.ext.quit()
     return 0
 
 

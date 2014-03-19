@@ -1,27 +1,18 @@
 """The Pong Game."""
 import sys
+import sdl2
+import sdl2.ext
 
-try:
-    import sdl2.ext as sdl2ext
-    import sdl2.events as sdlevents
-    import sdl2.timer as sdltimer
-    import sdl2.keycode as sdlkc
-except ImportError:
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
-from sdl2.ext.ebs import Applicator, Entity, World
-
-BLACK = sdl2ext.Color(0, 0, 0)
-WHITE = sdl2ext.Color(255, 255, 255)
+BLACK = sdl2.ext.Color(0, 0, 0)
+WHITE = sdl2.ext.Color(255, 255, 255)
 PADDLE_SPEED = 3
 BALL_SPEED = 3
 
 
-class CollisionSystem(Applicator):
+class CollisionSystem(sdl2.ext.Applicator):
     def __init__(self, minx, miny, maxx, maxy):
         super(CollisionSystem, self).__init__()
-        self.componenttypes = (Velocity, sdl2ext.Sprite)
+        self.componenttypes = Velocity, sdl2.ext.Sprite
         self.ball = None
         self.minx = minx
         self.miny = miny
@@ -36,8 +27,8 @@ class CollisionSystem(Applicator):
         left, top, right, bottom = sprite.area
         bleft, btop, bright, bbottom = self.ball.sprite.area
 
-        return bleft < right and bright > left and \
-            btop < bottom and bbottom > top
+        return (bleft < right and bright > left and
+                btop < bottom and bbottom > top)
 
     def process(self, world, componentsets):
         collitems = [comp for comp in componentsets if self._overlap(comp)]
@@ -45,8 +36,7 @@ class CollisionSystem(Applicator):
             self.ball.velocity.vx = -self.ball.velocity.vx
 
             sprite = collitems[0][1]
-            ballcentery = self.ball.sprite.y + \
-                self.ball.sprite.size[1] // 2
+            ballcentery = self.ball.sprite.y + self.ball.sprite.size[1] // 2
             halfheight = sprite.size[1] // 2
             stepsize = halfheight // 10
             degrees = 0.7
@@ -60,19 +50,19 @@ class CollisionSystem(Applicator):
             else:
                 self.ball.velocity.vy = -self.ball.velocity.vy
 
-        if self.ball.sprite.y <= self.miny or \
-                self.ball.sprite.y + self.ball.sprite.size[1] >= self.maxy:
+        if (self.ball.sprite.y <= self.miny or
+            self.ball.sprite.y + self.ball.sprite.size[1] >= self.maxy):
             self.ball.velocity.vy = -self.ball.velocity.vy
 
-        if self.ball.sprite.x <= self.minx or \
-                self.ball.sprite.x + self.ball.sprite.size[0] >= self.maxx:
+        if (self.ball.sprite.x <= self.minx or
+            self.ball.sprite.x + self.ball.sprite.size[0] >= self.maxx):
             self.ball.velocity.vx = -self.ball.velocity.vx
 
 
-class MovementSystem(Applicator):
+class MovementSystem(sdl2.ext.Applicator):
     def __init__(self, minx, miny, maxx, maxy):
         super(MovementSystem, self).__init__()
-        self.componenttypes = (Velocity, sdl2ext.Sprite)
+        self.componenttypes = Velocity, sdl2.ext.Sprite
         self.minx = minx
         self.miny = miny
         self.maxx = maxx
@@ -95,10 +85,10 @@ class MovementSystem(Applicator):
                 sprite.y = self.maxy - sheight
 
 
-class TrackingAIController(Applicator):
+class TrackingAIController(sdl2.ext.Applicator):
     def __init__(self, miny, maxy):
         super(TrackingAIController, self).__init__()
-        self.componenttypes = (PlayerData, Velocity, sdl2ext.Sprite)
+        self.componenttypes = PlayerData, Velocity, sdl2.ext.Sprite
         self.miny = miny
         self.maxy = maxy
         self.ball = None
@@ -128,16 +118,16 @@ class TrackingAIController(Applicator):
                     vel.vy = 0
 
 
-class SoftwareRenderer(sdl2ext.SoftwareSpriteRenderer):
+class SoftwareRenderer(sdl2.ext.SoftwareSpriteRenderer):
     def __init__(self, window):
         super(SoftwareRenderer, self).__init__(window)
 
     def render(self, components):
-        sdl2ext.fill(self.surface, BLACK)
+        sdl2.ext.fill(self.surface, BLACK)
         super(SoftwareRenderer, self).render(components)
 
 
-class TextureRenderer(sdl2ext.TextureSpriteRenderer):
+class TextureRenderer(sdl2.ext.TextureSpriteRenderer):
     def __init__(self, renderer):
         super(TextureRenderer, self).__init__(renderer)
         self.renderer = renderer
@@ -164,7 +154,7 @@ class PlayerData(object):
         self.points = 0
 
 
-class Player(Entity):
+class Player(sdl2.ext.Entity):
     def __init__(self, world, sprite, posx=0, posy=0, ai=False):
         self.sprite = sprite
         self.sprite.position = posx, posy
@@ -173,7 +163,7 @@ class Player(Entity):
         self.playerdata.ai = ai
 
 
-class Ball(Entity):
+class Ball(sdl2.ext.Entity):
     def __init__(self, world, sprite, posx=0, posy=0):
         self.sprite = sprite
         self.sprite.position = posx, posy
@@ -181,17 +171,17 @@ class Ball(Entity):
 
 
 def run():
-    sdl2ext.init()
-    window = sdl2ext.Window("The Pong Game", size=(800, 600))
+    sdl2.ext.init()
+    window = sdl2.ext.Window("The Pong Game", size=(800, 600))
     window.show()
 
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
-        renderer = sdl2ext.RenderContext(window)
-        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        renderer = sdl2.ext.RenderContext(window)
+        factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
-        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+        factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
 
     # Create the paddles - we want white ones. To keep it easy enough for us,
     # we create a set of surfaces that can be used for Texture- and
@@ -200,12 +190,12 @@ def run():
     sp_paddle2 = factory.from_color(WHITE, size=(20, 100))
     sp_ball = factory.from_color(WHITE, size=(20, 20))
 
-    world = World()
+    world = sdl2.ext.World()
 
     movement = MovementSystem(0, 0, 800, 600)
     collision = CollisionSystem(0, 0, 800, 600)
     aicontroller = TrackingAIController(0, 600)
-    if factory.sprite_type == sdl2ext.SOFTWARE:
+    if factory.sprite_type == sdl2.ext.SOFTWARE:
         spriterenderer = SoftwareRenderer(window)
     else:
         spriterenderer = TextureRenderer(renderer)
@@ -224,19 +214,19 @@ def run():
 
     running = True
     while running:
-        for event in sdl2ext.get_events():
-            if event.type == sdlevents.SDL_QUIT:
+        for event in sdl2.ext.get_events():
+            if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
-            if event.type == sdlevents.SDL_KEYDOWN:
-                if event.key.keysym.sym == sdlkc.SDLK_UP:
+            if event.type == sdl2.SDL_KEYDOWN:
+                if event.key.keysym.sym == sdl2.SDLK_UP:
                     player1.velocity.vy = -PADDLE_SPEED
-                elif event.key.keysym.sym == sdlkc.SDLK_DOWN:
+                elif event.key.keysym.sym == sdl2.SDLK_DOWN:
                     player1.velocity.vy = PADDLE_SPEED
-            elif event.type == sdlevents.SDL_KEYUP:
-                if event.key.keysym.sym in (sdlkc.SDLK_UP, sdlkc.SDLK_DOWN):
+            elif event.type == sdl2.SDL_KEYUP:
+                if event.key.keysym.sym in (sdl2.SDLK_UP, sdl2.SDLK_DOWN):
                     player1.velocity.vy = 0
-        sdltimer.SDL_Delay(10)
+        sdl2.SDL_Delay(10)
         world.process()
 
 
