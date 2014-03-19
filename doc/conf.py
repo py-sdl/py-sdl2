@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PySDL2'
-copyright = u'2013, Marcus von Appen'
+copyright = u'2013-2014, Marcus von Appen'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
