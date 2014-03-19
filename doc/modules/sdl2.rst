@@ -123,6 +123,11 @@ SDL2, but were introduced by :mod:`sdl2`.
    Tuple containing all SDL2 pixel format constants (SDL_PIXELFORMAT_INDEX1LSB,
    ..., SDL_PIXELFORMAT_RGB565, ...).
 
+.. data:: AUDIO_FORMATS
+
+   Set containing all SDL2 audio format constants (AUDIO_U8, AUDIO_S8,
+   ... AUDIO_F32LSB, ... ).
+
 .. function:: sdl2.rw_from_object(obj : object) -> SDL_RWops
 
    Creates a SDL_RWops from any Python object. The Python object must at least

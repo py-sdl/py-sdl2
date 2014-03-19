@@ -14,7 +14,7 @@ __all__ = ["SDL_AudioFormat", "SDL_AUDIO_MASK_BITSIZE",
            "AUDIO_S8", "AUDIO_U16LSB", "AUDIO_S16LSB", "AUDIO_U16MSB",
            "AUDIO_S16MSB", "AUDIO_U16", "AUDIO_S16", "AUDIO_S32LSB",
            "AUDIO_S32MSB", "AUDIO_S32", "AUDIO_F32LSB", "AUDIO_S32MSB",
-           "AUDIO_F32", "AUDIO_U16SYS", "AUDIO_S16SYS", "AUDIO_S32SYS",
+           "AUDIO_F32", "AUDIO_U16SYS", "AUDIO_S16SYS", "AUDIO_S32SYS", "AUDIO_FORMATS",
            "AUDIO_F32SYS", "SDL_AUDIO_ALLOW_FREQUENCY_CHANGE",
            "SDL_AUDIO_ALLOW_FORMAT_CHANGE", "SDL_AUDIO_ALLOW_CHANNELS_CHANGE",
            "SDL_AUDIO_ALLOW_ANY_CHANGE", "SDL_AudioCallback", "SDL_AudioSpec",
@@ -60,6 +60,15 @@ AUDIO_S32 = AUDIO_S32LSB
 AUDIO_F32LSB = 0x8120
 AUDIO_F32MSB = 0x9120
 AUDIO_F32 = AUDIO_F32LSB
+
+
+# All of the audio formats should be in this set which is provided as a
+# convenience to the end user for purposes of iteration and validation.
+# (is the provided audio format in the supported set?)
+AUDIO_FORMATS = set([AUDIO_U8, AUDIO_S8, AUDIO_U16LSB, AUDIO_S16LSB,
+                     AUDIO_U16MSB, AUDIO_S16MSB, AUDIO_U16, AUDIO_S16,
+                     AUDIO_S32LSB, AUDIO_S32MSB, AUDIO_S32, AUDIO_F32LSB,
+                     AUDIO_F32MSB, AUDIO_F32])
 
 if SDL_BYTEORDER == SDL_LIL_ENDIAN:
     AUDIO_U16SYS = AUDIO_U16LSB
@@ -146,7 +155,7 @@ SDL_GetAudioDeviceStatus = _bind("SDL_GetAudioDeviceStatus", [SDL_AudioDeviceID]
 SDL_PauseAudio = _bind("SDL_PauseAudio", [c_int])
 SDL_PauseAudioDevice = _bind("SDL_PauseAudioDevice", [SDL_AudioDeviceID, c_int])
 SDL_LoadWAV_RW = _bind("SDL_LoadWAV_RW", [POINTER(SDL_RWops), c_int, POINTER(SDL_AudioSpec), POINTER(POINTER(Uint8)), POINTER(Uint32)], POINTER(SDL_AudioSpec))
-SDL_LoadWAV = lambda f, s, ab, al: SDL_LoadWAV_RW(SDL_RWFromFile(f, "rb"), 1, s, ab , al)
+SDL_LoadWAV = lambda f, s, ab, al: SDL_LoadWAV_RW(SDL_RWFromFile(f, b"rb"), 1, s, ab , al)
 SDL_FreeWAV = _bind("SDL_FreeWAV", [POINTER(Uint8)])
 SDL_BuildAudioCVT = _bind("SDL_BuildAudioCVT", [POINTER(SDL_AudioCVT), SDL_AudioFormat, Uint8, c_int, SDL_AudioFormat, Uint8, c_int], c_int)
 SDL_ConvertAudio = _bind("SDL_ConvertAudio", [POINTER(SDL_AudioCVT)], c_int)
