@@ -8,17 +8,19 @@ something is missing, please suggest it!
 On importing...
 ---------------
 ... my script fails and complains that a SDL2 library could not be found!
+    
+   Do you have the libraries properly installed? Did you follow the operating
+   system's way of installing or registering libraries? If you placed the
+   libraries in some folder, make sure that the ``PYSDL2_DLL_PATH``
+   environment variable points to the correct location.
+   
+... my script fails complaining that the *found* SDL2 library can't be used!
 
    Do you use a 64-bit operating system? Please make sure, that the Python
    interpreter *and* that the SDL2 libraries are either 64-bit ones *or*
    32-bit ones. A 32-bit Python interpreter can't deal with a 64-bit library
    and vice versa.
 
-   Do you have the libraries properly installed? Did you follow the operating
-   system's way of installing or registering libraries? If you placed the
-   libraries in some folder, make sure that the ``PYSDL2_DLL_PATH``
-   environment variable points to the correct location.
-   
 Using...
 --------
 

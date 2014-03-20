@@ -2,6 +2,48 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.0
+-----
+Released on
+
+**IMPORTANT: This release breaks backwards-compatibility. See the notes
+for the issues #36 and #39.**
+
+* updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.3)
+* new :func:`sdl2.ext.subsurface()` function to create subsurfaces from
+  :class:`sdl2.SDL_Surface` objects
+* new :func:`sdl2.ext.SoftwareSprite.subsprite()` method to create
+  :class:`sdl2.ext.SoftwarSprite` objects sharing pixel data
+* the unit test runner features a `--logfile` argument now to
+  safe the unit test output to a file
+* issues #36, #39: the different render classes of sdl2.ext.sprite were renamed
+  
+  * the ``sdl2.ext.RenderContext`` class was renamed to
+    :class:`sdl2.ext.Renderer` to be consistent with with SDL2's naming scheme
+  * ``sdl2.ext.SpriteRenderer`` was renamed to
+    :class:`sdl2.ext.SpriteRenderSystem`
+  * ``sdl2.ext.SoftwareSpriteRenderer`` was renamed to
+    :class:`sdl2.ext.SoftwareSpriteRenderSystem`
+  * ``sdl2.ext.TextureSpriteRenderer`` was renamed to
+    :class:`sdl2.ext.TextureSpriteRenderSystem`
+  * ``sdl2.ext.SpriteFactory.create_sprite_renderer()`` was renamed to
+    :meth:`sdl2.ext.SpriteFactory.create_sprite_render_system()`
+
+* fixed :func:`sdl2.audio.SDL_LoadWAV()` macro to provide the correct arguments
+* fixed issue #44: use a slightly less confusing ``ValueError``, if a renderer
+  argument for the :class:`sdl2.ext.SpriteFactory` is not provided
+* fixed issue #43: improved the code reference for the improved bouncing
+  section in the docs
+* fixed issue #40: typo in a ``RuntimeWarning`` message on loading the SDL2
+  libraries
+* fixed issue #38: the points arguments of
+  :meth:`sdl2.ext.Renderer.draw_points()` are properly documented now
+* fixed issue #37: :func:`sdl2.SDL_GetRendererOutputSize()` is now acccessible
+  via a wildcard import
+* fixed issue #35: download location is now mentioned in the docs
+* fixed issue #12: remove confusing try/except on import in the examples
+
+  
 0.8.0
 -----
 Released on 2013-12-30.

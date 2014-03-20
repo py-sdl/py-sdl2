@@ -29,4 +29,5 @@ Learn more about
    sdl2ext_pixelaccess.rst
    sdl2ext_resources.rst
    sdl2ext_sprite.rst
+   sdl2ext_surface.rst
    sdl2ext_window.rst
