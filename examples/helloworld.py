@@ -34,15 +34,15 @@ def run():
     # (or SDL_Renderer), which will create the underlying textures for us.
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
-        renderer = sdl2.ext.RenderContext(window)
+        renderer = sdl2.ext.Renderer(window)
         factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
         factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
 
     # Creates a simple rendering system for the Window. The
-    # SpriteRenderer can draw Sprite objects on the window.
-    spriterenderer = factory.create_sprite_renderer(window)
+    # SpriteRenderSystem can draw Sprite objects on the window.
+    spriterenderer = factory.create_sprite_render_system(window)
 
     # Creates a new 2D pixel-based surface to be displayed, processed or
     # manipulated. We will use the one of the shipped example images

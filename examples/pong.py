@@ -118,18 +118,18 @@ class TrackingAIController(sdl2.ext.Applicator):
                     vel.vy = 0
 
 
-class SoftwareRenderer(sdl2.ext.SoftwareSpriteRenderer):
+class SoftwareRenderSystem(sdl2.ext.SoftwareSpriteRenderSystem):
     def __init__(self, window):
-        super(SoftwareRenderer, self).__init__(window)
+        super(SoftwareRenderSystem, self).__init__(window)
 
     def render(self, components):
         sdl2.ext.fill(self.surface, BLACK)
-        super(SoftwareRenderer, self).render(components)
+        super(SoftwareRenderSystem, self).render(components)
 
 
-class TextureRenderer(sdl2.ext.TextureSpriteRenderer):
+class TextureRenderSystem(sdl2.ext.TextureSpriteRenderSystem):
     def __init__(self, renderer):
-        super(TextureRenderer, self).__init__(renderer)
+        super(TextureRenderSystem, self).__init__(renderer)
         self.renderer = renderer
 
     def render(self, components):
@@ -137,7 +137,7 @@ class TextureRenderer(sdl2.ext.TextureSpriteRenderer):
         self.renderer.color = BLACK
         self.renderer.clear()
         self.renderer.color = tmp
-        super(TextureRenderer, self).render(components)
+        super(TextureRenderSystem, self).render(components)
 
 
 class Velocity(object):
@@ -177,7 +177,7 @@ def run():
 
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
-        renderer = sdl2.ext.RenderContext(window)
+        renderer = sdl2.ext.Renderer(window)
         factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
@@ -196,9 +196,9 @@ def run():
     collision = CollisionSystem(0, 0, 800, 600)
     aicontroller = TrackingAIController(0, 600)
     if factory.sprite_type == sdl2.ext.SOFTWARE:
-        spriterenderer = SoftwareRenderer(window)
+        spriterenderer = SoftwareRenderSystem(window)
     else:
-        spriterenderer = TextureRenderer(renderer)
+        spriterenderer = TextureRenderSystem(renderer)
 
     world.add_system(aicontroller)
     world.add_system(movement)

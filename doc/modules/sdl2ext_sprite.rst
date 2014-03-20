@@ -47,7 +47,7 @@ Sprite, texture and pixel surface routines
       The layer depth on which to draw the :class:`Sprite`.
       :class:`Sprite` objects with higher :attr:`depth` values will be
       drawn on top of other :class:`Sprite` values by the
-      :class:`SpriteRenderer`.
+      :class:`SpriteRenderSystem`.
 
 .. class:: SoftwareSprite()
 
@@ -65,7 +65,7 @@ Sprite, texture and pixel surface routines
    .. method:: subsprite(area : (int, int, int, int)) -> SoftwareSprite
 
       Creates another :class:`SoftwareSprite` from a part of the
-      :class:`SoftwareSprite`. The two sprites share pixel data, so if the 
+      :class:`SoftwareSprite`. The two sprites share pixel data, so if the
       parent sprite's surface is not managed by the sprite (``free`` is False),
       you will need to keep it alive while the subsprite exists.
 
@@ -82,7 +82,7 @@ Sprite, texture and pixel surface routines
 
       The :class:`sdl2.SDL_Texture` containing the texture data.
 
-.. class:: SpriteRenderer()
+.. class:: SpriteRenderSystem()
 
    A rendering system for :class:`Sprite` components. This is a base class for
    rendering systems capable of drawing and displaying :class:`Sprite` based
@@ -112,10 +112,10 @@ Sprite, texture and pixel surface routines
          This is a no-op function and needs to be implemented by inheriting
          classes.
 
-.. class:: SoftwareSpriteRenderer(window : object)
+.. class:: SoftwareSpriteRenderSystem(window : object)
 
    A rendering system for :class:`SoftwareSprite` components. The
-   :class:`SoftwareSpriteRenderer` class uses a :class:`sdl2.SDL_Window` as
+   :class:`SoftwareSpriteRenderSystem` class uses a :class:`sdl2.SDL_Window` as
    drawing device to display :class:`SoftwareSprite` surfaces. It uses the
    internal SDL surface of the *window* as drawing context, so that GL
    operations, such as texture handling or the usage of SDL renderers is not
@@ -144,14 +144,14 @@ Sprite, texture and pixel surface routines
       position. If *sprites* is a single :class:`SoftwareSprite`, *x* and *y*
       denote the absolute position of the :class:`SoftwareSprite`, if set.
 
-.. class:: TextureSpriteRenderer(target : object)
+.. class:: TextureSpriteRenderSystem(target : object)
 
    A rendering system for :class:`TextureSprite` components. The
-   :class:`TextureSpriteRenderer` class uses a :class:`sdl2.SDL_Renderer` as
+   :class:`TextureSpriteRenderSystem` class uses a :class:`sdl2.SDL_Renderer` as
    drawing device to display :class:`Sprite` surfaces.
 
    *target* can be a :class:`sdl2.ext.Window`, :class:`sdl2.SDL_Window`,
-   a:class:`sdl2.ext.RenderContext` or a :class:`sdl2.SDL_Renderer`. If it is a
+   a:class:`sdl2.ext.Renderer` or a :class:`sdl2.SDL_Renderer`. If it is a
    :class:`sdl2.ext.Window` or :class:`sdl2.SDL_Window` instance, it will try
    to create a :class:`sdl2.SDL_Renderer` with hardware acceleration for it.
 
@@ -216,15 +216,15 @@ Sprite, texture and pixel surface routines
       :attr:`default_args` contain the same keys, the key-value pair of
       *kwargs* is chosen.
 
-   .. method:: create_sprite_renderer(*args, **kwargs) -> SpriteRenderer
+   .. method:: create_sprite_render_system(*args, **kwargs) -> SpriteRenderSystem
 
-      Creates a new :class:`SpriteRenderer`, based on the set
+      Creates a new :class:`SpriteRenderSystem`, based on the set
       :attr:`sprite_type`. If :attr:`sprite_type` is ``TEXTURE``, a
-      :class:`TextureSpriteRenderer` is created with the the
+      :class:`TextureSpriteRenderSystem` is created with the the
       ``renderer`` from the :attr:`default_args`. Other keyword
       arguments are ignored in that case.
 
-      Otherwise a :class:`SoftwareSpriteRenderer` is created and *args*
+      Otherwise a :class:`SoftwareSpriteRenderSystem` is created and *args*
       and *kwargs* are passed to it.
 
    .. method:: create_texture_sprite(renderer : object, size, pformat=sdl2.SDL_PIXELFORMAT_RGBA8888, access=sdl2.SDL_TEXTUREACCESS_STATIC) -> TextureSprite
@@ -266,7 +266,7 @@ Sprite, texture and pixel surface routines
       requires a :class:`sdl2.ext.FontManager` to be in *kwargs* or
       :attr:`default_args`.
 
-.. class:: RenderContext(target : obj[, index=-1[, flags=sdl2.SDL_RENDERER_ACCELERATED]])
+.. class:: Renderer(target : obj[, index=-1[, flags=sdl2.SDL_RENDERER_ACCELERATED]])
 
    A rendering context for windows and sprites that can use hardware or
    software-accelerated graphics drivers.
@@ -283,7 +283,7 @@ Sprite, texture and pixel surface routines
 
    .. attribute:: rendertarget
 
-      The target for which the :class:`RenderContext` was created.
+      The target for which the :class:`Renderer` was created.
 
    .. attribute:: color
 
@@ -308,7 +308,7 @@ Sprite, texture and pixel surface routines
 
       Copies (blits) the passed *src*, which can be a :class:`TextureSprite` or
       :class:`sdl2.SDL_Texture`, to the target of the
-      :class:`RenderContext`. *srcrect* is the source rectangle to be used for
+      :class:`Renderer`. *srcrect* is the source rectangle to be used for
       clipping portions of *src*. *dstrect* is the destination rectangle.
 
    .. method:: draw_line(points : iterable[, color=None]) -> None

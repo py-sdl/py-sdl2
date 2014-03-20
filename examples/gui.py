@@ -67,7 +67,7 @@ def run():
     # (or SDL_Renderer), which will create the underlying textures for us.
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
-        renderer = sdl2.ext.RenderContext(window)
+        renderer = sdl2.ext.Renderer(window)
         factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
@@ -85,7 +85,7 @@ def run():
     # (for SOFTWARE), so everything you can do with those classes is also
     # possible for the UI elements.
     button = uifactory.from_image(sdl2.ext.BUTTON,
-                                   RESOURCES.get_path("button.bmp"))
+                                  RESOURCES.get_path("button.bmp"))
     button.position = 50, 50
 
     # Create a TextEntry sprite, which reacts on keyboard presses and
@@ -125,9 +125,9 @@ def run():
     checkbutton.factory = factory
 
     # Since all gui elements are sprites, we can use the
-    # SpriteRenderer class, we learned about in helloworld.py, to
+    # SpriteRenderSystem class, we learned about in helloworld.py, to
     # draw them on the Window.
-    spriterenderer = factory.create_sprite_renderer(window)
+    spriterenderer = factory.create_sprite_render_system(window)
 
     # Create a new UIProcessor, which will handle the user input events
     # and pass them on to the relevant user interface elements.

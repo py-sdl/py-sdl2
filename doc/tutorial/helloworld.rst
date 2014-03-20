@@ -45,7 +45,7 @@ to the user. ::
     factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
     sprite = factory.from_image(RESOURCES.get_path("hello.bmp"))
 
-    spriterenderer = factory.create_sprite_renderer(window)
+    spriterenderer = factory.create_sprite_render_system(window)
     spriterenderer.render(sprite)
 
 First, we initialise the :mod:`sdl2.ext` internals to gain access to the
@@ -62,14 +62,14 @@ on. This is done via a :class:`sdl2.ext.SpriteFactory`, since the
 factory allows us to switch between texture-based, hardware-accelerated, and
 software-based sprites easily.
 
-To display the image, we will use a :class:`sdl2.ext.SpriteRenderer`,
+To display the image, we will use a :class:`sdl2.ext.SpriteRenderSystem`,
 which supports the sprite type (texture- or software-based) and can copy the
-image to the window for display. The :class:`sdl2.ext.SpriteRenderer`
+image to the window for display. The :class:`sdl2.ext.SpriteRenderSystem`
 needs to know, where to copy to, thus we have to supply the window as target
 for copy and display operations.
 
 All left to do is to initiate the copy process by calling
-:class:`sdl2.ext.SpriteRenderer.render()` with the image we
+:class:`sdl2.ext.SpriteRenderSystem.render()` with the image we
 created earlier.
 
 .. tip::
