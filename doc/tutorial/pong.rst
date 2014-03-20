@@ -78,7 +78,7 @@ that will display them. ::
 
     WHITE = sdl2.ext.Color(255, 255, 255)
 
-    class SoftwareRenderer(sdl2.ext.SoftwareSpriteRenderer):
+    class SoftwareRenderer(sdl2.ext.SoftwareSpriteRenderSystem):
         def __init__(self, window):
             super(SoftwareRenderer, self).__init__(window)
 
@@ -121,7 +121,7 @@ that will display them. ::
         sys.exit(run())
 
 The first thing to do is to enhance the
-:class:`sdl2.ext.SoftwareSpriteRenderer` so that it will paint
+:class:`sdl2.ext.SoftwareSpriteRenderSystem` so that it will paint
 the whole window screen black on every drawing cycle, before drawing all
 sprites on the window.
 
@@ -574,7 +574,7 @@ complex as it sounds.
     function within the ``CollisionSystem``, if the ball collides with
     one of the paddles.
 
-  * write an own Renderer, based on :class:`sdl2.ext.Applicator`,
+  * write an own render sytem, based on :class:`sdl2.ext.Applicator`,
     which takes care of position and sprite sets ::
 
        StaticRepeatingSprite(Entity):

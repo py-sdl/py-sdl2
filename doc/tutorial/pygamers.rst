@@ -270,7 +270,7 @@ pygame.Surface
 pygame.Surface          sdl2
 ======================= =====================================================
 ``blit()``              :meth:`sdl2.surface.SDL_BlitSurface()`,
-                        :class:`sdl2.ext.SpriteRenderer`
+                        :class:`sdl2.ext.SpriteRenderSystem`
 ``convert()``           :func:`sdl2.surface.SDL_ConvertSurface()`
 ``convert_alpha()``     :func:`sdl2.surface.SDL_ConvertSurface()`
 ``copy()``              :func:`sdl2.surface.SDL_ConvertSurface()`

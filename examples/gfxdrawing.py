@@ -293,7 +293,7 @@ def run():
     window.show()
 
     # Create a rendering context for the window. The sdlgfx module requires it.
-    context = sdl2.ext.RenderContext(window)
+    context = sdl2.ext.Renderer(window)
 
     # We implement the functionality as it was done in colorpalettes.py and
     # utilise a mapping table to look up the function to be executed, together

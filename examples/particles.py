@@ -79,14 +79,14 @@ def deleteparticles(world, deadones):
 
 
 # Create a simple rendering system for particles. This is somewhat
-# similar to the TextureSprinteRenderer from sdl2.ext. Since we operate on
+# similar to the TextureSprinteRenderSystem from sdl2.ext. Since we operate on
 # particles rather than sprites, we need to provide our own rendering logic.
-class ParticleRenderer(sdl2.ext.System):
+class ParticleRenderSystem(sdl2.ext.System):
     def __init__(self, renderer, images):
         # Create a new particle renderer. The surface argument will be
         # the targets surface to do the rendering on. images is a set of
         # images to be used for rendering the particles.
-        super(ParticleRenderer, self).__init__()
+        super(ParticleRenderSystem, self).__init__()
         # Define, what component instances are processed by the
         # ParticleRenderer.
         self.componenttypes = (CParticle,)
@@ -175,7 +175,7 @@ def run():
     # Create a hardware-accelerated sprite factory. The sprite factory requires
     # a rendering context, which enables it to create the underlying textures
     # that serve as the visual parts for the sprites.
-    renderer = sdl2.ext.RenderContext(window)
+    renderer = sdl2.ext.Renderer(window)
     factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
 
     # Create a set of images to be used as particles on rendering. The
@@ -198,7 +198,7 @@ def run():
     # similar to the SoftSpriteRenderer, but since we only operate with
     # hundreds of particles (and not sprites with all their overhead),
     # we need an own rendering system.
-    particlerenderer = ParticleRenderer(renderer, images)
+    particlerenderer = ParticleRenderSystem(renderer, images)
     world.add_system(particlerenderer)
 
     # The almighty event loop. You already know several parts of it.

@@ -12,18 +12,18 @@ from .. import blendmode, surface, rect, video, pixels, render, rwops
 from ..stdinc import Uint8, Uint32
 
 __all__ = ["Sprite", "SoftwareSprite", "TextureSprite", "SpriteFactory",
-           "SoftwareSpriteRenderer", "SpriteRenderer",
-           "TextureSpriteRenderer", "RenderContext", "TEXTURE", "SOFTWARE"]
+           "SoftwareSpriteRenderSystem", "SpriteRenderSystem",
+           "TextureSpriteRenderSystem", "Renderer", "TEXTURE", "SOFTWARE"]
 
 TEXTURE = 0
 SOFTWARE = 1
 
 
-class RenderContext(object):
-    """SDL2-based rendering context for windows and sprites."""
+class Renderer(object):
+    """SDL2-based renderer for windows and sprites."""
     def __init__(self, target, index=-1,
                  flags=render.SDL_RENDERER_ACCELERATED):
-        """Creates a new RenderContext for the given target.
+        """Creates a new Renderer for the given target.
 
         If target is a Window or SDL_Window, index and flags are passed
         to the relevant sdl.render.create_renderer() call. If target is
@@ -55,7 +55,7 @@ class RenderContext(object):
 
     @property
     def color(self):
-        """The drawing color of the RenderContext."""
+        """The drawing color of the Renderer."""
         r, g, b, a = Uint8(), Uint8(), Uint8(), Uint8()
         ret = render.SDL_GetRenderDrawColor(self.renderer, byref(r), byref(g),
                                             byref(b), byref(a))
@@ -65,7 +65,7 @@ class RenderContext(object):
 
     @color.setter
     def color(self, value):
-        """The drawing color of the RenderContext."""
+        """The drawing color of the Renderer."""
         c = convert_to_color(value)
         ret = render.SDL_SetRenderDrawColor(self.renderer, c.r, c.g, c.b, c.a)
         if ret == -1:
@@ -88,8 +88,7 @@ class RenderContext(object):
             raise SDLError()
 
     def clear(self, color=None):
-        """Clears the rendering context with the currently set or passed
-        color."""
+        """Clears the renderer with the currently set or passed color."""
         if color is not None:
             tmp = self.color
             self.color = color
@@ -100,8 +99,7 @@ class RenderContext(object):
             raise SDLError()
 
     def copy(self, src, srcrect=None, dstrect=None):
-        """Copies (blits) the passed source to the target of the
-        RenderContext,"""
+        """Copies (blits) the passed source to the target of the Renderer."""
         SDL_Rect = rect.SDL_Rect
         if isinstance(src, TextureSprite):
             texture = src.texture
@@ -120,11 +118,11 @@ class RenderContext(object):
             raise SDLError()
 
     def present(self):
-        """Refreshes the target of the RenderContext,"""
+        """Refreshes the target of the Renderer."""
         render.SDL_RenderPresent(self.renderer)
 
     def draw_line(self, points, color=None):
-        """Draws one or multiple lines on the rendering context."""
+        """Draws one or multiple lines on the renderer."""
         # (x1, y1, x2, y2, ...)
         pcount = len(points)
         if (pcount % 4) != 0:
@@ -159,7 +157,7 @@ class RenderContext(object):
                 raise SDLError()
 
     def draw_point(self, points, color=None):
-        """Draws one or multiple points on the rendering context."""
+        """Draws one or multiple points on the renderer."""
         # (x1, y1, x2, y2, ...)
         pcount = len(points)
         if (pcount % 2) != 0:
@@ -194,7 +192,7 @@ class RenderContext(object):
                 raise SDLError()
 
     def draw_rect(self, rects, color=None):
-        """Draws one or multiple rectangles on the rendering context."""
+        """Draws one or multiple rectangles on the renderer."""
         SDL_Rect = rect.SDL_Rect
         # ((x, y, w, h), ...)
         if type(rects[0]) == int:
@@ -224,8 +222,7 @@ class RenderContext(object):
                 raise SDLError()
 
     def fill(self, rects, color=None):
-        """Fills one or multiple rectangular areas on the rendering
-        context."""
+        """Fills one or multiple rectangular areas on the renderer."""
         SDL_Rect = rect.SDL_Rect
         # ((x, y, w, h), ...)
         if type(rects[0]) == int:
@@ -316,7 +313,7 @@ class SoftwareSprite(Sprite):
 
     def subsprite(self, area):
         """Creates another SoftwareSprite from a part of the SoftwareSprite.
-        
+
         The two sprites share pixel data, so if the parent sprite's surface is
         not managed by the sprite (free is False), you will need to keep it
         alive while the subsprite exists."""
@@ -403,16 +400,16 @@ class SpriteFactory(object):
         return "SpriteFactory(sprite_type=%s, default_args=%s)" % \
             (stype, self.default_args)
 
-    def create_sprite_renderer(self, *args, **kwargs):
-        """Creates a new SpriteRenderer.
+    def create_sprite_render_system(self, *args, **kwargs):
+        """Creates a new SpriteRenderSystem.
 
         For TEXTURE mode, the passed args and kwargs are ignored and the
-        RenderContext or SDL_Renderer passed to the SpriteFactory is used.
+        Renderer or SDL_Renderer passed to the SpriteFactory is used.
         """
         if self.sprite_type == TEXTURE:
-            return TextureSpriteRenderer(self.default_args["renderer"])
+            return TextureSpriteRenderSystem(self.default_args["renderer"])
         else:
-            return SoftwareSpriteRenderer(*args, **kwargs)
+            return SoftwareSpriteRenderSystem(*args, **kwargs)
 
     def from_image(self, fname):
         """Creates a Sprite from the passed image file."""
@@ -534,7 +531,7 @@ class SpriteFactory(object):
         """
         if isinstance(renderer, render.SDL_Renderer):
             sdlrenderer = renderer
-        elif isinstance(renderer, RenderContext):
+        elif isinstance(renderer, Renderer):
             sdlrenderer = renderer.renderer
         else:
             raise TypeError("renderer must be a Renderer or SDL_Renderer")
@@ -545,7 +542,7 @@ class SpriteFactory(object):
         return TextureSprite(texture.contents)
 
 
-class SpriteRenderer(System):
+class SpriteRenderSystem(System):
     """A rendering system for Sprite components.
 
     This is a base class for rendering systems capable of drawing and
@@ -554,7 +551,7 @@ class SpriteRenderer(System):
     method.
     """
     def __init__(self):
-        super(SpriteRenderer, self).__init__()
+        super(SpriteRenderSystem, self).__init__()
         self.componenttypes = (Sprite,)
         self._sortfunc = lambda e: e.depth
 
@@ -593,17 +590,17 @@ class SpriteRenderer(System):
         self._sortfunc = value
 
 
-class SoftwareSpriteRenderer(SpriteRenderer):
+class SoftwareSpriteRenderSystem(SpriteRenderSystem):
     """A rendering system for SoftwareSprite components.
 
-    The SoftwareSpriteRenderer class uses a Window as drawing device to
+    The SoftwareSpriteRenderSystem class uses a Window as drawing device to
     display Sprite surfaces. It uses the Window's internal SDL surface as
     drawing context, so that GL operations, such as texture handling or
     using SDL renderers is not possible.
     """
     def __init__(self, window):
-        """Creates a new SoftSpriteRenderer for a specific Window."""
-        super(SoftwareSpriteRenderer, self).__init__()
+        """Creates a new SoftwareSpriteRenderSystem for a specific Window."""
+        super(SoftwareSpriteRenderSystem, self).__init__()
         if isinstance(window, Window):
             self.window = window.window
         elif isinstance(window, video.SDL_Window):
@@ -619,13 +616,13 @@ class SoftwareSpriteRenderer(SpriteRenderer):
     def render(self, sprites, x=None, y=None):
         """Draws the passed sprites (or sprite) on the Window's surface.
 
-        x and y are optional arguments that can be used as relative
-        drawing location for sprites. If set to None, the location
-        information of the sprites are used. If set and sprites is an
-        iterable, such as a list of SoftwareSprite objects, x and y are
-        relative location values that will be added to each individual sprite's
-        position. If sprites is a single SoftwareSprite, x and y denote the
-        absolute position of the SoftwareSprite, if set.
+        x and y are optional arguments that can be used as relative drawing
+        location for sprites. If set to None, the location information of the
+        sprites are used. If set and sprites is an iterable, such as a list of
+        SoftwareSprite objects, x and y are relative location values that will
+        be added to each individual sprite's position. If sprites is a single
+        SoftwareSprite, x and y denote the absolute position of the
+        SoftwareSprite, if set.
         """
         r = rect.SDL_Rect(0, 0, 0, 0)
         if isiterable(sprites):
@@ -647,25 +644,25 @@ class SoftwareSpriteRenderer(SpriteRenderer):
         video.SDL_UpdateWindowSurface(self.window)
 
 
-class TextureSpriteRenderer(SpriteRenderer):
+class TextureSpriteRenderSystem(SpriteRenderSystem):
     """A rendering system for TextureSprite components.
 
-    The TextureSpriteRenderer class uses a SDL_Renderer as drawing
+    The TextureSpriteRenderSystem class uses a SDL_Renderer as drawing
     device to display TextureSprite objects.
     """
     def __init__(self, target):
-        """Creates a new TextureSpriteRenderer.
+        """Creates a new TextureSpriteRenderSystem.
 
-        target can be a Window, SDL_Window, RenderContext or SDL_Renderer.
-        If it is a Window or SDL_Window instance, a RenderContext will be
+        target can be a Window, SDL_Window, Renderer or SDL_Renderer.
+        If it is a Window or SDL_Window instance, a Renderer will be
         created to acquire the SDL_Renderer.
         """
-        super(TextureSpriteRenderer, self).__init__()
+        super(TextureSpriteRenderSystem, self).__init__()
         if isinstance(target, (Window, video.SDL_Window)):
             # Create a Renderer for the window and use that one.
-            target = RenderContext(target)
+            target = Renderer(target)
 
-        if isinstance(target, RenderContext):
+        if isinstance(target, Renderer):
             self._renderer = target  # Used to prevent GC
             sdlrenderer = target.renderer
         elif isinstance(target, render.SDL_Renderer):

@@ -51,8 +51,10 @@ def run():
     window.show()
 
     # Explicitly acquire the window's surface to draw on. We used the
-    # SpriteRenderer class in helloworld.py, which did the drawing magic for
-    # us. Now we will do it ourselves, so we have to get a surface to draw on.
+    # SpriteRenderSystem class in helloworld.py, which did the drawing magic
+    # for us. Now we will do it ourselves, so we have to get a surface to draw
+    # on.
+    #
     # NOTE: if you intend to use textures or the SDL renderers, you must not
     # use the method.
     windowsurface = window.get_surface()
@@ -83,8 +85,8 @@ def run():
     draw_palette(windowsurface, palettes[0][1])
 
     # The event loop. In helloworld.py we used the TestEventProcessor class,
-    # since there was not much to do. Now however, we want to react on the user
-    # input. Every time the user clicks around in our window, we want to
+    # since there was not much to do. Now however, we want to react on the
+    # user input. Every time the user clicks around in our window, we want to
     # show the next palette. Once we reached the last palette within the
     # mapping table, we will start again with the first one.
     running = True

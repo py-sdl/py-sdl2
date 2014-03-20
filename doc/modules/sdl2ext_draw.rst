@@ -8,7 +8,7 @@
    The drawing functions within this module are unoptimised and should not be
    considered fast. If you want improved drawing of 2D primitives, including
    hardware acceleration, you should use the methods of the
-   :class:`RenderContext` instead.
+   :class:`Renderer` instead.
 
 .. function:: prepare_color(color : object, target : object) -> int
 
