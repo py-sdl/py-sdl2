@@ -7,7 +7,7 @@ Image loaders
 
    Gets the formats supported by PySDL2 in the default installation.
 
-.. function:: load_image(fname : str[, renderer=None[,assurface=False[, enforce=None]]]) -> SDL_Surface, TextureSprite or SoftwareSprite
+.. function:: load_image(fname : str[, enforce=None]) -> sdl2.SDL_Surface
 
    Creates a :class:`sdl2.SDL_Surface` from an image file.
 

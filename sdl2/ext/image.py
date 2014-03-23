@@ -29,10 +29,6 @@ def get_image_formats():
 def load_image(fname, enforce=None):
     """Creates a SDL_Surface from an image file.
 
-    If assurface is True, a SDL_Surface will be returned instead of a
-    Sprite or SoftSprite object. If renderer is set to a SDL_Renderer, a
-    Sprite will be returned.
-
     This function makes use of the Python Imaging Library, if it is available
     on the target execution environment. The function will try to load the
     file via mule.sdlimage first. If the file could not be loaded, it will
