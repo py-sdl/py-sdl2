@@ -4,7 +4,7 @@ This describes the latest changes between the PySDL2 releases.
 
 0.9.0
 -----
-Released on
+Released on 2014-03-23.
 
 **IMPORTANT: This release breaks backwards-compatibility. See the notes
 for the issues #36 and #39.**
