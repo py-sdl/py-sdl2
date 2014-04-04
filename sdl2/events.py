@@ -22,11 +22,11 @@ __all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING",
            "SDL_FINGERDOWN", "SDL_FINGERUP", "SDL_FINGERMOTION",
            "SDL_DOLLARGESTURE", "SDL_DOLLARRECORD", "SDL_MULTIGESTURE",
            "SDL_CLIPBOARDUPDATE", "SDL_DROPFILE", "SDL_RENDER_TARGETS_RESET",
-           "SDL_USEREVENT", "SDL_LASTEVENT", "SDL_EventType",
-           "SDL_GenericEvent", "SDL_WindowEvent", "SDL_KeyboardEvent",
-           "SDL_TEXTEDITINGEVENT_TEXT_SIZE", "SDL_TextEditingEvent",
-           "SDL_TEXTINPUTEVENT_TEXT_SIZE", "SDL_TextInputEvent",
-           "SDL_MouseMotionEvent", "SDL_MouseButtonEvent",
+           "SDL_RENDER_DEVICE_RESET", "SDL_USEREVENT", "SDL_LASTEVENT",
+           "SDL_EventType","SDL_GenericEvent", "SDL_WindowEvent",
+           "SDL_KeyboardEvent", "SDL_TEXTEDITINGEVENT_TEXT_SIZE",
+           "SDL_TextEditingEvent", "SDL_TEXTINPUTEVENT_TEXT_SIZE",
+           "SDL_TextInputEvent", "SDL_MouseMotionEvent", "SDL_MouseButtonEvent",
            "SDL_MouseWheelEvent", "SDL_JoyAxisEvent", "SDL_JoyBallEvent",
            "SDL_JoyHatEvent", "SDL_JoyButtonEvent", "SDL_JoyDeviceEvent",
            "SDL_ControllerAxisEvent", "SDL_ControllerButtonEvent",
@@ -84,6 +84,7 @@ SDL_MULTIGESTURE = 0x802
 SDL_CLIPBOARDUPDATE = 0x900
 SDL_DROPFILE = 0x1000
 SDL_RENDER_TARGETS_RESET = 0x2000
+SDL_RENDER_DEVICE_RESET = 0x2001
 SDL_USEREVENT = 0x8000
 SDL_LASTEVENT = 0xFFFF
 SDL_EventType = c_int
