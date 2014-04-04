@@ -21,5 +21,5 @@ SDL_HasSSE3 = _bind("SDL_HasSSE3", None, SDL_bool)
 SDL_HasSSE41 = _bind("SDL_HasSSE41", None, SDL_bool)
 SDL_HasSSE42 = _bind("SDL_HasSSE42", None, SDL_bool)
 SDL_GetSystemRAM = _bind("SDL_GetSystemRAM", None, c_int, nullfunc)
-SDL_HasAVX = _bind("SDL_HasAVX", None, SDL_bool)
+SDL_HasAVX = _bind("SDL_HasAVX", None, SDL_bool, nullfunc)
 
