@@ -13,8 +13,8 @@ prebuilt package for your operating system or distribution.
 Documentation
 =============
 If you just started with SDL and PySDL2, it is strongly recommended
-that you read through the tutorial of the documentation to understand.
-You can find the documentation at *doc/html* or online at
+that you read through the tutorial of the documentation to learn the 
+basics. You can find the documentation at *doc/html* or online at
 http://pysdl2.readthedocs.org.
 
 License
