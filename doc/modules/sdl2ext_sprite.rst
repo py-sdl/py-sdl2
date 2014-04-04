@@ -175,7 +175,7 @@ Sprite, texture and pixel surface routines
       :class:`TextureSprite`, *x* and *y* denote the absolute position of the
       :class:`TextureSprite`, if set.
 
-.. class:: SpriteFactory(sprite_type=SOFTWARE, **kwargs)
+.. class:: SpriteFactory(sprite_type=TEXTURE, **kwargs)
 
    A factory class for creating :class:`Sprite` objects. The
    :class:`SpriteFactory` can create :class:`TextureSprite` or
