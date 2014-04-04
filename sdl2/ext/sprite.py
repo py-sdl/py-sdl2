@@ -185,7 +185,7 @@ class Renderer(object):
                 tmp = self.color
                 self.color = color
             ptr = cast(ptlist, POINTER(SDL_Point))
-            ret = render.SDL_RenderDrawPoints(self.renderer, ptr)
+            ret = render.SDL_RenderDrawPoints(self.renderer, ptr, pcount / 2)
             if color is not None:
                 self.color = tmp
             if ret == -1:
@@ -214,8 +214,8 @@ class Renderer(object):
             if color is not None:
                 tmp = self.color
                 self.color = color
-            ptr = cast(rlist, SDL_Rect)
-            ret = render.SDL_RenderDrawRects(self.renderer, ptr)
+            ptr = cast(rlist, POINTER(SDL_Rect))
+            ret = render.SDL_RenderDrawRects(self.renderer, ptr, len(rects))
             if color is not None:
                 self.color = tmp
             if ret == -1:
@@ -244,8 +244,8 @@ class Renderer(object):
             if color is not None:
                 tmp = self.color
                 self.color = color
-            ptr = cast(rlist, SDL_Rect)
-            ret = render.SDL_RenderFillRects(self.renderer, ptr)
+            ptr = cast(rlist, POINTER(SDL_Rect))
+            ret = render.SDL_RenderFillRects(self.renderer, ptr, len(rects))
             if color is not None:
                 self.color = tmp
             if ret == -1:

@@ -539,6 +539,9 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         view = sdl2ext.PixelView(surface)
         self.check_pixels(view, 128, 128, sp, 0x0000FF, (0x0,))
         del view
+        sdl2ext.fill(surface, 0x0)
+        renderer.fill([(5, 5, 10, 10), (20, 15, 8, 10)], 0x0000FF)
+        # TODO: add fill check
 
 
 if __name__ == '__main__':
