@@ -50,6 +50,23 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                     self.assertTrue(view[y][x] in c2,
                                     msg % (x, y, view[y][x], c2))
 
+    def check_areas(self, view, w, h, rects, c1, c2):
+        def _inarea(x, y, rs):
+            for r in rs:
+                if (x >= r[0] and x < (r[0] + r[2]) and
+                    y >= r[1] and y < (r[1] + r[3])):
+                    return True
+            return False
+        msg = "color mismatch at %d,%d: %d not in %s"
+        for y in range(w):
+            for x in range(h):
+                if _inarea(x, y, rects):
+                    self.assertEqual(view[y][x], c1,
+                                     msg % (x, y, view[y][x], c1))
+                else:
+                    self.assertTrue(view[y][x] in c2,
+                                    msg % (x, y, view[y][x], c2))
+
     def test_SpriteFactory(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         self.assertIsInstance(factory, sdl2ext.SpriteFactory)
@@ -541,7 +558,10 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         del view
         sdl2ext.fill(surface, 0x0)
         renderer.fill([(5, 5, 10, 10), (20, 15, 8, 10)], 0x0000FF)
-        # TODO: add fill check
+        view = sdl2ext.PixelView(surface)
+        self.check_areas(view, 128, 128, [(5, 5, 10, 10), (20, 15, 8, 10)],
+                         0x0000FF, (0x0,))
+        del view
 
 
 if __name__ == '__main__':
