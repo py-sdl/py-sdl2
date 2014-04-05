@@ -12,4 +12,4 @@ Thanks to everyone else for their assistance, support, fixes and improvements:
 
 Sven Eckelmann, Marcel Rodrigues, Michael McCandless, Andreas Schiefer,
 Franz Schrober, Roger Flores, otus, Mihail Latyshov, Todd Rovito, Bil Bas,
-Dan McCombs, William Manire, Radomir Dopieralski
+Dan McCombs, William Manire, Radomir Dopieralski, Joe Polak

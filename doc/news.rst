@@ -2,6 +2,20 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.1
+-----
+Released on 2014-04-05.
+
+* fixed issue #50: corrected the :func:`sdl2.ext.load_image()`
+  documentation
+* fixed issue #52: :meth:`sdl2.ext.Renderer.fill()`,
+  :meth:`sdl2.ext.Renderer.draw_rect()` and
+  :meth:`sdl2.ext.Renderer.draw_point()` convert sequences
+  correctly now
+* fixed issue #53: provide backwards compatibility for previous
+  SDL2 releases by adding a wrapper func for
+  :func:`sdl2.cpuinfo.SDL_HasAVX()`
+
 0.9.0
 -----
 Released on 2014-03-23.
