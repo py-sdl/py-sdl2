@@ -253,5 +253,5 @@ SDL_GL_GetSwapInterval = _bind("SDL_GL_GetSwapInterval", None, c_int)
 SDL_GL_SwapWindow = _bind("SDL_GL_SwapWindow", [POINTER(SDL_Window)])
 SDL_GL_DeleteContext = _bind("SDL_GL_DeleteContext", [SDL_GLContext])
 SDL_GL_GetDrawableSize = _bind("SDL_GL_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)], optfunc=nullfunc)
-SDL_GL_ResetAttributes = _bind("SDL_GL_ResetAttributes")
+SDL_GL_ResetAttributes = _bind("SDL_GL_ResetAttributes", optfunc=nullfunc)
 
