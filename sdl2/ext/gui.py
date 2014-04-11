@@ -1,5 +1,5 @@
 """User interface elements."""
-from .compat import isiterable
+from .compat import isiterable, stringify
 from .ebs import System, World
 from .events import EventHandler
 from .sprite import Sprite
@@ -227,7 +227,7 @@ class UIProcessor(System):
         passed component and passes the event on to that component."""
         if self._activecomponent == component:
             if (component.uitype & TEXTENTRY):
-                component.text += event.text.text
+                component.text += stringify(event.text.text, "utf-8")
             component.events[event.type](event)
 
     def mousemotion(self, component, event):
