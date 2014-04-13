@@ -44,14 +44,20 @@ def cohensutherland(left, top, right, bottom, x1, y1, x2, y2):
         elif opt & RIGHT:
             y = y1 + (y2 - y1) * (1.0 * (right - x1)) / (x2 - x1)
             x = right
-        else:
+        elif opt & LEFT:
             y = y1 + (y2 - y1) * (1.0 * (left - x1)) / (x2 - x1)
-            x = right
+            x = left
+        else:
+            # this should not happen
+            raise RuntimeError("invalid clipping state")
+
         if opt == k1:
-            x1, y1 = int(x), int(y)
+            # x1, y1 = int(x), int(y)
+            x1, y1 = x, y
             k1 = _getclip(x1, y1)
         else:
-            x2, y2 = int(x), int(y)
+            # x2, y2 = int(x), int(y)
+            x2, y2 = x, y
             k2 = _getclip(x2, y2)
     return x1, y1, x2, y2
 
@@ -68,9 +74,11 @@ def liangbarsky(left, top, right, bottom, x1, y1, x2, y2):
     four None values will be returned as tuple. Otherwise a tuple of the
     clipped line points will be returned in the form (cx1, cy1, cx2, cy2).
     """
-    dx = x2 - x1
-    dy = y2 - y1
-    dt0, dt1 = 0, 1
+    dx = x2 - x1 * 1.0
+    dy = y2 - y1 * 1.0
+    dt0, dt1 = 0.0, 1.0
+    xx1 = x1
+    yy1 = y1
 
     checks = ((-dx, x1 - left),
               (dx, right - x1),
@@ -80,21 +88,22 @@ def liangbarsky(left, top, right, bottom, x1, y1, x2, y2):
     for p, q in checks:
         if p == 0 and q < 0:
             return None, None, None, None
-        dt = q / (p * 1.0)
-        if p < 0:
-            if dt > dt1:
-                return None, None, None, None
-            dt0 = max(dt0, dt)
-        else:
-            if dt < dt0:
-                return None, None, None, None
-            dt1 = min(dt1, dt)
+        if p != 0:
+            dt = q / (p * 1.0)
+            if p < 0:
+                if dt > dt1:
+                    return None, None, None, None
+                dt0 = max(dt0, dt)
+            else:
+                if dt < dt0:
+                    return None, None, None, None
+                dt1 = min(dt1, dt)
     if dt0 > 0:
         x1 += dt0 * dx
         y1 += dt0 * dy
     if dt1 < 1:
-        x2 = x1 + dt1 * dx
-        y2 = y1 + dt1 * dy
+        x2 = xx1 + dt1 * dx
+        y2 = yy1 + dt1 * dy
     return x1, y1, x2, y2
 
 
