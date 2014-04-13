@@ -2,6 +2,20 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.2
+-----
+Released on 2014-04-13.
+
+* fixed issue #32: the line clipping algorithms do not run into precision
+  errors anymore
+* fixed issue #53 (again): :func:`sdl2.video.SDL_GL_ResetAttributes()`
+  is properly wrapped now to retain backwards compatibility with previous
+  SDL2 releases
+* fixed issue #54: text input is correctly converted for the text entry
+  component
+* updated the example BMP files, which could not be loaded properly on
+  some systems with SDL2_image and PIL
+
 0.9.1
 -----
 Released on 2014-04-05.
