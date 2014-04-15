@@ -36,7 +36,7 @@ class Window(object):
         The default flags for creating Window instances can be adjusted
         through the DEFAULTFLAGS class variable:
 
-            Window.DEFAULTFLAGS = mule.sdl.video.SDL_WINDOW_SHOWN
+            Window.DEFAULTFLAGS = sdl2.video.SDL_WINDOW_SHOWN
         """
         if position is None:
             position = self.DEFAULTPOS
