@@ -1,7 +1,7 @@
 import os
 from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_char_p, c_void_p, \
     c_double
-from .dll import _DLL
+from .dll import DLL
 from .version import SDL_version
 from .audio import AUDIO_S16LSB, AUDIO_S16MSB
 from .stdinc import Uint8, Uint16, Uint32, Sint16
@@ -50,8 +50,8 @@ __all__ = ["get_dll_file", "SDL_MIXER_MAJOR_VERSION", "SDL_MIXER_MINOR_VERSION",
           ]
 
 try:
-    dll = _DLL("SDL2_mixer", ["SDL2_mixer", "SDL2_mixer-2.0"],
-               os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL("SDL2_mixer", ["SDL2_mixer", "SDL2_mixer-2.0"],
+              os.getenv("PYSDL2_DLL_PATH"))
 except RuntimeError as exc:
     raise ImportError(exc)
 

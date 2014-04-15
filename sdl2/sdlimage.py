@@ -1,6 +1,6 @@
 import os
 from ctypes import POINTER, c_int, c_char_p
-from .dll import _DLL
+from .dll import DLL
 from .version import SDL_version
 from .surface import SDL_Surface
 from .rwops import SDL_RWops
@@ -26,8 +26,8 @@ __all__ = ["SDL_IMAGE_MAJOR_VERSION", "SDL_IMAGE_MINOR_VERSION", \
            ]
 
 try:
-    dll = _DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],
-               os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],
+              os.getenv("PYSDL2_DLL_PATH"))
 except RuntimeError as exc:
     raise ImportError(exc)
 

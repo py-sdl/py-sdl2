@@ -1,7 +1,7 @@
 import os
 from ctypes import Structure, POINTER, c_int, c_float, c_void_p, c_char, \
     c_char_p, c_double
-from .dll import _DLL
+from .dll import DLL
 from .stdinc import Uint8, Uint32, Sint16
 from .render import SDL_Renderer
 from .surface import SDL_Surface
@@ -34,8 +34,8 @@ __all__ = ["get_dll_file", "FPS_UPPER_LIMIT", "FPS_LOWER_LIMIT", "FPS_DEFAULT",
            ]
 
 try:
-    dll = _DLL("SDL2_gfx", ["SDL2_gfx", "SDL2_gfx-1.0"],
-               os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL("SDL2_gfx", ["SDL2_gfx", "SDL2_gfx-1.0"],
+              os.getenv("PYSDL2_DLL_PATH"))
 except RuntimeError as exc:
     raise ImportError(exc)
 

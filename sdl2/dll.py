@@ -5,7 +5,7 @@ import warnings
 from ctypes import CDLL
 from ctypes.util import find_library
 
-__all__ = ["get_dll_file"]
+__all__ = ["DLL", "nullfunc"]
 
 
 def _findlib(libnames, path=None):
@@ -39,7 +39,7 @@ def _findlib(libnames, path=None):
     return results
 
 
-class _DLL(object):
+class DLL(object):
     """Function wrapper around the different DLL functions. Do not use or
     instantiate this one directly from your user code.
     """
@@ -91,6 +91,7 @@ class _DLL(object):
         """Gets the filename of the loaded library."""
         return self._libfile
 
+
 def _nonexistent(funcname, func):
     """A simple wrapper to mark functions and methods as nonexistent."""
     def wrapper(*fargs, **kw):
@@ -101,14 +102,14 @@ def _nonexistent(funcname, func):
     return wrapper
 
 
-try:
-    dll = _DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
-except RuntimeError as exc:
-    raise ImportError(exc)
-
 def nullfunc(*args):
     """A simple no-op function to be used as dll replacement."""
     return
+
+try:
+    dll = DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
+except RuntimeError as exc:
+    raise ImportError(exc)
 
 def get_dll_file():
     """Gets the file name of the loaded SDL2 library."""
