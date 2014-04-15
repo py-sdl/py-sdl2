@@ -100,14 +100,39 @@ class SDLRWopsTest(unittest.TestCase):
         pos = rwops.SDL_RWseek(rw, 12, rwops.RW_SEEK_END)
         self.assertTrue(pos == buf.tell() == len(data) + 12)
 
-    @unittest.skip("not implemented")
     def test_SDL_RWread(self):
-        pass
+        data = byteify("A Teststring of length 25", "utf-8")
+        buf = BytesIO(data)
+        rw = rwops.rw_from_object(buf)
+        self.assertIsInstance(rw, rwops.SDL_RWops)
+        
+        readbuf = ctypes.create_string_buffer(2)
+        
+        read = rwops.SDL_RWread(rw, readbuf, 1, 2)
+        self.assertEqual(read, 2)
+        self.assertEqual(readbuf.raw, b"A ")
+        readbuf = ctypes.create_string_buffer(10)
+        read = rwops.SDL_RWread(rw, readbuf, 1, 10)
+        self.assertEqual(read, 10)
+        self.assertEqual(readbuf.raw, b"Teststring")
 
-    @unittest.skip("not implemented")
     def test_SDL_RWwrite(self):
-        pass
+        data = byteify("A Teststring of length 25", "utf-8")
+        buf = BytesIO(data)
+        rw = rwops.rw_from_object(buf)
+        self.assertIsInstance(rw, rwops.SDL_RWops)
 
+        writebuf = ctypes.create_string_buffer(b"XQ")
+        written = rwops.SDL_RWwrite(rw, writebuf, 1, 2)
+        self.assertEqual(written, 2)
+        self.assertEqual(buf.getvalue(), b"XQTeststring of length 25")
+        
+        writebuf = ctypes.create_string_buffer(b"banana")
+        rwops.SDL_RWseek(rw, 14, rwops.RW_SEEK_CUR)
+        written = rwops.SDL_RWwrite(rw, writebuf, 1, 6)
+        self.assertEqual(written, 6)
+        self.assertEqual(buf.getvalue(), b"XQTeststring of banana 25")
+       
     def test_SDL_RWclose(self):
         data = byteify("A Teststring", "utf-8")
         buf = BytesIO(data)

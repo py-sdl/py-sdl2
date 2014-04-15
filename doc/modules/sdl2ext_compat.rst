@@ -31,6 +31,12 @@ releases.
 
       Only defined for Python 3.x, for which it is the same as :func:`chr()`.
 
+.. function:: unicode(string[, encoding[, errors]])
+
+   .. note::
+
+      Only defined for Python 3.x, for which it is the same as :func:`str()`.
+
 .. function:: callable(x) -> bool
 
    .. note::
