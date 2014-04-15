@@ -1,6 +1,6 @@
 import os
 from ctypes import Structure, POINTER, c_int, c_long, c_char_p
-from .dll import _DLL
+from .dll import DLL
 from .version import SDL_version
 from .rwops import SDL_RWops
 from .stdinc import Uint16, Uint32
@@ -37,8 +37,8 @@ __all__ = ["get_dll_file", "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION",
           ]
 
 try:
-    dll = _DLL("SDL2_ttf", ["SDL2_ttf", "SDL2_ttf-2.0"],
-               os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL("SDL2_ttf", ["SDL2_ttf", "SDL2_ttf-2.0"],
+              os.getenv("PYSDL2_DLL_PATH"))
 except RuntimeError as exc:
     raise ImportError(exc)
 
