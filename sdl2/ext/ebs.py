@@ -205,8 +205,7 @@ class World(object):
         True, the system will operate on combined sets of components.
         """
         if not self._system_is_valid(system):
-            raise ValueError("""system must have componenttypes and a process
-method""")
+            raise ValueError("system must have componenttypes and a process method")
         for classtype in system.componenttypes:
             if classtype not in self.components:
                 self.add_componenttype(classtype)
@@ -219,8 +218,7 @@ method""")
         processing order.
         """
         if not self._system_is_valid(system):
-            raise ValueError("""system must have componenttypes and a process
-method""")
+            raise ValueError("system must have componenttypes and a process method")
         for classtype in system.componenttypes:
             if classtype not in self.components:
                 self.add_componenttype(classtype)

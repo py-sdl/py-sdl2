@@ -1,5 +1,5 @@
 """
-PyMule color module for color creation and conversion operations.
+color module for color creation and conversion operations.
 """
 from math import floor
 from .compat import *

@@ -19,8 +19,7 @@ __all__ = ["get_image_formats", "load_image"]
 
 
 def get_image_formats():
-    """Gets the formats supported by mule in the default
-    installation.
+    """Gets the formats supported in the default installation.
     """
     return ("bmp", "cur", "gif", "ico", "jpg", "lbm", "pbm", "pcx", "pgm",
             "png", "pnm", "ppm", "tga", "tif", "webp", "xcf", "xpm")
@@ -31,13 +30,13 @@ def load_image(fname, enforce=None):
 
     This function makes use of the Python Imaging Library, if it is available
     on the target execution environment. The function will try to load the
-    file via mule.sdlimage first. If the file could not be loaded, it will
+    file via sdl2.sdlimage first. If the file could not be loaded, it will
     try to load it via PIL.
 
     You can force the function to use only one of them, by passing the enforce
     as either "PIL" or "SDL".
 
-    Note: This will call mule.sdlimage.init() implicitly with the
+    Note: This will call sdl2.sdlimage.init() implicitly with the
     default arguments, if the module is available.
     """
     if enforce is not None and enforce not in ("PIL", "SDL"):
