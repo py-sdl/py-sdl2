@@ -501,21 +501,89 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
 
-    @unittest.skip("not implemented")
     def test_Renderer(self):
-        pass
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0).contents
+        
+        renderer = sdl2ext.Renderer(sf)
+        self.assertEqual(renderer.rendertarget, sf)
+        self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
+        del renderer
+        
+        sprite = sdl2ext.SoftwareSprite(sf, True)
+        renderer = sdl2ext.Renderer(sprite)
+        self.assertEqual(renderer.rendertarget, sprite.surface)
+        self.assertEqual(renderer.rendertarget, sf)
+        self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
+        del renderer
+        
+        window = sdl2ext.Window("Test", size=(1, 1))
+        renderer = sdl2ext.Renderer(window)
+        self.assertEqual(renderer.rendertarget, window.window)
+        self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
+        del renderer
+        
+        sdlwindow = window.window
+        renderer = sdl2ext.Renderer(sdlwindow)
+        self.assertEqual(renderer.rendertarget, sdlwindow)
+        self.assertEqual(renderer.rendertarget, window.window)
+        self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
+        del renderer
+        del window
+        
+        self.assertRaises(TypeError, sdl2ext.Renderer, None)
+        self.assertRaises(TypeError, sdl2ext.Renderer, 1234)
+        self.assertRaises(TypeError, sdl2ext.Renderer, "test")
 
-    @unittest.skip("not implemented")
     def test_Renderer_color(self):
-        pass
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32,
+                                  0xFF000000,
+                                  0x00FF0000,
+                                  0x0000FF00,
+                                  0x000000FF)
+        renderer = sdl2ext.Renderer(sf.contents)
+        self.assertIsInstance(renderer.color, sdl2ext.Color)
+        self.assertEqual(renderer.color, sdl2ext.Color(0, 0, 0 ,0))
+        renderer.color = 0x00FF0000
+        self.assertEqual(renderer.color, sdl2ext.Color(0xFF, 0, 0, 0))
+        renderer.clear()
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xFF000000, (0x0,))
+        del view
+        renderer.color = 0xAABBCCDD
+        self.assertEqual(renderer.color, sdl2ext.Color(0xBB, 0xCC, 0xDD, 0xAA))
+        renderer.clear()
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
+        del view
+        del renderer
+        SDL_FreeSurface(sf)
 
     @unittest.skip("not implemented")
     def test_Renderer_blendmode(self):
         pass
 
-    @unittest.skip("not implemented")
     def test_Renderer_clear(self):
-        pass
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32,
+                                  0xFF000000,
+                                  0x00FF0000,
+                                  0x0000FF00,
+                                  0x000000FF)
+        renderer = sdl2ext.Renderer(sf.contents)
+        self.assertIsInstance(renderer.color, sdl2ext.Color)
+        self.assertEqual(renderer.color, sdl2ext.Color(0, 0, 0 ,0))
+        renderer.color = 0x00FF0000
+        self.assertEqual(renderer.color, sdl2ext.Color(0xFF, 0, 0, 0))
+        renderer.clear()
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xFF000000, (0x0,))
+        del view
+        renderer.clear(0xAABBCCDD)
+        self.assertEqual(renderer.color, sdl2ext.Color(0xFF, 0, 0, 0))
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
+        del view
+        del renderer
+        SDL_FreeSurface(sf)
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_copy(self):
