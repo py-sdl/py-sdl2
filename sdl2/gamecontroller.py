@@ -104,5 +104,5 @@ SDL_GameControllerGetBindForButton = _bind("SDL_GameControllerGetBindForButton",
 SDL_GameControllerGetButton = _bind("SDL_GameControllerGetButton", [POINTER(SDL_GameController), SDL_GameControllerButton], Uint8)
 SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameController)])
 SDL_GameControllerAddMappingsFromRW = _bind("SDL_GameControllerAddMappingsFromRW", [POINTER(SDL_RWops), c_int], c_int, nullfunc)
-SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, "rb"), 1)
+SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
 
