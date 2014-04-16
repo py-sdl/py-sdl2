@@ -34,3 +34,9 @@ Common algorithms
    y2 : int[,method=liangbarsky]) -> int, int, int, int
 
    Clips a line to a rectangular area.
+
+.. function:: point_on_line(p1 : iterable, p2 : iterable, point : iterable) -> bool
+
+   Checks, if *point*, a two-value tuple, is on the line segment defined by *p1*
+   and *p2*.
+

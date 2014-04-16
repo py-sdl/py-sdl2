@@ -1,6 +1,6 @@
 """Sprite, texture and pixel surface routines."""
 import abc
-from ctypes import byref, cast, POINTER, c_int
+from ctypes import byref, cast, POINTER, c_int, c_float
 from .common import SDLError
 from .compat import *
 from .color import convert_to_color
@@ -85,6 +85,21 @@ class Renderer(object):
         """The blend mode used for drawing operations (fill and line)."""
         ret = render.SDL_SetRenderDrawBlendMode(self.renderer, value)
         if ret == -1:
+            raise SDLError()
+
+    @property
+    def scale(self):
+        """The horizontal and vertical drawing scale."""
+        sx = c_float(0.0)
+        sy = c_float(0.0)
+        render.SDL_RenderGetScale(self.renderer, byref(sx), byref(sy))
+        return sx.value, sy.value
+        
+    @scale.setter
+    def scale(self, value):
+        """The horizontal and vertical drawing scale."""
+        ret = render.SDL_RenderGetScale(self.renderer, value[0], value[1])
+        if ret != 0:
             raise SDLError()
 
     def clear(self, color=None):

@@ -1,6 +1,7 @@
 """Common algorithms."""
+import sys
 
-__all__ = ["liangbarsky", "cohensutherland", "clipline"]
+__all__ = ["liangbarsky", "cohensutherland", "clipline", "point_on_line"]
 
 
 def cohensutherland(left, top, right, bottom, x1, y1, x2, y2):
@@ -109,3 +110,15 @@ def liangbarsky(left, top, right, bottom, x1, y1, x2, y2):
 
 clipline = lambda l, t, r, b, x1, y1, x2, y2, method = liangbarsky: \
     method(l, t, r, b, x1, y1, x2, y2)
+
+
+def point_on_line(p1, p2, point):
+    """Checks, if point is on the line segment [p1, p2]."""
+    x1, y1 = p1
+    x2, y2 = p2
+    px, py = point
+    det = (py - y1) * (x2 - x1) - (px - x1) * (y2 - y1)
+    if abs(det) > sys.float_info.epsilon:
+        return False
+    return (min(x1, x2) <= px <= max(x1, x2) and
+            min(y1, y2) <= py <= max(y1, y2))

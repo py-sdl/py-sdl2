@@ -299,6 +299,10 @@ Sprite, texture and pixel surface routines
       * ``SDL_BLENDMODE_ADD`` for additive color blending
       * ``SDL_BLENDMODE_MOD`` for multiplied color blending
 
+   .. attribute:: scale
+   
+      The horizontal and vertical drawing scale as two-value tuple.
+
    .. method:: clear([color=None])
 
       Clears the rendering context with the currently set or passed

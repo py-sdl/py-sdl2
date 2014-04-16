@@ -67,6 +67,22 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                     self.assertTrue(view[y][x] in c2,
                                     msg % (x, y, view[y][x], c2))
 
+    def check_lines(self, view, w, h, points, c1, c2):
+        def _online(x, y, pts):
+            for p1, p2 in pts:
+                if sdl2ext.point_on_line(p1, p2, (x, y)):
+                    return True
+            return False
+        msg = "color mismatch at %d,%d: %d not in %s"
+        for y in range(w):
+            for x in range(h):
+                if _online(x, y, points):
+                    self.assertEqual(view[y][x], c1,
+                                     msg % (x, y, view[y][x], c1))
+                else:
+                    self.assertTrue(view[y][x] in c2,
+                                    msg % (x, y, view[y][x], c2))
+            
     def test_SpriteFactory(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         self.assertIsInstance(factory, sdl2ext.SpriteFactory)
@@ -607,9 +623,36 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_Renderer_draw_point(self):
         pass
 
-    @unittest.skip("not implemented")
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_draw_rect(self):
-        pass
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.Renderer(surface)
+        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        w, h = 32, 32
+        sp = factory.from_color(0xFF0000, (w, h))
+        sp.x, sp.y = 40, 50
+        renderer.draw_rect((sp.x, sp.y, w, h), 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_lines(view, 128, 128,
+            [((40, 50), (71, 50)),
+             ((40, 50), (40, 81)),
+             ((40, 81), (71, 81)),
+             ((71, 50), (71, 81))], 0x0000FF, (0x0,))
+        del view
+        sdl2ext.fill(surface, 0x0)
+        renderer.draw_rect([(5, 5, 10, 10), (20, 15, 8, 10)], 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_lines(view, 128, 128,
+            [((5, 5), (14, 5)),
+             ((5, 5), (5, 14)),
+             ((5, 14), (14, 14)),
+             ((14, 5), (14, 14)),
+             ((20, 15), (27, 15)),
+             ((20, 15), (20, 24)),
+             ((20, 24), (27, 24)),
+             ((27, 15), (27, 24))], 0x0000FF, (0x0,))
+        del view
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_fill(self):
