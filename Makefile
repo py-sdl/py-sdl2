@@ -12,7 +12,7 @@ SUBDIRS = \
 	$(top_srcdir)/doc/modules \
 	$(top_srcdir)/examples
 
-INTERPRETERS = python2.7 python3.2 python3.3 pypy
+INTERPRETERS = python2.7 python3.2 python3.3 python3.4 pypy
 
 all: clean build
 
