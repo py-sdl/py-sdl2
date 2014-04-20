@@ -94,7 +94,7 @@ class Renderer(object):
         sy = c_float(0.0)
         render.SDL_RenderGetScale(self.renderer, byref(sx), byref(sy))
         return sx.value, sy.value
-        
+
     @scale.setter
     def scale(self, value):
         """The horizontal and vertical drawing scale."""
@@ -155,8 +155,9 @@ class Renderer(object):
         else:
             x = 0
             off = 0
+            count = pcount // 2
             SDL_Point = rect.SDL_Point
-            ptlist = (SDL_Point * pcount / 2)()
+            ptlist = (SDL_Point * count)()
             while x < pcount:
                 ptlist[off] = SDL_Point(points[x], points[x + 1])
                 x += 2
@@ -165,7 +166,7 @@ class Renderer(object):
                 tmp = self.color
                 self.color = color
             ptr = cast(ptlist, POINTER(SDL_Point))
-            ret = render.SDL_RenderDrawLines(self.renderer, ptr, pcount / 2)
+            ret = render.SDL_RenderDrawLines(self.renderer, ptr, count)
             if color is not None:
                 self.color = tmp
             if ret == -1:
@@ -190,8 +191,9 @@ class Renderer(object):
         else:
             x = 0
             off = 0
+            count = pcount // 2
             SDL_Point = rect.SDL_Point
-            ptlist = (SDL_Point * pcount / 2)()
+            ptlist = (SDL_Point * count)()
             while x < pcount:
                 ptlist[off] = SDL_Point(points[x], points[x + 1])
                 x += 2
@@ -200,7 +202,7 @@ class Renderer(object):
                 tmp = self.color
                 self.color = color
             ptr = cast(ptlist, POINTER(SDL_Point))
-            ret = render.SDL_RenderDrawPoints(self.renderer, ptr, pcount / 2)
+            ret = render.SDL_RenderDrawPoints(self.renderer, ptr, count)
             if color is not None:
                 self.color = tmp
             if ret == -1:
