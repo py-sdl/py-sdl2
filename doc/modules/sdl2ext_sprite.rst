@@ -155,7 +155,7 @@ Sprite, texture and pixel surface routines
    :class:`sdl2.ext.Window` or :class:`sdl2.SDL_Window` instance, it will try
    to create a :class:`sdl2.SDL_Renderer` with hardware acceleration for it.
 
-   .. attribute:: renderer
+   .. attribute:: sdlrenderer
 
       The :class:`sdl2.SDL_Renderer` that is used as drawing context.
 
