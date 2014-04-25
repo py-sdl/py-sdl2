@@ -1,6 +1,7 @@
 """Font and text rendering routines."""
 import os
 from .. import surface, rect, pixels
+from .common import SDLError
 from .compat import *
 from .sprite import SoftwareSprite
 from .color import Color, convert_to_color
@@ -341,4 +342,6 @@ class FontManager(object):
             surface = sdlttf.TTF_RenderUTF8_Blended(font, text, color)
         else:
             surface = sdlttf.TTF_RenderUTF8_Shaded(font, text, color, bg_color)
+        if not surface:
+            raise SDLError(sdlttf.TTF_GetError())
         return surface.contents
