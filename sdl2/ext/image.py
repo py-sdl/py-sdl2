@@ -19,8 +19,9 @@ __all__ = ["get_image_formats", "load_image"]
 
 
 def get_image_formats():
-    """Gets the formats supported in the default installation.
-    """
+    """Gets the formats supported in the default installation."""
+    if not _HASPIL and not _HASSDLIMAGE:
+        return ("bmp", )
     return ("bmp", "cur", "gif", "ico", "jpg", "lbm", "pbm", "pcx", "pgm",
             "png", "pnm", "ppm", "tga", "tif", "webp", "xcf", "xpm")
 
@@ -30,31 +31,40 @@ def load_image(fname, enforce=None):
 
     This function makes use of the Python Imaging Library, if it is available
     on the target execution environment. The function will try to load the
-    file via sdl2.sdlimage first. If the file could not be loaded, it will
-    try to load it via PIL.
+    file via sdl2 first. If the file could not be loaded, it will try
+    to load it via sdl2.sdlimage and PIL.
 
     You can force the function to use only one of them, by passing the enforce
     as either "PIL" or "SDL".
 
-    Note: This will call sdl2.sdlimage.init() implicitly with the
-    default arguments, if the module is available.
+    Note: This will call sdl2.sdlimage.init() implicitly with the default
+    arguments, if the module is available and if sdl2.SDL_LoadBMP() failed to
+    load the image.
     """
     if enforce is not None and enforce not in ("PIL", "SDL"):
         raise ValueError("enforce must be either 'PIL' or 'SDL', if set")
 
+    name = byteify(fname, "utf-8")
     if not _HASPIL and not _HASSDLIMAGE:
-        raise UnsupportedError(load_image,
-                               "cannot use PIL or SDL for image loading")
+        imgsurface = surface.SDL_LoadBMP(name)
+        if not imgsurface:
+            raise UnsupportedError(load_image,
+                                   "cannot use PIL or SDL for image loading")
+        return imgsurface.contents
     if enforce == "PIL" and not _HASPIL:
         raise UnsupportedError(load_image, "cannot use PIL (not found)")
     if enforce == "SDL" and not _HASSDLIMAGE:
-        raise UnsupportedError(load_image, "cannot use SDL_image (not found)")
+        imgsurface = surface.SDL_LoadBMP(name)
+        if not imgsurface:
+            raise UnsupportedError(load_image,
+                                   "cannot use SDL_image (not found)")
+        return imgsurface.contents
 
     imgsurface = None
     if enforce != "PIL" and _HASSDLIMAGE:
         sdlimage.IMG_Init(sdlimage.IMG_INIT_JPG | sdlimage.IMG_INIT_PNG |
                           sdlimage.IMG_INIT_TIF | sdlimage.IMG_INIT_WEBP)
-        imgsurface = sdlimage.IMG_Load(byteify(fname, "utf-8"))
+        imgsurface = sdlimage.IMG_Load(name)
         if not imgsurface:
             # An error occured - if we do not try PIL, break out now
             if not _HASPIL or enforce == "SDL":
@@ -113,6 +123,8 @@ def load_image(fname, enforce=None):
         if not imgsurface:
             raise SDLError()
         imgsurface = imgsurface.contents
+        # the pixel buffer must not be freed for the lifetime of the surface
+        imgsurface._pxbuf = pxbuf
 
         if mode == "P":
             # Create a SDL_Palette for the SDL_Surface
