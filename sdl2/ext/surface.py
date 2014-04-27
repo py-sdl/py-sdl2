@@ -5,7 +5,7 @@ __all__ = ["subsurface"]
 
 def subsurface(surface, area):
     """Creates a surface from a part of another surface.
-    
+
     The two surfaces share pixel data. The subsurface *must not* be used after
     its parent has been freed!
     """
@@ -17,4 +17,3 @@ def subsurface(surface, area):
                                     surface.pitch, surface_format.Rmask,
                                     surface_format.Gmask, surface_format.Bmask,
                                     surface_format.Amask)[0]
-
