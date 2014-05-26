@@ -104,6 +104,7 @@ SDL_RenderSetViewport = _bind("SDL_RenderSetViewport", [POINTER(SDL_Renderer), P
 SDL_RenderGetViewport = _bind("SDL_RenderGetViewport", [POINTER(SDL_Renderer), POINTER(SDL_Rect)])
 SDL_RenderGetClipRect = _bind("SDL_RenderGetClipRect", [POINTER(SDL_Renderer), POINTER(SDL_Rect)])
 SDL_RenderSetClipRect = _bind("SDL_RenderSetClipRect", [POINTER(SDL_Renderer), POINTER(SDL_Rect)], c_int)
+SDL_RenderIsClipEnabled = _bind("SDL_RenderIsClipEnabled", [POINTER(SDL_Renderer)], SDL_bool, nullfunc)
 SDL_RenderSetScale = _bind("SDL_RenderSetScale", [POINTER(SDL_Renderer), c_float, c_float], c_int)
 SDL_RenderGetScale = _bind("SDL_RenderGetScale", [POINTER(SDL_Renderer), POINTER(c_float), POINTER(c_float)])
 SDL_SetRenderDrawColor = _bind("SDL_SetRenderDrawColor", [POINTER(SDL_Renderer), Uint8, Uint8, Uint8, Uint8], c_int)
