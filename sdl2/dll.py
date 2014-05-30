@@ -29,9 +29,10 @@ def _findlib(libnames, path=None):
     results = []
     if path:
         for libname in searchfor:
-            dllfile = os.path.join(path, pattern % libname)
-            if os.path.exists(dllfile):
-                results.append(dllfile)
+            for subpath in str.split(path, os.pathsep):
+                dllfile = os.path.join(subpath, pattern % libname)
+                if os.path.exists(dllfile):
+                    results.append(dllfile)
     for libname in searchfor:
         dllfile = find_library(libname)
         if dllfile:
