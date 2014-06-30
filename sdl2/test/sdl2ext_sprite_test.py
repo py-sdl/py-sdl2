@@ -82,7 +82,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                 else:
                     self.assertTrue(view[y][x] in c2,
                                     msg % (x, y, view[y][x], c2))
-            
+
     def test_SpriteFactory(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         self.assertIsInstance(factory, sdl2ext.SpriteFactory)
@@ -519,25 +519,25 @@ class SDL2ExtSpriteTest(unittest.TestCase):
 
     def test_Renderer(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0).contents
-        
+
         renderer = sdl2ext.Renderer(sf)
         self.assertEqual(renderer.rendertarget, sf)
         self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
         del renderer
-        
+
         sprite = sdl2ext.SoftwareSprite(sf, True)
         renderer = sdl2ext.Renderer(sprite)
         self.assertEqual(renderer.rendertarget, sprite.surface)
         self.assertEqual(renderer.rendertarget, sf)
         self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
         del renderer
-        
+
         window = sdl2ext.Window("Test", size=(1, 1))
         renderer = sdl2ext.Renderer(window)
         self.assertEqual(renderer.rendertarget, window.window)
         self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
         del renderer
-        
+
         sdlwindow = window.window
         renderer = sdl2ext.Renderer(sdlwindow)
         self.assertEqual(renderer.rendertarget, sdlwindow)
@@ -545,7 +545,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
         del renderer
         del window
-        
+
         self.assertRaises(TypeError, sdl2ext.Renderer, None)
         self.assertRaises(TypeError, sdl2ext.Renderer, 1234)
         self.assertRaises(TypeError, sdl2ext.Renderer, "test")
@@ -615,9 +615,16 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.check_pixels(view, 128, 128, sp, 0xFF0000, (0x0,))
         del view
 
-    @unittest.skip("not implemented")
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_draw_line(self):
-        pass
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.Renderer(surface)
+        renderer.draw_line((20, 10, 20, 86), 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_lines(view, 128, 128,
+                         [((20, 10), (20, 86))], 0x0000FF, (0x0,))
+        del view
 
     @unittest.skip("not implemented")
     def test_Renderer_draw_point(self):
@@ -628,11 +635,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
         renderer = sdl2ext.Renderer(surface)
-        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
-        w, h = 32, 32
-        sp = factory.from_color(0xFF0000, (w, h))
-        sp.x, sp.y = 40, 50
-        renderer.draw_rect((sp.x, sp.y, w, h), 0x0000FF)
+        renderer.draw_rect((40, 50, 32, 32), 0x0000FF)
         view = sdl2ext.PixelView(surface)
         self.check_lines(view, 128, 128,
             [((40, 50), (71, 50)),

@@ -20,12 +20,13 @@ wrapper functions. This means that the user needs to have SDL2 installed or
 that you ship a SDL2 library with your project.
 
 If the user has a SDL2 library installed on the target system, the
-:mod:`ctypes` hooks of :mod:`sdl2` try to find it in the OS-specific
-standard locations via :func:`ctypes.util.find_library`. If you are
-going to ship your own SDL2 library with the project or can not rely
-on the standard mechanism of :mod:`ctypes`, it is also possible to set
-the environment variable :envvar:`PYSDL2_DLL_PATH`, which shall point to the
-directory of the SDL2 library.
+:mod:`ctypes` hooks of :mod:`sdl2` try to find it in the OS-specific standard
+locations via :func:`ctypes.util.find_library`. If you are going to ship your
+own SDL2 library with the project or can not rely on the standard mechanism of
+:mod:`ctypes`, it is also possible to set the environment variable
+:envvar:`PYSDL2_DLL_PATH`, which shall point to the directory of the SDL2
+library or consist of a list of directories, in which the SDL2 libraries can
+be found.
 
 .. note::
 
@@ -46,6 +47,9 @@ variable :envvar:`PYSDL2_DLL_PATH` before starting Python. ::
 
   # Unix/Posix-alike environments - C shells
   setenv PYSDL2_DLL_PATH /path/to/fancy_project/third_party
+
+  # Define multiple paths to search for the libraries - Win32
+  set PYSDL2_DLL_PATH=C:\first\path;C:\second\path
 
 You also can set the environment variable within Python using
 :data:`os.environ`. ::

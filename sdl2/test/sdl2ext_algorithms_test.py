@@ -18,6 +18,9 @@ class SDL2ExtAlgorithmsTest(unittest.TestCase):
     def test_clipline(self):
         pass
 
+    def test_point_on_line(self):
+        pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
