@@ -46,6 +46,14 @@ class SDLMouseTest(unittest.TestCase):
     def test_SDL_ShowCursor(self):
         pass
 
+    def test_SDL_WarpMouseGlobal(self):
+        pass
+
+    def test_SDL_CaptureMouse(self):
+        pass
+
+    def test_SDL_GetGlobalMouseState(self):
+        pass
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

@@ -630,6 +630,10 @@ class SDLVideoTest(unittest.TestCase):
     def test_SDL_GetWindowGammaRamp(self):
         pass
 
+    @unittest.skip("not implemented")
+    def test_SDL_SetWindowHitTest(self):
+        pass
+
     def test_SDL_GL_LoadUnloadLibrary(self):
         # Try the default library
         self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
