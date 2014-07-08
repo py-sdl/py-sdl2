@@ -2,6 +2,38 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.3
+-----
+Released on 2014-07-08..
+
+* updated :mod:`sdl2` to include the latest changes of SDL2 (HG)
+* new :attr:`sdl2.ext.Renderer.scale` attribute, which denotes the horizontal
+  and vertical drawing scale
+* new :func:`sdl2.ext.point_on_line()` function to test, if a point lies on a
+  line segment
+* PYSDL2_DLL_PATH can contain multiple paths separated by :attr:`os.pathsep`
+  to search for the libraries now
+* :func:`sdl2.ext.get_image_formats()` only returns BMP image support now, if
+  SDL2_image and PIL are not found
+* :func:`sdl2.ext.load_image()` tries to use :func:`sdl2.SDL_LoadBMP()` now,
+  if SDL2_image and PIL are not found
+* fixed issue #55: :meth:`sdl2.SDL_GameControllerAddMappingsFromFile()` does
+  not raise a TypeError for Python 3.x anymore
+* fixed issue #56: :meth:`sdl2.ext.Renderer.draw_line()` and
+  :func:`sdl2.ext.Renderer.draw_point()` handle multiple lines (or points) as
+  arguments properly now
+* fixed issue #57: if SDL2_image is not installed and PIL is used, the loaded
+  pixel buffer of the image file is not referenced anymore after returning
+  from :func:`sdl2.ext.load_image()`, causing random segmentation faults
+* fixed issue #58: raise a proper error,
+  if :meth:`sdl2.ext.FontManager.render()` could not render a text surface
+* fixed issue #59: The :attr:`sdl2.ext.TextureSpriteRenderSystem.sdlrenderer`
+  attribute is correctly documented now
+* fixed a local variable and module name collision in
+  :meth:`sdl2.ext.FontManager.render()`
+
+Thanks to Filip M. Nowak for the PYSDL2_DLL_PATH improvement.
+
 0.9.2
 -----
 Released on 2014-04-13.
