@@ -426,5 +426,9 @@ class SDLRectTest(unittest.TestCase):
         self.assertTrue(ret)
         self.assertEqual(res, rect.SDL_Rect(0, 0, 1, 1))
 
+    @unittest.skip("not implemented")
+    def test_SDL_PointInRect(self):
+        pass
+
 if __name__ == '__main__':
     sys.exit(unittest.main())

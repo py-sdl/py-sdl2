@@ -4,7 +4,8 @@ from .stdinc import SDL_bool
 
 __all__ = ["SDL_Point", "SDL_Rect", "SDL_RectEmpty", "SDL_RectEquals",
            "SDL_HasIntersection", "SDL_IntersectRect", "SDL_UnionRect",
-           "SDL_EnclosePoints", "SDL_IntersectRectAndLine"
+           "SDL_EnclosePoints", "SDL_IntersectRectAndLine",
+           "SDL_PointInRect"
            ]
 
 
@@ -64,7 +65,9 @@ class SDL_Rect(Structure):
 
 SDL_RectEmpty = lambda x: ((not x) or (x.w <= 0) or (x.h <= 0))
 SDL_RectEquals = lambda a, b: ((a.x == b.x) and (a.y == b.y) and
-                              (a.w == b.w) and (a.h == b.h))
+                               (a.w == b.w) and (a.h == b.h))
+SDL_PointInRect = lambda p, r: ((p.x >= r.x) and (p.x < (r.x + r.w)) and
+                                (p.y >= r.y) and (p.y < (r.y + r.h)))
 SDL_HasIntersection = _bind("SDL_HasIntersection", [POINTER(SDL_Rect), POINTER(SDL_Rect)], SDL_bool)
 SDL_IntersectRect = _bind("SDL_IntersectRect", [POINTER(SDL_Rect), POINTER(SDL_Rect), POINTER(SDL_Rect)], SDL_bool)
 SDL_UnionRect = _bind("SDL_UnionRect", [POINTER(SDL_Rect), POINTER(SDL_Rect), POINTER(SDL_Rect)])

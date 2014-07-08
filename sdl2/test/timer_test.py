@@ -31,13 +31,13 @@ class SDLTimerTest(unittest.TestCase):
         # on the system's context switching behaviour, load, etc., etc.,
         # etc.
         self.assertTrue(abs(ticks2 - 1000 - ticks) <= 3,
-            "%f is not <= 3 for %f and %f" % (abs(ticks2 - 1000 - ticks),
+            "1: %f is not <= 3 for %f and %f" % (abs(ticks2 - 1000 - ticks),
                                               ticks2, ticks))
         self.assertTrue(abs(ticks3 - 1000 - ticks2) <= 3,
-            "%f is not <= 3 for %f and %f" % (abs(ticks3 - 1000 - ticks2),
+            "2: %f is not <= 3 for %f and %f" % (abs(ticks3 - 1000 - ticks2),
                                               ticks3, ticks2))
         self.assertTrue(abs(ticks3 - 2000 - ticks) <= 3,
-            "%f is not <= 3 for %f and %f" % (abs(ticks3 - 2000 - ticks2),
+            "3: %f is not <= 3 for %f and %f" % (abs(ticks3 - 2000 - ticks2),
                                               ticks3, ticks))
 
     def test_SDL_GetPerformanceCounter(self):
