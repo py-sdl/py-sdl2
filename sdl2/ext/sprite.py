@@ -54,6 +54,21 @@ class Renderer(object):
         self.rendertarget = None
 
     @property
+    def logical_size(self):
+        """The logical pixel size of the Renderer"""
+        w, h = c_int(), c_int()
+        render.SDL_RenderGetLogicalSize(self.renderer, byref(w), byref(h))
+        return w.value, h.value
+
+    @logical_size.setter
+    def logical_size(self, size):
+        """The logical pixel size of the Renderer"""
+        width, height = size
+        ret = render.SDL_RenderSetLogicalSize(self.renderer, width, height)
+        if ret != 0:
+            raise SDLError()
+
+    @property
     def color(self):
         """The drawing color of the Renderer."""
         r, g, b, a = Uint8(), Uint8(), Uint8(), Uint8()
