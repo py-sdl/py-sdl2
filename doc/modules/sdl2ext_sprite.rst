@@ -290,7 +290,7 @@ Sprite, texture and pixel surface routines
       The logical size of the renderer.
 
       Setting this allows you to draw as if your renderer had this size, even
-      though the taret may be larger or smaller. When drawing, the renderer will
+      though the target may be larger or smaller. When drawing, the renderer will
       automatically scale your contents to the target, creating letter-boxing or
       sidebars if necessary.
 
