@@ -266,7 +266,7 @@ Sprite, texture and pixel surface routines
       requires a :class:`sdl2.ext.FontManager` to be in *kwargs* or
       :attr:`default_args`.
 
-.. class:: Renderer(target : obj[, index=-1[, flags=sdl2.SDL_RENDERER_ACCELERATED]])
+.. class:: Renderer(target : obj[, logical_size=None[, index=-1[, flags=sdl2.SDL_RENDERER_ACCELERATED]])
 
    A rendering context for windows and sprites that can use hardware or
    software-accelerated graphics drivers.
@@ -284,6 +284,21 @@ Sprite, texture and pixel surface routines
    .. attribute:: rendertarget
 
       The target for which the :class:`Renderer` was created.
+
+   .. attribute:: logical_size
+
+      The logical size of the renderer.
+
+      Setting this allows you to draw as if your renderer had this size, even
+      though the taret may be larger or smaller. When drawing, the renderer will
+      automatically scale your contents to the target, creating letter-boxing or
+      sidebars if necessary.
+
+      To reset your logical size back to the target's, set it to ``(0, 0)``.
+
+      Setting this to a lower value may be useful for low-resolution effects.
+
+      Setting this to a larger value may be useful for antialiasing.
 
    .. attribute:: color
 
