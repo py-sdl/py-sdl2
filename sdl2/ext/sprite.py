@@ -21,7 +21,7 @@ SOFTWARE = 1
 
 class Renderer(object):
     """SDL2-based renderer for windows and sprites."""
-    def __init__(self, target, index=-1,
+    def __init__(self, target, index=-1, logical_size=None,
                  flags=render.SDL_RENDERER_ACCELERATED):
         """Creates a new Renderer for the given target.
 
@@ -47,6 +47,9 @@ class Renderer(object):
             self.rendertarget = target
         else:
             raise TypeError("unsupported target type")
+
+        if logical_size is not None:
+            self.logical_size = logical_size
 
     def __del__(self):
         if self.renderer:
