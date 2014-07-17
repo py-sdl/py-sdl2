@@ -300,7 +300,7 @@ Sprite, texture and pixel surface routines
       * ``SDL_BLENDMODE_MOD`` for multiplied color blending
 
    .. attribute:: scale
-   
+
       The horizontal and vertical drawing scale as two-value tuple.
 
    .. method:: clear([color=None])
@@ -317,10 +317,10 @@ Sprite, texture and pixel surface routines
 
    .. method:: draw_line(points : iterable[, color=None]) -> None
 
-      Draws one or multiple lines on the rendering context. The *line*
-      argument contains the start and end coordinates of the individual lines
-      in the form ``(line1_x1, line1_y1, line1_x2, line1_y2, line2_x1,
-      line2_y1, ...)``.
+      Draws one or multiple lines on the rendering context. If *line* consists
+      of four values ``(x1, y1, x2, y2)`` only, a single line is drawn. If
+      *line* contains more than four values, a series of connected lines is
+      drawn.
 
    .. method:: draw_point(points : iterable[, color=None]) -> None
 
