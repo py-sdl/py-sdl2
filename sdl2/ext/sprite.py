@@ -137,7 +137,7 @@ class Renderer(object):
         render.SDL_RenderPresent(self.renderer)
 
     def draw_line(self, points, color=None):
-        """Draws one or multiple lines on the renderer."""
+        """Draws one or multiple connected lines on the renderer."""
         # (x1, y1, x2, y2, ...)
         pcount = len(points)
         if (pcount % 4) != 0:
