@@ -40,6 +40,10 @@ def _findlib(libnames, path=None):
     return results
 
 
+class DLLWarning(Warning):
+    pass
+
+
 class DLL(object):
     """Function wrapper around the different DLL functions. Do not use or
     instantiate this one directly from your user code.
@@ -57,9 +61,10 @@ class DLL(object):
                 self._libfile = libfile
                 break
             except Exception as exc:
-                # Could not load it, silently ignore that issue and move
-                # to the next one.
-                warnings.warn(repr(exc), ImportWarning)
+                # Could not load the DLL, move to the next, but inform the user
+                # about something weird going on - this may become noisy, but
+                # is better than confusing the users with the RuntimeError below
+                warnings.warn(repr(exc), DLLWarning)
         if self._dll is None:
             raise RuntimeError("found %s, but it's not usable for the library %s" %
                                (foundlibs, libinfo))
