@@ -7,7 +7,7 @@ The :mod:`sdl2` package is a :mod:`ctypes`-based wrapper around
 the SDL2 library. It wraps nearly all publicly accessible structures and
 functions of the SDL2 library to be accessible from Python code.
 
-A detailled documentation about the behaviour of the different functions
+A detailed documentation about the behaviour of the different functions
 can found within the `SDL2 documentation
 <http://wiki.libsdl.org/moin.cgi/CategoryAPI>`_.
 
