@@ -90,7 +90,7 @@ Doing the same in Python: ::
         return 0
 
     if __name__ == "__main__":
-        sys.exit(run())
+        sys.exit(main())
 
 You can port code in a straightforward manner from one language to the other,
 though it is important to know about the limitations and slight differences
