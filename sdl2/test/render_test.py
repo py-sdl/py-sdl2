@@ -575,8 +575,7 @@ seems to fail on creating the second renderer of the window, if any""")
 #        self.assertRaises((AttributeError, TypeError),
 #                          render.SDL_RenderClear, 123456)
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     @unittest.skipIf(sys.platform=="cli",
                      "IronPython can't cast values array values correctly")
     def test_SDL_RenderDrawPoint(self):
@@ -659,6 +658,7 @@ seems to fail on creating the second renderer of the window, if any""")
     def test_SDL_RenderGetSetScale(self):
         pass
 
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_SDL_RenderGetSetLogicalSize(self):
         w, h = 100, 100
 
