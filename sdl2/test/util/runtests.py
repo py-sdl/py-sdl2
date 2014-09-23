@@ -223,6 +223,7 @@ def run():
                                           randomizer=randomizer)
 
     if options.subprocess:
+        overall = 0
         timeout = options.timeout
         gettime = time.time
         curmodule = "%s.%s" % (__package__, inspect.getmodulename(__file__))
@@ -243,12 +244,13 @@ def run():
                 writer.writeline("ERROR")
                 writer.write(proc.stdout.read().decode("utf-8"))
                 writer.writeline()
+                overall = 1
             else:
                 writer.writeline("OK")
                 if options.verbose:
                     writer.write(proc.stdout.read().decode("utf-8"))
                     writer.writeline()
-        return 0
+        return overall
 
     testsuites = []
     package = __package__.rsplit(".", 1)[0]
