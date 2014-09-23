@@ -550,6 +550,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertRaises(TypeError, sdl2ext.Renderer, 1234)
         self.assertRaises(TypeError, sdl2ext.Renderer, "test")
 
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_color(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
                                   0xFF000000,
@@ -578,6 +579,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
     def test_Renderer_blendmode(self):
         pass
 
+    @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_clear(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
                                   0xFF000000,
