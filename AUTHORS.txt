@@ -13,4 +13,4 @@ Thanks to everyone else for their assistance, support, fixes and improvements:
 Sven Eckelmann, Marcel Rodrigues, Michael McCandless, Andreas Schiefer,
 Franz Schrober, Roger Flores, otus, Mihail Latyshov, Todd Rovito, Bil Bas,
 Dan McCombs, William Manire, Radomir Dopieralski, Joe Polak, Jordan F, DR0ID,
-Filip M. Nowak
+Filip M. Nowak, David Farler, Max Bareiss
