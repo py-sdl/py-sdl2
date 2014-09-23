@@ -298,6 +298,18 @@ class SDLAudioTest(unittest.TestCase):
     def test_SDL_CloseAudio(self):
         pass
 
+    @unittest.skip("not implemented")
+    def test_SDL_QueueAudio(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_GetQueuedAudioSize(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_ClearQueuedAudio(self):
+        pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
