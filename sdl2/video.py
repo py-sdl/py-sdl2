@@ -81,6 +81,7 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_GetAttribute", "SDL_GL_CreateContext",
            "SDL_GL_MakeCurrent", "SDL_GL_SetSwapInterval",
            "SDL_GL_GetSwapInterval", "SDL_GL_SwapWindow",
+           "SDL_GL_GetDrawableSize",
            "SDL_GL_DeleteContext", "SDL_GL_ResetAttributes" ]
 
 class SDL_DisplayMode(Structure):
