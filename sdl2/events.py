@@ -165,7 +165,8 @@ class SDL_MouseWheelEvent(Structure):
                 ("windowID", Uint32),
                 ("which", Uint32),
                 ("x", Sint32),
-                ("y", Sint32)
+                ("y", Sint32),
+                ("direction", Uint32)
                 ]
 
 class SDL_JoyAxisEvent(Structure):
