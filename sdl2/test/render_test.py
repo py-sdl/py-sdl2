@@ -661,7 +661,6 @@ seems to fail on creating the second renderer of the window, if any""")
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_SDL_RenderGetSetLogicalSize(self):
         w, h = 100, 100
-
         sf = surface.SDL_CreateRGBSurface(0, w, h, 32,
                                           0xFF000000,
                                           0x00FF0000,
@@ -678,27 +677,30 @@ seems to fail on creating the second renderer of the window, if any""")
         green_int = sum(c << (i * 8) for i, c in enumerate(reversed(green)))
 
         def clear_green():
-            ret = render.SDL_SetRenderDrawColor(renderer, green[0], green[1], green[2], green[3])
+            ret = render.SDL_SetRenderDrawColor(renderer, green[0], green[1],
+                                                green[2], green[3])
             self.assertEqual(ret, 0)
             ret = render.SDL_RenderClear(renderer)
             self.assertEqual(ret, 0)
 
         def draw_magenta_pixel(x, y):
-            ret = render.SDL_SetRenderDrawColor(renderer, magenta[0], magenta[1], magenta[2], magenta[3])
+            ret = render.SDL_SetRenderDrawColor(renderer, magenta[0],
+                                                magenta[1], magenta[2],
+                                                magenta[3])
             self.assertEqual(ret, 0)
-
             ret = render.SDL_RenderDrawPoint(renderer, x, y)
             self.assertEqual(ret, 0)
 
         # Test 1
-        # If we set the logical renderer size to 1 x 1, drawing a point at 0, 0 should have the same effect
-        # as filling the entire (square) window with magenta - no green should show through.
+        # If we set the logical renderer size to 1 x 1, drawing a point
+        # at 0, 0 should have the same effect as filling the entire
+        # (square) window with magenta - no green should show through.
         got_width, got_height = c_int(), c_int()
 
         ret = render.SDL_RenderSetLogicalSize(renderer, 1, 1)
         self.assertEqual(ret, 0)
-
-        render.SDL_RenderGetLogicalSize(renderer, byref(got_width), byref(got_height))
+        render.SDL_RenderGetLogicalSize(renderer, byref(got_width),
+                                        byref(got_height))
         self.assertEqual(got_width.value, 1)
         self.assertEqual(got_height.value, 1)
 
@@ -706,17 +708,20 @@ seems to fail on creating the second renderer of the window, if any""")
         draw_magenta_pixel(0, 0)
 
         for x, y in itertools.product(range(w), range(h)):
-            self.assertEqual(hex(view[y][x]), hex(magenta_int), 'No pixel should be green')
+            self.assertEqual(view[y][x], magenta_int,
+                             'No pixel should be green')
 
         # Test 2
         # Reset the logical size to the original target by using 0, 0
-        # only the first and last pixel should be magenta. The rest should be green.
+        # only the first and last pixel should be magenta. The rest
+        # should be green.
         got_width, got_height = c_int(), c_int()
 
         ret = render.SDL_RenderSetLogicalSize(renderer, 0, 0)
         self.assertEqual(ret, 0)
 
-        render.SDL_RenderGetLogicalSize(renderer, byref(got_width), byref(got_height))
+        render.SDL_RenderGetLogicalSize(renderer, byref(got_width),
+                                        byref(got_height))
         self.assertEqual(got_width.value, 0)
         self.assertEqual(got_height.value, 0)
 
@@ -727,18 +732,22 @@ seems to fail on creating the second renderer of the window, if any""")
 
         for x, y in itertools.product(range(w), range(h)):
             if (x, y) == (0, 0) or (x, y) == (w - 1, h - 1):
-                self.assertEqual(hex(view[y][x]), hex(magenta_int), 'First and last pixel should be magenta')
+                self.assertEqual(view[y][x], magenta_int,
+                                 'First and last pixel should be magenta')
             else:
-                self.assertEqual(hex(view[y][x]), hex(green_int), 'All other pixels should be green')
+                self.assertEqual(view[y][x], green_int,
+                                 'All other pixels should be green')
 
         # Test 3
-        # Set the logical size to 1/10, making a logical pixel draw be 10 x 10 real pixel blocks.
+        # Set the logical size to 1/10, making a logical pixel draw be
+        # 10 x 10 real pixel blocks.
         got_width, got_height = c_int(), c_int()
 
         ret = render.SDL_RenderSetLogicalSize(renderer, w//10, h//10)
         self.assertEqual(ret, 0)
 
-        render.SDL_RenderGetLogicalSize(renderer, byref(got_width), byref(got_height))
+        render.SDL_RenderGetLogicalSize(renderer, byref(got_width),
+                                        byref(got_height))
         self.assertEqual(got_width.value, w//10)
         self.assertEqual(got_height.value, h//10)
 
@@ -747,9 +756,11 @@ seems to fail on creating the second renderer of the window, if any""")
         draw_magenta_pixel(0, 0)
         for x, y in itertools.product(range(w), range(h)):
             if x < 10 and y < 10:
-                self.assertEqual(hex(view[y][x]), hex(magenta_int), 'Top-left 10 x 10 pixel block should be magenta')
+                self.assertEqual(view[y][x], magenta_int,
+                    'Top-left 10 x 10 pixel block should be magenta')
             else:
-                self.assertEqual(hex(view[y][x]), hex(green_int), 'All other pixels should be green')
+                self.assertEqual(view[y][x], green_int,
+                                 'All other pixels should be green')
 
         render.SDL_DestroyRenderer(renderer)
 
