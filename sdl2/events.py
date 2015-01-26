@@ -41,7 +41,8 @@ __all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING",
            "SDL_GetEventFilter", "SDL_AddEventWatch", "SDL_DelEventWatch",
            "SDL_FilterEvents", "SDL_QUERY", "SDL_IGNORE", "SDL_DISABLE",
            "SDL_ENABLE", "SDL_EventState", "SDL_GetEventState",
-           "SDL_RegisterEvents", "SDL_QuitRequested"
+           "SDL_RegisterEvents", "SDL_QuitRequested", "SDL_PRESSED",
+           "SDL_RELEASED"
            ]
 
 SDL_FIRSTEVENT = 0
@@ -88,6 +89,9 @@ SDL_RENDER_DEVICE_RESET = 0x2001
 SDL_USEREVENT = 0x8000
 SDL_LASTEVENT = 0xFFFF
 SDL_EventType = c_int
+
+SDL_RELEASED = 0
+SDL_PRESSED = 1
 
 class SDL_GenericEvent(Structure):
     _fields_ = [("type", Uint32), ("timestamp", Uint32)]
