@@ -15,6 +15,10 @@ class SDLEventsTest(unittest.TestCase):
         SDL_QuitSubSystem(SDL_INIT_EVERYTHING)
         SDL_Quit()
 
+    def test_SDL_AudioDeviceEvent(self):
+        event = events.SDL_AudioDeviceEvent()
+        self.assertIsInstance(event, events.SDL_AudioDeviceEvent)
+
     def test_SDL_WindowEvent(self):
         event = events.SDL_WindowEvent()
         self.assertIsInstance(event, events.SDL_WindowEvent)
