@@ -14,6 +14,11 @@ _ISPYPY = hasattr(sys, "pypy_version_info")
 
 RESOURCES = Resources(__file__, "resources")
 
+if _ISPYPY:
+    import gc
+    dogc = gc.collect
+else:
+    dogc = lambda: None
 
 class MSprite(sdl2ext.Sprite):
     def __init__(self, w=0, h=0):
@@ -106,6 +111,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertRaises(ValueError, sdl2ext.SpriteFactory, -456)
         self.assertRaises(ValueError, sdl2ext.SpriteFactory, 123)
         self.assertRaises(ValueError, sdl2ext.SpriteFactory, sdl2ext.TEXTURE)
+        dogc()
 
     def test_SpriteFactory_create_sprite(self):
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -125,6 +131,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                     continue
                 sprite = tfactory.create_sprite(size=(w, h))
                 self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+        dogc()
 
     def test_SpriteFactory_create_software_sprite(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -147,6 +154,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertRaises((ArgumentError, TypeError),
                           factory.create_software_sprite, size=(10, 10),
                           masks=("Test", 1, 2, 3))
+        dogc()
 
     def test_SpriteFactory_create_texture_sprite(self):
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -163,6 +171,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             sprite = factory.create_texture_sprite(renderer, size=(64, 64),
                                                    access=flag)
             self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+        dogc()
 
     def test_SpriteFactory_from_image(self):
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -184,6 +193,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             #                  factory.from_image, "banana")
             self.assertRaises((AttributeError, IOError, sdl2ext.SDLError),
                               factory.from_image, 12345)
+        dogc()
 
     @unittest.skip("not implemented")
     def test_SpriteFactory_from_object(self):
@@ -213,6 +223,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             # TODO: crashes pypy 2.0
             #self.assertRaises((AttributeError, ArgumentError, TypeError),
             #                  factory.from_surface, 1234)
+        dogc()
 
     def test_SpriteFactory_from_text(self):
         sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -236,6 +247,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                                          fontmanager=fm)
         sprite = tfactory.from_text("Test", alias="tuffy")
         self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+        dogc()
 
     def test_SpriteRenderSystem(self):
         renderer = sdl2ext.SpriteRenderSystem()
@@ -288,6 +300,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertIsNotNone(renderer.sortfunc)
         self.assertFalse(sdl2ext.Sprite in renderer.componenttypes)
         self.assertTrue(sdl2ext.SoftwareSprite in renderer.componenttypes)
+        dogc()
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_SoftwareSpriteRenderSystem_render(self):
@@ -458,6 +471,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertIsInstance(sprite, sdl2ext.TextureSprite)
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
+        dogc()
 
     def test_TextureSprite_position_xy(self):
         window = POINTER(SDL_Window)()
@@ -478,6 +492,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             self.assertEqual(sprite.position, (x + 1, y + 1))
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
+        dogc()
 
     def test_TextureSprite_size(self):
         window = POINTER(SDL_Window)()
@@ -494,6 +509,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                 del sprite
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
+        dogc()
+        dogc()
 
     def test_TextureSprite_area(self):
         window = POINTER(SDL_Window)()
@@ -516,6 +533,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertEqual(sprite.area, (-22, 99, -12, 119))
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
+        dogc()
 
     def test_Renderer(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0).contents
@@ -531,12 +549,14 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertEqual(renderer.rendertarget, sf)
         self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
         del renderer
+        dogc()
 
         window = sdl2ext.Window("Test", size=(1, 1))
         renderer = sdl2ext.Renderer(window)
         self.assertEqual(renderer.rendertarget, window.window)
         self.assertIsInstance(renderer.renderer.contents, SDL_Renderer)
         del renderer
+        dogc()
 
         sdlwindow = window.window
         renderer = sdl2ext.Renderer(sdlwindow)
@@ -549,6 +569,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertRaises(TypeError, sdl2ext.Renderer, None)
         self.assertRaises(TypeError, sdl2ext.Renderer, 1234)
         self.assertRaises(TypeError, sdl2ext.Renderer, "test")
+        dogc()
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_color(self):
@@ -574,6 +595,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         del view
         del renderer
         SDL_FreeSurface(sf)
+        dogc()
 
     @unittest.skip("not implemented")
     def test_Renderer_blendmode(self):
@@ -602,6 +624,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         del view
         del renderer
         SDL_FreeSurface(sf)
+        dogc()
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_copy(self):

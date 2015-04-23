@@ -10,6 +10,9 @@ from ..ext.pixelaccess import PixelView
 _ISPYPY = hasattr(sys, "pypy_version_info")
 if _ISPYPY:
     import gc
+    dogc = gc.collect
+else:
+    dogc = lambda: None
 
 
 # TODO: mostly positive tests, improve this!
@@ -67,6 +70,7 @@ class SDLRenderTest(unittest.TestCase):
 
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
+        dogc()
 
         # TODO: the code below works, too - is that really expected from SDL?
         #window, renderer = render.SDL_CreateWindowAndRenderer \
@@ -93,6 +97,7 @@ class SDLRenderTest(unittest.TestCase):
             self.assertIsInstance(renderer.contents, render.SDL_Renderer)
             render.SDL_DestroyRenderer(renderer)
             video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_CreateSoftwareRenderer(self):
         sf = surface.SDL_CreateRGBSurface(0, 100, 100, 32,
@@ -132,6 +137,7 @@ class SDLRenderTest(unittest.TestCase):
         #                  render.SDL_GetRenderer, None)
         #self.assertRaises((AttributeError, TypeError),
         #                  render.SDL_GetRenderer, "Test")
+        dogc()
 
     def test_SDL_GetRendererInfo(self):
         for i in range(render.SDL_GetNumRenderDrivers()):
@@ -156,6 +162,7 @@ class SDLRenderTest(unittest.TestCase):
                           render.SDL_GetRendererInfo, None)
         self.assertRaises((AttributeError, TypeError),
                           render.SDL_GetRendererInfo, "Test")
+        dogc()
 
     def test_SDL_CreateDestroyTexture(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
@@ -183,8 +190,8 @@ class SDLRenderTest(unittest.TestCase):
                                                        w, h)
                         self.assertIsInstance(tex.contents, render.SDL_Texture)
                         render.SDL_DestroyTexture(tex)
-                    if _ISPYPY and (w % 50) == 0:
-                        gc.collect()
+                    if (w % 50) == 0:
+                        dogc()
 
         #self.assertRaises(sdl.SDLError, render.SDL_CreateTexture, renderer,
         #                  pixels.SDL_PIXELFORMAT_RGB555, 1, -10, 10)
@@ -213,6 +220,7 @@ class SDLRenderTest(unittest.TestCase):
         #self.assertRaises(sdl.SDLError, render.SDL_CreateTexture, renderer,
         #                  pixels.SDL_PIXELFORMAT_RGB555, 1, 10, 10)
         video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_CreateTextureFromSurface(self):
         sf = surface.SDL_CreateRGBSurface(0, 100, 100, 32, 0xFF000000,
@@ -226,6 +234,7 @@ class SDLRenderTest(unittest.TestCase):
         self.assertIsInstance(renderer.contents, render.SDL_Renderer)
         tex = render.SDL_CreateTextureFromSurface(renderer, sf)
         self.assertIsInstance(tex.contents, render.SDL_Texture)
+        dogc()
 
     def test_SDL_QueryTexture(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
@@ -266,6 +275,7 @@ class SDLRenderTest(unittest.TestCase):
 
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_GetSetTextureColorMod(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
@@ -306,6 +316,7 @@ class SDLRenderTest(unittest.TestCase):
 
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_GetSetTextureAlphaMod(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
@@ -336,6 +347,7 @@ class SDLRenderTest(unittest.TestCase):
 
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_GetSetTextureBlendMode(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
@@ -371,6 +383,7 @@ class SDLRenderTest(unittest.TestCase):
 
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
+        dogc()
 
     @unittest.skip("not implemented")
     def test_SDL_UpdateTexture(self):
@@ -395,6 +408,7 @@ class SDLRenderTest(unittest.TestCase):
             self.assertIn(val, (SDL_TRUE, SDL_FALSE))
             render.SDL_DestroyRenderer(renderer)
             video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_GetSetRenderTarget(self):
         skipcount = 0
@@ -443,6 +457,7 @@ class SDLRenderTest(unittest.TestCase):
 
         if skipcount == render.SDL_GetNumRenderDrivers():
             self.skipTest("None of the renderers supports render targets")
+        dogc()
 
     def test_SDL_RenderGetSetViewport(self):
         rects = (rect.SDL_Rect(0, 0, 0, 0),
@@ -488,6 +503,7 @@ class SDLRenderTest(unittest.TestCase):
         if failcount > 0:
             unittest.skip("""for some reason, even with correct values, this
 seems to fail on creating the second renderer of the window, if any""")
+        dogc()
 
     def test_SDL_GetSetRenderDrawColor(self):
         for i in range(render.SDL_GetNumRenderDrivers()):
@@ -526,6 +542,7 @@ seems to fail on creating the second renderer of the window, if any""")
             #self.assertRaises(sdl.SDLError, render.SDL_GetRenderDrawColor,
             #                  renderer)
             video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_GetSetRenderDrawBlendMode(self):
         for i in range(render.SDL_GetNumRenderDrivers()):
@@ -555,6 +572,7 @@ seems to fail on creating the second renderer of the window, if any""")
             #self.assertRaises(sdl.SDLError, render.SDL_GetRenderDrawBlendMode,
             #                  renderer)
             video.SDL_DestroyWindow(window)
+        dogc()
 
     def test_SDL_RenderClear(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
@@ -574,6 +592,7 @@ seems to fail on creating the second renderer of the window, if any""")
 #                          render.SDL_RenderClear, "Test")
 #        self.assertRaises((AttributeError, TypeError),
 #                          render.SDL_RenderClear, 123456)
+        dogc()
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
     @unittest.skipIf(sys.platform=="cli",

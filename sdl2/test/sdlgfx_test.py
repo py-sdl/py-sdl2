@@ -1,14 +1,14 @@
 import os
 import sys
 import unittest
-from .. import SDL_Init, SDL_Quit, sdlgfx
-
+from .. import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
+from .. import surface, sdlgfx
 
 class SDLTTFTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlgfx"]
 
     def setUp(self):
-        SDL_Init(0)
+        SDL_Init(SDL_INIT_VIDEO)
 
     def tearDown(self):
         SDL_Quit()
@@ -301,9 +301,18 @@ class SDLTTFTest(unittest.TestCase):
     def test_shrinkSurface(self):
         pass
 
-    @unittest.skip("not implemented")
     def test_rotateSurface90Degrees(self):
-        pass
+        w, h = 470, 530
+        sf = surface.SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+
+        rotsf = sdlgfx.rotateSurface90Degrees(sf, 1)
+        self.assertIsInstance(rotsf.contents, surface.SDL_Surface)
+        self.assertEqual(rotsf.contents.w, h)
+        self.assertEqual(rotsf.contents.h, w)
+
+        surface.SDL_FreeSurface(rotsf)
+        surface.SDL_FreeSurface(sf)
 
 
 if __name__ == '__main__':

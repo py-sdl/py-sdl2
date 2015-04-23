@@ -174,7 +174,6 @@ class SDLImageTest(unittest.TestCase):
         fp.close()
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
-        pass
 
     @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadGIF_RW(self):
