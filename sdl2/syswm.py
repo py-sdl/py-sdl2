@@ -1,7 +1,7 @@
 from ctypes import Union, Structure, c_int, c_void_p, c_long, c_ulong, \
     c_longlong, c_ulonglong, c_uint, sizeof, POINTER
 from .dll import _bind
-from .stdinc import SDL_bool
+from .stdinc import SDL_bool, Uint32
 from .version import SDL_version
 from .video import SDL_Window
 
@@ -27,6 +27,7 @@ SDL_SYSWM_ANDROID = 9
 # FIXME: Hack around the ctypes "_type_ 'v' not supported" bug - remove
 # once this has been fixed properly in Python 2.7+
 HWND = c_void_p
+HDC = c_void_p
 UINT = c_uint
 if sizeof(c_long) == sizeof(c_void_p):
     WPARAM = c_ulong
@@ -78,7 +79,8 @@ class SDL_SysWMmsg(Structure):
 
 
 class _wininfo(Structure):
-    _fields_ = [("window", HWND)]
+    _fields_ = [("window", HWND),
+                ("hdc", HDC)]
 
 
 class _x11info(Structure):
@@ -101,7 +103,9 @@ class _cocoainfo(Structure):
 
 class _uikitinfo(Structure):
     """Window information for iOS."""
-    _fields_ = [("window", c_void_p)]
+    _fields_ = [("window", c_void_p),
+                ("framebuffer", Uint32),
+                ("colorbuffer", Uint32)]
 
 
 class _wl(Structure):

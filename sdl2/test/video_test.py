@@ -602,6 +602,10 @@ class SDLVideoTest(unittest.TestCase):
             video.SDL_SetWindowGrab(window, SDL_FALSE)
             self.assertEqual(video.SDL_GetWindowGrab(window), SDL_FALSE)
 
+    @unittest.skip("not implemented")
+    def test_SDL_GetGrabbedWindow(self):
+        pass
+
     def test_SDL_GetSetWindowBrightness(self):
         flags = (video.SDL_WINDOW_BORDERLESS,
                  video.SDL_WINDOW_BORDERLESS | video.SDL_WINDOW_HIDDEN,
