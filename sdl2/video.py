@@ -36,7 +36,8 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_CONTEXT_MAJOR_VERSION", "SDL_GL_CONTEXT_MINOR_VERSION",
            "SDL_GL_CONTEXT_EGL", "SDL_GL_CONTEXT_FLAGS",
            "SDL_GL_CONTEXT_PROFILE_MASK", "SDL_GL_SHARE_WITH_CURRENT_CONTEXT",
-           "SDL_GL_FRAMEBUFFER_SRGB_CAPABLE", "SDL_GLprofile",
+           "SDL_GL_FRAMEBUFFER_SRGB_CAPABLE",
+           "SDL_GL_CONTEXT_RELEASE_BEHAVIOR", "SDL_GLprofile",
            "SDL_GL_CONTEXT_PROFILE_CORE",
            "SDL_GL_CONTEXT_PROFILE_COMPATIBILITY",
            "SDL_GL_CONTEXT_PROFILE_ES", "SDL_GLcontextFlag",
@@ -64,7 +65,8 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_RestoreWindow", "SDL_SetWindowFullscreen",
            "SDL_GetWindowSurface", "SDL_UpdateWindowSurface",
            "SDL_UpdateWindowSurfaceRects", "SDL_SetWindowGrab",
-           "SDL_GetWindowGrab", "SDL_SetWindowBrightness",
+           "SDL_GetWindowGrab", "SDL_GetGrabbedWindow",
+           "SDL_SetWindowBrightness",
            "SDL_GetWindowBrightness", "SDL_SetWindowGammaRamp",
            "SDL_GetWindowGammaRamp", "SDL_DestroyWindow",
            "SDL_DisableScreenSaver", "SDL_IsScreenSaverEnabled",
@@ -82,7 +84,11 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_MakeCurrent", "SDL_GL_SetSwapInterval",
            "SDL_GL_GetSwapInterval", "SDL_GL_SwapWindow",
            "SDL_GL_GetDrawableSize",
-           "SDL_GL_DeleteContext", "SDL_GL_ResetAttributes" ]
+           "SDL_GL_DeleteContext", "SDL_GL_ResetAttributes",
+           "SDL_GLcontextReleaseFlag",
+           "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE",
+           "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH"
+       ]
 
 class SDL_DisplayMode(Structure):
     _fields_ = [("format", Uint32),
@@ -184,6 +190,7 @@ SDL_GL_CONTEXT_FLAGS = 20
 SDL_GL_CONTEXT_PROFILE_MASK = 21
 SDL_GL_SHARE_WITH_CURRENT_CONTEXT = 22
 SDL_GL_FRAMEBUFFER_SRGB_CAPABLE = 23
+SDL_GL_CONTEXT_RELEASE_BEHAVIOR = 24
 
 SDL_GLprofile = c_int
 SDL_GL_CONTEXT_PROFILE_CORE = 0x0001
@@ -195,6 +202,10 @@ SDL_GL_CONTEXT_DEBUG_FLAG = 0x0001
 SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG = 0x0002
 SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG = 0x0004
 SDL_GL_CONTEXT_RESET_ISOLATION_FLAG = 0x0008
+
+SDL_GLcontextReleaseFlag = c_int
+SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE = 0x0000
+SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH = 0x0001
 
 SDL_HitTestResult = c_int
 SDL_HITTEST_NORMAL = 0
@@ -257,6 +268,7 @@ SDL_UpdateWindowSurface = _bind("SDL_UpdateWindowSurface", [POINTER(SDL_Window)]
 SDL_UpdateWindowSurfaceRects = _bind("SDL_UpdateWindowSurfaceRects", [POINTER(SDL_Window), POINTER(SDL_Rect), c_int], c_int)
 SDL_SetWindowGrab = _bind("SDL_SetWindowGrab", [POINTER(SDL_Window), SDL_bool])
 SDL_GetWindowGrab = _bind("SDL_GetWindowGrab", [POINTER(SDL_Window)], SDL_bool)
+SDL_GetGrabbedWindow = _bind("SDL_GetGrabbedWindow", None, POINTER(SDL_Window), optfunc=nullfunc)
 SDL_SetWindowBrightness = _bind("SDL_SetWindowBrightness", [POINTER(SDL_Window), c_float], c_int)
 SDL_GetWindowBrightness = _bind("SDL_GetWindowBrightness", [POINTER(SDL_Window)], c_float)
 SDL_SetWindowGammaRamp = _bind("SDL_SetWindowGammaRamp", [POINTER(SDL_Window), POINTER(Uint16), POINTER(Uint16), POINTER(Uint16)], c_int)
