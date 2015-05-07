@@ -32,7 +32,7 @@ def oninput(entry, event):
 # A callback for the TextEntry.edit event.
 def onedit(entry, event):
     print("Edit received with text '%s', start '%d', length '%d'" %
-          (event.text.text, event.text.start, event.text.length))
+          (event.edit.text, event.edit.start, event.edit.length))
 
 
 def oncheck(button, event):
