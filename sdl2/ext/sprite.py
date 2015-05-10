@@ -116,7 +116,7 @@ class Renderer(object):
     @scale.setter
     def scale(self, value):
         """The horizontal and vertical drawing scale."""
-        ret = render.SDL_RenderGetScale(self.renderer, value[0], value[1])
+        ret = render.SDL_RenderSetScale(self.renderer, value[0], value[1])
         if ret != 0:
             raise SDLError()
 
