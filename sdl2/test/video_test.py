@@ -819,6 +819,9 @@ class SDLVideoTest(unittest.TestCase):
     def test_SDL_GL_ResetAttributes(self):
         pass
 
+    @unittest.skip("not implemented")
+    def test_SDL_GetDisplayDPI(self):
+        pass
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

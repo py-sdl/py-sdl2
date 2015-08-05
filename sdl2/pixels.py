@@ -73,15 +73,37 @@ def SDL_ISPIXELFORMAT_INDEXED(pformat):
             ((SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX1) or
              (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX4) or
              (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX8)))
+
+def SDL_ISPIXELFORMAT_PACKED(pformat):
+    """Checks, if the passed format value is a packed format."""
+    return (not SDL_ISPIXELFORMAT_FOURCC(pformat) and
+            ((SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED8) or
+             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED16) or
+             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED32)))
+
+def SDL_ISPIXELFORMAT_ARRAY(pformat):
+    """Checks, if the passed format value is an array format."""
+    return (not SDL_ISPIXELFORMAT_FOURCC(pformat) and
+            ((SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU8) and
+             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU16) or
+             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU32) or
+             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYF16) or
+             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYF32)))
+
 def SDL_ISPIXELFORMAT_ALPHA(pformat):
     """Checks, if the passed format value is an alpha channel supporting
     format.
     """
-    return ((not SDL_ISPIXELFORMAT_FOURCC(pformat)) and
-            ((SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ARGB) or
-             (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_RGBA) or
-             (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ABGR) or
-             (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_BGRA)))
+    return ((SDL_ISPIXELFORMAT_PACKED(pformat) and
+             ((SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ARGB) or
+              (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_RGBA) or
+              (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ABGR) or
+              (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_BGRA))) or
+            (SDL_ISPIXELFORMAT_ARRAY(pformat) and
+             ((SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_ARGB) or
+              (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_RGBA) or
+              (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_ABGR) or
+              (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_BGRA))))
 
 SDL_ISPIXELFORMAT_FOURCC = lambda fmt: ((fmt) and (SDL_PIXELFLAG(fmt) != 1))
 SDL_PIXELFORMAT_UNKNOWN = 0
