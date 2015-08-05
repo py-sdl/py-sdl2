@@ -43,11 +43,13 @@ def load_image(fname, enforce=None):
     """
     if enforce is not None and enforce not in ("PIL", "SDL"):
         raise ValueError("enforce must be either 'PIL' or 'SDL', if set")
+    if fname is None:
+        raise ValueError("fname must be a string")
 
     name = fname
     if hasattr(fname, 'encode'):
         name = byteify(fname, "utf-8")
-    
+
     if not _HASPIL and not _HASSDLIMAGE:
         imgsurface = surface.SDL_LoadBMP(name)
         if not imgsurface:

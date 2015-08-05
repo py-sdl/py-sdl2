@@ -187,12 +187,11 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             self.assertIsInstance(ssprite, sdl2ext.SoftwareSprite)
 
         for factory in (tfactory, sfactory):
-            self.assertRaises((AttributeError, TypeError, sdl2ext.SDLError),
+            self.assertRaises((ArgumentError, ValueError),
                               factory.from_image, None)
             #self.assertRaises((IOError, SDLError),
             #                  factory.from_image, "banana")
-            self.assertRaises((AttributeError, IOError, sdl2ext.SDLError),
-                              factory.from_image, 12345)
+            self.assertRaises(ArgumentError, factory.from_image, 12345)
         dogc()
 
     @unittest.skip("not implemented")
