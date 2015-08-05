@@ -87,7 +87,8 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_DeleteContext", "SDL_GL_ResetAttributes",
            "SDL_GLcontextReleaseFlag",
            "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE",
-           "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH"
+           "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH",
+           "SDL_GetDisplayDPI"
        ]
 
 class SDL_DisplayMode(Structure):
@@ -278,6 +279,7 @@ SDL_IsScreenSaverEnabled = _bind("SDL_IsScreenSaverEnabled", None, SDL_bool)
 SDL_EnableScreenSaver = _bind("SDL_EnableScreenSaver")
 SDL_DisableScreenSaver = _bind("SDL_DisableScreenSaver")
 SDL_SetWindowHitTest = _bind("SDL_SetWindowHitTest", [POINTER(SDL_Window), SDL_HitTest, c_void_p], c_int, optfunc=nullfunc)
+SDL_GetDisplayDPI = _bind("SDL_GetDisplayDPI", [c_int, POINTER(c_float), POINTER(c_float), POINTER(c_float), c_int, optfunc=nullfunc)
 
 SDL_GL_LoadLibrary = _bind("SDL_GL_LoadLibrary", [c_char_p], c_int)
 SDL_GL_GetProcAddress = _bind("SDL_GL_GetProcAddress", [c_char_p], c_void_p)

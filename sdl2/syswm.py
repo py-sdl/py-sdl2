@@ -105,7 +105,8 @@ class _uikitinfo(Structure):
     """Window information for iOS."""
     _fields_ = [("window", c_void_p),
                 ("framebuffer", Uint32),
-                ("colorbuffer", Uint32)]
+                ("colorbuffer", Uint32),
+                ("resolveFramebuffer", Uint32)]
 
 
 class _wl(Structure):
