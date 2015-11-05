@@ -63,7 +63,7 @@ need to set up your ``PYTHONPATH`` to point to the location of the
 source distribution package. On Windows-based platforms, you might use
 something like ::
 
-   set PYTHONPATH=C:\path\to\pysdl2\:$PYTHONPATH
+   set PYTHONPATH=C:\path\to\pysdl2\:%PYTHONPATH%
 
 to define the ``PYTHONPATH`` on a command shell. On Linux/Unix, use ::
 
