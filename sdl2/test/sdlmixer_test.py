@@ -19,7 +19,7 @@ class SDLMixerTest(unittest.TestCase):
         self.assertIsInstance(v.contents, version.SDL_version)
         self.assertEqual(v.contents.major, 2)
         self.assertEqual(v.contents.minor, 0)
-        self.assertEqual(v.contents.patch, 0)
+        self.assertEqual(v.contents.patch, 1)
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

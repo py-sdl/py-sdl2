@@ -147,6 +147,9 @@ class SDLJoystickTest(unittest.TestCase):
                 # self.assertIsInstance(val, bool)
             joystick.SDL_JoystickClose(stick)
 
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickFromInstanceID(self):
+        pass
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
