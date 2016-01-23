@@ -191,7 +191,8 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                               factory.from_image, None)
             #self.assertRaises((IOError, SDLError),
             #                  factory.from_image, "banana")
-            self.assertRaises(ArgumentError, factory.from_image, 12345)
+            if not _ISPYPY:
+                self.assertRaises(ArgumentError, factory.from_image, 12345)
         dogc()
 
     @unittest.skip("not implemented")
@@ -508,7 +509,6 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                 del sprite
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
-        dogc()
         dogc()
 
     def test_TextureSprite_area(self):
