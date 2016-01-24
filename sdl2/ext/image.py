@@ -121,7 +121,7 @@ def load_image(fname, enforce=None):
             # We do not support CMYK or YCbCr for now
             raise TypeError("unsupported image format")
 
-        pxbuf = image.tostring()
+        pxbuf = image.tobytes()
         imgsurface = surface.SDL_CreateRGBSurfaceFrom(pxbuf, width, height,
                                                       depth, pitch, rmask,
                                                       gmask, bmask, amask)
