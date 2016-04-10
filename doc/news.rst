@@ -2,6 +2,13 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.4
+-----
+* updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.4)
+* dropped IronPython support
+
+
+
 0.9.3
 -----
 Released on 2014-07-08..

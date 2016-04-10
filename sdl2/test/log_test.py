@@ -3,8 +3,6 @@ import unittest
 import ctypes
 from .. import log
 
-@unittest.skipIf(sys.platform == "cli",
-                 "IronPython does not handle func pointers correctly")
 class SDLLogTest(unittest.TestCase):
     __tags__ = ["sdl"]
 

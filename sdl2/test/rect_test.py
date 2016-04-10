@@ -324,8 +324,6 @@ class SDLRectTest(unittest.TestCase):
         self.assertFalse(ret)
         # TODO
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython does not convert arrays to POINTER objects")
     def test_SDL_EnclosePoints(self):
         pt1 = rect.SDL_Point(0, 0)
         pt2 = rect.SDL_Point(5, 7)
@@ -352,11 +350,9 @@ class SDLRectTest(unittest.TestCase):
         self.assertNotEqual(res, rect.SDL_Rect())
 
         self.assertRaises(TypeError, rect.SDL_EnclosePoints, None, None)
-        if sys.platform != "cli":  # IronPython can't handle this correctly
-            self.assertRaises(TypeError, rect.SDL_EnclosePoints, "Test", None)
-            self.assertRaises(TypeError, rect.SDL_EnclosePoints, (1, 2, 3),
-                              None)
-            self.assertRaises(TypeError, rect.SDL_EnclosePoints, (None,), None)
+        self.assertRaises(TypeError, rect.SDL_EnclosePoints, "Test", None)
+        self.assertRaises(TypeError, rect.SDL_EnclosePoints, (1, 2, 3), None)
+        self.assertRaises(TypeError, rect.SDL_EnclosePoints, (None,), None)
 
     def test_SDL_HasIntersection(self):
         r1 = rect.SDL_Rect()

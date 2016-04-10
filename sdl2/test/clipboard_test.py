@@ -7,7 +7,7 @@ from .util.testutils import interactive, doprint
 
 
 def is_win_or_mac():
-    return sys.platform in ("win32", "cygwin", "darwin", "cli")
+    return sys.platform in ("win32", "cygwin", "darwin")
 
 
 class SDLClipboardTest(unittest.TestCase):
@@ -38,11 +38,9 @@ class SDLClipboardTest(unittest.TestCase):
         retval = clipboard.SDL_GetClipboardText()
         self.assertEqual(retval, b"Test content")
 
-        if sys.platform != "cli":
-            # TODO: Check next IronPython version (>2.7.4)
-            self.assertEquals(clipboard.SDL_SetClipboardText(b""), 0)
-            retval = clipboard.SDL_GetClipboardText()
-            self.assertEqual(retval, b"")
+        self.assertEquals(clipboard.SDL_SetClipboardText(b""), 0)
+        retval = clipboard.SDL_GetClipboardText()
+        self.assertEqual(retval, b"")
 
         self.assertEquals(clipboard.SDL_SetClipboardText(b"Test content"), 0)
         retval = clipboard.SDL_GetClipboardText()
