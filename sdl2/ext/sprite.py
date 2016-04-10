@@ -158,8 +158,10 @@ class Renderer(object):
         """Draws one or multiple connected lines on the renderer."""
         # (x1, y1, x2, y2, ...)
         pcount = len(points)
-        if (pcount % 4) != 0:
+        if (pcount % 2) != 0:
             raise ValueError("points does not contain a valid set of points")
+        if pcount < 4:
+            raise ValueError("points must contain more that one point")
         if pcount == 4:
             if color is not None:
                 tmp = self.color
