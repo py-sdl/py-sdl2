@@ -58,7 +58,6 @@ class SDLImageTest(unittest.TestCase):
             self.assertIsInstance(sf.contents, surface.SDL_Surface)
             surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_Load_RW(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -103,7 +102,6 @@ class SDLImageTest(unittest.TestCase):
         render.SDL_DestroyRenderer(rd)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadTexture_RW(self):
         sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
         rd = render.SDL_CreateSoftwareRenderer(sf)
@@ -125,7 +123,6 @@ class SDLImageTest(unittest.TestCase):
         render.SDL_DestroyRenderer(rd)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadTextureTyped_RW(self):
         sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
         rd = render.SDL_CreateSoftwareRenderer(sf)
@@ -144,7 +141,6 @@ class SDLImageTest(unittest.TestCase):
         render.SDL_DestroyRenderer(rd)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadTyped_RW(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -157,7 +153,6 @@ class SDLImageTest(unittest.TestCase):
             self.assertIsInstance(sf.contents, surface.SDL_Surface)
             surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadBMP_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.bmp"), "rb")
@@ -166,7 +161,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadCUR_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.cur"), "rb")
@@ -175,7 +169,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadGIF_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.gif"), "rb")
@@ -184,7 +177,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadICO_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.ico"), "rb")
@@ -193,7 +185,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadJPG_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.jpg"), "rb")
@@ -202,7 +193,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadLBM_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.lbm"), "rb")
@@ -211,7 +201,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadPCX_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.pcx"), "rb")
@@ -220,7 +209,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadPNG_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.png"), "rb")
@@ -229,7 +217,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadPNM_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.pnm"), "rb")
@@ -238,7 +225,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadTGA_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.tga"), "rb")
@@ -247,7 +233,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadTIF_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.tif"), "rb")
@@ -256,7 +241,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadWEBP_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.webp"), "rb")
@@ -265,7 +249,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadXCF_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.xcf"), "rb")
@@ -274,7 +257,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_LoadXPM_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.xpm"), "rb")
@@ -292,7 +274,6 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isBMP(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -306,7 +287,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isBMP(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isCUR(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -320,7 +300,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isCUR(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isGIF(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -334,7 +313,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isGIF(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isICO(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -348,7 +326,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isICO(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isJPG(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -362,7 +339,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isJPG(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isLBM(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -376,7 +352,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isLBM(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isPCX(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -390,7 +365,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isPCX(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isPNG(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -404,7 +378,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isPNG(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isPNM(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -418,7 +391,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isPNM(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isTIF(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -432,7 +404,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isTIF(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isWEBP(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -446,7 +417,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isWEBP(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isXCF(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -460,7 +430,6 @@ class SDLImageTest(unittest.TestCase):
                 self.assertFalse(sdlimage.IMG_isXCF(imgrw))
             fp.close()
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't handle RW objects")
     def test_IMG_isXPM(self):
         fname = "surfacetest.%s"
         for fmt in formats:
@@ -490,8 +459,6 @@ class SDLImageTest(unittest.TestCase):
 
     @unittest.skipIf(hasattr(sys, "pypy_version_info"),
                      "PyPy's ctypes fails to pass a correct string array")
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't handle byte() objects")
     def test_IMG_ReadXPMFromArray(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.xpm"), "rb")

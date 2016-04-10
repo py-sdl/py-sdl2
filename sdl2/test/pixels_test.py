@@ -395,8 +395,6 @@ class SDLPixelsTest(unittest.TestCase):
             # TODO
             pixels.SDL_FreeFormat(pformat)
 
-    @unittest.skipIf(sys.platform == "cli",
-                     "IronPython's ctypes can't handle long values correctly")
     def test_SDL_MapRGB(self):
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_RGBA8888)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
@@ -412,8 +410,6 @@ class SDLPixelsTest(unittest.TestCase):
         self.assertEqual(val, 0x0)
         pixels.SDL_FreeFormat(pformat)
 
-    @unittest.skipIf(sys.platform == "cli",
-                     "IronPython's ctypes can't handle long values correctly")
     def test_SDL_MapRGBA(self):
         pformat = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_RGBA8888)
         self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)

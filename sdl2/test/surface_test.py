@@ -62,8 +62,6 @@ class SDLSurfaceTest(unittest.TestCase):
         self.assertIsInstance(sf, surface.SDL_Surface)
         # TODO: property checks
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython crashes for unknown reasons")
     def test_SDL_ConvertPixels(self):
         for buf, bpp, pitch, masks, fmt in rgba_pixelations_16x16:
             bytecount = bpp // 8
@@ -82,8 +80,6 @@ class SDLSurfaceTest(unittest.TestCase):
             for index, val in enumerate(dst):
                 self.assertEqual(val, src.view[index])
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython crashes for unknown reasons")
     def test_SDL_ConvertSurface(self):
         for idx in pixels.ALL_PIXELFORMATS:
             if pixels.SDL_ISPIXELFORMAT_FOURCC(idx):
@@ -127,8 +123,6 @@ class SDLSurfaceTest(unittest.TestCase):
         # surface.free_surface(sf)
         #######################################################################
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython crashes for unknown reasons")
     def test_SDL_ConvertSurfaceFormat(self):
         for pfmt in pixels.ALL_PIXELFORMATS:
             if pixels.SDL_ISPIXELFORMAT_FOURCC(pfmt):
@@ -151,8 +145,6 @@ class SDLSurfaceTest(unittest.TestCase):
                 surface.SDL_FreeSurface(sf)
                 surface.SDL_FreeSurface(csf)
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython crashes for unknown reasons")
     def test_SDL_CreateRGBSurface(self):
         for w in range(1, 100, 5):
             for h in range(1, 100, 5):
@@ -204,8 +196,6 @@ class SDLSurfaceTest(unittest.TestCase):
         #self.assertRaises(sdl.SDLError, surface.create_rgb_surface, 1, 1, 32,
         #                  0xf0, 0x0f, 0x01, 0x02)
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython crashes for unknown reasons")
     def test_SDL_CreateRGBSurfaceFrom(self):
         for buf, bpp, pitch, masks, fmt in rgba_pixelations_16x16:
             if bpp == 32:
@@ -252,8 +242,6 @@ class SDLSurfaceTest(unittest.TestCase):
                         self.assertEqual(ret, 0)
                     surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't handle array to POINTER conversions")
     def test_SDL_FillRects(self):
         rectlist = to_ctypes([rect.SDL_Rect(0, 0, 0, 0),
                               rect.SDL_Rect(0, 0, 10, 10),
@@ -336,8 +324,6 @@ class SDLSurfaceTest(unittest.TestCase):
                 "clip: Could not set clip rect %s" % r)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't handle int type conversions")
     def test_SDL_GetSetColorKey(self):
         colorkeys = ((0, 0, 0),
                      (32, 64, 128),
@@ -478,8 +464,6 @@ class SDLSurfaceTest(unittest.TestCase):
                 self.assertFalse(sf.contents.locked)
             surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't handle array to POINTER conversions")
     def test_SDL_LowerBlit(self):
         bpp = 32
         w, h = 10, 10
@@ -527,8 +511,6 @@ class SDLSurfaceTest(unittest.TestCase):
     def test_SDL_LowerBlitScaled(self):
         pass
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't handle array to POINTER conversions")
     def test_SDL_UpperBlit(self):
         bpp = 32
         w, h = 10, 10
@@ -572,7 +554,6 @@ class SDLSurfaceTest(unittest.TestCase):
             surface.SDL_FreeSurface(sf)
         surface.SDL_FreeSurface(dest)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't cast correctly")
     def test_SDL_BlitSurface(self):
         bpp = 32
         w, h = 10, 10
@@ -650,8 +631,6 @@ class SDLSurfaceTest(unittest.TestCase):
     def test_SDL_SetSurfaceRLE(self):
         pass
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't handle RW objects")
     def test_SDL_LoadBMP_RW(self):
         fp = open(self.testfile, "rb")
         imgrw = rwops.rw_from_object(fp)

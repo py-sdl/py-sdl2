@@ -90,7 +90,6 @@ class SDL2ExtResourcesTest(unittest.TestCase):
         urlpath = "file:%s" % p2url(tfile)
         self.assertRaises(urllib2.URLError, resources.open_url, urlpath)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython's tarfile module is broken")
     def test_Resources(self):
         self.assertRaises(ValueError, resources.Resources, "invalid")
 
@@ -111,7 +110,6 @@ class SDL2ExtResourcesTest(unittest.TestCase):
         self.assertIsNotNone(res3.get("rwopstest.txt"))
         self.assertIsNotNone(res3.get("surfacetest.bmp"))
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython's tarfile module is broken")
     def test_Resources_add(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         sfile = os.path.join(fpath, "surfacetest.bmp")
@@ -166,7 +164,6 @@ class SDL2ExtResourcesTest(unittest.TestCase):
         self.assertIsNotNone(res.get("rwopstest.txt"))
         self.assertRaises(KeyError, res.get, "resources.tar.gz")
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython's tarfile module is broken")
     def test_Resources_get(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
 
@@ -183,7 +180,6 @@ class SDL2ExtResourcesTest(unittest.TestCase):
                 self.assertIsNotNone(res.get("surfacetest.bmp"))
                 self.assertIsNotNone(res.get("rwopstest.txt"))
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython's tarfile module is broken")
     def test_Resources_get_filelike(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         zfile = os.path.join(fpath, "resources.zip")
@@ -206,7 +202,6 @@ class SDL2ExtResourcesTest(unittest.TestCase):
         self.assertRaises(KeyError, res.get_filelike, "invalid")
         self.assertRaises(KeyError, res.get_filelike, 1234)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython's tarfile module is broken")
     def test_Resources_get_path(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         zfile = os.path.join(fpath, "resources.zip")
@@ -226,7 +221,6 @@ class SDL2ExtResourcesTest(unittest.TestCase):
         self.assertRaises(KeyError, res.get_path, "invalid")
         self.assertRaises(KeyError, res.get_path, 1234)
 
-    @unittest.skipIf(sys.platform=="cli", "IronPython's tarfile module is broken")
     def test_Resources_scan(self):
         fpath = os.path.join(os.path.dirname(__file__))
         res = resources.Resources()

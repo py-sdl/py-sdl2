@@ -131,8 +131,6 @@ class SDLKeyboardTest(unittest.TestCase):
         # self.assertRaises(ValueError, keyboard.get_scancode_from_key, "Test")
         # self.assertRaises(TypeError, keyboard.get_scancode_from_key, self)
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't pass empty bytes() to ctypes")
     def test_SDL_GetScancodeFromName(self):
         codes = range(scancode.SDL_SCANCODE_A, scancode.SDL_SCANCODE_Z)
         xoff = 0

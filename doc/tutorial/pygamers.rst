@@ -28,8 +28,8 @@ pygame
 ======================= =================================================
 pygame                  sdl2
 ======================= =================================================
-``init()``              :func:`sdl2.SDL_init()` where appropriate
-``quit()``              :func:`sdl2.SDL_quit()` where appropriate
+``init()``              :func:`sdl2.SDL_Init()` where appropriate
+``quit()``              :func:`sdl2.SDL_Quit()` where appropriate
 ``error``               No equivalent
 ``get_error()``         :func:`sdl2.SDL_GetError()`
 ``set_error()``         :func:`sdl2.SDL_SetError()`

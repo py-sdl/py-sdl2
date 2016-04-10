@@ -595,8 +595,6 @@ seems to fail on creating the second renderer of the window, if any""")
         dogc()
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't cast values array values correctly")
     def test_SDL_RenderDrawPoint(self):
         points = ((-4, -3), (-4, 3), (4, -3),
                   (0, 0), (1, 1), (10, 10), (99, 99),

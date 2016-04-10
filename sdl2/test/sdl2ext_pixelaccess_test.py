@@ -20,7 +20,6 @@ class SDL2ExtPixelAccessTest(unittest.TestCase):
 
     @unittest.skipIf(hasattr(sys, "pypy_version_info"),
                      "PyPy's ctypes can't do byref(value, offset)")
-    @unittest.skipIf(sys.platform=="cli", "IronPython can't cast correctly")
     def test_PixelView(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         sprite = factory.create_sprite(size=(10, 10), bpp=32)

@@ -95,8 +95,6 @@ class SDLEventsTest(unittest.TestCase):
         event = events.SDL_Event()
         self.assertIsInstance(event, events.SDL_Event)
 
-    @unittest.skipIf(sys.platform == "cli",
-                     "IronPython's ctypes can't handle Union types correctly")
     def test_SDL_AddDelEventWatch(self):
         eventwatch = []
 
@@ -121,8 +119,6 @@ class SDLEventsTest(unittest.TestCase):
         # TODO: x
         # self.assertEqual(eventwatch[0][1], udata)
 
-    @unittest.skipIf(sys.platform == "cli",
-                     "IronPython's ctypes can't handle Union types correctly")
     def test_SDL_EventState(self):
         pass
         # state = events.SDL_EventState(events.SDL_USEREVENT, events.SDL_QUERY)

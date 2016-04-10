@@ -39,8 +39,6 @@ class SDLShapeTest(unittest.TestCase):
             self.assertFalse(val)
             video.SDL_DestroyWindow(window)
 
-    @unittest.skipIf(sys.platform=="cli",
-                     "IronPython can't create Union types")
     def test_SDL_SetWindowShape(self):
         sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32,
                                           0xFF000000,
