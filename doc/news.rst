@@ -4,14 +4,31 @@ This describes the latest changes between the PySDL2 releases.
 
 0.9.4
 -----
+
+
 * updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.4)
+* updated :mod:`sdl2.sdlttf` to include the latest changes of SDL_ttf (release 2.0.14)
+* new :attr:`sdl2.ext.Renderer.logical_size` attribute to set or retrieve the logical
+  pixel size of a renderer
+* fixed issue #48: be more noisy about DLL loading issues
+* fixed issue #65: misleading documentation for :meth:`sdl2.ext.Renderer.draw_line()`
+* fixed issue #67: Return a proper error code, when unittests running as subprocesses fail
+* fixed issue #72: :func:`sdl2.video.SDL_GL_DrawableSize()` not available on import
+* fixed issue #76: define missing SDL_PRESSED and SDL_RELEASED constants
+* fixed issue #82: examples/gui.py fails due to an attribute error
+* fixed issue #83: fix compatibility with newer PIL versions in
+  :func:`sdl2.ext.image.load_image()`
+* fixed issue #84: The setter of :attr:`sdl2.ext.Renderer.scale` works properly now
+* fixed issue #85: fix environment-dependent unit tests
+* fixed issue #87: fix incorrect MIX_INIT_* constants in :mod:`sdl2.sdlmixer`
+* fixed issue #88: use PILs `Image.tobyte()instead of the deprecated `Image.tostring()`
+* fixed horizontical and vertical line drawing in :func:`sdl2.ext.line()`
+* fixed a bug in :meth:`sdl2.ext.Renderer.draw_line()` for odd numbers of points
 * dropped IronPython support
-
-
 
 0.9.3
 -----
-Released on 2014-07-08..
+Released on 2014-07-08.
 
 * updated :mod:`sdl2` to include the latest changes of SDL2 (HG)
 * new :attr:`sdl2.ext.Renderer.scale` attribute, which denotes the horizontal
