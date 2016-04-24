@@ -24,7 +24,7 @@ __all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING",
            "SDL_CLIPBOARDUPDATE", "SDL_DROPFILE", "SDL_RENDER_TARGETS_RESET",
            "SDL_RENDER_DEVICE_RESET", "SDL_USEREVENT", "SDL_LASTEVENT",
            "SDL_AUDIODEVICEADDED", "SDL_AUDIODEVICEREMOVED",
-           "SDL_EventType","SDL_GenericEvent", "SDL_WindowEvent",
+           "SDL_EventType","SDL_CommonEvent", "SDL_WindowEvent",
            "SDL_KeyboardEvent", "SDL_TEXTEDITINGEVENT_TEXT_SIZE",
            "SDL_TextEditingEvent", "SDL_TEXTINPUTEVENT_TEXT_SIZE",
            "SDL_TextInputEvent", "SDL_MouseMotionEvent", "SDL_MouseButtonEvent",
@@ -97,7 +97,8 @@ SDL_EventType = c_int
 SDL_RELEASED = 0
 SDL_PRESSED = 1
 
-class SDL_GenericEvent(Structure):
+
+class SDL_CommonEvent(Structure):
     _fields_ = [("type", Uint32), ("timestamp", Uint32)]
 
 class SDL_WindowEvent(Structure):
@@ -337,7 +338,7 @@ class SDL_SysWMEvent(Structure):
 
 class SDL_Event(Union):
     _fields_ = [("type", Uint32),
-                ("generic", SDL_GenericEvent),
+                ("common", SDL_CommonEvent),
                 ("window", SDL_WindowEvent),
                 ("key", SDL_KeyboardEvent),
                 ("edit", SDL_TextEditingEvent),

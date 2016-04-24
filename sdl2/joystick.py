@@ -19,8 +19,7 @@ __all__ = ["SDL_Joystick", "SDL_JoystickGUID", "SDL_JoystickID",
            "SDL_JOYSTICK_POWER_LOW", "SDL_JOYSTICK_POWER_MEDIUM",
            "SDL_JOYSTICK_POWER_FULL", "SDL_JOYSTICK_POWER_WIRED",
            "SDL_JOYSTICK_POWER_MAX","SDL_JoystickPowerLevel",
-           "SDL_JoystickCurrentPowerLevel", "SDL_JoystickPowerLevel",
-           "SDL_JoystickFromInstanceID"
+           "SDL_JoystickCurrentPowerLevel", "SDL_JoystickFromInstanceID"
            ]
 
 SDL_JoystickPowerLevel = c_int
@@ -73,6 +72,5 @@ SDL_JoystickGetBall = _bind("SDL_JoystickGetBall", [POINTER(SDL_Joystick), c_int
 SDL_JoystickGetButton = _bind("SDL_JoystickGetButton", [POINTER(SDL_Joystick), c_int], Uint8)
 SDL_JoystickClose = _bind("SDL_JoystickClose", [POINTER(SDL_Joystick)])
 SDL_JoystickCurrentPowerLevel = _bind("SDL_JoystickCurrentPowerLevel", [POINTER(SDL_Joystick)], SDL_JoystickPowerLevel, nullfunc)
-SDL_JoystickPowerLevel = SDL_JoystickCurrentPowerLevel
 SDL_JoystickFromInstanceID = _bind("SDL_JoystickFromInstanceID", [SDL_JoystickID], POINTER(SDL_Joystick), nullfunc)
 

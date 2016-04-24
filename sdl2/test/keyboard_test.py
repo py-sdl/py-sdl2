@@ -22,13 +22,11 @@ class SDLKeyboardTest(unittest.TestCase):
         self.assertEqual(keysym.scancode, 0)
         self.assertEqual(keysym.sym, 0)
         self.assertEqual(keysym.mod, 0)
-        self.assertEqual(keysym.unicode, ord("\0"))  # TODO
 
         keysym = keyboard.SDL_Keysym(1, 2, 3, ord("b"))
         self.assertEqual(keysym.scancode, 1)
         self.assertEqual(keysym.sym, 2)
         self.assertEqual(keysym.mod, 3)
-        self.assertEqual(keysym.unicode, ord("b"))
 
         uval = "\u0220"
         if sys.version_info[0] < 3:
@@ -37,10 +35,9 @@ class SDLKeyboardTest(unittest.TestCase):
         self.assertEqual(keysym.scancode, 17)
         self.assertEqual(keysym.sym, 32)
         self.assertEqual(keysym.mod, 88)
-        self.assertEqual(keysym.unicode, ord(uval))
 
     def test_SDL_GetKeyboardFocus(self):
-        window = keyboard.SDL_GetKeyboardFocus()
+        # window = keyboard.SDL_GetKeyboardFocus()
         # TODO: x
         # self.assertEqual(window, None)
         rwin = video.SDL_CreateWindow(b"test", 10, 10, 10, 10, 0)

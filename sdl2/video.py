@@ -84,6 +84,7 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_MakeCurrent", "SDL_GL_SetSwapInterval",
            "SDL_GL_GetSwapInterval", "SDL_GL_SwapWindow",
            "SDL_GL_GetDrawableSize",
+           "SDL_GL_GetCurrentWindow", "SDL_GL_GetCurrentContext",
            "SDL_GL_DeleteContext", "SDL_GL_ResetAttributes",
            "SDL_GLcontextReleaseFlag",
            "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE",
@@ -288,7 +289,9 @@ SDL_GL_ExtensionSupported = _bind("SDL_GL_ExtensionSupported", [c_char_p], SDL_b
 SDL_GL_SetAttribute = _bind("SDL_GL_SetAttribute", [SDL_GLattr, c_int], c_int)
 SDL_GL_GetAttribute = _bind("SDL_GL_GetAttribute", [SDL_GLattr, POINTER(c_int)], c_int)
 SDL_GL_CreateContext = _bind("SDL_GL_CreateContext", [POINTER(SDL_Window)], SDL_GLContext)
+SDL_GL_GetCurrentWindow = _bind("SDL_GL_GetCurrentWindow", None, POINTER(SDL_Window))
 SDL_GL_MakeCurrent = _bind("SDL_GL_MakeCurrent", [POINTER(SDL_Window), SDL_GLContext], c_int)
+SDL_GL_GetCurrentContext = _bind("SDL_GL_GetCurrentContext", None, SDL_GLContext)
 SDL_GL_SetSwapInterval = _bind("SDL_GL_SetSwapInterval", [c_int], c_int)
 SDL_GL_GetSwapInterval = _bind("SDL_GL_GetSwapInterval", None, c_int)
 SDL_GL_SwapWindow = _bind("SDL_GL_SwapWindow", [POINTER(SDL_Window)])

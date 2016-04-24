@@ -22,7 +22,7 @@ __all__ = ["SDL_Cursor", "SDL_SYSTEM_CURSOR_ARROW", "SDL_SYSTEM_CURSOR_IBEAM",
            "SDL_BUTTON_RMASK", "SDL_BUTTON_X1MASK", "SDL_BUTTON_X2MASK",
            "SDL_WarpMouseGlobal", "SDL_CaptureMouse",
            "SDL_GetGlobalMouseState", "SDL_MOUSEWHEEL_NORMAL",
-           "SDL_MOUSEWHEEL_FLIPPED" ]
+           "SDL_MOUSEWHEEL_FLIPPED", "SDL_MouseWheelDirection" ]
 
 
 class SDL_Cursor(Structure):
@@ -73,3 +73,4 @@ SDL_BUTTON_X1MASK = SDL_BUTTON(SDL_BUTTON_X1)
 SDL_BUTTON_X2MASK = SDL_BUTTON(SDL_BUTTON_X2)
 SDL_MOUSEWHEEL_NORMAL = 0
 SDL_MOUSEWHEEL_FLIPPED = 1
+SDL_MouseWheelDirection = c_int
