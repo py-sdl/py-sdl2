@@ -83,6 +83,10 @@ class _wininfo(Structure):
                 ("hdc", HDC)]
 
 
+class _winrtinfo(Structure):
+    _fields_ = [("window", c_void_p)]
+
+
 class _x11info(Structure):
     """Window information for X11."""
     _fields_ = [("display", c_void_p),
@@ -131,6 +135,7 @@ class _android(Structure):
 class _info(Union):
     """The platform-specific information of a window."""
     _fields_ = [("win", _wininfo),
+                ("winrt", _winrtinfo),
                 ("x11", _x11info),
                 ("dfb", _dfbinfo),
                 ("cocoa", _cocoainfo),

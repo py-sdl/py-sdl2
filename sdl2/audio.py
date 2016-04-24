@@ -1,4 +1,3 @@
-import sys
 from ctypes import Structure, c_int, c_char_p, c_double, c_void_p, CFUNCTYPE, \
     POINTER
 from .dll import _bind, nullfunc
