@@ -3,7 +3,7 @@ import os
 import sys
 from distutils.core import setup
 
-VERSION = "0.9.3"
+VERSION = "0.9.4"
 
 if __name__ == "__main__":
 
@@ -49,6 +49,7 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.2",
             "Programming Language :: Python :: 3.3",
             "Programming Language :: Python :: 3.4",
+            "Programming Language :: Python :: 3.5",
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
             "Topic :: Software Development :: Libraries :: Python Modules",

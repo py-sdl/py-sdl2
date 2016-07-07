@@ -4,7 +4,7 @@ This describes the latest changes between the PySDL2 releases.
 
 0.9.4
 -----
-
+Released on 2016-07-07.
 
 * updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.4)
 * updated :mod:`sdl2.sdlttf` to include the latest changes of SDL_ttf (release 2.0.14)
