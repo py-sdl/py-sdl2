@@ -196,6 +196,31 @@ class SDLSurfaceTest(unittest.TestCase):
         #self.assertRaises(sdl.SDLError, surface.create_rgb_surface, 1, 1, 32,
         #                  0xf0, 0x0f, 0x01, 0x02)
 
+    def test_SDL_CreateRGBSurfaceWithFormat(self):
+        for w in range(1, 100, 5):
+            for h in range(1, 100, 5):
+                for bpp in alldepths:
+                    for fmt in pixels.ALL_PIXELFORMATS:
+                        if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+                            continue
+                        sf = surface.SDL_CreateRGBSurfaceWithFormat(0, w, h,
+                                                                    bpp, fmt)
+                        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                        surface.SDL_FreeSurface(sf)
+
+    def test_SDL_CreateRGBSurfaceWithFormatFrom(self):
+        for buf, bpp, pitch, masks, fmt in rgba_pixelations_16x16:
+            if bpp == 32:
+                arflag = "I"
+            elif bpp == 16:
+                arflag = "H"
+            bytebuf = CTypesView(array.array(arflag, buf))
+            bufptr = cast(bytebuf.to_bytes(), POINTER(Uint8))
+            sf = surface.SDL_CreateRGBSurfaceWithFormatFrom(bufptr, 16, 16,
+                    bpp, pitch, fmt)
+            self.assertIsInstance(sf.contents, surface.SDL_Surface)
+            surface.SDL_FreeSurface(sf)
+
     def test_SDL_CreateRGBSurfaceFrom(self):
         for buf, bpp, pitch, masks, fmt in rgba_pixelations_16x16:
             if bpp == 32:

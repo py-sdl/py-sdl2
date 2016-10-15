@@ -279,11 +279,15 @@ def run():
             self.maxcount = maxcount
             self.verbose = verbose
 
-        def __call__(self):
+        def __call__(self, test=None):
             self.curcount += 1
             if not self.verbose:
-                writer.writesame("Running tests [ %d / %d ] ..." %
-                                 (self.curcount, self.maxcount))
+                if test:
+                    writer.writesame("Running tests [ %d / %d ] [ %s ] ..." %
+                                     (self.curcount, self.maxcount, test))
+                else:
+                    writer.writesame("Running tests [ %d / %d ] ..." %
+                                     (self.curcount, self.maxcount))
 
     runwrite = writerunning(maxcount, options.verbose)
 
