@@ -1,6 +1,6 @@
 import sys
 from ctypes.util import find_library
-from ctypes import c_int, byref, cast, POINTER, py_object
+from ctypes import c_int, c_float, byref, cast, POINTER, py_object
 import unittest
 from .util.testutils import interactive, doprint
 from ..stdinc import SDL_FALSE, SDL_TRUE
@@ -297,7 +297,7 @@ class SDLVideoTest(unittest.TestCase):
             self.assertTrue(0 <= dindex <= numdisplays,
                             "Invalid display index")
             video.SDL_DestroyWindow(window)
-            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowDisplay,
+            # self.assertRaises(sdl.SDLError, video.SDL_GetWindowDisplay,
             #                  window)
 
     def test_SDL_GetWindowDisplayMode(self):
@@ -309,7 +309,7 @@ class SDLVideoTest(unittest.TestCase):
             ret = video.SDL_GetWindowDisplayMode(window, byref(dmode))
             self.assertEqual(ret, 0)
             video.SDL_DestroyWindow(window)
-            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowDisplayMode,
+            # self.assertRaises(sdl.SDLError, video.SDL_GetWindowDisplayMode,
             #                  window)
 
     def test_SDL_SetWindowDisplayMode(self):
@@ -331,7 +331,7 @@ class SDLVideoTest(unittest.TestCase):
             #self.assertEqual(dmode, wmode)
 
             video.SDL_DestroyWindow(window)
-            #self.assertRaises(sdl.SDLError, video.SDL_SetWindowDisplayMode,
+            # self.assertRaises(sdl.SDLError, video.SDL_SetWindowDisplayMode,
             #                  window, dmode)
 
     def test_SDL_GetWindowPixelFormat(self):
@@ -342,7 +342,7 @@ class SDLVideoTest(unittest.TestCase):
             fmt = video.SDL_GetWindowPixelFormat(window)
             self.assertTrue(type(fmt) in(int, long))
             video.SDL_DestroyWindow(window)
-            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowPixelFormat,
+            # self.assertRaises(sdl.SDLError, video.SDL_GetWindowPixelFormat,
             #                  window)
 
     def test_SDL_GetWindowID(self):
@@ -397,28 +397,28 @@ class SDLVideoTest(unittest.TestCase):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10, 0)
         video.SDL_SetWindowIcon(window, sf)
 
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_SetWindowIcon, None, None)
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_SetWindowIcon, window, None)
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_SetWindowIcon, None, sf)
-        ##self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_SetWindowIcon, window, "Test")
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_SetWindowIcon, window, 123456)
 
     @unittest.skipIf(hasattr(sys, "pypy_version_info"),
                      "PyPy can't create proper py_object() values")
     def test_SDL_GetSetWindowData(self):
-        #TODO: fix this
+        # TODO: fix this
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10, 0)
         self.assertIsInstance(window.contents, video.SDL_Window)
         values = {b"text": py_object("Teststring"),
                   b"object": py_object(self),
                   b"list": py_object([1, 2, 3, 4]),
                   b"tuple": py_object(("a", 1, self))
-                  }
+                 }
 
         for k, v in values.items():
             retval = video.SDL_GetWindowData(window, k)
@@ -557,7 +557,7 @@ class SDLVideoTest(unittest.TestCase):
             sf = video.SDL_GetWindowSurface(window)
             self.assertIsInstance(sf.contents, surface.SDL_Surface)
             video.SDL_DestroyWindow(window)
-            #self.assertRaises(sdl.SDLError, video.SDL_GetWindowSurface,
+            # self.assertRaises(sdl.SDLError, video.SDL_GetWindowSurface,
             #                  window)
 
     def test_SDL_UpdateWindowSurface(self):
@@ -581,7 +581,7 @@ class SDLVideoTest(unittest.TestCase):
                  video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
         for flag in flags:
             window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flag)
-            #self.assertRaises(sdl.SDLError,
+            # self.assertRaises(sdl.SDLError,
             #                  video.SDL_UpdateWindowSurfaceRects,
             #                  window, rectlist)
             sf = surface.SDL_Surface()
@@ -641,7 +641,7 @@ class SDLVideoTest(unittest.TestCase):
 
     def test_SDL_GL_LoadUnloadLibrary(self):
         # Try the default library
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
         video.SDL_GL_UnloadLibrary()
 
         if has_opengl_lib():
@@ -657,11 +657,12 @@ class SDLVideoTest(unittest.TestCase):
         procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
         self.assertIsNone(procaddr)
 
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
 
         # Behaviour is undefined as long as there is no window and context.
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_OPENGL)
+                                        video.SDL_WINDOW_OPENGL)
+
         ctx = video.SDL_GL_CreateContext(window)
 
         procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
@@ -677,9 +678,10 @@ class SDLVideoTest(unittest.TestCase):
     def test_SDL_GL_ExtensionSupported(self):
         self.assertFalse(video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra"))
 
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_OPENGL)
+                                        video.SDL_WINDOW_OPENGL)
+
         ctx = video.SDL_GL_CreateContext(window)
 
         self.assertTrue(video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra"))
@@ -691,15 +693,16 @@ class SDLVideoTest(unittest.TestCase):
         self.assertFalse(video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra"))
 
     def test_SDL_GL_GetSetAttribute(self):
-        #self.assertRaises(sdl.SDLError, video.SDL_GL_GetAttribute,
+        # self.assertRaises(sdl.SDLError, video.SDL_GL_GetAttribute,
         #                  video.SDL_GL_DEPTH_SIZE)
-        #self.assertRaises(sdl.SDLError, video.SDL_GL_SetAttribute,
+        # self.assertRaises(sdl.SDLError, video.SDL_GL_SetAttribute,
         #                  1455, 24)
 
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
 
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_OPENGL)
+                                        video.SDL_WINDOW_OPENGL)
+
         ctx = video.SDL_GL_CreateContext(window)
 
         depth = c_int()
@@ -718,7 +721,8 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_GL_SetAttribute(video.SDL_GL_DEPTH_SIZE, newdepth)
 
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_OPENGL)
+                                        video.SDL_WINDOW_OPENGL)
+
         ctx = video.SDL_GL_CreateContext(window)
 
         val = c_int()
@@ -731,28 +735,31 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_GL_UnloadLibrary()
 
     def test_SDL_GL_CreateDeleteContext(self):
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_GL_CreateContext, None)
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_GL_CreateContext, "Test")
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_GL_CreateContext, 1234)
 
         window = video.SDL_CreateWindow(b"No OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_BORDERLESS)
+                                        video.SDL_WINDOW_BORDERLESS)
+
         #self.assertRaises(sdl.SDLError, video.SDL_GL_CreateContext, window)
         video.SDL_DestroyWindow(window)
 
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_OPENGL)
+                                        video.SDL_WINDOW_OPENGL)
+
         ctx = video.SDL_GL_CreateContext(window)
 
         video.SDL_GL_DeleteContext(ctx)
         video.SDL_DestroyWindow(window)
 
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_OPENGL)
+                                        video.SDL_WINDOW_OPENGL)
+
         ctx = video.SDL_GL_CreateContext(window)
         video.SDL_DestroyWindow(window)
         video.SDL_GL_DeleteContext(ctx)
@@ -760,17 +767,18 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_GL_UnloadLibrary()
 
     def test_SDL_GL_MakeCurrent(self):
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
 
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_GL_MakeCurrent, None, None)
 
         window = video.SDL_CreateWindow(b"No OpenGL", 10, 10, 10, 10,
-                                     video.SDL_WINDOW_BORDERLESS)
+                                        video.SDL_WINDOW_BORDERLESS)
+
         #self.assertRaises(sdl.SDLError, video.SDL_GL_CreateContext, window)
         video.SDL_DestroyWindow(window)
 
-        #self.assertRaises((AttributeError, TypeError),
+        # self.assertRaises((AttributeError, TypeError),
         #                  video.SDL_GL_MakeCurrent, None, None)
 
         video.SDL_GL_UnloadLibrary()
@@ -787,7 +795,7 @@ class SDLVideoTest(unittest.TestCase):
         # self.assertRaises(sdl.SDLError, video.SDL_GL_SetSwapInterval, 1)
         # self.assertRaises(sdl.SDLError, video.SDL_GL_SetSwapInterval, 0)
 
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
                                         video.SDL_WINDOW_OPENGL)
         ctx = video.SDL_GL_CreateContext(window)
@@ -803,7 +811,7 @@ class SDLVideoTest(unittest.TestCase):
         video.SDL_GL_UnloadLibrary()
 
     def test_SDL_GL_SwapWindow(self):
-        self.assertEquals(video.SDL_GL_LoadLibrary(None), 0)
+        self.assertEqual(video.SDL_GL_LoadLibrary(None), 0)
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
                                         video.SDL_WINDOW_OPENGL)
         ctx = video.SDL_GL_CreateContext(window)
@@ -820,8 +828,95 @@ class SDLVideoTest(unittest.TestCase):
     def test_SDL_GL_ResetAttributes(self):
         pass
 
-    @unittest.skip("not implemented")
     def test_SDL_GetDisplayDPI(self):
+        numdisplays = video.SDL_GetNumVideoDisplays()
+        for index in range(numdisplays):
+            ddpi, hdpi, vdpi = c_float(), c_float(), c_float()
+            ret = video.SDL_GetDisplayDPI(index, byref(ddpi), byref(hdpi),
+                                          byref(vdpi))
+            self.assertEqual(ret, 0)
+            self.assertGreaterEqual(ddpi.value, 96.0)
+            self.assertGreaterEqual(hdpi.value, 96.0)
+            self.assertGreaterEqual(vdpi.value, 96.0)
+
+    def test_SDL_SetWindowResizable(self):
+        window = video.SDL_CreateWindow(b"Resizable", 10, 10, 10, 10,
+                                        video.SDL_WINDOW_RESIZABLE)
+        flags = video.SDL_GetWindowFlags(window)
+        self.assertEqual(flags & video.SDL_WINDOW_RESIZABLE,
+                         video.SDL_WINDOW_RESIZABLE)
+        video.SDL_SetWindowResizable(window, SDL_FALSE)
+        flags = video.SDL_GetWindowFlags(window)
+        self.assertNotEqual(flags & video.SDL_WINDOW_RESIZABLE,
+                            video.SDL_WINDOW_RESIZABLE)
+        video.SDL_SetWindowResizable(window, SDL_TRUE)
+        flags = video.SDL_GetWindowFlags(window)
+        self.assertEqual(flags & video.SDL_WINDOW_RESIZABLE,
+                         video.SDL_WINDOW_RESIZABLE)
+        video.SDL_DestroyWindow(window)
+
+    def test_SDL_GetSetWindowOpacity(self):
+        window = video.SDL_CreateWindow(b"Opacity", 10, 10, 10, 10, 0)
+        opacity = c_float()
+        ret = video.SDL_GetWindowOpacity(window, byref(opacity))
+        self.assertEqual(ret, 0)
+        self.assertEqual(opacity.value, 1.0)
+        ret = video.SDL_SetWindowOpacity(window, 0.0)
+        self.assertEqual(ret, 0)
+        ret = video.SDL_GetWindowOpacity(window, byref(opacity))
+        self.assertEqual(ret, 0)
+        self.assertEqual(opacity.value, 0.0)
+        ret = video.SDL_SetWindowOpacity(window, 0.653)
+        self.assertEqual(ret, 0)
+        ret = video.SDL_GetWindowOpacity(window, byref(opacity))
+        self.assertEqual(ret, 0)
+        self.assertAlmostEqual(opacity.value, 0.653, 2)
+        video.SDL_DestroyWindow(window)
+
+    def test_SDL_GetDisplayUsableBounds(self):
+        numdisplays = video.SDL_GetNumVideoDisplays()
+        for index in range(numdisplays):
+            bounds = rect.SDL_Rect()
+            ret = video.SDL_GetDisplayUsableBounds(index, byref(bounds))
+            self.assertEqual(ret, 0)
+            self.assertFalse(rect.SDL_RectEmpty(bounds))
+
+    def test_SDL_GetWindowsBordersSize(self):
+        window = video.SDL_CreateWindow(b"Borders", 10, 10, 10, 10, 0)
+        l, r, t, b = c_int(), c_int(), c_int(), c_int()
+        ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
+                                             byref(b), byref(r))
+        if sys.platform in ("win32", "cygwin", "darwin"):
+            self.assertEqual(ret, -1)
+            self.assertEqual(t.value, 0)
+            self.assertEqual(l.value, 0)
+            self.assertEqual(b.value, 0)
+            self.assertEqual(r.value, 0)
+        else:
+            self.assertEqual(ret, 0)
+            self.assertNotEqual(t.value, 0)
+            self.assertNotEqual(l.value, 0)
+            self.assertNotEqual(b.value, 0)
+            self.assertNotEqual(r.value, 0)
+        video.SDL_DestroyWindow(window)
+        window = video.SDL_CreateWindow(b"No Borders", 10, 10, 10, 10,
+                                        video.SDL_WINDOW_BORDERLESS)
+        ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
+                                             byref(b), byref(r))
+        if sys.platform not in ("win32", "cygwin", "darwin"):
+            self.assertEqual(ret, 0)
+            self.assertEqual(t.value, 0)
+            self.assertEqual(l.value, 0)
+            self.assertEqual(b.value, 0)
+            self.assertEqual(r.value, 0)
+        video.SDL_DestroyWindow(window)
+
+    @unittest.skip("not implemented")
+    def test_SDL_SetWindowModalFor(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_SetWindowInputFocus(self):
         pass
 
 if __name__ == '__main__':

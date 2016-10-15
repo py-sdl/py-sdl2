@@ -3,7 +3,7 @@ import unittest
 from ctypes import cast, c_char_p
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from .. import hints
-
+from ..stdinc import SDL_TRUE, SDL_FALSE
 
 class SDLHintsTest(unittest.TestCase):
     __tags__ = ["sdl"]
@@ -57,6 +57,12 @@ class SDLHintsTest(unittest.TestCase):
         #                  "TEST", "123456789", None)
         # self.assertRaises(ValueError, hints.SDL_SetHintWithPriority,
         #                  "TEST", "123456789", "bananas")
+
+    def test_SDL_GetHintBoolean(self):
+        self.assertEqual(hints.SDL_SetHint(b"TEST", b"32"), 1)
+        self.assertEqual(hints.SDL_GetHintBoolean(b"TEST", SDL_TRUE), SDL_TRUE)
+        self.assertEqual(hints.SDL_GetHintBoolean(b"TEST", SDL_FALSE), SDL_TRUE)
+        self.assertNotEqual(hints.SDL_GetHintBoolean(b"TEST2", SDL_FALSE), SDL_TRUE)
 
     def test_SDL_AddDelHintCallback(self):
         calls = []

@@ -17,13 +17,13 @@
 @IF "%PYTHON35_X86%" == "" SET PYTHON35_X86=c:\Python35-x86\python.exe
 @IF "%PYTHON35_X64%" == "" SET PYTHON35_X64=c:\Python35-x64\python.exe
 @IF "%PYTHON%" == "" SET PYTHON=%PYTHON27_X64%
-@IF "%PYPY40%" == "" SET PYPY40=c:\pypy-4.0\pypy.exe
-@IF "%PYPY3_24%" == "" SET PYPY3_24=c:\pypy3-2.4\pypy.exe
+@IF "%PYPY2%" == "" SET PYPY2=c:\pypy2-v5.4.1\pypy.exe
+@IF "%PYPY3%" == "" SET PYPY3=c:\pypy3-v2.4\pypy.exe
 
 @SET INTERP_X64=%PYTHON27_X64%;%PYTHON32_X64%;%PYTHON33_X64%;%PYTHON34_X64%;^
  %PYTHON35_X64%
 @SET INTERP_X86=%PYTHON27_X86%;%PYTHON32_X86%;%PYTHON33_X86%;%PYTHON34_X86%;^
- %PYTHON35_X86%;%PYPY40%;%PYPY3_24%
+ %PYTHON35_X86%;%PYPY2%;%PYPY3%
 @SET INTERPRETERS=%INTERP_X86%;%INTERP_X64%
 
 @IF "%~1" == "" GOTO :all
@@ -125,7 +125,7 @@
 @RMDIR /S /Q C:\Python34-x64\Lib\site-packages\sdl2
 @RMDIR /S /Q C:\Python35-x86\Lib\site-packages\sdl2
 @RMDIR /S /Q C:\Python35-x64\Lib\site-packages\sdl2
-@RMDIR /S /Q C:\pypy-4.0\site-packages\sdl2
+@RMDIR /S /Q C:\pypy2-v5.4.1\site-packages\sdl2
 @RMDIR /S /Q C:\pypy3-2.4\site-packages\sdl2
 @echo done
 @GOTO :eof

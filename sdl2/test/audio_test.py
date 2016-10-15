@@ -251,7 +251,7 @@ class SDLAudioTest(unittest.TestCase):
         pass
 
     @unittest.skip("not implemented")
-    def test_SDL_PausAudio(self):
+    def test_SDL_PauseAudio(self):
         pass
 
     @unittest.skip("not implemented")
@@ -308,6 +308,10 @@ class SDLAudioTest(unittest.TestCase):
 
     @unittest.skip("not implemented")
     def test_SDL_ClearQueuedAudio(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_DequeueAudio(self):
         pass
 
 

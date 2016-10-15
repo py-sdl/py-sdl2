@@ -2,6 +2,11 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.5
+-----
+
+* updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.5)
+
 0.9.4
 -----
 Released on 2016-07-07.
@@ -101,7 +106,7 @@ for the issues #36 and #39.**
 * the unit test runner features a `--logfile` argument now to
   safe the unit test output to a file
 * issues #36, #39: the different render classes of sdl2.ext.sprite were renamed
-  
+
   * the ``sdl2.ext.RenderContext`` class was renamed to
     :class:`sdl2.ext.Renderer` to be consistent with with SDL2's naming scheme
   * ``sdl2.ext.SpriteRenderer`` was renamed to
@@ -127,7 +132,7 @@ for the issues #36 and #39.**
 * fixed issue #35: download location is now mentioned in the docs
 * fixed issue #12: remove confusing try/except on import in the examples
 
-  
+
 0.8.0
 -----
 Released on 2013-12-30.

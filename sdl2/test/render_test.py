@@ -780,6 +780,7 @@ seems to fail on creating the second renderer of the window, if any""")
                                  'All other pixels should be green')
 
         render.SDL_DestroyRenderer(renderer)
+        surface.SDL_FreeSurface(sf)
 
     @unittest.skip("not implemented")
     def test_SDL_RenderGetSetClipRect(self):
@@ -793,6 +794,23 @@ seems to fail on creating the second renderer of the window, if any""")
     def test_SDL_RenderIsClipEnabled(self):
         pass
 
+    def test_SDL_RenderGetSetIntegerScale(self):
+        sf = surface.SDL_CreateRGBSurface(0, 100, 100, 32,
+                                          0xFF000000,
+                                          0x00FF0000,
+                                          0x0000FF00,
+                                          0x000000FF)
+        renderer = render.SDL_CreateSoftwareRenderer(sf)
+        self.assertIsInstance(renderer.contents, render.SDL_Renderer)
+        self.assertEqual(render.SDL_RenderGetIntegerScale(renderer), SDL_FALSE)
+        self.assertEqual(render.SDL_RenderSetIntegerScale(renderer, SDL_FALSE), 0)
+        self.assertEqual(render.SDL_RenderGetIntegerScale(renderer), SDL_FALSE)
+        self.assertEqual(render.SDL_RenderSetIntegerScale(renderer, SDL_TRUE), 0)
+        self.assertEqual(render.SDL_RenderGetIntegerScale(renderer), SDL_TRUE)
+        self.assertEqual(render.SDL_RenderSetIntegerScale(renderer, SDL_FALSE), 0)
+        self.assertEqual(render.SDL_RenderGetIntegerScale(renderer), SDL_FALSE)
+        render.SDL_DestroyRenderer(renderer)
+        surface.SDL_FreeSurface(sf)
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

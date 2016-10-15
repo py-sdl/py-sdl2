@@ -13,6 +13,8 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_WINDOW_INPUT_FOCUS", "SDL_WINDOW_MOUSE_FOCUS",
            "SDL_WINDOW_FULLSCREEN_DESKTOP", "SDL_WINDOW_FOREIGN",
            "SDL_WINDOW_ALLOW_HIGHDPI", "SDL_WINDOW_MOUSE_CAPTURE",
+           "SDL_WINDOW_ALWAYS_ON_TOP", "SDL_WINDOW_SKIP_TASKBAR",
+           "SDL_WINDOW_UTILITY", "SDL_WINDOW_TOOLTIP", "SDL_WINDOW_POPUP_MENU",
            "SDL_WINDOWPOS_UNDEFINED_MASK", "SDL_WINDOWPOS_UNDEFINED_DISPLAY",
            "SDL_WINDOWPOS_UNDEFINED", "SDL_WINDOWPOS_ISUNDEFINED",
            "SDL_WINDOWPOS_CENTERED_MASK", "SDL_WINDOWPOS_CENTERED_DISPLAY",
@@ -25,6 +27,7 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_WINDOWEVENT_RESTORED", "SDL_WINDOWEVENT_ENTER",
            "SDL_WINDOWEVENT_LEAVE", "SDL_WINDOWEVENT_FOCUS_GAINED",
            "SDL_WINDOWEVENT_FOCUS_LOST", "SDL_WINDOWEVENT_CLOSE",
+           "SDL_WINDOWEVENT_TAKE_FOCUS", "SDL_WINDOWEVENT_HIT_TEST",
            "SDL_GLContext", "SDL_GLattr", "SDL_GL_RED_SIZE",
            "SDL_GL_GREEN_SIZE", "SDL_GL_BLUE_SIZE", "SDL_GL_ALPHA_SIZE",
            "SDL_GL_BUFFER_SIZE", "SDL_GL_DOUBLEBUFFER", "SDL_GL_DEPTH_SIZE",
@@ -83,14 +86,17 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_GetAttribute", "SDL_GL_CreateContext",
            "SDL_GL_MakeCurrent", "SDL_GL_SetSwapInterval",
            "SDL_GL_GetSwapInterval", "SDL_GL_SwapWindow",
-           "SDL_GL_GetDrawableSize",
-           "SDL_GL_GetCurrentWindow", "SDL_GL_GetCurrentContext",
-           "SDL_GL_DeleteContext", "SDL_GL_ResetAttributes",
-           "SDL_GLcontextReleaseFlag",
+           "SDL_GL_GetDrawableSize", "SDL_GL_GetCurrentWindow",
+           "SDL_GL_GetCurrentContext", "SDL_GL_DeleteContext",
+           "SDL_GL_ResetAttributes", "SDL_GLcontextReleaseFlag",
            "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE",
            "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH",
-           "SDL_GetDisplayDPI"
-       ]
+           "SDL_GetDisplayDPI", "SDL_GetDisplayUsableBounds",
+           "SDL_GetWindowBordersSize", "SDL_GetWindowOpacity",
+           "SDL_SetWindowOpacity", "SDL_SetWindowInputFocus",
+           "SDL_SetWindowModalFor", "SDL_SetWindowResizable"
+          ]
+
 
 class SDL_DisplayMode(Structure):
     _fields_ = [("format", Uint32),
@@ -98,7 +104,7 @@ class SDL_DisplayMode(Structure):
                 ("h", c_int),
                 ("refresh_rate", c_int),
                 ("driverdata", c_void_p)
-                ]
+               ]
     def __init__(self, format_=0, w=0, h=0, refresh_rate=0):
         super(SDL_DisplayMode, self).__init__()
         self.format = format_
@@ -137,6 +143,11 @@ SDL_WINDOW_FULLSCREEN_DESKTOP = (SDL_WINDOW_FULLSCREEN | 0x00001000)
 SDL_WINDOW_FOREIGN = 0x00000800
 SDL_WINDOW_ALLOW_HIGHDPI = 0x00002000
 SDL_WINDOW_MOUSE_CAPTURE = 0x00004000
+SDL_WINDOW_ALWAYS_ON_TOP = 0x00008000
+SDL_WINDOW_SKIP_TASKBAR  = 0x00010000
+SDL_WINDOW_UTILITY = 0x00020000
+SDL_WINDOW_TOOLTIP = 0x00040000
+SDL_WINDOW_POPUP_MENU = 0x00080000
 
 SDL_WINDOWPOS_UNDEFINED_MASK = 0x1FFF0000
 SDL_WINDOWPOS_UNDEFINED_DISPLAY = lambda x: (SDL_WINDOWPOS_UNDEFINED_MASK | x)
@@ -165,6 +176,8 @@ SDL_WINDOWEVENT_LEAVE = 11
 SDL_WINDOWEVENT_FOCUS_GAINED = 12
 SDL_WINDOWEVENT_FOCUS_LOST = 13
 SDL_WINDOWEVENT_CLOSE = 14
+SDL_WINDOWEVENT_TAKE_FOCUS = 15
+SDL_WINDOWEVENT_HIT_TEST = 16
 
 SDL_GLContext = c_void_p
 SDL_GLattr = c_int
@@ -281,6 +294,13 @@ SDL_EnableScreenSaver = _bind("SDL_EnableScreenSaver")
 SDL_DisableScreenSaver = _bind("SDL_DisableScreenSaver")
 SDL_SetWindowHitTest = _bind("SDL_SetWindowHitTest", [POINTER(SDL_Window), SDL_HitTest, c_void_p], c_int, optfunc=nullfunc)
 SDL_GetDisplayDPI = _bind("SDL_GetDisplayDPI", [c_int, POINTER(c_float), POINTER(c_float), POINTER(c_float)], c_int, optfunc=nullfunc)
+SDL_GetDisplayUsableBounds = _bind("SDL_GetDisplayUsableBounds", [c_int, POINTER(SDL_Rect)], c_int, optfunc=nullfunc)
+SDL_GetWindowBordersSize = _bind("SDL_GetWindowBordersSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int), POINTER(c_int), POINTER(c_int)], c_int, optfunc=nullfunc)
+SDL_GetWindowOpacity = _bind("SDL_GetWindowOpacity", [POINTER(SDL_Window), POINTER(c_float)], c_int, optfunc=nullfunc)
+SDL_SetWindowOpacity = _bind("SDL_SetWindowOpacity", [POINTER(SDL_Window), c_float], c_int, optfunc=nullfunc)
+SDL_SetWindowInputFocus = _bind("SDL_SetWindowInputFocus", [POINTER(SDL_Window)], c_int, optfunc=nullfunc)
+SDL_SetWindowModalFor = _bind("SDL_SetWindowModalFor", [POINTER(SDL_Window), POINTER(SDL_Window)], c_int, optfunc=nullfunc)
+SDL_SetWindowResizable = _bind("SDL_SetWindowResizable", [POINTER(SDL_Window), SDL_bool], optfunc=nullfunc)
 
 SDL_GL_LoadLibrary = _bind("SDL_GL_LoadLibrary", [c_char_p], c_int)
 SDL_GL_GetProcAddress = _bind("SDL_GL_GetProcAddress", [c_char_p], c_void_p)

@@ -66,38 +66,37 @@ class SimpleTestResult(TestResult):
         self.verbose = verbose
         self.countcall = countcall
 
+    def startTest(self, test):
+        super(SimpleTestResult, self).startTest(test)
+        self.countcall(test)
+
     def addSkip(self, test, reason):
         TestResult.addSkip(self, test, reason)
         if self.verbose:
             self.stream.write("SKIPPED: %s [%s]%s" % (test, reason,
                                                       os.linesep))
             self.stream.flush()
-        self.countcall()
 
     def addSuccess(self, test):
         TestResult.addSuccess(self, test)
         if self.verbose:
             self.stream.write("OK:      %s%s" % (test, os.linesep))
             self.stream.flush()
-        self.countcall()
 
     def addError(self, test, err):
         TestResult.addError(self, test, err)
         if self.verbose:
             self.stream.write("ERROR:   %s%s" % (test, os.linesep))
             self.stream.flush()
-        self.countcall()
 
     def addFailure(self, test, err):
         TestResult.addFailure(self, test, err)
         if self.verbose:
             self.stream.write("FAILED:  %s%s" % (test, os.linesep))
             self.stream.flush()
-        self.countcall()
 
 
 class SimpleTestRunner(object):
-
     def __init__(self, stream=sys.stderr, verbose=False):
         self.stream = stream
         self.verbose = verbose
