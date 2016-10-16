@@ -63,14 +63,16 @@ Text rendering routines
 
       Checks, whether all characters in the passed *text* can be rendered.
 
-.. class:: FontManager(font_path : str[, alias=None[, size=16[, color=Color(255, 255, 255)[, bg_color=Color(0, 0, 0)]]]])
+.. class:: FontManager(font_path : str[, alias=None[, size=16[, color=Color(255, 255, 255)[, bg_color=Color(0, 0, 0)[, index=0]]]]])
 
    Manage fonts and rendering of text.
 
    One font path must be given to initialise the FontManager.
    :attr:`default_font` will be set to this font. *size* is the default
    font size in pixels. *color* and *bg_color* will give the FontManager
-   a default color.
+   a default color. *index* will select a specific font face from a file
+   containing multiple font faces. The first face is always at index 0. It can
+   be used for TTC (TrueType Font Collection) fonts.
 
    .. attribute:: bg_color
 
@@ -90,11 +92,12 @@ Text rendering routines
 
       The default font size in pixels.
 
-   .. method:: add(font_path : str[, alias=None[, size=None]]) -> sdl2.sdlttf.TTF_Font
+   .. method:: add(font_path : str[, alias=None[, size=None[, index=0]]])) -> sdl2.sdlttf.TTF_Font
 
       Add a font to the :class:`FontManager`. *alias* is by default the
       font name, any other name can be passed, *size* is the font size
-      in pixels and defaults to :attr:`size`. Returns the font pointer
+      in pixels and defaults to :attr:`size`. *index* selects a specific font
+      face from a TTC (TrueType Font Collection) file. Returns the font pointer
       stored in :attr:`fonts`.
 
    .. method:: close()
