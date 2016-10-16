@@ -74,6 +74,20 @@ Sprite, texture and pixel surface routines
    A simple, visible, pixel-based 2D object, implemented on top of SDL2
    textures.
 
+   .. attribute:: angle
+
+      The rotation angle for the :class:`TextureSprite`.
+
+   .. attribute:: center
+
+      The center to use for rotating the :class:`TextureSprite`. `None` will
+      reset the center to the default center of the :class:`TextureSprite`.
+
+   .. attribute:: flip
+
+      Allows the :class:`TextureSprite`to be flipped over its horizontal or
+      vertical axis via the appropriate SDL_FLIP_* value.
+
    .. attribute:: size
 
       The size of the :class:`TextureSprite` as tuple.
