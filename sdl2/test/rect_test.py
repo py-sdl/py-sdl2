@@ -422,9 +422,18 @@ class SDLRectTest(unittest.TestCase):
         self.assertTrue(ret)
         self.assertEqual(res, rect.SDL_Rect(0, 0, 1, 1))
 
-    @unittest.skip("not implemented")
     def test_SDL_PointInRect(self):
-        pass
+        r1 = rect.SDL_Rect(0, 0, 10, 10)
+        p = rect.SDL_Point(0, 0)
+        self.assertTrue(rect.SDL_PointInRect(p, r1))
+        p = rect.SDL_Point(10, 10)
+        self.assertFalse(rect.SDL_PointInRect(p, r1))
+        p = rect.SDL_Point(10, 3)
+        self.assertFalse(rect.SDL_PointInRect(p, r1))
+        p = rect.SDL_Point(3, 10)
+        self.assertFalse(rect.SDL_PointInRect(p, r1))
+        p = rect.SDL_Point(4, 2)
+        self.assertTrue(rect.SDL_PointInRect(p, r1))
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
