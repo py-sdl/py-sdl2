@@ -380,13 +380,29 @@ class TextureSprite(Sprite):
                                       byref(w), byref(h))
         if ret == -1:
             raise SDLError()
+        self.angle = 0.0
+        self.flip = render.SDL_FLIP_NONE
         self._size = w.value, h.value
+        self._center = None
 
     def __del__(self):
         """Releases the bound SDL_Texture."""
         if self.texture is not None:
             render.SDL_DestroyTexture(self.texture)
         self.texture = None
+
+    @property
+    def center(self):
+        """The center of the TextureSprite as tuple."""
+        return self._center
+
+    @center.setter
+    def center(self, value):
+        """Sets the center of the TextureSprite."""
+        if value != None:
+            self._center = rect.SDL_Point(value[0], value[1])
+        else:
+            self._center = None
 
     @property
     def size(self):
@@ -402,8 +418,9 @@ class TextureSprite(Sprite):
                                       byref(access), byref(w), byref(h))
         if ret == -1:
             raise SDLError()
-        return "TextureSprite(format=%d, access=%d, size=%s)" % \
-            (flags.value, access.value, (w.value, h.value))
+        return "TextureSprite(format=%d, access=%d, size=%s, angle=%f, center=%s)" % \
+            (flags.value, access.value, (w.value, h.value), self.angle,
+             (self.center.x, self.center.y))
 
 
 class SpriteFactory(object):
@@ -592,7 +609,7 @@ class SpriteRenderSystem(System):
         self.componenttypes = (Sprite,)
         self._sortfunc = lambda e: e.depth
 
-    def render(self, sprites):
+    def render(self, sprites, x=None, y=None):
         """Renders the passed sprites.
 
         This is a no-op function and needs to be implemented by inheriting
@@ -721,8 +738,8 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
         denote the absolute position of the TextureSprite, if set.
         """
         r = rect.SDL_Rect(0, 0, 0, 0)
+        rcopy = render.SDL_RenderCopyEx
         if isiterable(sprites):
-            rcopy = render.SDL_RenderCopy
             renderer = self.sdlrenderer
             x = x or 0
             y = y or 0
@@ -730,7 +747,8 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
                 r.x = x + sp.x
                 r.y = y + sp.y
                 r.w, r.h = sp.size
-                if rcopy(renderer, sp.texture, None, r) == -1:
+                if rcopy(renderer, sp.texture, None, r, sp.angle, sp.center,
+                         sp.flip) == -1:
                     raise SDLError()
         else:
             r.x = sprites.x
@@ -739,5 +757,7 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
             if x is not None and y is not None:
                 r.x = x
                 r.y = y
-            render.SDL_RenderCopy(self.sdlrenderer, sprites.texture, None, r)
+            if rcopy(self.sdlrenderer, sprites.texture, None, r, sprites.angle,
+                     sprites.center, sprites.flip) == -1:
+                raise SDLError()
         render.SDL_RenderPresent(self.sdlrenderer)
