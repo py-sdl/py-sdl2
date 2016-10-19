@@ -5,7 +5,7 @@ This software packages was created and is maintained and improved by
 with contributions from
 
 * Steven Johnson
-* Marcel Rodrigues 
+* Marcel Rodrigues
 * Dan Gillett
 
 Thanks to everyone else for their assistance, support, fixes and improvements:
@@ -14,4 +14,4 @@ Sven Eckelmann, Marcel Rodrigues, Michael McCandless, Andreas Schiefer,
 Franz Schrober, Roger Flores, otus, Mihail Latyshov, Todd Rovito, Bil Bas,
 Dan McCombs, William Manire, Radomir Dopieralski, Joe Polak, Jordan F, DR0ID,
 Filip M. Nowak, David Farler, Max Bareiss, Kenneth Long, Robert Winkler,
-Jones Romao, smea lum, Linus Heckemann
+Jones Romao, smea lum, Linus Heckemann, DBLobster

@@ -18,33 +18,33 @@ def draw_lines(context, width, height):
     lw = 5
     x0, x1 = whalf, whalf
     y0, y1 = 0, height
-    sdl2.sdlgfx.thickLineColor(context.renderer, x0, y0, x1, y1, lw,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, x0, y0, x1, y1, lw,
                                0xFFFFFFFF)
     x0, x1 = 0, width
     y0, y1 = hhalf, hhalf
-    sdl2.sdlgfx.thickLineColor(context.renderer, x0, y0, x1, y1, lw,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, x0, y0, x1, y1, lw,
                                0xFFFFFFFF)
     for x in range(15):
         # In the first quadrant, draw normal lines
         color = randint(0, 0xFFFFFFFF)
         x0, x1 = randint(0, whalf), randint(0, whalf)
         y0, y1 = randint(0, hhalf), randint(0, hhalf)
-        sdl2.sdlgfx.lineColor(context.renderer, x0, y0, x1, y1, color)
+        sdl2.sdlgfx.lineColor(context.sdlrenderer, x0, y0, x1, y1, color)
         # In the second quadrant, draw aa lines
         color = randint(0, 0xFFFFFFFF)
         x0, x1 = randint(whalf + lw, width), randint(whalf + lw, width)
         y0, y1 = randint(0, hhalf), randint(0, hhalf)
-        sdl2.sdlgfx.aalineColor(context.renderer, x0, y0, x1, y1, color)
+        sdl2.sdlgfx.aalineColor(context.sdlrenderer, x0, y0, x1, y1, color)
         # In the third quadrant, draw horizontal lines
         color = randint(0, 0xFFFFFFFF)
         x0, x1 = randint(0, whalf), randint(0, whalf)
         y0 = randint(hhalf + lw, height)
-        sdl2.sdlgfx.hlineColor(context.renderer, x0, x1, y0, color)
+        sdl2.sdlgfx.hlineColor(context.sdlrenderer, x0, x1, y0, color)
         # In the fourth quadrant, draw vertical lines
         color = randint(0, 0xFFFFFFFF)
         x0 = randint(whalf + lw, width)
         y0, y1 = randint(hhalf + lw, height), randint(hhalf + lw, height)
-        sdl2.sdlgfx.vlineColor(context.renderer, x0, y0, y1, color)
+        sdl2.sdlgfx.vlineColor(context.sdlrenderer, x0, y0, y1, color)
 
 
 # Draws random circles using the passed rendering context
@@ -54,27 +54,27 @@ def draw_circles(context, width, height):
     # Split the visible area
     wthird = width // 3 - 1
     lw = 3
-    sdl2.sdlgfx.thickLineColor(context.renderer, wthird, 0, wthird, height,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, wthird, 0, wthird, height,
                                lw, 0xFFFFFFFF)
-    sdl2.sdlgfx.thickLineColor(context.renderer, (2 * wthird + lw), 0,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, (2 * wthird + lw), 0,
                                (2 * wthird + lw), height, lw, 0xFFFFFFFF)
     for x in range(15):
         # In the first part, draw circles
         color = randint(0, 0xFFFFFFFF)
         x, y = randint(0, wthird), randint(0, height)
         r = randint(1, max(min(x, wthird - x), 2))
-        sdl2.sdlgfx.circleColor(context.renderer, x, y, r, color)
+        sdl2.sdlgfx.circleColor(context.sdlrenderer, x, y, r, color)
         # In the second part, draw aa circles
         color = randint(0, 0xFFFFFFFF)
         x, y = randint(0, wthird), randint(0, height)
         r = randint(1, max(min(x, wthird - x), 2))
-        sdl2.sdlgfx.aacircleColor(context.renderer, x + wthird + lw, y, r,
+        sdl2.sdlgfx.aacircleColor(context.sdlrenderer, x + wthird + lw, y, r,
                                   color)
         # In the third part, draw filled circles
         color = randint(0, 0xFFFFFFFF)
         x, y = randint(0, wthird), randint(0, height)
         r = randint(1, max(min(x, wthird - x), 2))
-        sdl2.sdlgfx.filledCircleColor(context.renderer, x + 2 * (wthird + lw),
+        sdl2.sdlgfx.filledCircleColor(context.sdlrenderer, x + 2 * (wthird + lw),
                                       y, r, color)
 
 
@@ -86,27 +86,27 @@ def draw_ellipsis(context, width, height):
     wthird = width // 3 - 1
     eheight = height // 4
     lw = 3
-    sdl2.sdlgfx.thickLineColor(context.renderer, wthird, 0, wthird, height,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, wthird, 0, wthird, height,
                                lw, 0xFFFFFFFF)
-    sdl2.sdlgfx.thickLineColor(context.renderer, (2 * wthird + lw), 0,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, (2 * wthird + lw), 0,
                                (2 * wthird + lw), height, lw, 0xFFFFFFFF)
     for x in range(15):
         # In the first part, draw ellipsis
         color = randint(0, 0xFFFFFFFF)
         x, y = randint(0, wthird), randint(0, height)
         rx, ry = randint(1, max(min(x, wthird - x), 2)), randint(0, eheight)
-        sdl2.sdlgfx.ellipseColor(context.renderer, x, y, rx, ry, color)
+        sdl2.sdlgfx.ellipseColor(context.sdlrenderer, x, y, rx, ry, color)
         # In the second part, draw aa ellipsis
         color = randint(0, 0xFFFFFFFF)
         x, y = randint(0, wthird), randint(0, height)
         rx, ry = randint(1, max(min(x, wthird - x), 2)), randint(0, eheight)
-        sdl2.sdlgfx.aaellipseColor(context.renderer, x + wthird + lw, y,
+        sdl2.sdlgfx.aaellipseColor(context.sdlrenderer, x + wthird + lw, y,
                                    rx, ry, color)
         # In the third part, draw filled ellipsis
         color = randint(0, 0xFFFFFFFF)
         x, y = randint(0, wthird), randint(0, height)
         rx, ry = randint(1, max(min(x, wthird - x), 2)), randint(0, eheight)
-        sdl2.sdlgfx.filledEllipseColor(context.renderer,
+        sdl2.sdlgfx.filledEllipseColor(context.sdlrenderer,
                                        x + 2 * (wthird + lw), y, rx, ry,
                                        color)
 
@@ -121,36 +121,36 @@ def draw_rects(context, width, height):
     lw = 5
     x0, x1 = whalf, whalf
     y0, y1 = 0, height
-    sdl2.sdlgfx.thickLineColor(context.renderer, x0, y0, x1, y1, lw,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, x0, y0, x1, y1, lw,
                                0xFFFFFFFF)
     x0, x1 = 0, width
     y0, y1 = hhalf, hhalf
-    sdl2.sdlgfx.thickLineColor(context.renderer, x0, y0, x1, y1, lw,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, x0, y0, x1, y1, lw,
                                0xFFFFFFFF)
     for x in range(15):
         # In the first quadrant, draw normal rectangles
         color = randint(0, 0xFFFFFFFF)
         x0, x1 = randint(0, whalf), randint(0, whalf)
         y0, y1 = randint(0, hhalf), randint(0, hhalf)
-        sdl2.sdlgfx.rectangleColor(context.renderer, x0, y0, x1, y1, color)
+        sdl2.sdlgfx.rectangleColor(context.sdlrenderer, x0, y0, x1, y1, color)
         # In the second quadrant, draw rounded rectangles
         color = randint(0, 0xFFFFFFFF)
         x0, x1 = randint(whalf + lw, width), randint(whalf + lw, width)
         y0, y1 = randint(0, hhalf), randint(0, hhalf)
         r = randint(0, max(x1 - x0, x0 - x1))
-        sdl2.sdlgfx.roundedRectangleColor(context.renderer, x0, y0, x1, y1, r,
+        sdl2.sdlgfx.roundedRectangleColor(context.sdlrenderer, x0, y0, x1, y1, r,
                                           color)
         # In the third quadrant, draw horizontal lines
         color = randint(0, 0xFFFFFFFF)
         x0, x1 = randint(0, whalf), randint(0, whalf)
         y0, y1 = randint(hhalf + lw, height), randint(hhalf + lw, height)
-        sdl2.sdlgfx.boxColor(context.renderer, x0, y0, x1, y1, color)
+        sdl2.sdlgfx.boxColor(context.sdlrenderer, x0, y0, x1, y1, color)
         # In the fourth quadrant, draw vertical lines
         color = randint(0, 0xFFFFFFFF)
         x0, x1 = randint(whalf + lw, width), randint(whalf + lw, width)
         y0, y1 = randint(hhalf + lw, height), randint(hhalf + lw, height)
         r = randint(1, max(x1 - x0, x0 - x1))
-        sdl2.sdlgfx.roundedBoxColor(context.renderer, x0, y0, x1, y1, r,
+        sdl2.sdlgfx.roundedBoxColor(context.sdlrenderer, x0, y0, x1, y1, r,
                                     color)
 
 
@@ -161,9 +161,9 @@ def draw_trigons(context, width, height):
     # Split the visible area
     wthird = width // 3 - 1
     lw = 3
-    sdl2.sdlgfx.thickLineColor(context.renderer, wthird, 0, wthird, height,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, wthird, 0, wthird, height,
                                lw, 0xFFFFFFFF)
-    sdl2.sdlgfx.thickLineColor(context.renderer, (2 * wthird + lw), 0,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, (2 * wthird + lw), 0,
                                (2 * wthird + lw), height, lw, 0xFFFFFFFF)
     for x in range(15):
         # In the first part, draw triangles
@@ -171,21 +171,21 @@ def draw_trigons(context, width, height):
         x0, y0 = randint(0, wthird), randint(0, height)
         x1, y1 = randint(0, wthird), randint(0, height)
         x2, y2 = randint(0, wthird), randint(0, height)
-        sdl2.sdlgfx.trigonColor(context.renderer, x0, y0, x1, y1, x2, y2,
+        sdl2.sdlgfx.trigonColor(context.sdlrenderer, x0, y0, x1, y1, x2, y2,
                                 color)
         # In the second part, draw aa triangles
         color = randint(0, 0xFFFFFFFF)
         x0, y0 = randint(0, wthird) + wthird + lw, randint(0, height)
         x1, y1 = randint(0, wthird) + wthird + lw, randint(0, height)
         x2, y2 = randint(0, wthird) + wthird + lw, randint(0, height)
-        sdl2.sdlgfx.aatrigonColor(context.renderer, x0, y0, x1, y1, x2, y2,
+        sdl2.sdlgfx.aatrigonColor(context.sdlrenderer, x0, y0, x1, y1, x2, y2,
                                   color)
         # In the third part, draw filled triangles
         color = randint(0, 0xFFFFFFFF)
         x0, y0 = randint(0, wthird) + 2 * (wthird + lw), randint(0, height)
         x1, y1 = randint(0, wthird) + 2 * (wthird + lw), randint(0, height)
         x2, y2 = randint(0, wthird) + 2 * (wthird + lw), randint(0, height)
-        sdl2.sdlgfx.filledTrigonColor(context.renderer, x0, y0, x1, y1,
+        sdl2.sdlgfx.filledTrigonColor(context.sdlrenderer, x0, y0, x1, y1,
                                       x2, y2, color)
 
 
@@ -196,9 +196,9 @@ def draw_polygons(context, width, height):
     # Split the visible area
     wthird = width // 3 - 1
     lw = 3
-    sdl2.sdlgfx.thickLineColor(context.renderer, wthird, 0, wthird, height,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, wthird, 0, wthird, height,
                                lw, 0xFFFFFFFF)
-    sdl2.sdlgfx.thickLineColor(context.renderer, (2 * wthird + lw), 0,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, (2 * wthird + lw), 0,
                                (2 * wthird + lw), height, lw, 0xFFFFFFFF)
     for x in range(5):
         # In the first part, draw polygons
@@ -210,7 +210,7 @@ def draw_polygons(context, width, height):
             ylist[k] = randint(0, height)
         xptr = ctypes.cast(xlist, ctypes.POINTER(sdl2.Sint16))
         yptr = ctypes.cast(ylist, ctypes.POINTER(sdl2.Sint16))
-        sdl2.sdlgfx.polygonColor(context.renderer, xptr, yptr, ptcount, color)
+        sdl2.sdlgfx.polygonColor(context.sdlrenderer, xptr, yptr, ptcount, color)
         # In the second part, draw aa polygons
         color = randint(0, 0xFFFFFFFF)
         ptcount = randint(3, 10)
@@ -220,7 +220,7 @@ def draw_polygons(context, width, height):
             ylist[k] = randint(0, height)
         xptr = ctypes.cast(xlist, ctypes.POINTER(sdl2.Sint16))
         yptr = ctypes.cast(ylist, ctypes.POINTER(sdl2.Sint16))
-        sdl2.sdlgfx.aapolygonColor(context.renderer, xptr, yptr, ptcount,
+        sdl2.sdlgfx.aapolygonColor(context.sdlrenderer, xptr, yptr, ptcount,
                                    color)
         # In the third part, draw filled polygons
         color = randint(0, 0xFFFFFFFF)
@@ -231,7 +231,7 @@ def draw_polygons(context, width, height):
             ylist[k] = randint(0, height)
         xptr = ctypes.cast(xlist, ctypes.POINTER(sdl2.Sint16))
         yptr = ctypes.cast(ylist, ctypes.POINTER(sdl2.Sint16))
-        sdl2.sdlgfx.filledPolygonColor(context.renderer, xptr, yptr, ptcount,
+        sdl2.sdlgfx.filledPolygonColor(context.sdlrenderer, xptr, yptr, ptcount,
                                        color)
 
 
@@ -245,11 +245,11 @@ def draw_mixed(context, width, height):
     lw = 5
     x0, x1 = whalf, whalf
     y0, y1 = 0, height
-    sdl2.sdlgfx.thickLineColor(context.renderer, x0, y0, x1, y1, lw,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, x0, y0, x1, y1, lw,
                                0xFFFFFFFF)
     x0, x1 = 0, width
     y0, y1 = hhalf, hhalf
-    sdl2.sdlgfx.thickLineColor(context.renderer, x0, y0, x1, y1, lw,
+    sdl2.sdlgfx.thickLineColor(context.sdlrenderer, x0, y0, x1, y1, lw,
                                0xFFFFFFFF)
     for x in range(15):
         # In the first quadrant, draw arcs
@@ -257,7 +257,7 @@ def draw_mixed(context, width, height):
         x0, y0 = randint(0, whalf), randint(0, hhalf)
         rad = randint(0, min(whalf - x0, hhalf - y0))
         start, end = randint(0, 360), randint(0, 360)
-        sdl2.sdlgfx.arcColor(context.renderer, x0, y0, rad, start, end, color)
+        sdl2.sdlgfx.arcColor(context.sdlrenderer, x0, y0, rad, start, end, color)
         # In the second quadrant, draw bezier curves
         color = randint(0, 0xFFFFFFFF)
         ptcount = randint(3, 10)
@@ -268,20 +268,20 @@ def draw_mixed(context, width, height):
         steps = randint(2, 10)
         xptr = ctypes.cast(xlist, ctypes.POINTER(sdl2.Sint16))
         yptr = ctypes.cast(ylist, ctypes.POINTER(sdl2.Sint16))
-        sdl2.sdlgfx.bezierColor(context.renderer, xptr, yptr, ptcount, steps,
+        sdl2.sdlgfx.bezierColor(context.sdlrenderer, xptr, yptr, ptcount, steps,
                                 color)
         # In the third quadrant, draw pies
         color = randint(0, 0xFFFFFFFF)
         x0, y0 = randint(0, whalf), randint(hhalf + lw, height)
         rad = randint(0, min(whalf - x0, y0 - (hhalf + lw)))
         start, end = randint(0, 360), randint(0, 360)
-        sdl2.sdlgfx.pieColor(context.renderer, x0, y0, rad, start, end, color)
+        sdl2.sdlgfx.pieColor(context.sdlrenderer, x0, y0, rad, start, end, color)
         # In the fourth quadrant, draw filled pies
         color = randint(0, 0xFFFFFFFF)
         x0, y0 = randint(whalf + lw, width), randint(hhalf + lw, height)
         rad = randint(0, min(x0 - (whalf + lw), y0 - (hhalf + lw)))
         start, end = randint(0, 360), randint(0, 360)
-        sdl2.sdlgfx.filledPieColor(context.renderer, x0, y0, rad, start, end,
+        sdl2.sdlgfx.filledPieColor(context.sdlrenderer, x0, y0, rad, start, end,
                                    color)
 
 
@@ -305,7 +305,7 @@ def run():
                  (draw_trigons, (context, 800, 600)),
                  (draw_polygons, (context, 800, 600)),
                  (draw_mixed, (context, 800, 600))
-                 )
+                )
 
     # A storage variable for the function we are currently on, so that we know
     # which function to execute next.

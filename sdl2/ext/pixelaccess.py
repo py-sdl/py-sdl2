@@ -143,7 +143,7 @@ def pixels2d(source):
               2: numpy.uint16,
               3: numpy.uint32,
               4: numpy.uint32
-              }
+             }
 
     if SDL_MUSTLOCK(psurface):
         SDL_LockSurface(psurface)

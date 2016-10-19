@@ -1,11 +1,17 @@
 import sys
 import ctypes
 import unittest
-from .. import version
+from .. import version, __version__, version_info
 
 
 class SDLVersionTest(unittest.TestCase):
     __tags__ = ["sdl"]
+
+    def test___version__(self):
+        self.assertEqual(__version__, "0.9.5")
+
+    def test_version_info(self):
+        self.assertEqual(version_info, (0, 9, 5, ""))
 
     def test_SDL_version(self):
         v = version.SDL_version(0, 0, 0)
