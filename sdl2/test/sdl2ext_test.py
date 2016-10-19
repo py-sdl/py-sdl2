@@ -24,9 +24,19 @@ class SDL2ExtTest(unittest.TestCase):
         sdl2ext.quit()
         self.assertNotEqual(SDL_WasInit(SDL_INIT_VIDEO), SDL_INIT_VIDEO)
 
-    @unittest.skip("not implemented")
     def test_get_events(self):
-        pass
+        sdl2ext.init()
+        SDL_FlushEvent(SDL_FIRSTEVENT, SDL_LASTEVENT)
+        for x in range(10):
+            event = SDL_Event()
+            event.type = SDL_USEREVENT + 1
+            event.user = SDL_UserEvent(type=event.type, timestamp=0,
+                                       windowID=0, code=0)
+            SDL_PushEvent(event)
+        results = sdl2ext.get_events()
+        self.assertEqual(len(results), 10)
+        for ev in results:
+            self.assertEqual(ev.type, (SDL_USEREVENT + 1))
 
     def test_get_events_issue_6(self):
         sdl2ext.init()

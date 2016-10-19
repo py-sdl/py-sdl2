@@ -112,7 +112,7 @@ class ParticleRenderSystem(sdl2.ext.System):
         dorender = sdl2.SDL_RenderCopy
 
         # And some more shortcuts.
-        sdlrenderer = self.renderer.renderer
+        sdlrenderer = self.renderer.sdlrenderer
         images = self.images
         # Before rendering all particles, make sure the old ones are
         # removed from the window by filling it with a black color.
@@ -195,7 +195,7 @@ def run():
     sdl2.SDL_ShowCursor(0)
 
     # Create the rendering system for the particles. This is somewhat
-    # similar to the SoftSpriteRenderer, but since we only operate with
+    # similar to the SoftSpriteRenderSystem, but since we only operate with
     # hundreds of particles (and not sprites with all their overhead),
     # we need an own rendering system.
     particlerenderer = ParticleRenderSystem(renderer, images)

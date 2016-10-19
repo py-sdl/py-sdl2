@@ -47,7 +47,7 @@ class BitmapFont(object):
                   "klmnopqrst",
                   "uvwxyz    ",
                   ",;.:!?+-()"
-                  ]
+                ]
 
 
     def __init__(self, imgsurface, size, mapping=None):

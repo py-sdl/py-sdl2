@@ -85,7 +85,7 @@ Sprite, texture and pixel surface routines
 
    .. attribute:: flip
 
-      Allows the :class:`TextureSprite`to be flipped over its horizontal or
+      Allows the :class:`TextureSprite` to be flipped over its horizontal or
       vertical axis via the appropriate SDL_FLIP_* value.
 
    .. attribute:: size
@@ -291,7 +291,7 @@ Sprite, texture and pixel surface routines
    :class:`SoftwareSprite` or :class:`sdl2.SDL_Surface`, the *index*
    and *flags* arguments are ignored.
 
-   .. attribute:: renderer
+   .. attribute:: sdlrenderer
 
       The underlying :class:`sdl2.SDL_Renderer`.
 
@@ -337,12 +337,16 @@ Sprite, texture and pixel surface routines
       Clears the rendering context with the currently set or passed
       *color*.
 
-   .. method:: copy(src : obj[, srcrect=None[, dstrect=None]]) -> None
+   .. method:: copy(src : obj[, srcrect=None[, dstrect=None[, angle=0[, center=None[, flip=render.SDL_FLIP_NONE]]]]]) -> None
 
       Copies (blits) the passed *src*, which can be a :class:`TextureSprite` or
       :class:`sdl2.SDL_Texture`, to the target of the
       :class:`Renderer`. *srcrect* is the source rectangle to be used for
       clipping portions of *src*. *dstrect* is the destination rectangle.
+      *angle* will cause the texture to be rotated around *center* by the given
+      degrees. *flip* can be one of the SDL_FLIP_* constants and will flip the
+      texture over its horizontal or vertical middle axis. If *src* is a
+      :class:`TextureSprite`, *angle*, *center* and *flip
 
    .. method:: draw_line(points : iterable[, color=None]) -> None
 

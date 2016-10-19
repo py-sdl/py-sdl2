@@ -597,7 +597,7 @@ class SDLVideoTest(unittest.TestCase):
                  video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
         for flag in flags:
             window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flag)
-            self.assertFalse(video.SDL_GetWindowGrab(window))
+            self.assertEqual(video.SDL_GetWindowGrab(window), SDL_FALSE)
             video.SDL_SetWindowGrab(window, SDL_TRUE)
             self.assertEqual(video.SDL_GetWindowGrab(window), SDL_TRUE)
             video.SDL_SetWindowGrab(window, SDL_FALSE)
