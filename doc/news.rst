@@ -4,13 +4,14 @@ This describes the latest changes between the PySDL2 releases.
 
 0.9.5
 -----
+Released on 2016-10-20.
 
 * updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.5)
 * fixed issue #94: added support for TrueType font collection (TTC) files
 * fixed issue #80: added flip and rotation support for TextureSprite objects
-* renamed :class:`sdl2.ext.Renderer.renderer` attribute to
-  :class:`sdl2.ext.Renderer.sdlrenderer`. The `renderer` attribute is deprecated
-  and will be removed in a later version.
+* renamed :attr:`sdl2.ext.Renderer.renderer` attribute to
+  :attr:`sdl2.ext.Renderer.sdlrenderer`. The `renderer` attribute is
+  deprecated and will be removed in a later version.
 
 0.9.4
 -----
