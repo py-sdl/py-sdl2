@@ -59,7 +59,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         def _inarea(x, y, rs):
             for r in rs:
                 if (x >= r[0] and x < (r[0] + r[2]) and
-                    y >= r[1] and y < (r[1] + r[3])):
+                        y >= r[1] and y < (r[1] + r[3])):
                     return True
             return False
         msg = "color mismatch at %d,%d: %d not in %s"
@@ -164,13 +164,15 @@ class SDL2ExtSpriteTest(unittest.TestCase):
             for h in range(1, 100):
                 sprite = factory.create_texture_sprite(renderer, size=(w, h))
                 self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+                del sprite
 
         # Test different access flags
         for flag in (SDL_TEXTUREACCESS_STATIC, SDL_TEXTUREACCESS_STREAMING,
-                     SDL_TEXTUREACCESS_TARGET, 22):
+                     SDL_TEXTUREACCESS_TARGET):
             sprite = factory.create_texture_sprite(renderer, size=(64, 64),
                                                    access=flag)
             self.assertIsInstance(sprite, sdl2ext.TextureSprite)
+            del sprite
         dogc()
 
     def test_SpriteFactory_from_image(self):
@@ -233,10 +235,10 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.assertRaises(KeyError, sfactory.from_text, "Test")
 
         # Passing various keywords arguments
-        sprite = sfactory.from_text("Test", fontmanager = fm)
+        sprite = sfactory.from_text("Test", fontmanager=fm)
         self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
 
-        sprite = sfactory.from_text("Test", fontmanager = fm, alias="tuffy")
+        sprite = sfactory.from_text("Test", fontmanager=fm, alias="tuffy")
         self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
 
         # Get text from a texture sprite factory
@@ -586,7 +588,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                                   0x000000FF)
         renderer = sdl2ext.Renderer(sf.contents)
         self.assertIsInstance(renderer.color, sdl2ext.Color)
-        self.assertEqual(renderer.color, sdl2ext.Color(0, 0, 0 ,0))
+        self.assertEqual(renderer.color, sdl2ext.Color(0, 0, 0, 0))
         renderer.color = 0x00FF0000
         self.assertEqual(renderer.color, sdl2ext.Color(0xFF, 0, 0, 0))
         renderer.clear()
@@ -616,7 +618,7 @@ class SDL2ExtSpriteTest(unittest.TestCase):
                                   0x000000FF)
         renderer = sdl2ext.Renderer(sf.contents)
         self.assertIsInstance(renderer.color, sdl2ext.Color)
-        self.assertEqual(renderer.color, sdl2ext.Color(0, 0, 0 ,0))
+        self.assertEqual(renderer.color, sdl2ext.Color(0, 0, 0, 0))
         renderer.color = 0x00FF0000
         self.assertEqual(renderer.color, sdl2ext.Color(0xFF, 0, 0, 0))
         renderer.clear()
@@ -668,24 +670,24 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         renderer = sdl2ext.Renderer(surface)
         renderer.draw_rect((40, 50, 32, 32), 0x0000FF)
         view = sdl2ext.PixelView(surface)
-        self.check_lines(view, 128, 128,
-            [((40, 50), (71, 50)),
-             ((40, 50), (40, 81)),
-             ((40, 81), (71, 81)),
-             ((71, 50), (71, 81))], 0x0000FF, (0x0,))
+        self.check_lines(view, 128, 128, [
+            ((40, 50), (71, 50)),
+            ((40, 50), (40, 81)),
+            ((40, 81), (71, 81)),
+            ((71, 50), (71, 81))], 0x0000FF, (0x0,))
         del view
         sdl2ext.fill(surface, 0x0)
         renderer.draw_rect([(5, 5, 10, 10), (20, 15, 8, 10)], 0x0000FF)
         view = sdl2ext.PixelView(surface)
-        self.check_lines(view, 128, 128,
-            [((5, 5), (14, 5)),
-             ((5, 5), (5, 14)),
-             ((5, 14), (14, 14)),
-             ((14, 5), (14, 14)),
-             ((20, 15), (27, 15)),
-             ((20, 15), (20, 24)),
-             ((20, 24), (27, 24)),
-             ((27, 15), (27, 24))], 0x0000FF, (0x0,))
+        self.check_lines(view, 128, 128, [
+            ((5, 5), (14, 5)),
+            ((5, 5), (5, 14)),
+            ((5, 14), (14, 14)),
+            ((14, 5), (14, 14)),
+            ((20, 15), (27, 15)),
+            ((20, 15), (20, 24)),
+            ((20, 24), (27, 24)),
+            ((27, 15), (27, 24))], 0x0000FF, (0x0,))
         del view
 
     @unittest.skipIf(_ISPYPY, "PyPy's ctypes can't do byref(value, offset)")
