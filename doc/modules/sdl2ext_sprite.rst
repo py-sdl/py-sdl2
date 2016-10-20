@@ -346,7 +346,8 @@ Sprite, texture and pixel surface routines
       *angle* will cause the texture to be rotated around *center* by the given
       degrees. *flip* can be one of the SDL_FLIP_* constants and will flip the
       texture over its horizontal or vertical middle axis. If *src* is a
-      :class:`TextureSprite`, *angle*, *center* and *flip
+      :class:`TextureSprite`, *angle*, *center* and *flip* will be set from
+      *src*'s attributes, if not provided.
 
    .. method:: draw_line(points : iterable[, color=None]) -> None
 
