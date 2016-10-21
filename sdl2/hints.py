@@ -1,5 +1,5 @@
 from ctypes import CFUNCTYPE, c_int, c_char_p, c_void_p
-from .dll import _bind
+from .dll import _bind, nullfunc
 from .stdinc import SDL_bool
 
 __all__ = ["SDL_HINT_FRAMEBUFFER_ACCELERATION", "SDL_HINT_RENDER_DRIVER",
@@ -105,7 +105,7 @@ SDL_HintPriority = c_int
 SDL_SetHintWithPriority = _bind("SDL_SetHintWithPriority", [c_char_p, c_char_p, SDL_HintPriority], SDL_bool)
 SDL_SetHint = _bind("SDL_SetHint", [c_char_p, c_char_p], SDL_bool)
 SDL_GetHint = _bind("SDL_GetHint", [c_char_p], c_char_p)
-SDL_GetHintBoolean = _bind("SDL_GetHintBoolean", [c_char_p, SDL_bool], SDL_bool)
+SDL_GetHintBoolean = _bind("SDL_GetHintBoolean", [c_char_p, SDL_bool], SDL_bool, optfunc=nullfunc)
 SDL_ClearHints = _bind("SDL_ClearHints")
 SDL_HintCallback = CFUNCTYPE(None, c_void_p, c_char_p, c_char_p, c_char_p)
 SDL_AddHintCallback = _bind("SDL_AddHintCallback", [c_char_p, SDL_HintCallback, c_void_p])
