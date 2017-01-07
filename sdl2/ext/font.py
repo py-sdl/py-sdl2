@@ -345,9 +345,20 @@ class FontManager(object):
         font = self.fonts[alias][size]
         text = byteify(text, "utf-8")
         if width:
-            sf = sdlttf.TTF_RenderUTF8_Blended_Wrapped(font, text, color,
-                                                       width)
-        elif bg_color == pixels.SDL_Color(0, 0, 0):
+            fontsf = sdlttf.TTF_RenderUTF8_Blended_Wrapped(font, text, color,
+                                                           width)
+            if not fontsf:
+                raise SDLError(sdlttf.TTF_GetError())
+            if bg_color != pixels.SDL_Color(0, 0, 0):
+                w, h = fontsf.w, fontsf.h
+                bpp = fontsf.format.BitsPerPixel
+                fmt = fontsf.format.format
+                bgsf = surface.SDL_CreateRGBSurfaceWithFormat(0, w, h, bpp, fmt)
+                surface.SDL_BlitSurface(fontsf, None, bgsf, None)
+                return bgsf.contents
+            return fontsf.contents
+        sf = None
+        if bg_color == pixels.SDL_Color(0, 0, 0):
             sf = sdlttf.TTF_RenderUTF8_Blended(font, text, color)
         else:
             sf = sdlttf.TTF_RenderUTF8_Shaded(font, text, color,
