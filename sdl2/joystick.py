@@ -1,6 +1,6 @@
 from ctypes import Structure, c_int, c_char_p, POINTER
 from .dll import _bind, nullfunc
-from .stdinc import Sint16, Sint32, Uint8, SDL_bool
+from .stdinc import Sint16, Sint32, Uint16, Uint8, SDL_bool
 
 __all__ = ["SDL_Joystick", "SDL_JoystickGUID", "SDL_JoystickID",
            "SDL_NumJoysticks", "SDL_JoystickNameForIndex", "SDL_JoystickOpen",
@@ -18,9 +18,11 @@ __all__ = ["SDL_Joystick", "SDL_JoystickGUID", "SDL_JoystickID",
            "SDL_JOYSTICK_POWER_UNKNOWN", "SDL_JOYSTICK_POWER_EMPTY",
            "SDL_JOYSTICK_POWER_LOW", "SDL_JOYSTICK_POWER_MEDIUM",
            "SDL_JOYSTICK_POWER_FULL", "SDL_JOYSTICK_POWER_WIRED",
-           "SDL_JOYSTICK_POWER_MAX","SDL_JoystickPowerLevel",
-           "SDL_JoystickCurrentPowerLevel", "SDL_JoystickFromInstanceID"
-           ]
+           "SDL_JOYSTICK_POWER_MAX", "SDL_JoystickPowerLevel",
+           "SDL_JoystickCurrentPowerLevel", "SDL_JoystickFromInstanceID",
+           "SDL_JoystickGetVendor", "SDL_JoystickGetProductVersion",
+           "SDL_JoystickGetProduct", "SDL_JoystickGetAxisInitialState"
+          ]
 
 SDL_JoystickPowerLevel = c_int
 
@@ -73,4 +75,7 @@ SDL_JoystickGetButton = _bind("SDL_JoystickGetButton", [POINTER(SDL_Joystick), c
 SDL_JoystickClose = _bind("SDL_JoystickClose", [POINTER(SDL_Joystick)])
 SDL_JoystickCurrentPowerLevel = _bind("SDL_JoystickCurrentPowerLevel", [POINTER(SDL_Joystick)], SDL_JoystickPowerLevel, nullfunc)
 SDL_JoystickFromInstanceID = _bind("SDL_JoystickFromInstanceID", [SDL_JoystickID], POINTER(SDL_Joystick), nullfunc)
-
+SDL_JoystickGetVendor = _bind("SDL_JoystickGetVendor", [POINTER(SDL_Joystick)], Uint16, nullfunc)
+SDL_JoystickGetProduct = _bind("SDL_JoystickGetProduct", [POINTER(SDL_Joystick)], Uint16, nullfunc)
+SDL_JoystickGetProductVersion = _bind("SDL_JoystickGetProductVersion", [POINTER(SDL_Joystick)], Uint16, nullfunc)
+SDL_JoystickGetAxisInitialState = _bind("SDL_JoystickGetAxisInitialState", [POINTER(SDL_Joystick), c_int, POINTER(Sint16)], SDL_bool, nullfunc)
