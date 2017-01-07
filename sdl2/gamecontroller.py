@@ -1,6 +1,6 @@
 from ctypes import Structure, Union, c_int, c_char_p, POINTER
 from .dll import _bind, nullfunc
-from .stdinc import SDL_bool, Sint16, Uint8
+from .stdinc import SDL_bool, Sint16, Uint16, Uint8
 from .joystick import SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID
 from .rwops import SDL_RWops, SDL_RWFromFile
 
@@ -36,8 +36,10 @@ __all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
            "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
            "SDL_GameControllerClose", "SDL_GameControllerAddMappingsFromFile",
            "SDL_GameControllerAddMappingsFromRW",
-           "SDL_GameControllerFromInstanceID",
-           ]
+           "SDL_GameControllerFromInstanceID", "SDL_GameControllerGetVendor",
+           "SDL_GameControllerGetProduct", "SDL_GameControllerGetProductVersion",
+           "SDL_GameControllerNumMappings", "SDL_GameControllerMappingForIndex"
+          ]
 
 class SDL_GameController(Structure):
     pass
@@ -107,4 +109,8 @@ SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameCont
 SDL_GameControllerAddMappingsFromRW = _bind("SDL_GameControllerAddMappingsFromRW", [POINTER(SDL_RWops), c_int], c_int, nullfunc)
 SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
 SDL_GameControllerFromInstanceID = _bind("SDL_GameControllerFromInstanceID", [SDL_JoystickID], POINTER(SDL_GameController), nullfunc)
-
+SDL_GameControllerGetVendor = _bind("SDL_GameControllerGetVendor", [POINTER(SDL_GameController)], Uint16, nullfunc)
+SDL_GameControllerGetProduct = _bind("SDL_GameControllerGetProduct", [POINTER(SDL_GameController)], Uint16, nullfunc)
+SDL_GameControllerGetProductVersion = _bind("SDL_GameControllerGetProductVersion", [POINTER(SDL_GameController)], Uint16, nullfunc)
+SDL_GameControllerNumMappings = _bind("SDL_GameControllerNumMappings", None, c_int, nullfunc)
+SDL_GameControllerMappingForIndex = _bind("SDL_GameControllerMappingForIndex", [c_int], c_char_p, nullfunc)
