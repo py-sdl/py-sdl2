@@ -48,7 +48,7 @@ class Entity(object):
     def __getattr__(self, name):
         """Gets the component data related to the Entity."""
         if name in ("_id", "_world"):
-            return object.__getattr__(self, name)
+            return object.__getattribute__(self, name)
         try:
             ctype = self._world._componenttypes[name]
         except KeyError:
