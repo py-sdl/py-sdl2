@@ -29,8 +29,9 @@ __all__ = ["SDL_AudioFormat", "SDL_AUDIO_MASK_BITSIZE",
            "SDL_MixAudioFormat", "SDL_LockAudio", "SDL_LockAudioDevice",
            "SDL_UnlockAudio", "SDL_UnlockAudioDevice", "SDL_CloseAudio",
            "SDL_CloseAudioDevice", "SDL_QueueAudio", "SDL_GetQueuedAudioSize",
-           "SDL_ClearQueuedAudio", "SDL_DequeueAudio"
-         ]
+           "SDL_ClearQueuedAudio", "SDL_DequeueAudio",
+           "SDL_AUDIOCVT_MAX_FILTERS"
+          ]
 
 SDL_AudioFormat = Uint16
 
@@ -111,6 +112,8 @@ class SDL_AudioSpec(Structure):
         self.callback = callback
         self.userdata = userdata
 
+SDL_AUDIOCVT_MAX_FILTERS = 9
+
 class SDL_AudioCVT(Structure):
     pass
 
@@ -124,9 +127,9 @@ SDL_AudioCVT._fields_ = [("needed", c_int),
                          ("len_cvt", c_int),
                          ("len_mult", c_int),
                          ("len_ratio", c_double),
-                         ("filters", (SDL_AudioFilter * 10)),
+                         ("filters", (SDL_AudioFilter * (SDL_AUDIOCVT_MAX_FILTERS+1))),
                          ("filter_index", c_int)
-                         ]
+                        ]
 
 SDL_GetNumAudioDrivers = _bind("SDL_GetNumAudioDrivers", None, c_int)
 SDL_GetAudioDriver = _bind("SDL_GetAudioDriver", [c_int], c_char_p)
