@@ -1,7 +1,7 @@
 from ctypes import Union, Structure, c_int, c_void_p, c_long, c_ulong, \
     c_longlong, c_ulonglong, c_uint, sizeof, POINTER
 from .dll import _bind
-from .stdinc import SDL_bool, Uint32
+from .stdinc import SDL_bool, Uint8, Uint32
 from .version import SDL_version
 from .video import SDL_Window
 
@@ -153,7 +153,7 @@ class _info(Union):
                 ("mir", _mir),
                 ("android", _android),
                 ("vivante", _vivante),
-                ("dummy", c_int)
+                ("dummy", (Uint8 * 64))
                ]
 
 
