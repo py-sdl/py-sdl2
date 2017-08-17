@@ -20,7 +20,7 @@ __all__ = ["SDL_SWSURFACE", "SDL_PREALLOC", "SDL_RLEACCEL", "SDL_DONTFREE",
            "SDL_FillRects", "SDL_UpperBlit", "SDL_BlitSurface", "SDL_LowerBlit",
            "SDL_SoftStretch", "SDL_UpperBlitScaled", "SDL_BlitScaled",
            "SDL_LowerBlitScaled", "SDL_CreateRGBSurfaceWithFormat",
-           "SDL_CreateRGBSurfaceWithFormatFrom"
+           "SDL_CreateRGBSurfaceWithFormatFrom", "SDL_DuplicateSurface"
           ]
 
 SDL_SWSURFACE = 0
@@ -57,6 +57,7 @@ SDL_FreeSurface = _bind("SDL_FreeSurface", [POINTER(SDL_Surface)])
 SDL_SetSurfacePalette = _bind("SDL_SetSurfacePalette", [POINTER(SDL_Surface), POINTER(SDL_Palette)], c_int)
 SDL_LockSurface = _bind("SDL_LockSurface", [POINTER(SDL_Surface)], c_int)
 SDL_UnlockSurface = _bind("SDL_UnlockSurface", [POINTER(SDL_Surface)])
+SDL_DuplicateSurface = _bind("SDL_DuplicateSurface", [POINTER(SDL_Surface)], POINTER(SDL_Surface), optfunc=nullfunc)
 
 SDL_LoadBMP_RW = _bind("SDL_LoadBMP_RW", [POINTER(SDL_RWops), c_int], POINTER(SDL_Surface))
 SDL_LoadBMP = lambda fname: SDL_LoadBMP_RW(SDL_RWFromFile(fname, b"rb"), 1)
