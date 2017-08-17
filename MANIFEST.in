@@ -2,4 +2,4 @@ graft doc
 graft util
 graft examples
 include *.bat Makefile
-include *.txt
+include *.txt *.rst
