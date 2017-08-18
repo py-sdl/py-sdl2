@@ -19,4 +19,4 @@ env:
   - SDL_VIDEODRIVER=dummy
   - SDL_AUDIODRIVER=dummy
 
-script: make runtest
+script: "python -B -m sdl2.test.util.runtests -v"
