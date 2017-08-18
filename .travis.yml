@@ -11,6 +11,7 @@ before_install:
   - sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-gfx-dev
 
 install:
-  - pip install .
+  - pip install --user -U pip
+  - pip install --user .
 
 script: make runtest
