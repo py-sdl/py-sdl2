@@ -14,4 +14,9 @@ install:
   - pip install --user -U pip
   - pip install --user .
 
+env:
+  global:
+  - SDL_VIDEODRIVER=dummy
+  - SDL_AUDIODRIVER=dummy
+
 script: make runtest
