@@ -62,7 +62,7 @@ class SDL2ExtImageTest(unittest.TestCase):
                 sf = sdl2ext.load_image(filename, enforce="PIL")
                 self.assertIsInstance(sf, surface.SDL_Surface)
 
-            # Force only mule.sdlimage
+            # Force only sdlimage
             sf = sdl2ext.load_image(filename, enforce="SDL")
             self.assertIsInstance(sf, surface.SDL_Surface)
 

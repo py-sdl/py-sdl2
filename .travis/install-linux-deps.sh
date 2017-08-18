@@ -15,7 +15,7 @@ sudo apt-get install build-essential mercurial make cmake autoconf automake \
     fcitx-libs-dev libsamplerate0-dev libsndio-dev \
     libfreetype6-dev \
     libflac-dev libfluidsynth-dev libmikmod2-dev libogg-dev libvorbis-dev \
-    libjpeg-dev libpng-dev libtiff4-dev zlib1g-dev
+    libjpeg-dev libpng-dev libtiff4-dev libwebp-dev zlib1g-dev
 
 wget https://www.libsdl.org/release/$SDL_LIB.tar.gz
 tar xzf $SDL_LIB.tar.gz
