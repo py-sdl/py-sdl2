@@ -24,10 +24,10 @@ class SDLHintsTest(unittest.TestCase):
     def test_SDL_GetHint(self):
         self.assertEqual(hints.SDL_SetHint(b"TEST", b"32"), 1)
         self.assertEqual(hints.SDL_GetHint(b"TEST"), b"32")
-        self.assertEqual(hints.SDL_SetHint(hints.SDL_HINT_RENDER_DRIVER,
-                                           b"dummy"), 1)
-        self.assertEqual(hints.SDL_GetHint(hints.SDL_HINT_RENDER_DRIVER),
-                         b"dummy")
+        self.assertEqual(hints.SDL_SetHint(hints.SDL_HINT_ALLOW_TOPMOST,
+                                           b"true"), 1)
+        self.assertEqual(hints.SDL_GetHint(hints.SDL_HINT_ALLOW_TOPMOST),
+                         b"true")
 
     def test_SDL_SetHint(self):
         self.assertEqual(hints.SDL_SetHint(b"TEST", b"32"), 1)
@@ -81,7 +81,7 @@ class SDLHintsTest(unittest.TestCase):
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[1], (b"banana", hints.SDL_HINT_ALLOW_TOPMOST,
                                     None, b"true"))
-        hints.SDL_DelHintCallback(hints.SDL_HINT_ALLOW_TOPMOST, hintcb,
+        hints.SDL_DelHintCallb  ack(hints.SDL_HINT_ALLOW_TOPMOST, hintcb,
                                   udata)
         hints.SDL_SetHint(hints.SDL_HINT_ALLOW_TOPMOST, b"false")
         self.assertEqual(len(calls), 2)

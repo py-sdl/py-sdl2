@@ -16,6 +16,8 @@ class SDLShapeTest(unittest.TestCase):
         SDL_Quit()
 
     def test_SDL_CreateShapedWindow(self):
+        if video.SDL_GetCurrentVideoDriver() == b"dummy":
+            self.skipTest("dummy video driver does not support shaped windows")
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
             window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
@@ -24,6 +26,8 @@ class SDLShapeTest(unittest.TestCase):
             video.SDL_DestroyWindow(window)
 
     def test_SDL_IsShapedWindow(self):
+        if video.SDL_GetCurrentVideoDriver() == b"dummy":
+            self.skipTest("dummy video driver does not support shaped windows")
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
             window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
@@ -40,6 +44,8 @@ class SDLShapeTest(unittest.TestCase):
             video.SDL_DestroyWindow(window)
 
     def test_SDL_SetWindowShape(self):
+        if video.SDL_GetCurrentVideoDriver() == b"dummy":
+            self.skipTest("dummy video driver does not support shaped windows")
         sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32,
                                           0xFF000000,
                                           0x00FF0000,
@@ -86,6 +92,8 @@ class SDLShapeTest(unittest.TestCase):
         surface.SDL_FreeSurface(sf)
 
     def test_SDL_GetShapedWindowMode(self):
+        if video.SDL_GetCurrentVideoDriver() == b"dummy":
+            self.skipTest("dummy video driver does not support shaped windows")
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
             window = shape.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,

@@ -15,6 +15,9 @@ class SDLSysWMTest(unittest.TestCase):
         video.SDL_VideoQuit()
 
     def test_SDL_GetWindowWMInfo(self):
+        if video.SDL_GetCurrentVideoDriver() == b"dummy":
+            self.skipTest("cannot retrieve WM information for the dummy video driver")
+
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
                                         video.SDL_WINDOW_HIDDEN)
         wminfo = syswm.SDL_SysWMinfo()
