@@ -81,7 +81,7 @@ class SDLHintsTest(unittest.TestCase):
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[1], (b"banana", hints.SDL_HINT_ALLOW_TOPMOST,
                                     None, b"true"))
-        hints.SDL_DelHintCallb  ack(hints.SDL_HINT_ALLOW_TOPMOST, hintcb,
+        hints.SDL_DelHintCallback(hints.SDL_HINT_ALLOW_TOPMOST, hintcb,
                                   udata)
         hints.SDL_SetHint(hints.SDL_HINT_ALLOW_TOPMOST, b"false")
         self.assertEqual(len(calls), 2)
