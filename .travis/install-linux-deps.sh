@@ -27,7 +27,7 @@ cd $SDLMIXER_LIB && ./configure --prefix=/usr && make && sudo make install && cd
 
 wget https://www.libsdl.org/projects/SDL_image/release/$SDLIMAGE_LIB.tar.gz
 tar xzf $SDLIMAGE_LIB.tar.gz
-cd $SDLMIXER_LIB && ./configure --prefix=/usr && make && sudo make install && cd ..
+cd $SDLIMAGE_LIB && ./configure --prefix=/usr && make && sudo make install && cd ..
 
 wget https://www.libsdl.org/projects/SDL_ttf/release/$SDLTTF_LIB.tar.gz
 tar xzf $SDLTTF_LIB.tar.gz
