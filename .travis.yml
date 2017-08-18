@@ -8,7 +8,7 @@ language: python
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-gfx-dev
+  - sh .travis/install-linux-deps.sh
 
 install:
   - pip install --user -U pip
