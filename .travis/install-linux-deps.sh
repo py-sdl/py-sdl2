@@ -15,33 +15,33 @@ sudo apt-get install build-essential mercurial make cmake autoconf automake \
     libfreetype6-dev \
     libflac-dev libfluidsynth-dev libmikmod2-dev libogg-dev libvorbis-dev
 
-wget https://www.libsdl.org/release/$(SDL_LIB).tar.gz
-tar xzvf $(SDL_LIB).tar.gz
-cd $(SDL_LIB) \
+wget https://www.libsdl.org/release/$SDL_LIB.tar.gz
+tar xzvf $SDL_LIB.tar.gz
+cd $SDL_LIB \
 ./configure
 make
 sudo make install
 cd ..
 
-wget https://www.libsdl.org/projects/SDL_mixer/release/$(SDLMIXER_LIB).tar.gz
-tar xzvf $(SDLMIXER_LIB).tar.gz
-cd $(SDLMIXER_LIB)
+wget https://www.libsdl.org/projects/SDL_mixer/release/$SDLMIXER_LIB.tar.gz
+tar xzvf $SDLMIXER_LIB.tar.gz
+cd $SDLMIXER_LIB
 ./configure
 make
 sudo make install
 cd ..
 
-wget https://www.libsdl.org/projects/SDL_ttf/release/$(SDLTTF_LIB).tar.gz
-tar xzvf $(SDLTTF_LIB).tar.gz
-cd $(SDLTTF_LIB)
+wget https://www.libsdl.org/projects/SDL_ttf/release/$SDLTTF_LIB.tar.gz
+tar xzvf $SDLTTF_LIB.tar.gz
+cd $SDLTTF_LIB
 ./configure
 make
 sudo make install
 cd ..
 
-wget http://www.ferzkopp.net/Software/SDL2_gfx/$(SDLGFX_LIB).tar.gz
-tar xzvf $(SDLGFX_LIB).tar.gz
-cd $(SDLGFX_LIB)
+wget http://www.ferzkopp.net/Software/SDL2_gfx/$SDLGFX_LIB.tar.gz
+tar xzvf $SDLGFX_LIB.tar.gz
+cd $SDLGFX_LIB
 ./configure
 make
 sudo make install
