@@ -18,5 +18,6 @@ env:
   global:
   - SDL_VIDEODRIVER=dummy
   - SDL_AUDIODRIVER=dummy
+  - SDL_RENDER_DRIVER=software
 
 script: "python -B -m sdl2.test.util.runtests -v"
