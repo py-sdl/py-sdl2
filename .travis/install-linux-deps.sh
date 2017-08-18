@@ -1,10 +1,10 @@
 #!/bin/sh
 set -e
 
-SDL_LIB = SDL2-2.0.5
-SDLTTF_LIB = SDL2_ttf-2.0.14
-SDLMIXER_LIB = SDL2_mixer-2.0.1
-SDLGFX_LIB = SDL2_gfx-1.0.3
+SDL_LIB=SDL2-2.0.5
+SDLTTF_LIB=SDL2_ttf-2.0.14
+SDLMIXER_LIB=SDL2_mixer-2.0.1
+SDLGFX_LIB=SDL2_gfx-1.0.3
 
 sudo apt-get install build-essential mercurial make cmake autoconf automake \
     libtool libasound2-dev libpulse-dev libaudio-dev libx11-dev libxext-dev \
