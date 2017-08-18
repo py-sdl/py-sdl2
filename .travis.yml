@@ -6,6 +6,10 @@ language: python
   - "3.5"
   - "3.6"
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libsdl2 libsdl2-image libsdl2-mixer libsdl2-ttf libsdl2-gfx
+
 install:
   - pip install .
 
