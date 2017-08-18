@@ -4,6 +4,7 @@ set -e
 SDL_LIB=SDL2-2.0.5
 SDLTTF_LIB=SDL2_ttf-2.0.14
 SDLMIXER_LIB=SDL2_mixer-2.0.1
+SDLIMAGE_LIB=SDL2_image-2.0.1
 SDLGFX_LIB=SDL2_gfx-1.0.3
 
 sudo apt-get install build-essential mercurial make cmake autoconf automake \
@@ -13,7 +14,8 @@ sudo apt-get install build-essential mercurial make cmake autoconf automake \
     libgles1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libibus-1.0-dev \
     fcitx-libs-dev libsamplerate0-dev libsndio-dev \
     libfreetype6-dev \
-    libflac-dev libfluidsynth-dev libmikmod2-dev libogg-dev libvorbis-dev
+    libflac-dev libfluidsynth-dev libmikmod2-dev libogg-dev libvorbis-dev \
+    libjpeg-dev libpng-dev libtiff4-dev zlib1g-dev
 
 wget https://www.libsdl.org/release/$SDL_LIB.tar.gz
 tar xzf $SDL_LIB.tar.gz
@@ -21,6 +23,10 @@ cd $SDL_LIB && ./configure --prefix=/usr --disable-sndio && make && sudo make in
 
 wget https://www.libsdl.org/projects/SDL_mixer/release/$SDLMIXER_LIB.tar.gz
 tar xzf $SDLMIXER_LIB.tar.gz
+cd $SDLMIXER_LIB && ./configure --prefix=/usr && make && sudo make install && cd ..
+
+wget https://www.libsdl.org/projects/SDL_image/release/$SDLIMAGE_LIB.tar.gz
+tar xzf $SDLIMAGE_LIB.tar.gz
 cd $SDLMIXER_LIB && ./configure --prefix=/usr && make && sudo make install && cd ..
 
 wget https://www.libsdl.org/projects/SDL_ttf/release/$SDLTTF_LIB.tar.gz
