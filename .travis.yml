@@ -8,7 +8,7 @@ language: python
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y libsdl2 libsdl2-image libsdl2-mixer libsdl2-ttf libsdl2-gfx
+  - sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-gfx-dev
 
 install:
   - pip install .
