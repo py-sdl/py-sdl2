@@ -17,32 +17,16 @@ sudo apt-get install build-essential mercurial make cmake autoconf automake \
 
 wget https://www.libsdl.org/release/$SDL_LIB.tar.gz
 tar xzvf $SDL_LIB.tar.gz
-cd $SDL_LIB \
-./configure
-make
-sudo make install
-cd ..
+cd $SDL_LIB && ./configure && make && sudo make install && cd ..
 
 wget https://www.libsdl.org/projects/SDL_mixer/release/$SDLMIXER_LIB.tar.gz
 tar xzvf $SDLMIXER_LIB.tar.gz
-cd $SDLMIXER_LIB
-./configure
-make
-sudo make install
-cd ..
+cd $SDLMIXER_LIB && ./configure && make && sudo make install && cd ..
 
 wget https://www.libsdl.org/projects/SDL_ttf/release/$SDLTTF_LIB.tar.gz
 tar xzvf $SDLTTF_LIB.tar.gz
-cd $SDLTTF_LIB
-./configure
-make
-sudo make install
-cd ..
+cd $SDLTTF_LIB && ./configure && make && sudo make install && cd ..
 
 wget http://www.ferzkopp.net/Software/SDL2_gfx/$SDLGFX_LIB.tar.gz
 tar xzvf $SDLGFX_LIB.tar.gz
-cd $SDLGFX_LIB
-./configure
-make
-sudo make install
-cd ..
+cd $SDLGFX_LIB && ./configure && make && sudo make install && cd ..
