@@ -4,9 +4,9 @@ set -e
 brew update
 
 if [[ "$PYVER" == "3" ]]; then
-    brew install python3
+    brew install python3 || brew upgrade python3
 else
-    brew install python
+    brew install python || brew upgrade python
 fi
 
 brew install sdl2
