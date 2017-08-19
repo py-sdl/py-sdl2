@@ -10,3 +10,4 @@ else
 fi
 
 source pysdl2-venv/bin/activate
+ls -al bin/
