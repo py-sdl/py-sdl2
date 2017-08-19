@@ -36,6 +36,7 @@ class SDLKeyboardTest(unittest.TestCase):
         self.assertEqual(keysym.sym, 32)
         self.assertEqual(keysym.mod, 88)
 
+    @unittest.skipIf(sys.platform.startswith("darwin"), "crashes on OS X")
     def test_SDL_GetKeyboardFocus(self):
         # window = keyboard.SDL_GetKeyboardFocus()
         # TODO: x
