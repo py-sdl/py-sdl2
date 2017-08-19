@@ -6,5 +6,5 @@ if [[ "$PYVER" == "3" ]]; then
     python3 -m virtualenv pysdl2-venv
 else
     pip2 install virtualenv
-    python -m virtualenv pysdl2-venv
+    python2 -m virtualenv pysdl2-venv
 fi
