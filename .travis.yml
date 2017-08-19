@@ -33,7 +33,7 @@ install:
 
 env:
   global:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; SDL_VIDEODRIVER=dummy; fi
+  - SDL_VIDEODRIVER=dummy
   - SDL_AUDIODRIVER=dummy
   - SDL_RENDER_DRIVER=software
 

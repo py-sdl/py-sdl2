@@ -8,3 +8,5 @@ else
     pip2 install virtualenv
     python2 -m virtualenv pysdl2-venv
 fi
+
+source pysdl2-venv/bin/activate
