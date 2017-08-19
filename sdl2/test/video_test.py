@@ -917,6 +917,8 @@ class SDLVideoTest(unittest.TestCase):
             self.assertFalse(rect.SDL_RectEmpty(bounds))
 
     def test_SDL_GetWindowsBordersSize(self):
+        if video.SDL_GetCurrentVideoDriver() == b"dummy":
+            self.skipTest("dummy video driver does not support the window border size")
         window = video.SDL_CreateWindow(b"Borders", 10, 10, 10, 10, 0)
         l, r, t, b = c_int(), c_int(), c_int(), c_int()
         ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
