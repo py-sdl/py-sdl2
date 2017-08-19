@@ -1,10 +1,19 @@
 language: python
-  - "2.7"
-  - "3.2"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
+
+matrix:
+  include:
+    - os: linux
+      sudo: required
+      python: 2.7
+    - os: linux
+      sudo: required
+      python: 3.4
+    - os: linux
+      sudo: required
+      python: 3.5
+    - os: linux
+      sudo: required
+      python: 3.6
 
 before_install:
   - sudo apt-get -qq update
@@ -20,4 +29,5 @@ env:
   - SDL_AUDIODRIVER=dummy
   - SDL_RENDER_DRIVER=software
 
-script: "python -B -m sdl2.test.util.runtests -v"
+script:
+  - python -B -m sdl2.test.util.runtests -v
