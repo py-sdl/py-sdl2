@@ -1,3 +1,9 @@
+
+.. image:: https://travis-ci.org/marcusva/py-sdl2.svg?branch=master
+    :target: https://travis-ci.org/marcusva/py-sdl2
+.. image:: https://img.shields.io/pypi/v/PySDL2.svg
+    :target: https://pypi.python.org/pypi/PySDL2
+
 About PySDL2
 ============
 PySDL2 is a wrapper around the SDL2 library and as such similar to the
@@ -13,7 +19,7 @@ prebuilt package for your operating system or distribution.
 Documentation
 =============
 If you just started with SDL and PySDL2, it is strongly recommended
-that you read through the tutorial of the documentation to learn the 
+that you read through the tutorial of the documentation to learn the
 basics. You can find the documentation at *doc/html* or online at
 http://pysdl2.readthedocs.org.
 
