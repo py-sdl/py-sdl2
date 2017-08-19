@@ -14,12 +14,20 @@ matrix:
     - os: linux
       sudo: required
       python: 3.6
+    - os: osx
+      language: generic
+      env: PYVER=3
+    - os: osx
+      language: generic
+      env: PYVER=2
 
 before_install:
-  - sudo apt-get -qq update
-  - sh .travis/install-linux-deps.sh
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh .travis/install-linux-deps.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .travis/install-osx-deps.sh; fi
 
 install:
+  - pip install -U pip
+  - pip install -U numpy
   - pip install .
 
 env:

@@ -7,6 +7,8 @@ SDLMIXER_LIB=SDL2_mixer-2.0.1
 SDLIMAGE_LIB=SDL2_image-2.0.1
 SDLGFX_LIB=SDL2_gfx-1.0.3
 
+
+sudo apt-get -qq update
 sudo apt-get install build-essential mercurial make cmake autoconf automake \
     libtool libasound2-dev libpulse-dev libaudio-dev libx11-dev libxext-dev \
     libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev libxxf86vm-dev \
