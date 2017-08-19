@@ -41,7 +41,8 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_CONTEXT_EGL", "SDL_GL_CONTEXT_FLAGS",
            "SDL_GL_CONTEXT_PROFILE_MASK", "SDL_GL_SHARE_WITH_CURRENT_CONTEXT",
            "SDL_GL_FRAMEBUFFER_SRGB_CAPABLE",
-           "SDL_GL_CONTEXT_RELEASE_BEHAVIOR", "SDL_GLprofile",
+           "SDL_GL_CONTEXT_RELEASE_BEHAVIOR",
+           "SDL_GL_CONTEXT_RESET_NOTIFICATION", "SDL_GLprofile",
            "SDL_GL_CONTEXT_PROFILE_CORE",
            "SDL_GL_CONTEXT_PROFILE_COMPATIBILITY",
            "SDL_GL_CONTEXT_PROFILE_ES", "SDL_GLcontextFlag",
@@ -92,6 +93,9 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GL_ResetAttributes", "SDL_GLcontextReleaseFlag",
            "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE",
            "SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH",
+           "SDL_GLContextResetNotification",
+           "SDL_GL_CONTEXT_RESET_NO_NOTIFICATION",
+           "SDL_GL_CONTEXT_RESET_LOSE_CONTEXT",
            "SDL_GetDisplayDPI", "SDL_GetDisplayUsableBounds",
            "SDL_GetWindowBordersSize", "SDL_GetWindowOpacity",
            "SDL_SetWindowOpacity", "SDL_SetWindowInputFocus",
@@ -209,6 +213,7 @@ SDL_GL_CONTEXT_PROFILE_MASK = 21
 SDL_GL_SHARE_WITH_CURRENT_CONTEXT = 22
 SDL_GL_FRAMEBUFFER_SRGB_CAPABLE = 23
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR = 24
+SDL_GL_CONTEXT_RESET_NOTIFICATION = 25
 
 SDL_GLprofile = c_int
 SDL_GL_CONTEXT_PROFILE_CORE = 0x0001
@@ -224,6 +229,10 @@ SDL_GL_CONTEXT_RESET_ISOLATION_FLAG = 0x0008
 SDL_GLcontextReleaseFlag = c_int
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE = 0x0000
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH = 0x0001
+
+SDL_GLContextResetNotification = c_int
+SDL_GL_CONTEXT_RESET_NO_NOTIFICATION = 0x0000
+SDL_GL_CONTEXT_RESET_LOSE_CONTEXT = 0x0001
 
 SDL_HitTestResult = c_int
 SDL_HITTEST_NORMAL = 0
