@@ -28,6 +28,9 @@ matrix:
       language: generic
       env: PYVER=2
   allow_failures:
+    - os: linux
+      sudo: required
+      python: pypy
     - os: osx
       language: generic
       env: PYVER=3
