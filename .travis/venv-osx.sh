@@ -11,3 +11,5 @@ fi
 
 ls -al pysdl2-venv/bin
 source pysdl2-venv/bin/activate
+which python
+which pip
