@@ -1,6 +1,7 @@
 language: python
 
 matrix:
+  fast_finish: true
   include:
     - os: linux
       sudo: required
@@ -14,6 +15,13 @@ matrix:
     - os: linux
       sudo: required
       python: 3.6
+    - os: osx
+      language: generic
+      env: PYVER=3
+    - os: osx
+      language: generic
+      env: PYVER=2
+  allow_failures:
     - os: osx
       language: generic
       env: PYVER=3
