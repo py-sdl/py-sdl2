@@ -20,8 +20,7 @@ before_install:
   - sh .travis/install-linux-deps.sh
 
 install:
-  - pip install --user -U pip
-  - pip install --user .
+  - pip install .
 
 env:
   global:
