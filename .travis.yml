@@ -26,6 +26,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .travis/install-osx-deps.sh; fi
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .travis/venv-osx.sh; fi
   - pip install -U pip
   - pip install -U numpy
   - pip install .
