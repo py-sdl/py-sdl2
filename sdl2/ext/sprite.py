@@ -429,10 +429,10 @@ class TextureSprite(Sprite):
                                       byref(access), byref(w), byref(h))
         if ret == -1:
             raise SDLError()
-        if self._center:
+        if self.center:
             return "TextureSprite(format=%d, access=%d, size=%s, angle=%f, center=%s)" % \
                 (flags.value, access.value, (w.value, h.value), self.angle
-                 (self._center.x, self._center.y))
+                 (self.center.x, self.center.y))
         else:
             return "TextureSprite(format=%d, access=%d, size=%s, angle=%f)" % \
                 (flags.value, access.value, (w.value, h.value), self.angle)
