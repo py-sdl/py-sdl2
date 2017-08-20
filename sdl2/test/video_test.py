@@ -619,8 +619,8 @@ class SDLVideoTest(unittest.TestCase):
             window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flag)
             orig = video.SDL_GetWindowBrightness(window)
             self.assertIsInstance(orig, float)
-            # Go from 0.0, 0.1 ... to 3.0
-            gammas = (x * 0.1 for x in range(0, 20))
+            # Go from 0.0, 0.1 ... to 1.0
+            gammas = (x * 0.1 for x in range(0, 10))
             count = 0
             for b in gammas:
                 ret = video.SDL_SetWindowBrightness(window, b)
@@ -628,8 +628,12 @@ class SDLVideoTest(unittest.TestCase):
                     val = video.SDL_GetWindowBrightness(window)
                     self.assertAlmostEqual(val, b)
                     count += 1
-            # At least one gamma(1.0) must have worked.
-            self.assertTrue(count > 0)
+            # At least one gamma(1.0) should have worked, otherwise get the
+            # error explicitly
+            if count == 0:
+                ret = video.SDL_SetWindowBrightness(window, orig)
+                self.assertEqual(ret, 0, SDL_GetError())
+            video.SDL_DestroyWindow(window)
 
     @unittest.skip("not implemented")
     def test_SDL_SetWindowGammaRamp(self):
@@ -737,13 +741,13 @@ class SDLVideoTest(unittest.TestCase):
 
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
                                         video.SDL_WINDOW_OPENGL)
-
         ctx = video.SDL_GL_CreateContext(window)
 
         val = c_int()
         video.SDL_GL_GetAttribute(video.SDL_GL_DEPTH_SIZE, byref(val))
         self.assertNotEqual(depth, val)
-        self.assertEqual(val.value, newdepth)
+        self.assertGreaterEqual(val.value, newdepth)
+        # self.assertEqual(val.value, newdepth)
 
         video.SDL_GL_DeleteContext(ctx)
         video.SDL_DestroyWindow(window)
@@ -825,10 +829,12 @@ class SDLVideoTest(unittest.TestCase):
         ctx = video.SDL_GL_CreateContext(window)
         video.SDL_GL_MakeCurrent(window, ctx)
 
-        video.SDL_GL_SetSwapInterval(0)
-        self.assertEqual(video.SDL_GL_GetSwapInterval(), 0)
-        video.SDL_GL_SetSwapInterval(1)
-        self.assertEqual(video.SDL_GL_GetSwapInterval(), 1)
+        ret = video.SDL_GL_SetSwapInterval(0)
+        if ret == 0:
+            self.assertEqual(video.SDL_GL_GetSwapInterval(), 0)
+        ret = video.SDL_GL_SetSwapInterval(1)
+        if ret == 0:
+            self.assertEqual(video.SDL_GL_GetSwapInterval(), 1)
 
         video.SDL_GL_DeleteContext(ctx)
         video.SDL_DestroyWindow(window)
