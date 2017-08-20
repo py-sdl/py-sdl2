@@ -429,9 +429,13 @@ class TextureSprite(Sprite):
                                       byref(access), byref(w), byref(h))
         if ret == -1:
             raise SDLError()
-        return "TextureSprite(format=%d, access=%d, size=%s, angle=%f, center=%s)" % \
-            (flags.value, access.value, (w.value, h.value), self.angle,
-             (self.center.x, self.center.y))
+        if self._center:
+            return "TextureSprite(format=%d, access=%d, size=%s, angle=%f, center=%s)" % \
+                (flags.value, access.value, (w.value, h.value), self.angle
+                 (self._center.x, self._center.y))
+        else:
+            return "TextureSprite(format=%d, access=%d, size=%s, angle=%f)" % \
+                (flags.value, access.value, (w.value, h.value), self.angle)
 
 
 class SpriteFactory(object):
