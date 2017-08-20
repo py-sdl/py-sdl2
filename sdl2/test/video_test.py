@@ -1,3 +1,4 @@
+import os
 import sys
 from ctypes.util import find_library
 from ctypes import c_int, c_float, byref, cast, POINTER, py_object
@@ -609,6 +610,8 @@ class SDLVideoTest(unittest.TestCase):
     def test_SDL_GetGrabbedWindow(self):
         pass
 
+    @unittest.skipIf(os.environ["APPVEYOR"] == "True",
+        "Appveyor cannot set the brightness")
     def test_SDL_GetSetWindowBrightness(self):
         if video.SDL_GetCurrentVideoDriver() == b"dummy":
             self.skipTest("dummy video driver does not support brightness")
@@ -628,11 +631,7 @@ class SDLVideoTest(unittest.TestCase):
                     val = video.SDL_GetWindowBrightness(window)
                     self.assertAlmostEqual(val, b)
                     count += 1
-            # At least one gamma(1.0) should have worked, otherwise get the
-            # error explicitly
-            if count == 0:
-                ret = video.SDL_SetWindowBrightness(window, orig)
-                self.assertEqual(ret, 0, SDL_GetError())
+            self.assertTrue(count > 0)
             video.SDL_DestroyWindow(window)
 
     @unittest.skip("not implemented")
