@@ -14,5 +14,7 @@ install:
   - "%PYTHON%\\python.exe -m pip install -U numpy"
   - "%PYTHON%\\python.exe -m pip install ."
 
+build: off
+
 test_script:
   - "%PYTHON%\\python.exe -B -m sdl2.test.util.runtests -v"
