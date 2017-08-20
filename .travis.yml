@@ -39,11 +39,11 @@ matrix:
       env: PYVER=2
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh .travis/install-linux-deps.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .travis/install-osx-deps.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh .ci/install-linux-deps.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .ci/install-osx-deps.sh; fi
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .travis/venv-osx.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .ci/venv-osx.sh; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source pysdl2-venv/bin/activate; fi
   - pip install -U pip
   - pip install -U numpy
