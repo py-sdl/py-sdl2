@@ -1,6 +1,8 @@
 
 .. image:: https://travis-ci.org/marcusva/py-sdl2.svg?branch=master
     :target: https://travis-ci.org/marcusva/py-sdl2
+.. image:: https://ci.appveyor.com/api/projects/status/github/marcusva/pysdl2?svg=true
+    :target: https://ci.appveyor.com/project/marcusva/py-sdl2
 .. image:: https://img.shields.io/pypi/v/PySDL2.svg
     :target: https://pypi.python.org/pypi/PySDL2
 
