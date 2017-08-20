@@ -1,15 +1,27 @@
 environment:
   matrix:
     - PYTHON: "C:\\Python27"
+      PYSDL2_DLL_PATH: "dlls\32bit"
     - PYTHON: "C:\\Python27-x64"
+      PYSDL2_DLL_PATH: "dlls\64bit"
     - PYTHON: "C:\\Python34"
+      PYSDL2_DLL_PATH: "dlls\32bit"
     - PYTHON: "C:\\Python34-x64"
+      PYSDL2_DLL_PATH: "dlls\64bit"
     - PYTHON: "C:\\Python35"
+      PYSDL2_DLL_PATH: "dlls\32bit"
     - PYTHON: "C:\\Python35-x64"
+      PYSDL2_DLL_PATH: "dlls\64bit"
     - PYTHON: "C:\\Python36"
+      PYSDL2_DLL_PATH: "dlls\32bit"
     - PYTHON: "C:\\Python36-x64"
+      PYSDL2_DLL_PATH: "dlls\64bit"
+
+cache:
+  - dlls -> .ci\\install-win-deps.cmd
 
 install:
+  - IF NOT EXIST dlls\\32bit\\SDL2.dll cmd /E:ON .ci\\install-win-deps.cmd
   - "%PYTHON%\\python.exe -m pip install -U pip"
   - "%PYTHON%\\python.exe -m pip install -U numpy"
   - "%PYTHON%\\python.exe -m pip install ."
