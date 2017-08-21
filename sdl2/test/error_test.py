@@ -6,10 +6,12 @@ from .. import SDL_Init, SDL_Quit, error
 class SDLTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(0)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
 
     def test_SDL_ClearError(self):

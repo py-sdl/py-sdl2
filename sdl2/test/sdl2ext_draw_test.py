@@ -7,10 +7,12 @@ from .. import ext as sdl2ext
 class SDL2ExtDrawTest(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         sdl2ext.init()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         sdl2ext.quit()
 
     @unittest.skipIf(hasattr(sys, "pypy_version_info"),

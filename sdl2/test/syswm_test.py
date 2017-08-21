@@ -8,10 +8,12 @@ from .. import video, syswm, version
 class SDLSysWMTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         video.SDL_VideoInit(None)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         video.SDL_VideoQuit()
 
     def test_SDL_GetWindowWMInfo(self):

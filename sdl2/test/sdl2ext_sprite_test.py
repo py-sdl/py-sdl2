@@ -33,10 +33,12 @@ class MSprite(sdl2ext.Sprite):
 class SDL2ExtSpriteTest(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         sdl2ext.init()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         sdl2ext.quit()
 
     def check_pixels(self, view, w, h, sprite, c1, c2, cx=0, cy=0):

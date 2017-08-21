@@ -7,10 +7,12 @@ from .. import surface, sdlgfx
 class SDLTTFTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlgfx"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(SDL_INIT_VIDEO)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
 
     @unittest.skip("not implemented")

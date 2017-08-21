@@ -10,15 +10,17 @@ from .. import audio
 class SDLAudioTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(0)
 
         def audio_cb(userdata, audiobytes, length):
             pass
 
-        self.audiocallback = audio.SDL_AudioCallback(audio_cb)
+        cls.audiocallback = audio.SDL_AudioCallback(audio_cb)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
 
     def test_SDL_AUDIO_BITSIZE(self):

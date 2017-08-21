@@ -29,12 +29,14 @@ formats = ["bmp",
 class SDLImageTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlimage"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(0)
         sdlimage.IMG_Init(sdlimage.IMG_INIT_JPG | sdlimage.IMG_INIT_PNG |
                           sdlimage.IMG_INIT_TIF | sdlimage.IMG_INIT_WEBP)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
         sdlimage.IMG_Quit()
 

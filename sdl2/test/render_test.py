@@ -19,14 +19,16 @@ else:
 class SDLRenderTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
-        self._RENDERFLAGS = render.SDL_RENDERER_ACCELERATED
+    @classmethod
+    def setUpClass(cls):
+        cls._RENDERFLAGS = render.SDL_RENDERER_ACCELERATED
         SDL_Init(SDL_INIT_EVERYTHING)
         driver = video.SDL_GetCurrentVideoDriver()
         if driver == b"dummy":
-            self._RENDERFLAGS = render.SDL_RENDERER_SOFTWARE
+            cls._RENDERFLAGS = render.SDL_RENDERER_SOFTWARE
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
 
     def test_SDL_RendererInfo(self):

@@ -8,10 +8,12 @@ from .util.testutils import interactive, doprint
 class SDL2ExtWindowTest(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         sdl2ext.init()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         sdl2ext.quit()
 
     def test_Window(self):

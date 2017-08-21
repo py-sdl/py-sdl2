@@ -8,10 +8,12 @@ from .. import SDL_Init, SDL_Quit, sdlmixer, rwops, version
 class SDLMixerTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlmixer"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         sdlmixer.Mix_Init(0)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         sdlmixer.Mix_Quit()
 
     def test_Mix_Linked_Version(self):

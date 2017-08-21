@@ -10,10 +10,12 @@ byteify = lambda x: x.encode("utf-8")
 class SDLKeyboardTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(SDL_INIT_VIDEO)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_QuitSubSystem(SDL_INIT_VIDEO)
         SDL_Quit()
 

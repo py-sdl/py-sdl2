@@ -13,10 +13,12 @@ def is_win_or_mac():
 class SDLClipboardTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(SDL_INIT_EVERYTHING)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
 
     @unittest.skipIf(not is_win_or_mac(), "we would need a SDL window")

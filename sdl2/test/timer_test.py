@@ -14,10 +14,12 @@ calls = []
 class SDLTimerTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(SDL_INIT_TIMER)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_QuitSubSystem(SDL_INIT_TIMER)
         SDL_Quit()
 

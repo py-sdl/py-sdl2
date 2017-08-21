@@ -10,11 +10,13 @@ fontfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 class SDLTTFTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlttf"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(0)
         sdlttf.TTF_Init()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
         sdlttf.TTF_Quit()
 

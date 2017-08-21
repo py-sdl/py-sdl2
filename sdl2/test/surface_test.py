@@ -48,13 +48,15 @@ blitpositions = (
 class SDLSurfaceTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
-        self.testfile = os.path.join(os.path.dirname
+    @classmethod
+    def setUpClass(cls):
+        cls.testfile = os.path.join(os.path.dirname
                                      (os.path.abspath(__file__)),
                                      "resources", "surfacetest.bmp")
         SDL_Init(SDL_INIT_EVERYTHING)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_Quit()
 
     def test_SDL_Surface(self):

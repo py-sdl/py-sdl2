@@ -8,11 +8,13 @@ from .. import joystick
 class SDLJoystickTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         SDL_Init(SDL_INIT_JOYSTICK)
-        self.jcount = joystick.SDL_NumJoysticks()
+        cls.jcount = joystick.SDL_NumJoysticks()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
         SDL_Quit()
 
