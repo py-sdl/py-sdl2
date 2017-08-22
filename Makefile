@@ -60,11 +60,11 @@ docs:
 release: dist
 
 runtest:
-	@PYTHONPATH=$(PYTHONPATH) $(PYTHON) -B -m sdl2.test.util.runtests
+	@PYTHONPATH=$(PYTHONPATH) $(PYTHON) -B -m unittest discover sdl2.test -p *test.py -v
 
 testall:
 	@for interp in $(INTERPRETERS); do \
-		PYTHONPATH=$(PYTHONPATH) $$interp -B -m sdl2.test.util.runtests || true; \
+		PYTHONPATH=$(PYTHONPATH) $$interp -B -m unittest discover sdl2.test -p *test.py -v || true; \
 	done
 
 # Do not run these in production environments! They are for testing
@@ -78,11 +78,6 @@ buildall: clean
 installall:
 	@for interp in $(INTERPRETERS); do \
 		$$interp setup.py install; \
-	done
-
-testpackage:
-	@for interp in $(INTERPRETERS); do \
-		$$interp -c "import sdl2.test; sdl2.test.run()" || true \
 	done
 
 purge_installs:

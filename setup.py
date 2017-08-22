@@ -34,7 +34,6 @@ if __name__ == "__main__":
         "packages": ["sdl2",
                      "sdl2.ext",
                      "sdl2.test",
-                     "sdl2.test.util",
                      "sdl2.examples"
                      ],
         "classifiers": [

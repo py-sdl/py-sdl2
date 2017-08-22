@@ -82,9 +82,9 @@
 :testall
 @FOR /F "tokens=1 delims=" %%A in ('CHDIR') do @SET PYTHONPATH=%%A
 @SET PYSDL2_DLL_PATH=%DLLPATH_X86%
-@FOR %%A in (%INTERP_X86%) do @%%A -B -m sdl2.test.util.runtests
+@FOR %%A in (%INTERP_X86%) do @%%A -B -m unittest discover sdl2.test -p *test.py -v
 @SET PYSDL2_DLL_PATH=%DLLPATH_X64%
-@FOR %%A in (%INTERP_X64%) do @%%A -B -m sdl2.test.util.runtests
+@FOR %%A in (%INTERP_X64%) do @%%A -B -m unittest discover sdl2.test -p *test.py -v
 @GOTO :eof
 
 @REM Do not run these in production environments. They are for testing purposes
@@ -98,13 +98,6 @@
 :installall
 @FOR %%A in (%INTERPRETERS%) do @CALL :clean & @%%A setup.py install
 @CALL :clean
-@GOTO :eof
-
-:testall2
-@SET PYSDL2_DLL_PATH=%DLLPATH_X86%
-@FOR %%A in (%INTERP_X86%) do @%%A -B -c "import sdl2.test; sdl2.test.run()"
-@SET PYSDL2_DLL_PATH=%DLLPATH_X64%
-@FOR %%A in (%INTERP_X64%) do @%%A -B -c "import sdl2.test; sdl2.test.run()"
 @GOTO :eof
 
 :purge_installs
