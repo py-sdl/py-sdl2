@@ -1,6 +1,6 @@
 import sys
 import unittest
-from .. import mouse
+from sdl2 import mouse
 
 
 @unittest.skip("not implemented")

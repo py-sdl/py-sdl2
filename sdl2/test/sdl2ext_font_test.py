@@ -1,9 +1,9 @@
 # coding=utf-8
 import sys
 import unittest
-from .. import ext as sdl2ext
-from ..ext.compat import byteify
-from .. import surface, sdlttf
+from sdl2 import ext as sdl2ext
+from sdl2.ext.compat import byteify
+from sdl2 import surface, sdlttf
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")
 FONTMAP = ["0123456789",

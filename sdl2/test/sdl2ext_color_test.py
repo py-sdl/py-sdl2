@@ -1,9 +1,9 @@
 import sys
 import unittest
 import copy
-from ..ext import color
-from ..ext.color import Color
-from ..ext.compat import *
+from sdl2.ext import color
+from sdl2.ext.color import Color
+from sdl2.ext.compat import *
 
 combs = [0, 1, 2, 4, 8, 16, 32, 62, 63, 64, 126, 127, 128, 255]
 all_combos = [(r, g, b, a) for r in combs

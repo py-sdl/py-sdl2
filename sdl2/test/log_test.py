@@ -1,7 +1,7 @@
 import sys
 import unittest
 import ctypes
-from .. import log
+from sdl2 import log
 
 class SDLLogTest(unittest.TestCase):
     __tags__ = ["sdl"]

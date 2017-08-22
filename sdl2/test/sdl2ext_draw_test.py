@@ -1,7 +1,7 @@
 import sys
 import unittest
-from ..ext.color import Color, COLOR
-from .. import ext as sdl2ext
+from sdl2.ext.color import Color, COLOR
+from sdl2 import ext as sdl2ext
 
 
 class SDL2ExtDrawTest(unittest.TestCase):

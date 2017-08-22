@@ -3,9 +3,8 @@ import sys
 from ctypes.util import find_library
 from ctypes import c_int, c_float, byref, cast, POINTER, py_object
 import unittest
-from .util.testutils import interactive, doprint
-from ..stdinc import SDL_FALSE, SDL_TRUE
-from .. import video, rect, surface, SDL_GetError
+from sdl2.stdinc import SDL_FALSE, SDL_TRUE
+from sdl2 import video, rect, surface, SDL_GetError
 
 if sys.version_info[0] >= 3:
     long = int
@@ -466,74 +465,74 @@ class SDLVideoTest(unittest.TestCase):
         self.assertEqual((sx.value, sy.value), (600, 900))
         video.SDL_DestroyWindow(window)
 
-    @interactive("Was the window shown?")
-    def test_SDL_ShowWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_ShowWindow",
-                                        200, 200, 200, 200, 0)
-        video.SDL_ShowWindow(window)
-        doprint("""Please check, if a window with the title
-'test_SDL_ShowWindow' is shown""")
-        video.SDL_DestroyWindow(window)
+#     @interactive("Was the window shown?")
+#     def test_SDL_ShowWindow(self):
+#         window = video.SDL_CreateWindow(b"test_SDL_ShowWindow",
+#                                         200, 200, 200, 200, 0)
+#         video.SDL_ShowWindow(window)
+#         doprint("""Please check, if a window with the title
+# 'test_SDL_ShowWindow' is shown""")
+#         video.SDL_DestroyWindow(window)
 
-    @interactive("Did the window vanish from your sight and pop up again?")
-    def test_SDL_HideWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_HideWindow",
-                                        200, 200, 200, 200, 0)
-        video.SDL_ShowWindow(window)
-        doprint("""Please check, if a window with the title
-'test_SDL_HideWindow' is shown""")
-        video.SDL_HideWindow(window)
-        doprint("Please check, that the window is not shown anymore")
-        video.SDL_ShowWindow(window)
-        doprint("Please check, if the window is shown again")
-        video.SDL_DestroyWindow(window)
+#     @interactive("Did the window vanish from your sight and pop up again?")
+#     def test_SDL_HideWindow(self):
+#         window = video.SDL_CreateWindow(b"test_SDL_HideWindow",
+#                                         200, 200, 200, 200, 0)
+#         video.SDL_ShowWindow(window)
+#         doprint("""Please check, if a window with the title
+# 'test_SDL_HideWindow' is shown""")
+#         video.SDL_HideWindow(window)
+#         doprint("Please check, that the window is not shown anymore")
+#         video.SDL_ShowWindow(window)
+#         doprint("Please check, if the window is shown again")
+#         video.SDL_DestroyWindow(window)
 
-    @interactive("Did the window raise properly?")
-    def test_SDL_RaiseWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_RaiseWindow",
-                                        200, 200, 200, 200, 0)
-        video.SDL_ShowWindow(window)
-        doprint("""Please check, that a window with the title
-'test_SDL_RaiseWindow' is shown""")
-        doprint("Move another window on top of the window, so it is hidden")
-        video.SDL_RaiseWindow(window)
-        doprint("The window should be raised to the foreground now")
-        video.SDL_DestroyWindow(window)
+#     @interactive("Did the window raise properly?")
+#     def test_SDL_RaiseWindow(self):
+#         window = video.SDL_CreateWindow(b"test_SDL_RaiseWindow",
+#                                         200, 200, 200, 200, 0)
+#         video.SDL_ShowWindow(window)
+#         doprint("""Please check, that a window with the title
+# 'test_SDL_RaiseWindow' is shown""")
+#         doprint("Move another window on top of the window, so it is hidden")
+#         video.SDL_RaiseWindow(window)
+#         doprint("The window should be raised to the foreground now")
+#         video.SDL_DestroyWindow(window)
 
-    @interactive("Was the window maximized?")
-    def test_SDL_MaximizeWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_MaximizeWindow", 200, 200,
-                                        200, 200, video.SDL_WINDOW_RESIZABLE)
-        video.SDL_ShowWindow(window)
-        doprint("""Please check, that a window with the title
-'test_SDL_MaximizeWindow' is shown""")
-        video.SDL_MaximizeWindow(window)
-        doprint("Please check, if the window was maximized properly")
-        video.SDL_DestroyWindow(window)
+#     @interactive("Was the window maximized?")
+#     def test_SDL_MaximizeWindow(self):
+#         window = video.SDL_CreateWindow(b"test_SDL_MaximizeWindow", 200, 200,
+#                                         200, 200, video.SDL_WINDOW_RESIZABLE)
+#         video.SDL_ShowWindow(window)
+#         doprint("""Please check, that a window with the title
+# 'test_SDL_MaximizeWindow' is shown""")
+#         video.SDL_MaximizeWindow(window)
+#         doprint("Please check, if the window was maximized properly")
+#         video.SDL_DestroyWindow(window)
 
-    @interactive("Was the window minimized?")
-    def test_SDL_MinimizeWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_MinimizeWindow", 200, 200,
-                                        200, 200, 0)
-        video.SDL_ShowWindow(window)
-        doprint("""Please check, that a window with the title
-'test_SDL_MinimizeWindow' is shown""")
-        video.SDL_MinimizeWindow(window)
-        doprint("Please check, if the window was minimized properly")
-        video.SDL_DestroyWindow(window)
+#     @interactive("Was the window minimized?")
+#     def test_SDL_MinimizeWindow(self):
+#         window = video.SDL_CreateWindow(b"test_SDL_MinimizeWindow", 200, 200,
+#                                         200, 200, 0)
+#         video.SDL_ShowWindow(window)
+#         doprint("""Please check, that a window with the title
+# 'test_SDL_MinimizeWindow' is shown""")
+#         video.SDL_MinimizeWindow(window)
+#         doprint("Please check, if the window was minimized properly")
+#         video.SDL_DestroyWindow(window)
 
-    @interactive("Was the window maximized and restored properly?")
-    def test_SDL_RestoreWindow(self):
-        window = video.SDL_CreateWindow(b"test_SDL_RestoreWindow", 200, 200,
-                                        200, 200, video.SDL_WINDOW_RESIZABLE)
-        video.SDL_ShowWindow(window)
-        doprint("""Please check, that a window with the title
-'test_SDL_RestoreWindow' is shown""")
-        video.SDL_MaximizeWindow(window)
-        doprint("Please check, if the window was maximized properly")
-        video.SDL_RestoreWindow(window)
-        doprint("Please check, if the window was restored properly")
-        video.SDL_DestroyWindow(window)
+#     @interactive("Was the window maximized and restored properly?")
+#     def test_SDL_RestoreWindow(self):
+#         window = video.SDL_CreateWindow(b"test_SDL_RestoreWindow", 200, 200,
+#                                         200, 200, video.SDL_WINDOW_RESIZABLE)
+#         video.SDL_ShowWindow(window)
+#         doprint("""Please check, that a window with the title
+# 'test_SDL_RestoreWindow' is shown""")
+#         video.SDL_MaximizeWindow(window)
+#         doprint("Please check, if the window was maximized properly")
+#         video.SDL_RestoreWindow(window)
+#         doprint("Please check, if the window was restored properly")
+#         video.SDL_DestroyWindow(window)
 
     def test_SDL_SetWindowFullscreen(self):
         # TODO: HIDDEN avoids flickering, but is this really a sufficient test?
@@ -612,7 +611,7 @@ class SDLVideoTest(unittest.TestCase):
     def test_SDL_GetGrabbedWindow(self):
         pass
 
-    @unittest.skipIf(os.environ["APPVEYOR"] == "True",
+    @unittest.skipIf(os.environ.get("APPVEYOR") == "True",
         "Appveyor cannot set the brightness")
     def test_SDL_GetSetWindowBrightness(self):
         if video.SDL_GetCurrentVideoDriver() == b"dummy":

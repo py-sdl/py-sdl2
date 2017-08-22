@@ -3,7 +3,7 @@ import sys
 import ctypes
 import unittest
 from io import BytesIO
-from .. import rwops
+from sdl2 import rwops
 
 if sys.version_info[0] >= 3:
     byteify = bytes
@@ -105,9 +105,9 @@ class SDLRWopsTest(unittest.TestCase):
         buf = BytesIO(data)
         rw = rwops.rw_from_object(buf)
         self.assertIsInstance(rw, rwops.SDL_RWops)
-        
+
         readbuf = ctypes.create_string_buffer(2)
-        
+
         read = rwops.SDL_RWread(rw, readbuf, 1, 2)
         self.assertEqual(read, 2)
         self.assertEqual(readbuf.raw, b"A ")
@@ -126,13 +126,13 @@ class SDLRWopsTest(unittest.TestCase):
         written = rwops.SDL_RWwrite(rw, writebuf, 1, 2)
         self.assertEqual(written, 2)
         self.assertEqual(buf.getvalue(), b"XQTeststring of length 25")
-        
+
         writebuf = ctypes.create_string_buffer(b"banana")
         rwops.SDL_RWseek(rw, 14, rwops.RW_SEEK_CUR)
         written = rwops.SDL_RWwrite(rw, writebuf, 1, 6)
         self.assertEqual(written, 6)
         self.assertEqual(buf.getvalue(), b"XQTeststring of banana 25")
-       
+
     def test_SDL_RWclose(self):
         data = byteify("A Teststring", "utf-8")
         buf = BytesIO(data)

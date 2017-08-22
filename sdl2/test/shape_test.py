@@ -1,8 +1,8 @@
 import sys
 import unittest
 import ctypes
-from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
-from .. import video, shape, surface
+from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
+from sdl2 import video, shape, surface
 
 
 class SDLShapeTest(unittest.TestCase):

@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 import ctypes
-from .. import SDL_Init, SDL_Quit, sdlmixer, rwops, version
+from sdl2 import SDL_Init, SDL_Quit, sdlmixer, rwops, version
 
 
 class SDLMixerTest(unittest.TestCase):

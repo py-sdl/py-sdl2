@@ -1,6 +1,6 @@
 import sys
 import unittest
-from ..ext import algorithms
+from sdl2.ext import algorithms
 
 
 class SDL2ExtAlgorithmsTest(unittest.TestCase):

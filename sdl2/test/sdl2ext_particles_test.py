@@ -1,6 +1,6 @@
 import sys
 import unittest
-from ..ext import particles
+from sdl2.ext import particles
 
 
 class SDL2ExtParticlesTest(unittest.TestCase):

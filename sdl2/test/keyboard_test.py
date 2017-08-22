@@ -1,8 +1,8 @@
 import sys
 import unittest
-from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_VIDEO
-from .. import rect, keyboard, scancode, keycode, video
 from ctypes import c_int, cast, POINTER
+from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_VIDEO
+from sdl2 import rect, keyboard, scancode, keycode, video
 
 byteify = lambda x: x.encode("utf-8")
 

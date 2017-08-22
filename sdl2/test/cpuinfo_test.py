@@ -1,6 +1,6 @@
 import sys
 import unittest
-from .. import cpuinfo
+from sdl2 import cpuinfo
 
 _HASMP = True
 try:

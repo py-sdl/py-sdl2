@@ -3,7 +3,7 @@ import array
 import ctypes
 import struct
 import unittest
-from ..ext import array as sdlextarray
+from sdl2.ext import array as sdlextarray
 
 singlebyteseq = [x for x in range(0x100)]
 doublebyteseq = [x for x in range(0x10000)]

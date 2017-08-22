@@ -2,10 +2,10 @@ import sys
 import unittest
 import copy
 from ctypes import c_int, POINTER, byref, cast, ArgumentError
-from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
-from .. import pixels
-from ..pixels import SDL_Color
-from ..stdinc import Uint8, Uint16, Uint32
+from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
+from sdl2 import pixels
+from sdl2.pixels import SDL_Color
+from sdl2.stdinc import Uint8, Uint16, Uint32
 
 
 class SDLPixelsTest(unittest.TestCase):

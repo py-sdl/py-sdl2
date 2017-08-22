@@ -1,6 +1,6 @@
 import sys
 import unittest
-from ..ext.ebs import Entity, System, Applicator, World
+from sdl2.ext.ebs import Entity, System, Applicator, World
 
 
 class Position(object):

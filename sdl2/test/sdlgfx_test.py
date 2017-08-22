@@ -1,9 +1,16 @@
 import os
 import sys
 import unittest
-from .. import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
-from .. import surface, sdlgfx
+from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
+from sdl2 import surface
 
+try:
+    from sdl2 import sdlgfx
+    _HASSDLGFX=True
+except:
+    _HASSDLGFX=False
+
+@unittest.skipIf(_HASSDLGFX==False, "SDL2_gfx library could not be loaded")
 class SDLTTFTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlgfx"]
 

@@ -6,7 +6,7 @@ if sys.version_info[0] < 3:
     import urllib2
 else:
     import urllib.request as urllib2
-from ..ext import resources
+from sdl2.ext import resources
 
 
 class SDL2ExtResourcesTest(unittest.TestCase):

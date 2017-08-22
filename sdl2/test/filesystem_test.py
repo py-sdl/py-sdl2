@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 from ctypes import cast, c_char_p, addressof
-from .. import filesystem, SDL_free
+from sdl2 import filesystem, SDL_free
 
 
 class SDLFileSystemTest(unittest.TestCase):

@@ -1,7 +1,7 @@
 import os
 import sys
 import unittest
-from .. import SDL_Init, SDL_Quit, sdlttf, rwops
+from sdl2 import SDL_Init, SDL_Quit, sdlttf, rwops
 
 fontfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "resources", "tuffy.ttf").encode("utf-8")

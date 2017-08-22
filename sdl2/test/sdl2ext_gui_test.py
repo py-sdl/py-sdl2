@@ -1,6 +1,6 @@
 import sys
 import unittest
-from .. import ext as sdl2ext
+from sdl2 import ext as sdl2ext
 
 
 class SDL2ExtGUITest(unittest.TestCase):

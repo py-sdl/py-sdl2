@@ -1,6 +1,6 @@
 import sys
 import unittest
-from .. import SDL_Init, SDL_WasInit, SDL_InitSubSystem, SDL_QuitSubSystem, \
+from sdl2 import SDL_Init, SDL_WasInit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_Quit, SDL_INIT_AUDIO, SDL_INIT_EVERYTHING, SDL_INIT_GAMECONTROLLER, \
     SDL_INIT_HAPTIC, SDL_INIT_JOYSTICK, SDL_INIT_NOPARACHUTE, SDL_INIT_TIMER, \
     SDL_INIT_VIDEO, SDL_GetError

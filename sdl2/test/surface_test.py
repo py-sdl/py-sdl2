@@ -3,10 +3,10 @@ import sys
 import array
 import unittest
 from ctypes import c_int, byref, cast, POINTER, c_void_p
-from ..ext import CTypesView
-from .. import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
-from ..stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
-from .. import blendmode, pixels, rect, surface, rwops, error
+from sdl2.ext import CTypesView
+from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
+from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
+from sdl2 import blendmode, pixels, rect, surface, rwops, error
 
 to_ctypes = lambda seq, dtype: (dtype * len(seq))(*seq)
 

@@ -1,8 +1,7 @@
 import sys
 import unittest
-from .. import ext as sdl2ext
-from .. import surface, video
-from .util.testutils import interactive, doprint
+from sdl2 import ext as sdl2ext
+from sdl2 import surface, video
 
 
 class SDL2ExtWindowTest(unittest.TestCase):
@@ -41,42 +40,42 @@ class SDL2ExtWindowTest(unittest.TestCase):
         #window.title = 1234
         #self.assertEqual(window.title, "1234")
 
-    @interactive("Was the window shown?")
-    def test_Window_show(self):
-        window = sdl2ext.Window("Test Show Window", size=(200, 200))
-        window.show()
-        doprint("""Please check, if a window with the title
-'Test Show Window' is shown""")
+#     @interactive("Was the window shown?")
+#     def test_Window_show(self):
+#         window = sdl2ext.Window("Test Show Window", size=(200, 200))
+#         window.show()
+#         doprint("""Please check, if a window with the title
+# 'Test Show Window' is shown""")
 
-    @interactive("Did the window vanish from your sight and pop up again?")
-    def test_Window_hide(self):
-        window = sdl2ext.Window("Test Hide Window", size=(200, 200))
-        window.show()
-        doprint("""Please check, if a window with the title
-'Test Hide Window' is shown""")
-        window.hide()
-        doprint("Please check, that the window is not shown anymore")
-        window.show()
-        doprint("Please check, if the window is shown again")
+#     @interactive("Did the window vanish from your sight and pop up again?")
+#     def test_Window_hide(self):
+#         window = sdl2ext.Window("Test Hide Window", size=(200, 200))
+#         window.show()
+#         doprint("""Please check, if a window with the title
+# 'Test Hide Window' is shown""")
+#         window.hide()
+#         doprint("Please check, that the window is not shown anymore")
+#         window.show()
+#         doprint("Please check, if the window is shown again")
 
-    @interactive("Was the window maximized?")
-    def test_Window_maximize(self):
-        window = sdl2ext.Window("Test Maximize Window", size=(200, 200),
-                                flags=video.SDL_WINDOW_RESIZABLE)
-        window.show()
-        doprint("""Please check, that a window with the title
-'Test Maximize Window' is shown""")
-        window.maximize()
-        doprint("Please check, if the window was maximized properly")
+#     @interactive("Was the window maximized?")
+#     def test_Window_maximize(self):
+#         window = sdl2ext.Window("Test Maximize Window", size=(200, 200),
+#                                 flags=video.SDL_WINDOW_RESIZABLE)
+#         window.show()
+#         doprint("""Please check, that a window with the title
+# 'Test Maximize Window' is shown""")
+#         window.maximize()
+#         doprint("Please check, if the window was maximized properly")
 
-    @interactive("Was the window minimized?")
-    def test_Window_minimize(self):
-        window = sdl2ext.Window("Test Minimize Window", size=(200, 200))
-        window.show()
-        doprint("""Please check, that a window with the title
-'Test Minimize Window' is shown""")
-        window.minimize()
-        doprint("Please check, if the window was minimized properly")
+#     @interactive("Was the window minimized?")
+#     def test_Window_minimize(self):
+#         window = sdl2ext.Window("Test Minimize Window", size=(200, 200))
+#         window.show()
+#         doprint("""Please check, that a window with the title
+# 'Test Minimize Window' is shown""")
+#         window.minimize()
+#         doprint("Please check, if the window was minimized properly")
 
     @unittest.skip("not implemented")
     def test_Window_refresh(self):

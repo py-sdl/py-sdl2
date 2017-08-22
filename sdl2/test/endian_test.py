@@ -1,7 +1,7 @@
 import sys
 import math
 import unittest
-from .. import endian
+from sdl2 import endian
 
 
 class SDLEndianTest(unittest.TestCase):

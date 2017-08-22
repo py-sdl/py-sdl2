@@ -1,6 +1,6 @@
 import sys
 import unittest
-from .. import SDL_Init, SDL_Quit, error
+from sdl2 import SDL_Init, SDL_Quit, error
 
 
 class SDLTest(unittest.TestCase):

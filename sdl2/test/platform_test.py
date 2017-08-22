@@ -1,6 +1,6 @@
 import sys
 import unittest
-from .. import platform
+from sdl2 import platform
 
 
 class SDLPlatformTest(unittest.TestCase):

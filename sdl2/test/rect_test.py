@@ -2,7 +2,7 @@ import sys
 import copy
 import unittest
 from ctypes import byref, c_int
-from .. import rect
+from sdl2 import rect
 
 to_ctypes = lambda seq, dtype: (dtype * len(seq))(*seq)
 

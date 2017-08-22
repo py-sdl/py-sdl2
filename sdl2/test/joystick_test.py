@@ -1,8 +1,8 @@
 import sys
 import unittest
-from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_JOYSTICK
-from ..events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
-from .. import joystick
+from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_JOYSTICK
+from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
+from sdl2 import joystick
 
 
 class SDLJoystickTest(unittest.TestCase):

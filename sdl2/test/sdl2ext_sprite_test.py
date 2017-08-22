@@ -1,9 +1,9 @@
 import sys
 import unittest
 from ctypes import ArgumentError, POINTER, byref
-from ..ext.resources import Resources
-from .. import ext as sdl2ext
-from ..surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
+from sdl2.ext.resources import Resources
+from sdl2 import ext as sdl2ext
+from sdl2.surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.video import SDL_Window, SDL_WINDOW_HIDDEN, SDL_DestroyWindow
 from sdl2.render import SDL_Renderer, SDL_CreateWindowAndRenderer, \
     SDL_DestroyRenderer, SDL_CreateTexture, SDL_Texture, \

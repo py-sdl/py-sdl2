@@ -2,9 +2,9 @@ import os
 import sys
 import ctypes
 import unittest
-from .. import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
+from sdl2 import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_INIT_AUDIO
-from .. import audio
+from sdl2 import audio
 
 
 class SDLAudioTest(unittest.TestCase):

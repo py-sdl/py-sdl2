@@ -1,8 +1,8 @@
 import sys
 import unittest
 import ctypes
-from ..stdinc import SDL_TRUE
-from .. import video, syswm, version
+from sdl2.stdinc import SDL_TRUE
+from sdl2 import video, syswm, version
 
 
 class SDLSysWMTest(unittest.TestCase):

@@ -1,11 +1,11 @@
 import sys
 import unittest
 from ctypes import byref, POINTER, c_int
-from .. import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING, SDL_GetError
+from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING, SDL_GetError
 import itertools
-from ..stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
-from .. import render, video, surface, pixels, blendmode, rect
-from ..ext.pixelaccess import PixelView
+from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
+from sdl2 import render, video, surface, pixels, blendmode, rect
+from sdl2.ext.pixelaccess import PixelView
 
 _ISPYPY = hasattr(sys, "pypy_version_info")
 if _ISPYPY:
