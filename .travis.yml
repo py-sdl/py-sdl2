@@ -59,4 +59,4 @@ env:
   - SDL_RENDER_DRIVER=software
 
 script:
-  - python -B -m sdl2.test.util.runtests -v
+  - python -B -m pytest -v

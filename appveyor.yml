@@ -24,9 +24,10 @@ install:
   - IF NOT EXIST dlls\\32bit\\SDL2.dll .ci\\install-win-deps.cmd
   - "%PYTHON%\\python.exe -m pip install -U pip"
   - "%PYTHON%\\python.exe -m pip install -U numpy"
+  - "%PYTHON%\\python.exe -m pip install -U pytest"
   - "%PYTHON%\\python.exe -m pip install ."
 
 build: off
 
 test_script:
-  - "%PYTHON%\\python.exe -B -m sdl2.test.util.runtests -v"
+  - "%PYTHON%\\python.exe -B -m pytest -v"
