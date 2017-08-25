@@ -36,13 +36,13 @@ class Renderer(object):
         if isinstance(target, Window):
             self.sdlrenderer = render.SDL_CreateRenderer(target.window, index,
                                                          flags)
-            self.rendertarget = target.window
+            self.rendertarget = target
         elif isinstance(target, video.SDL_Window):
             self.sdlrenderer = render.SDL_CreateRenderer(target, index, flags)
             self.rendertarget = target
         elif isinstance(target, SoftwareSprite):
             self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target.surface)
-            self.rendertarget = target.surface
+            self.rendertarget = target
         elif isinstance(target, surface.SDL_Surface):
             self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target)
             self.rendertarget = target
@@ -380,7 +380,7 @@ class SoftwareSprite(Sprite):
 
 class TextureSprite(Sprite):
     """A simple, visible, texture-based 2D object, using a renderer."""
-    def __init__(self, texture):
+    def __init__(self, texture, free=True):
         """Creates a new TextureSprite."""
         super(TextureSprite, self).__init__()
         self.texture = texture
@@ -392,6 +392,7 @@ class TextureSprite(Sprite):
                                       byref(w), byref(h))
         if ret == -1:
             raise SDLError()
+        self.free = free
         self.angle = 0.0
         self.flip = render.SDL_FLIP_NONE
         self._size = w.value, h.value
@@ -399,7 +400,7 @@ class TextureSprite(Sprite):
 
     def __del__(self):
         """Releases the bound SDL_Texture."""
-        if self.texture:
+        if self.free and self.texture:
             render.SDL_DestroyTexture(self.texture)
         self.texture = None
 
@@ -533,9 +534,8 @@ class SpriteFactory(object):
                                            gmask, bmask, amask)
         if not sfc:
             raise SDLError()
-        sfc = sfc.contents
-        fmt = sfc.format.contents
-        if fmt.Amask != 0:
+        fmt = sfc.contents.format
+        if fmt.contents.Amask != 0:
             # Target has an alpha mask
             col = pixels.SDL_MapRGBA(fmt, color.r, color.g, color.b, color.a)
         else:
@@ -543,7 +543,7 @@ class SpriteFactory(object):
         ret = surface.SDL_FillRect(sfc, None, col)
         if ret == -1:
             raise SDLError()
-        return self.from_surface(sfc, True)
+        return self.from_surface(sfc.contents, True)
 
     def from_text(self, text, **kwargs):
         """Creates a Sprite from a string of text."""
@@ -677,6 +677,7 @@ class SoftwareSpriteRenderSystem(SpriteRenderSystem):
             self.window = window
         else:
             raise TypeError("unsupported window type")
+        self.target = window
         sfc = video.SDL_GetWindowSurface(self.window)
         if not sfc:
             raise SDLError()
@@ -731,6 +732,7 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
         if isinstance(target, (Window, video.SDL_Window)):
             # Create a Renderer for the window and use that one.
             target = Renderer(target)
+
         if isinstance(target, Renderer):
             self._renderer = target  # Used to prevent GC
             sdlrenderer = target.sdlrenderer

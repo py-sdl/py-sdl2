@@ -555,15 +555,14 @@ class SDL2ExtSpriteTest(unittest.TestCase):
 
         sprite = sdl2ext.SoftwareSprite(sf, True)
         renderer = sdl2ext.Renderer(sprite)
-        self.assertEqual(renderer.rendertarget, sprite.surface)
-        self.assertEqual(renderer.rendertarget, sf)
+        self.assertEqual(renderer.rendertarget, sprite)
         self.assertIsInstance(renderer.sdlrenderer.contents, SDL_Renderer)
         del renderer
         dogc()
 
         window = sdl2ext.Window("Test", size=(1, 1))
         renderer = sdl2ext.Renderer(window)
-        self.assertEqual(renderer.rendertarget, window.window)
+        self.assertEqual(renderer.rendertarget, window)
         self.assertIsInstance(renderer.sdlrenderer.contents, SDL_Renderer)
         del renderer
         dogc()
@@ -571,7 +570,6 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         sdlwindow = window.window
         renderer = sdl2ext.Renderer(sdlwindow)
         self.assertEqual(renderer.rendertarget, sdlwindow)
-        self.assertEqual(renderer.rendertarget, window.window)
         self.assertIsInstance(renderer.sdlrenderer.contents, SDL_Renderer)
         del renderer
         del window

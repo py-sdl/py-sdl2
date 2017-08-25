@@ -141,10 +141,9 @@ def load_image(fname, enforce=None):
             sdlpalette = pixels.SDL_AllocPalette(len(rgbcolors) // 3)
             if not sdlpalette:
                 raise SDLError()
-            sdlpalette = sdlpalette.contents
             SDL_Color = pixels.SDL_Color
             for idx, (r, g, b) in enumerate(_chunk(rgbcolors, 3)):
-                sdlpalette.colors[idx] = SDL_Color(r, g, b)
+                sdlpalette.contents.colors[idx] = SDL_Color(r, g, b)
             ret = surface.SDL_SetSurfacePalette(imgsurface, sdlpalette)
             # This will decrease the refcount on the palette, so it gets
             # freed properly on releasing the SDL_Surface.

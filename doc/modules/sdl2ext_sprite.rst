@@ -49,10 +49,16 @@ Sprite, texture and pixel surface routines
       drawn on top of other :class:`Sprite` values by the
       :class:`SpriteRenderSystem`.
 
-.. class:: SoftwareSprite()
+.. class:: SoftwareSprite(imgsurface : sdl2.SDL_Surface, free : boolean)
 
    A simple, visible, pixel-based 2D object, implemented on top of
-   SDL2 software surfaces.
+   SDL2 software surfaces. *free* indicates, whether *imgsurface* shall be
+   automatically freed on deleting the *SoftwareSprite*.
+
+   .. attribute:: free
+
+      Indicates, if the bound :attr:`surface` shall be freed on deleting the
+      :class:`SoftwareSprite`.
 
    .. attribute:: surface
 
@@ -69,10 +75,16 @@ Sprite, texture and pixel surface routines
       parent sprite's surface is not managed by the sprite (``free`` is False),
       you will need to keep it alive while the subsprite exists.
 
-.. class:: TextureSprite()
+.. class:: TextureSprite(texture : sdl2.SDL_Texture[, free=True])
 
    A simple, visible, pixel-based 2D object, implemented on top of SDL2
-   textures.
+   textures. *free* indicates, whether *texture* shall be automatically freed
+   on deleting the *TextureSprite*.
+
+   .. attribute:: free
+
+      Indicates, if the bound :attr:`texture` shall be freed on deleting the
+      :class:`TextureSprite`.
 
    .. attribute:: angle
 
@@ -175,7 +187,7 @@ Sprite, texture and pixel surface routines
 
    .. attribute:: rendertarget
 
-      The target for which the :attr:`renderer` was created, if any.
+      The target for which the :attr:`sdlrenderer` was created, if any.
 
    .. method:: render(sprites : object[, x=None[, y=None]]) -> None
 
