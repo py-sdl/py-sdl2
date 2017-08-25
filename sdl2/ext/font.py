@@ -64,9 +64,7 @@ class BitmapFont(object):
         self.offsets = {}
         if isinstance(imgsurface, SoftwareSprite):
             self.surface = imgsurface.surface
-        # elif isinstance(surface, sprite.Sprite):
-
-        #    TODO
+            self._sprite = imgsurface # prevent GC on the Sprite
         elif isinstance(imgsurface, surface.SDL_Surface):
             self.surface = imgsurface
         self.size = size[0], size[1]
@@ -134,9 +132,6 @@ class BitmapFont(object):
         target = None
         if isinstance(imgsurface, SoftwareSprite):
             target = imgsurface.surface
-        # elif isinstance(surface, sprite.Sprite):
-
-        #    TODO
         elif isinstance(imgsurface, surface.SDL_Surface):
             target = imgsurface
         else:
