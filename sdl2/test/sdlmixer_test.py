@@ -2,9 +2,15 @@ import os
 import sys
 import unittest
 import ctypes
-from sdl2 import SDL_Init, SDL_Quit, sdlmixer, rwops, version
+from sdl2 import SDL_Init, SDL_Quit, rwops, version
 
+try:
+    from sdl2 import sdlmixer
+    _HASSDLMIXER=True
+except:
+    _HASSDLMIXER=False
 
+@unittest.skipIf(not _HASSDLMIXER, "SDL2_mixer library could not be loaded")
 class SDLMixerTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlmixer"]
 

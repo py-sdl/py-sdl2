@@ -3,7 +3,12 @@ import sys
 import ctypes
 import unittest
 from sdl2 import SDL_Init, SDL_Quit, version, surface, rwops, render
-from sdl2 import sdlimage
+
+try:
+    from sdl2 import sdlimage
+    _HASSDLIMAGE=True
+except:
+    _HASSDLIMAGE=False
 
 formats = ["bmp",
            "cur",
@@ -26,6 +31,7 @@ formats = ["bmp",
            ]
 
 
+@unittest.skipIf(not _HASSDLIMAGE, "SDL2_image library could not be loaded")
 class SDLImageTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlimage"]
 

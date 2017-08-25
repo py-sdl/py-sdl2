@@ -1,12 +1,18 @@
 import os
 import sys
 import unittest
-from sdl2 import SDL_Init, SDL_Quit, sdlttf, rwops
+from sdl2 import SDL_Init, SDL_Quit, rwops
+
+try:
+    from sdl2 import sdlttf
+    _HASSDLTTF=True
+except:
+    _HASSDLTTF=False
 
 fontfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "resources", "tuffy.ttf").encode("utf-8")
 
-
+@unittest.skipIf(not _HASSDLTTF, "SDL2_ttf library could not be loaded")
 class SDLTTFTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlttf"]
 

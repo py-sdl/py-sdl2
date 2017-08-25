@@ -10,7 +10,7 @@ try:
 except:
     _HASSDLGFX=False
 
-@unittest.skipIf(_HASSDLGFX==False, "SDL2_gfx library could not be loaded")
+@unittest.skipIf(not _HASSDLGFX, "SDL2_gfx library could not be loaded")
 class SDLTTFTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlgfx"]
 
