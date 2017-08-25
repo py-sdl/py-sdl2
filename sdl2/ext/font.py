@@ -98,7 +98,8 @@ class BitmapFont(object):
         if bpp is None:
             bpp = self.surface.format.contents.BitsPerPixel
         sf = surface.SDL_CreateRGBSurface(0, tw, th, bpp, 0, 0, 0, 0)
-        sf = sf.contents
+        if not sf:
+            raise SDLError()
         imgsurface = SoftwareSprite(sf, False)
         target = imgsurface.surface
         blit_surface = surface.SDL_BlitSurface
@@ -253,8 +254,8 @@ class FontManager(object):
         else:
             font = sdlttf.TTF_OpenFontIndex(byteify(font_path, "utf-8"), size,
                                             index)
-        if font is None:
-            raise SDLError()
+        if not font:
+            raise SDLError(sdlttf.TTF_GetError())
         return font
 
     def _change_font_size(self, alias, size):
@@ -354,6 +355,9 @@ class FontManager(object):
                 bpp = fontsf.format.BitsPerPixel
                 fmt = fontsf.format.format
                 bgsf = surface.SDL_CreateRGBSurfaceWithFormat(0, w, h, bpp, fmt)
+                if not bgsf:
+                    surface.SDL_FreeSurface(fontsf)
+                    raise SDLError()
                 surface.SDL_BlitSurface(fontsf, None, bgsf, None)
                 return bgsf.contents
             return fontsf.contents

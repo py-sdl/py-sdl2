@@ -55,6 +55,7 @@ class Renderer(object):
     def __del__(self):
         if self.sdlrenderer:
             render.SDL_DestroyRenderer(self.sdlrenderer)
+        self.sdlrenderer = None
         self.rendertarget = None
 
     @property
@@ -398,7 +399,7 @@ class TextureSprite(Sprite):
 
     def __del__(self):
         """Releases the bound SDL_Texture."""
-        if self.texture is not None:
+        if self.texture:
             render.SDL_DestroyTexture(self.texture)
         self.texture = None
 
@@ -431,12 +432,11 @@ class TextureSprite(Sprite):
             raise SDLError()
         if self.center:
             return "TextureSprite(format=%d, access=%d, size=%s, angle=%f, center=%s)" % \
-                (flags.value, access.value, (w.value, h.value), self.angle
+                (flags.value, access.value, (w.value, h.value), self.angle,
                  (self.center.x, self.center.y))
         else:
             return "TextureSprite(format=%d, access=%d, size=%s, angle=%f)" % \
                 (flags.value, access.value, (w.value, h.value), self.angle)
-
 
 class SpriteFactory(object):
     """A factory class for creating Sprite components."""
@@ -740,6 +740,11 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
             raise TypeError("unsupported object type")
         self.sdlrenderer = sdlrenderer
         self.componenttypes = (TextureSprite,)
+
+    def __del__(self):
+        self.sdlrenderer = None
+        if hasattr(self, "_renderer"):
+            self._renderer = None
 
     def render(self, sprites, x=None, y=None):
         """Draws the passed sprites (or sprite).
