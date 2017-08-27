@@ -23,8 +23,8 @@ class SDLTTFTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        SDL_Quit()
         sdlttf.TTF_Quit()
+        SDL_Quit()
 
     def test_TTF_Font(self):
         font = sdlttf.TTF_Font()

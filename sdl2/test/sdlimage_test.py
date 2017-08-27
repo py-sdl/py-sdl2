@@ -43,8 +43,8 @@ class SDLImageTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        SDL_Quit()
         sdlimage.IMG_Quit()
+        SDL_Quit()
 
     @unittest.skip("not implemented")
     def test_IMG_InitQuit(self):
