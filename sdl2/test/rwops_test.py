@@ -147,6 +147,14 @@ class SDLRWopsTest(unittest.TestCase):
     def test_SDL_AllocFreeRW(self):
         pass
 
+    @unittest.skip("not implemented")
+    def test_SDL_LoadFile_RW(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_LoadFile(self):
+        pass
+
     def test_SDL_ReadLE16(self):
         data = byteify("A Teststring", "utf-8")
         buf = BytesIO(data)

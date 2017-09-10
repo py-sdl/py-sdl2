@@ -1,6 +1,6 @@
 import sys
 import unittest
-from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_JOYSTICK
+from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_JOYSTICK
 from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
 from sdl2 import joystick
 
@@ -15,7 +15,6 @@ class SDLJoystickTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
         SDL_Quit()
 
     def test_SDL_NumJoysticks(self):
@@ -29,27 +28,41 @@ class SDLJoystickTest(unittest.TestCase):
             name = joystick.SDL_JoystickNameForIndex(index)
             self.assertIn(type(name), (str, bytes))
 
-        # self.assertRaises(sdl.SDLError, joystick.joystick_name,
-        #                   self.jcount + 1)
-        # self.assertRaises(sdl.SDLError, joystick.joystick_name, -10)
-        # self.assertRaises(ValueError, joystick.joystick_name, "Test")
-        # self.assertRaises(TypeError, joystick.joystick_name, None)
-
-    def test_SDL_JoystickOpenClose(self):
+    def test_SDL_JoystickOpen(self):
         if self.jcount == 0:
             self.skipTest("no joysticks detected")
         for index in range(self.jcount):
             stick = joystick.SDL_JoystickOpen(index)
             self.assertIsInstance(stick.contents, joystick.SDL_Joystick)
-            # self.assertTrue(joystick.joystick_opened(index))
             joystick.SDL_JoystickClose(stick)
-            # self.assertFalse(joystick.joystick_opened(index))
 
-        # self.assertRaises(sdl.SDLError, joystick.joystick_open,
-        #                   self.jcount + 1)
-        # self.assertRaises(sdl.SDLError, joystick.joystick_open, -10)
-        # self.assertRaises(ValueError, joystick.joystick_open, "Test")
-        # self.assertRaises(TypeError, joystick.joystick_open, None)
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickName(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetDeviceGUID(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetGUID(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetGUIDString(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetGUIDFromString(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetAttached(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickInstanceID(self):
+        pass
 
     def test_SDL_JoystickNumAxes(self):
         if self.jcount == 0:
@@ -71,16 +84,6 @@ class SDLJoystickTest(unittest.TestCase):
             self.assertGreaterEqual(balls, 0)
             joystick.SDL_JoystickClose(stick)
 
-    def test_SDL_JoystickNumButtons(self):
-        if self.jcount == 0:
-            self.skipTest("no joysticks detected")
-        for index in range(self.jcount):
-            stick = joystick.SDL_JoystickOpen(index)
-            self.assertIsInstance(stick.contents, joystick.SDL_Joystick)
-            buttons = joystick.SDL_JoystickNumButtons(stick)
-            self.assertGreaterEqual(buttons, 0)
-            joystick.SDL_JoystickClose(stick)
-
     def test_SDL_JoystickNumHats(self):
         if self.jcount == 0:
             self.skipTest("no joysticks detected")
@@ -89,6 +92,16 @@ class SDLJoystickTest(unittest.TestCase):
             self.assertIsInstance(stick.contents, joystick.SDL_Joystick)
             hats = joystick.SDL_JoystickNumHats(stick)
             self.assertGreaterEqual(hats, 0)
+            joystick.SDL_JoystickClose(stick)
+
+    def test_SDL_JoystickNumButtons(self):
+        if self.jcount == 0:
+            self.skipTest("no joysticks detected")
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            self.assertIsInstance(stick.contents, joystick.SDL_Joystick)
+            buttons = joystick.SDL_JoystickNumButtons(stick)
+            self.assertGreaterEqual(buttons, 0)
             joystick.SDL_JoystickClose(stick)
 
     def test_SDL_JoystickUpdate(self):
@@ -150,8 +163,57 @@ class SDLJoystickTest(unittest.TestCase):
             joystick.SDL_JoystickClose(stick)
 
     @unittest.skip("not implemented")
+    def test_SDL_JoystickClose(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickCurrentPowerLevel(self):
+        pass
+
+    @unittest.skip("not implemented")
     def test_SDL_JoystickFromInstanceID(self):
         pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetVendor(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetProduct(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetProductVersion(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetAxisInitialState(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetType(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetDeviceVendor(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetDeviceProduct(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetDeviceProductVersion(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetDeviceType(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_JoystickGetDeviceInstanceID(self):
+        pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())

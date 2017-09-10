@@ -65,7 +65,10 @@ class SDLCPUInfoTest(unittest.TestCase):
 
     def test_SDL_HasAVX2(self):
         ret = cpuinfo.SDL_HasAVX2()
-        # TODO: remove None as soon as 2.0.4 is released
+        self.assertIn(ret, (0, 1))
+
+    def test_SDL_HasNEON(self):
+        ret = cpuinfo.SDL_HasNEON()
         self.assertIn(ret, (0, 1))
 
 
