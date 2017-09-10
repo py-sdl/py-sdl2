@@ -17,4 +17,4 @@ SDL_Vulkan_GetVkGetInstanceProcAddr = _bind("SDL_Vulkan_GetVkGetInstanceProcAddr
 SDL_Vulkan_UnloadLibrary = _bind("SDL_Vulkan_UnloadLibrary", None, None, nullfunc)
 SDL_Vulkan_GetInstanceExtensions = _bind("SDL_Vulkan_GetInstanceExtensions", [POINTER(SDL_Window), POINTER(c_uint), POINTER(c_char_p)], SDL_bool, nullfunc)
 SDL_Vulkan_CreateSurface = _bind("SDL_Vulkan_CreateSurface", [POINTER(SDL_Window), VkInstance, POINTER(VkSurfaceKHR)], SDL_bool, nullfunc)
-SDL_Vulkan_GetDrawableSize = _bind("SDL_Vulkan_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)], None, None)
+SDL_Vulkan_GetDrawableSize = _bind("SDL_Vulkan_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)], None, nullfunc)
