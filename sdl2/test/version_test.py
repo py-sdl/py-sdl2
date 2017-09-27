@@ -8,10 +8,10 @@ class SDLVersionTest(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test___version__(self):
-        self.assertEqual(__version__, "0.9.5")
+        self.assertEqual(__version__, "0.9.6")
 
     def test_version_info(self):
-        self.assertEqual(version_info, (0, 9, 5, ""))
+        self.assertEqual(version_info, (0, 9, 6, ""))
 
     def test_SDL_version(self):
         v = version.SDL_version(0, 0, 0)
