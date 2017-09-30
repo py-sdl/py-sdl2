@@ -2,6 +2,19 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.6
+-----
+Released on 2017-09-30.
+
+* updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.6)
+* fixed issue #98: wrap :func:`sdl2.SDL_GetHintBoolean()` correctly
+* fixed issue #99: wrap :func:`sdl2.sdlmixer.Mix_PausedMusic()` correctly
+* fixed issue #104: :meth:`sdl2.ext.Resources.scan()` shows the correct path on errors now
+* fixed issue #106: fix :meth:`TextureSprite.__repr__()` for an unset `center` property
+* fixed some minor GC issues in :mod:`sdl2.ext.sprite` and :mod:`sdl2.ext.font`
+* fixed the `__getattr__` implementation for :class:`sdl2.ext.ebs.Entity`
+* fixed background colour handling for multiline text surfaces
+
 0.9.5
 -----
 Released on 2016-10-20.
