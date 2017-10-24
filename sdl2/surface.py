@@ -1,5 +1,5 @@
 from ctypes import CFUNCTYPE, Structure, POINTER, c_int, c_void_p
-from .dll import _bind, nullfunc
+from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
 from .rect import SDL_Rect
@@ -51,13 +51,13 @@ SDL_Blit = CFUNCTYPE(c_int, POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL
 
 SDL_CreateRGBSurface = _bind("SDL_CreateRGBSurface", [Uint32, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], POINTER(SDL_Surface))
 SDL_CreateRGBSurfaceFrom = _bind("SDL_CreateRGBSurfaceFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], POINTER(SDL_Surface))
-SDL_CreateRGBSurfaceWithFormat = _bind("SDL_CreateRGBSurfaceWithFormat", [Uint32, c_int, c_int, c_int, Uint32], POINTER(SDL_Surface), optfunc=nullfunc)
-SDL_CreateRGBSurfaceWithFormatFrom = _bind("SDL_CreateRGBSurfaceWithFormatFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32], POINTER(SDL_Surface), optfunc=nullfunc)
+SDL_CreateRGBSurfaceWithFormat = _bind("SDL_CreateRGBSurfaceWithFormat", [Uint32, c_int, c_int, c_int, Uint32], POINTER(SDL_Surface))
+SDL_CreateRGBSurfaceWithFormatFrom = _bind("SDL_CreateRGBSurfaceWithFormatFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32], POINTER(SDL_Surface))
 SDL_FreeSurface = _bind("SDL_FreeSurface", [POINTER(SDL_Surface)])
 SDL_SetSurfacePalette = _bind("SDL_SetSurfacePalette", [POINTER(SDL_Surface), POINTER(SDL_Palette)], c_int)
 SDL_LockSurface = _bind("SDL_LockSurface", [POINTER(SDL_Surface)], c_int)
 SDL_UnlockSurface = _bind("SDL_UnlockSurface", [POINTER(SDL_Surface)])
-SDL_DuplicateSurface = _bind("SDL_DuplicateSurface", [POINTER(SDL_Surface)], POINTER(SDL_Surface), optfunc=nullfunc)
+SDL_DuplicateSurface = _bind("SDL_DuplicateSurface", [POINTER(SDL_Surface)], POINTER(SDL_Surface))
 
 SDL_LoadBMP_RW = _bind("SDL_LoadBMP_RW", [POINTER(SDL_RWops), c_int], POINTER(SDL_Surface))
 SDL_LoadBMP = lambda fname: SDL_LoadBMP_RW(SDL_RWFromFile(fname, b"rb"), 1)

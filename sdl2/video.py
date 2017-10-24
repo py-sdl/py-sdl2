@@ -1,6 +1,6 @@
 from ctypes import Structure, POINTER, c_int, c_void_p, c_char_p, c_float, \
     py_object, CFUNCTYPE
-from .dll import _bind, nullfunc
+from .dll import _bind
 from .stdinc import Uint16, Uint32, SDL_bool
 from .rect import SDL_Point, SDL_Rect
 from .surface import SDL_Surface
@@ -296,7 +296,7 @@ SDL_UpdateWindowSurface = _bind("SDL_UpdateWindowSurface", [POINTER(SDL_Window)]
 SDL_UpdateWindowSurfaceRects = _bind("SDL_UpdateWindowSurfaceRects", [POINTER(SDL_Window), POINTER(SDL_Rect), c_int], c_int)
 SDL_SetWindowGrab = _bind("SDL_SetWindowGrab", [POINTER(SDL_Window), SDL_bool])
 SDL_GetWindowGrab = _bind("SDL_GetWindowGrab", [POINTER(SDL_Window)], SDL_bool)
-SDL_GetGrabbedWindow = _bind("SDL_GetGrabbedWindow", None, POINTER(SDL_Window), optfunc=nullfunc)
+SDL_GetGrabbedWindow = _bind("SDL_GetGrabbedWindow", None, POINTER(SDL_Window))
 SDL_SetWindowBrightness = _bind("SDL_SetWindowBrightness", [POINTER(SDL_Window), c_float], c_int)
 SDL_GetWindowBrightness = _bind("SDL_GetWindowBrightness", [POINTER(SDL_Window)], c_float)
 SDL_SetWindowGammaRamp = _bind("SDL_SetWindowGammaRamp", [POINTER(SDL_Window), POINTER(Uint16), POINTER(Uint16), POINTER(Uint16)], c_int)
@@ -305,15 +305,15 @@ SDL_DestroyWindow = _bind("SDL_DestroyWindow", [POINTER(SDL_Window)])
 SDL_IsScreenSaverEnabled = _bind("SDL_IsScreenSaverEnabled", None, SDL_bool)
 SDL_EnableScreenSaver = _bind("SDL_EnableScreenSaver")
 SDL_DisableScreenSaver = _bind("SDL_DisableScreenSaver")
-SDL_SetWindowHitTest = _bind("SDL_SetWindowHitTest", [POINTER(SDL_Window), SDL_HitTest, c_void_p], c_int, optfunc=nullfunc)
-SDL_GetDisplayDPI = _bind("SDL_GetDisplayDPI", [c_int, POINTER(c_float), POINTER(c_float), POINTER(c_float)], c_int, optfunc=nullfunc)
-SDL_GetDisplayUsableBounds = _bind("SDL_GetDisplayUsableBounds", [c_int, POINTER(SDL_Rect)], c_int, optfunc=nullfunc)
-SDL_GetWindowBordersSize = _bind("SDL_GetWindowBordersSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int), POINTER(c_int), POINTER(c_int)], c_int, optfunc=nullfunc)
-SDL_GetWindowOpacity = _bind("SDL_GetWindowOpacity", [POINTER(SDL_Window), POINTER(c_float)], c_int, optfunc=nullfunc)
-SDL_SetWindowOpacity = _bind("SDL_SetWindowOpacity", [POINTER(SDL_Window), c_float], c_int, optfunc=nullfunc)
-SDL_SetWindowInputFocus = _bind("SDL_SetWindowInputFocus", [POINTER(SDL_Window)], c_int, optfunc=nullfunc)
-SDL_SetWindowModalFor = _bind("SDL_SetWindowModalFor", [POINTER(SDL_Window), POINTER(SDL_Window)], c_int, optfunc=nullfunc)
-SDL_SetWindowResizable = _bind("SDL_SetWindowResizable", [POINTER(SDL_Window), SDL_bool], optfunc=nullfunc)
+SDL_SetWindowHitTest = _bind("SDL_SetWindowHitTest", [POINTER(SDL_Window), SDL_HitTest, c_void_p], c_int)
+SDL_GetDisplayDPI = _bind("SDL_GetDisplayDPI", [c_int, POINTER(c_float), POINTER(c_float), POINTER(c_float)], c_int)
+SDL_GetDisplayUsableBounds = _bind("SDL_GetDisplayUsableBounds", [c_int, POINTER(SDL_Rect)], c_int)
+SDL_GetWindowBordersSize = _bind("SDL_GetWindowBordersSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int), POINTER(c_int), POINTER(c_int)], c_int)
+SDL_GetWindowOpacity = _bind("SDL_GetWindowOpacity", [POINTER(SDL_Window), POINTER(c_float)], c_int)
+SDL_SetWindowOpacity = _bind("SDL_SetWindowOpacity", [POINTER(SDL_Window), c_float], c_int)
+SDL_SetWindowInputFocus = _bind("SDL_SetWindowInputFocus", [POINTER(SDL_Window)], c_int)
+SDL_SetWindowModalFor = _bind("SDL_SetWindowModalFor", [POINTER(SDL_Window), POINTER(SDL_Window)], c_int)
+SDL_SetWindowResizable = _bind("SDL_SetWindowResizable", [POINTER(SDL_Window), SDL_bool])
 
 SDL_GL_LoadLibrary = _bind("SDL_GL_LoadLibrary", [c_char_p], c_int)
 SDL_GL_GetProcAddress = _bind("SDL_GL_GetProcAddress", [c_char_p], c_void_p)
@@ -329,5 +329,5 @@ SDL_GL_SetSwapInterval = _bind("SDL_GL_SetSwapInterval", [c_int], c_int)
 SDL_GL_GetSwapInterval = _bind("SDL_GL_GetSwapInterval", None, c_int)
 SDL_GL_SwapWindow = _bind("SDL_GL_SwapWindow", [POINTER(SDL_Window)])
 SDL_GL_DeleteContext = _bind("SDL_GL_DeleteContext", [SDL_GLContext])
-SDL_GL_GetDrawableSize = _bind("SDL_GL_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)], optfunc=nullfunc)
-SDL_GL_ResetAttributes = _bind("SDL_GL_ResetAttributes", optfunc=nullfunc)
+SDL_GL_GetDrawableSize = _bind("SDL_GL_GetDrawableSize", [POINTER(SDL_Window), POINTER(c_int), POINTER(c_int)])
+SDL_GL_ResetAttributes = _bind("SDL_GL_ResetAttributes")

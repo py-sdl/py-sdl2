@@ -1,7 +1,7 @@
 import sys
 from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_size_t, c_void_p, \
     c_char_p, memmove, string_at, Union
-from .dll import _bind, nullfunc
+from .dll import _bind
 from .stdinc import Sint64, Uint8, Uint16, Uint32, Uint64, SDL_bool
 
 __all__ = ["SDL_RWOPS_UNKNOWN", "SDL_RWOPS_WINFILE", "SDL_RWOPS_STDFILE",
@@ -51,7 +51,7 @@ SDL_RWFromConstMem = _bind("SDL_RWFromConstMem", [c_void_p, c_int], POINTER(SDL_
 SDL_AllocRW = _bind("SDL_AllocRW", None, POINTER(SDL_RWops))
 SDL_FreeRW = _bind("SDL_FreeRW", [POINTER(SDL_RWops)])
 
-SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t), c_int], c_void_p, optfunc=nullfunc)
+SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t), c_int], c_void_p)
 SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, "rb"), ds, 1)
 
 RW_SEEK_SET = 0

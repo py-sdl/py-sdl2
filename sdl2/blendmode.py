@@ -1,5 +1,5 @@
 from ctypes import c_int
-from .dll import _bind, nullfunc
+from .dll import _bind
 
 __all__ = ["SDL_BLENDMODE_NONE", "SDL_BLENDMODE_BLEND", "SDL_BLENDMODE_ADD",
            "SDL_BLENDMODE_MOD", "SDL_BLENDMODE_INVALID", "SDL_BlendMode",
@@ -40,4 +40,4 @@ SDL_BLENDFACTOR_DST_ALPHA           = 0x9
 SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA = 0xA
 SDL_BlendFactor = c_int
 
-SDL_ComposeCustomBlendMode = _bind("SDL_ComposeCustomBlendMode", [SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation, SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation], SDL_BlendMode, optfunc=nullfunc)
+SDL_ComposeCustomBlendMode = _bind("SDL_ComposeCustomBlendMode", [SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation, SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation], SDL_BlendMode)

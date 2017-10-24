@@ -1,6 +1,6 @@
 from ctypes import Structure, POINTER, c_int, c_char_p, c_void_p, c_float, \
     c_double
-from .dll import _bind, nullfunc
+from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
 from .rect import SDL_Point, SDL_Rect
@@ -105,11 +105,11 @@ SDL_RenderSetViewport = _bind("SDL_RenderSetViewport", [POINTER(SDL_Renderer), P
 SDL_RenderGetViewport = _bind("SDL_RenderGetViewport", [POINTER(SDL_Renderer), POINTER(SDL_Rect)])
 SDL_RenderGetClipRect = _bind("SDL_RenderGetClipRect", [POINTER(SDL_Renderer), POINTER(SDL_Rect)])
 SDL_RenderSetClipRect = _bind("SDL_RenderSetClipRect", [POINTER(SDL_Renderer), POINTER(SDL_Rect)], c_int)
-SDL_RenderIsClipEnabled = _bind("SDL_RenderIsClipEnabled", [POINTER(SDL_Renderer)], SDL_bool, nullfunc)
+SDL_RenderIsClipEnabled = _bind("SDL_RenderIsClipEnabled", [POINTER(SDL_Renderer)], SDL_bool)
 SDL_RenderSetScale = _bind("SDL_RenderSetScale", [POINTER(SDL_Renderer), c_float, c_float], c_int)
 SDL_RenderGetScale = _bind("SDL_RenderGetScale", [POINTER(SDL_Renderer), POINTER(c_float), POINTER(c_float)])
-SDL_RenderGetIntegerScale = _bind("SDL_RenderGetIntegerScale", [POINTER(SDL_Renderer)], SDL_bool, optfunc=nullfunc)
-SDL_RenderSetIntegerScale = _bind("SDL_RenderSetIntegerScale", [POINTER(SDL_Renderer), SDL_bool], c_int, optfunc=nullfunc)
+SDL_RenderGetIntegerScale = _bind("SDL_RenderGetIntegerScale", [POINTER(SDL_Renderer)], SDL_bool)
+SDL_RenderSetIntegerScale = _bind("SDL_RenderSetIntegerScale", [POINTER(SDL_Renderer), SDL_bool], c_int)
 SDL_SetRenderDrawColor = _bind("SDL_SetRenderDrawColor", [POINTER(SDL_Renderer), Uint8, Uint8, Uint8, Uint8], c_int)
 SDL_GetRenderDrawColor = _bind("SDL_GetRenderDrawColor", [POINTER(SDL_Renderer), POINTER(Uint8), POINTER(Uint8), POINTER(Uint8), POINTER(Uint8)], c_int)
 SDL_SetRenderDrawBlendMode = _bind("SDL_SetRenderDrawBlendMode", [POINTER(SDL_Renderer), SDL_BlendMode], c_int)
@@ -131,5 +131,4 @@ SDL_DestroyTexture = _bind("SDL_DestroyTexture", [POINTER(SDL_Texture)])
 SDL_DestroyRenderer = _bind("SDL_DestroyRenderer", [POINTER(SDL_Renderer)])
 SDL_GL_BindTexture = _bind("SDL_GL_BindTexture", [POINTER(SDL_Texture), POINTER(c_float), POINTER(c_float)], c_int)
 SDL_GL_UnbindTexture = _bind("SDL_GL_UnbindTexture", [POINTER(SDL_Texture)], c_int)
-SDL_UpdateYUVTexture = _bind("SDL_UpdateYUVTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(Uint8), c_int, POINTER(Uint8), c_int, POINTER(Uint8), c_int], c_int, nullfunc)
-
+SDL_UpdateYUVTexture = _bind("SDL_UpdateYUVTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(Uint8), c_int, POINTER(Uint8), c_int, POINTER(Uint8), c_int], c_int)
