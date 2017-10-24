@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-SDL_LIB=SDL2-2.0.6
+SDL_LIB=SDL2-2.0.7
 SDLTTF_LIB=SDL2_ttf-2.0.14
 SDLMIXER_LIB=SDL2_mixer-2.0.1
 SDLIMAGE_LIB=SDL2_image-2.0.1
