@@ -115,7 +115,7 @@ available within :mod:`sdl2`.
 
 Additional interfaces
 ---------------------
-The following functions, classes, constants and macros are are *not* part of
+The following functions, classes, constants and macros are *not* part of
 SDL2, but were introduced by :mod:`sdl2`.
 
 .. data:: ALL_PIXELFORMATS
