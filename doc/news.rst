@@ -6,8 +6,11 @@ This describes the latest changes between the PySDL2 releases.
 -----
 Released on 2017-XX-XX.
 
+* The minimum required SDL version is 2.0.6
+* The minimum required SDL_image version is 2.0.2
+* The minimum required SDL_image version is 2.0.2
+
 * updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.7)
-* The minimum required SDL version is now 2.0.6
 
 0.9.6
 -----
