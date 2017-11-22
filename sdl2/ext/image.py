@@ -23,7 +23,7 @@ def get_image_formats():
     if not _HASPIL and not _HASSDLIMAGE:
         return ("bmp", )
     return ("bmp", "cur", "gif", "ico", "jpg", "lbm", "pbm", "pcx", "pgm",
-            "png", "pnm", "ppm", "tga", "tif", "webp", "xcf", "xpm")
+            "png", "pnm", "ppm", "svg", "tga", "tif", "webp", "xcf", "xpm")
 
 
 def load_image(fname, enforce=None):

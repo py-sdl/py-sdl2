@@ -1,7 +1,7 @@
 import os
 from ctypes import Structure, POINTER, c_int, c_long, c_char_p
-from .dll import DLL, nullfunc
-from .version import SDL_version
+from .dll import DLL
+from .version import SDL_version, SDL_VERSIONNUM
 from .rwops import SDL_RWops
 from .stdinc import Uint16, Uint32
 from .pixels import SDL_Color
@@ -11,6 +11,7 @@ from .error import SDL_GetError, SDL_SetError
 __all__ = ["get_dll_file", "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION",
           "SDL_TTF_PATCHLEVEL", "SDL_TTF_VERSION", "TTF_MAJOR_VERSION",
           "TTF_MINOR_VERSION", "TTF_PATCHLEVEL", "TTF_VERSION",
+          "SDL_TTF_COMPILEDVERSION", "SDL_TTF_VERSION_ATLEAST",
           "TTF_Linked_Version", "UNICODE_BOM_NATIVE", "UNICODE_BOM_SWAPPED",
           "TTF_ByteSwappedUNICODE", "TTF_Font", "TTF_Init", "TTF_OpenFont",
           "TTF_OpenFontIndex", "TTF_OpenFontRW", "TTF_OpenFontIndexRW",
@@ -63,6 +64,9 @@ TTF_MAJOR_VERSION = SDL_TTF_MAJOR_VERSION
 TTF_MINOR_VERSION = SDL_TTF_MINOR_VERSION
 TTF_PATCHLEVEL = SDL_TTF_PATCHLEVEL
 TTF_VERSION = SDL_TTF_VERSION
+
+SDL_TTF_COMPILEDVERSION = SDL_VERSIONNUM(SDL_TTF_MAJOR_VERSION, SDL_TTF_MINOR_VERSION, SDL_TTF_PATCHLEVEL)
+SDL_TTF_VERSION_ATLEAST = lambda x, y, z: (SDL_TTF_COMPILEDVERSION >= SDL_VERSIONNUM(x, y, z))
 
 TTF_Linked_Version = _bind("TTF_Linked_Version", None, POINTER(SDL_version))
 UNICODE_BOM_NATIVE = 0xFEFF
@@ -134,7 +138,7 @@ TTF_CloseFont = _bind("TTF_CloseFont", [POINTER(TTF_Font)])
 TTF_Quit = _bind("TTF_Quit")
 TTF_WasInit = _bind("TTF_WasInit", None, c_int)
 TTF_GetFontKerningSize = _bind("TTF_GetFontKerningSize", [POINTER(TTF_Font), c_int, c_int], c_int)
-TTF_GetFontKerningSizeGlyphs = _bind("TTF_GetFontKerningSizeGlyphs", [POINTER(TTF_Font), Uint16, Uint16], c_int, nullfunc)
+TTF_GetFontKerningSizeGlyphs = _bind("TTF_GetFontKerningSizeGlyphs", [POINTER(TTF_Font), Uint16, Uint16], c_int)
 TTF_SetError = SDL_SetError
 TTF_GetError = SDL_GetError
 

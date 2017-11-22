@@ -2,29 +2,32 @@ import os
 from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_char_p, c_void_p, \
     c_double
 from .dll import DLL
-from .version import SDL_version
-from .audio import AUDIO_S16LSB, AUDIO_S16MSB
-from .stdinc import Uint8, Uint16, Uint32, Sint16
+from .version import SDL_version, SDL_VERSIONNUM
+from .audio import AUDIO_S16LSB, AUDIO_S16MSB, SDL_MIX_MAXVOLUME
+from .stdinc import Uint8, Uint16, Uint32, Sint16, SDL_bool
 from .endian import SDL_LIL_ENDIAN, SDL_BYTEORDER
 from .rwops import SDL_RWops, SDL_RWFromFile
-from .error import SDL_SetError, SDL_GetError
+from .error import SDL_SetError, SDL_GetError, SDL_ClearError
 
 __all__ = ["get_dll_file", "SDL_MIXER_MAJOR_VERSION", "SDL_MIXER_MINOR_VERSION",
            "SDL_MIXER_PATCHLEVEL", "SDL_MIXER_VERSION", "MIX_MAJOR_VERSION",
            "MIX_MINOR_VERSION", "MIX_PATCHLEVEL", "MIX_VERSION",
+           "SDL_MIXER_COMPILEDVERSION", "SDL_MIXER_VERSION_ATLEAST",
            "Mix_Linked_Version", "MIX_InitFlags", "MIX_INIT_FLAC",
            "MIX_INIT_MOD", "MIX_INIT_MP3", "MIX_INIT_OGG",
-           "MIX_INIT_FLUIDSYNTH", "Mix_Init", "Mix_Quit", "MIX_CHANNELS",
+           "MIX_INIT_MID", "Mix_Init", "Mix_Quit", "MIX_CHANNELS",
            "MIX_DEFAULT_FREQUENCY" , "MIX_DEFAULT_FORMAT",
            "MIX_DEFAULT_CHANNELS", "MIX_MAX_VOLUME", "Mix_Chunk", "Mix_Fading",
            "MIX_NO_FADING", "MIX_FADING_OUT", "MIX_FADING_IN", "Mix_MusicType",
            "MUS_NONE", "MUS_CMD", "MUS_WAV", "MUS_MOD", "MUS_MID", "MUS_OGG",
-           "MUS_MP3", "MUS_MP3_MAD", "MUS_FLAC", "MUS_MODPLUG", "Mix_Music",
+           "MUS_MP3", "MUS_MP3_MAD_UNUSED", "MUS_FLAC", "MUS_MODPLUG_UNUSED",
+           "Mix_Music", "Mix_OpenAudioDevice",
            "Mix_OpenAudio", "Mix_AllocateChannels", "Mix_QuerySpec",
            "Mix_LoadWAV_RW", "Mix_LoadWAV", "Mix_LoadMUS", "Mix_LoadMUS_RW",
            "Mix_LoadMUSType_RW", "Mix_QuickLoad_WAV", "Mix_QuickLoad_RAW",
            "Mix_FreeChunk", "Mix_FreeMusic", "Mix_GetNumChunkDecoders",
            "Mix_GetChunkDecoder", "Mix_GetNumMusicDecoders",
+           "Mix_HasChunkDecoder", "Mix_HasMusicDecoder",
            "Mix_GetMusicDecoder", "Mix_GetMusicType", "mix_func",
            "Mix_SetPostMix", "Mix_HookMusic", "music_finished",
            "Mix_HookMusicFinished", "Mix_GetMusicHookData", "channel_finished",
@@ -46,7 +49,7 @@ __all__ = ["get_dll_file", "SDL_MIXER_MAJOR_VERSION", "SDL_MIXER_MINOR_VERSION",
            "Mix_PlayingMusic", "Mix_SetMusicCMD", "Mix_SetSynchroValue",
            "Mix_GetSynchroValue", "Mix_SetSoundFonts", "Mix_GetSoundFonts",
            "soundfont_function", "Mix_EachSoundFont", "Mix_GetChunk",
-           "Mix_CloseAudio", "Mix_SetError", "Mix_GetError"
+           "Mix_CloseAudio", "Mix_SetError", "Mix_GetError", "Mix_ClearError"
           ]
 
 try:
@@ -64,7 +67,7 @@ _bind = dll.bind_function
 
 SDL_MIXER_MAJOR_VERSION = 2
 SDL_MIXER_MINOR_VERSION = 0
-SDL_MIXER_PATCHLEVEL = 0
+SDL_MIXER_PATCHLEVEL = 2
 
 
 def SDL_MIXER_VERSION(x):
@@ -77,14 +80,16 @@ MIX_MINOR_VERSION = SDL_MIXER_MINOR_VERSION
 MIX_PATCHLEVEL = SDL_MIXER_PATCHLEVEL
 MIX_VERSION = SDL_MIXER_VERSION
 
+SDL_MIXER_COMPILEDVERSION = SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL)
+SDL_MIXER_VERSION_ATLEAST = lambda x, y, z: (SDL_MIXER_COMPILEDVERSION >= SDL_VERSIONNUM(x, y, z))
+
 Mix_Linked_Version = _bind("Mix_Linked_Version", None, POINTER(SDL_version))
 MIX_InitFlags = c_int
 MIX_INIT_FLAC = 0x00000001
 MIX_INIT_MOD =  0x00000002
-MIX_INIT_MODPLUG = 0x00000004
 MIX_INIT_MP3 = 0x00000008
 MIX_INIT_OGG = 0x000000010
-MIX_INIT_FLUIDSYNTH = 0x00000020
+MIX_INIT_MID = 0x00000020
 
 Mix_Init = _bind("Mix_Init", [c_int], c_int)
 Mix_Quit = _bind("Mix_Quit")
@@ -96,7 +101,7 @@ if SDL_BYTEORDER == SDL_LIL_ENDIAN:
 else:
     MIX_DEFAULT_FORMAT = AUDIO_S16MSB
 MIX_DEFAULT_CHANNELS = 2
-MIX_MAX_VOLUME = 128
+MIX_MAX_VOLUME = SDL_MIX_MAXVOLUME
 
 class Mix_Chunk(Structure):
     _fields_ = [("allocated", c_int),
@@ -116,14 +121,15 @@ MUS_MOD = 3
 MUS_MID = 4
 MUS_OGG = 5
 MUS_MP3 = 6
-MUS_MP3_MAD = 7
-MUS_FLAC = 8
-MUS_MODPLUG = 9
+MUS_MP3_MAD_UNUSED = 7
+MUS_FLAC = 9
+MUS_MODPLUG_UNUSED = 10
 
 class Mix_Music(Structure):
     pass
 
 Mix_OpenAudio = _bind("Mix_OpenAudio", [c_int, Uint16, c_int, c_int], c_int)
+Mix_OpenAudioDevice = _bind("Mix_OpenAudioDevice", [c_int, Uint16, c_int, c_int, c_char_p, c_int], c_int)
 Mix_AllocateChannels = _bind("Mix_AllocateChannels", [c_int], c_int)
 Mix_QuerySpec = _bind("Mix_QuerySpec", [POINTER(c_int), POINTER(Uint16), POINTER(c_int)], c_int)
 Mix_LoadWAV_RW = _bind("Mix_LoadWAV_RW", [POINTER(SDL_RWops), c_int], POINTER(Mix_Chunk))
@@ -137,8 +143,10 @@ Mix_FreeChunk = _bind("Mix_FreeChunk", [POINTER(Mix_Chunk)])
 Mix_FreeMusic = _bind("Mix_FreeMusic", [POINTER(Mix_Music)])
 Mix_GetNumChunkDecoders = _bind("Mix_GetNumChunkDecoders", None, c_int)
 Mix_GetChunkDecoder = _bind("Mix_GetChunkDecoder", [c_int], c_char_p)
+Mix_HasChunkDecoder = _bind("Mix_HasChunkDecoder", [c_char_p], SDL_bool)
 Mix_GetNumMusicDecoders = _bind("Mix_GetNumMusicDecoders", None, c_int)
 Mix_GetMusicDecoder = _bind("Mix_GetMusicDecoder", [c_int], c_char_p)
+Mix_HasMusicDecoder = _bind("Mix_HasMusicDecoder", [c_char_p], SDL_bool)
 Mix_GetMusicType = _bind("Mix_GetMusicType", [POINTER(Mix_Music)], Mix_MusicType)
 mix_func = CFUNCTYPE(None, c_void_p, POINTER(Uint8), c_int)
 Mix_SetPostMix = _bind("Mix_SetPostMix", [mix_func, c_void_p])
@@ -206,3 +214,4 @@ Mix_GetChunk = _bind("Mix_GetChunk", [c_int], POINTER(Mix_Chunk))
 Mix_CloseAudio = _bind("Mix_CloseAudio")
 Mix_SetError = SDL_SetError
 Mix_GetError = SDL_GetError
+Mix_ClearError = SDL_ClearError

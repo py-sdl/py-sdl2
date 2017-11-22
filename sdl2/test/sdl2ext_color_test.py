@@ -595,10 +595,10 @@ class SDL2ExtColorTest(unittest.TestCase):
 
         t = c.normalize()
 
-        self.assertAlmostEquals(t[0], 0.800000, places=5)
-        self.assertAlmostEquals(t[1], 0.149016, places=5)
-        self.assertAlmostEquals(t[2], 0.760784, places=5)
-        self.assertAlmostEquals(t[3], 0.215686, places=5)
+        self.assertAlmostEqual(t[0], 0.800000, places=5)
+        self.assertAlmostEqual(t[1], 0.149016, places=5)
+        self.assertAlmostEqual(t[2], 0.760784, places=5)
+        self.assertAlmostEqual(t[3], 0.215686, places=5)
 
         c = Color(255, 255, 255, 255)
         self.assertEqual(c.normalize(), (1.0, 1.0, 1.0, 1.0))
@@ -607,15 +607,15 @@ class SDL2ExtColorTest(unittest.TestCase):
         c = Color(128, 128, 128, 128)
         t = c.normalize()
         for v in t:
-            self.assertAlmostEquals(v, 0.5, places=2)
+            self.assertAlmostEqual(v, 0.5, places=2)
 
         c = Color(128, 255, 0, 52)
         t = c.normalize()
-        self.assertAlmostEquals(t[0], 0.5, places=2)
+        self.assertAlmostEqual(t[0], 0.5, places=2)
         self.assertEqual(t[1], 1.0)
         self.assertEqual(t[2], 0.0)
         # 52 / 255 ~= .20
-        self.assertAlmostEquals(t[3], 0.2, places=2)
+        self.assertAlmostEqual(t[3], 0.2, places=2)
 
     def test_is_rgb_color(self):
         assertTrue = self.assertTrue

@@ -1,7 +1,7 @@
 import os
 from ctypes import POINTER, c_int, c_char_p
 from .dll import DLL
-from .version import SDL_version
+from .version import SDL_version, SDL_VERSIONNUM
 from .surface import SDL_Surface
 from .rwops import SDL_RWops
 from .render import SDL_Texture, SDL_Renderer
@@ -21,7 +21,8 @@ __all__ = ["SDL_IMAGE_MAJOR_VERSION", "SDL_IMAGE_MINOR_VERSION", \
            "IMG_LoadPNG_RW", "IMG_LoadTGA_RW", "IMG_LoadTIF_RW",
            "IMG_LoadXCF_RW", "IMG_LoadWEBP_RW", "IMG_LoadXPM_RW",
            "IMG_LoadXV_RW", "IMG_ReadXPMFromArray",
-           "IMG_GetError", "IMG_SetError",
+           "IMG_GetError", "IMG_SetError", "IMG_SaveJPG", "IMG_SaveJPG_RW",
+           "SDL_IMAGE_COMPILEDVERSION", "SDL_IMAGE_VERSION_ATLEAST",
            "get_dll_file"
            ]
 
@@ -40,13 +41,16 @@ _bind = dll.bind_function
 
 SDL_IMAGE_MAJOR_VERSION = 2
 SDL_IMAGE_MINOR_VERSION = 0
-SDL_IMAGE_PATCHLEVEL = 0
+SDL_IMAGE_PATCHLEVEL = 2
 
 
 def SDL_IMAGE_VERSION(x):
     x.major = SDL_IMAGE_MAJOR_VERSION
     x.minor = SDL_IMAGE_MINOR_VERSION
     x.patch = SDL_IMAGE_PATCHLEVEL
+
+SDL_IMAGE_COMPILEDVERSION = SDL_VERSIONNUM(SDL_IMAGE_MAJOR_VERSION, SDL_IMAGE_MINOR_VERSION, SDL_IMAGE_PATCHLEVEL)
+SDL_IMAGE_VERSION_ATLEAST = lambda x, y, z: (SDL_IMAGE_COMPILEDVERSION >= SDL_VERSIONNUM(x, y, z))
 
 IMG_Linked_Version = _bind("IMG_Linked_Version", None, POINTER(SDL_version))
 
@@ -74,6 +78,7 @@ IMG_isLBM = _bind("IMG_isLBM", [POINTER(SDL_RWops)], c_int)
 IMG_isPCX = _bind("IMG_isPCX", [POINTER(SDL_RWops)], c_int)
 IMG_isPNG = _bind("IMG_isPNG", [POINTER(SDL_RWops)], c_int)
 IMG_isPNM = _bind("IMG_isPNM", [POINTER(SDL_RWops)], c_int)
+IMG_isSVG = _bind("IMG_isSVG", [POINTER(SDL_RWops)], c_int)
 IMG_isTIF = _bind("IMG_isTIF", [POINTER(SDL_RWops)], c_int)
 IMG_isXCF = _bind("IMG_isXCF", [POINTER(SDL_RWops)], c_int)
 IMG_isXPM = _bind("IMG_isXPM", [POINTER(SDL_RWops)], c_int)
@@ -89,6 +94,7 @@ IMG_LoadLBM_RW = _bind("IMG_LoadLBM_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surfa
 IMG_LoadPCX_RW = _bind("IMG_LoadPCX_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadPNG_RW = _bind("IMG_LoadPNG_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadPNM_RW = _bind("IMG_LoadPNM_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
+IMG_LoadSVG_RW = _bind("IMG_LoadSVG_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadTGA_RW = _bind("IMG_LoadTGA_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadTIF_RW = _bind("IMG_LoadTIF_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadXCF_RW = _bind("IMG_LoadXCF_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
@@ -98,6 +104,8 @@ IMG_LoadWEBP_RW = _bind("IMG_LoadWEBP_RW", [POINTER(SDL_RWops)], POINTER(SDL_Sur
 
 IMG_ReadXPMFromArray = _bind("IMG_ReadXPMFromArray", [POINTER(c_char_p)], POINTER(SDL_Surface))
 
+IMG_SaveJPG = _bind("IMG_SaveJPG", [POINTER(SDL_Surface), c_char_p, c_int], c_int)
+IMG_SaveJPG_RW = _bind("IMG_SaveJPG_RW", [POINTER(SDL_Surface), POINTER(SDL_RWops), c_int, c_int], c_int)
 IMG_SavePNG = _bind("IMG_SavePNG", [POINTER(SDL_Surface), c_char_p], c_int)
 IMG_SavePNG_RW = _bind("IMG_SavePNG_RW", [POINTER(SDL_Surface), POINTER(SDL_RWops), c_int], c_int)
 

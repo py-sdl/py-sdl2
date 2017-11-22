@@ -17,6 +17,7 @@ formats = [  # Do not use bmp - it's contained in resources.zip
            "png",
            "pnm",
            "ppm",
+           "svg",
            "tga",
            "tif",
            "webp",
