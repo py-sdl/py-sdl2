@@ -1,5 +1,5 @@
 from ctypes import CFUNCTYPE, Structure, POINTER, c_int, c_void_p
-from .dll import _bind
+from .dll import _bind, nullfunc
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
 from .rect import SDL_Rect
@@ -20,7 +20,9 @@ __all__ = ["SDL_SWSURFACE", "SDL_PREALLOC", "SDL_RLEACCEL", "SDL_DONTFREE",
            "SDL_FillRects", "SDL_UpperBlit", "SDL_BlitSurface", "SDL_LowerBlit",
            "SDL_SoftStretch", "SDL_UpperBlitScaled", "SDL_BlitScaled",
            "SDL_LowerBlitScaled", "SDL_CreateRGBSurfaceWithFormat",
-           "SDL_CreateRGBSurfaceWithFormatFrom", "SDL_DuplicateSurface"
+           "SDL_CreateRGBSurfaceWithFormatFrom", "SDL_DuplicateSurface",
+           "SDL_SetYUVConversionMode", "SDL_GetYUVConversionMode",
+           "SDL_GetYUVConversionModeForResolution"
           ]
 
 SDL_SWSURFACE = 0
@@ -29,6 +31,12 @@ SDL_RLEACCEL = 0x00000002
 SDL_DONTFREE = 0x00000004
 
 SDL_MUSTLOCK = lambda s: ((s.flags & SDL_RLEACCEL) != 0)
+
+SDL_YUV_CONVERSION_MODE = c_int
+SDL_YUV_CONVERSION_JPEG = 0
+SDL_YUV_CONVERSION_BT601 = 1
+SDL_YUV_CONVERSION_BT709 = 2
+SDL_YUV_CONVERSION_AUTOMATIC = 3
 
 class SDL_BlitMap(Structure):
     pass
@@ -88,3 +96,7 @@ SDL_SoftStretch = _bind("SDL_SoftStretch", [POINTER(SDL_Surface), POINTER(SDL_Re
 SDL_UpperBlitScaled = _bind("SDL_UpperBlitScaled", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
 SDL_BlitScaled = SDL_UpperBlitScaled
 SDL_LowerBlitScaled = _bind("SDL_LowerBlitScaled", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
+
+SDL_SetYUVConversionMode = _bind("SDL_SetYUVConversionMode", [SDL_YUV_CONVERSION_MODE], None, nullfunc)
+SDL_GetYUVConversionMode = _bind("SDL_GetYUVConversionMode", None, SDL_YUV_CONVERSION_MODE, nullfunc)
+SDL_GetYUVConversionModeForResolution = _bind("SDL_GetYUVConversionModeForResolution", [c_int, c_int], SDL_YUV_CONVERSION_MODE, nullfunc)

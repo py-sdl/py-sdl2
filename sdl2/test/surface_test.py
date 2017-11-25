@@ -687,6 +687,14 @@ class SDLSurfaceTest(unittest.TestCase):
     def test_SDL_SaveBMP(self):
         pass
 
+    @unittest.skip("not implemented")
+    def test_SDL_GetSetYUVConversionMode(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_SDL_GetYUVConversionModeForResolution(self):
+        pass
+
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
