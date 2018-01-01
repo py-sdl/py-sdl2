@@ -11,6 +11,8 @@ class SDLShapeTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         SDL_Init(SDL_INIT_EVERYTHING)
+        if video.SDL_GetCurrentVideoDriver() is None:
+            raise unittest.SkipTest('Video subsystem not supported')
 
     @classmethod
     def tearDownClass(cls):

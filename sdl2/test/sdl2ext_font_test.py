@@ -22,7 +22,10 @@ class SDL2ExtFontTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        sdl2ext.init()
+        try:
+            sdl2ext.init()
+        except sdl2ext.SDLError:
+            raise unittest.SkipTest('Video subsystem not supported')
 
     @classmethod
     def tearDownClass(cls):
