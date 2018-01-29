@@ -173,18 +173,22 @@ class SDLAudioTest(unittest.TestCase):
     def test_SDL_GetCurrentAudioDriver(self):
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
             self.skipTest('Audio subsystem not supported')
+        SDL_QuitSubSystem(SDL_INIT_AUDIO)
         success = 0
         for index in range(audio.SDL_GetNumAudioDrivers()):
             drivername = audio.SDL_GetAudioDriver(index)
             os.environ["SDL_AUDIODRIVER"] = drivername.decode("utf-8")
+            # Certain drivers fail without bringing up the correct
+            # return value, such as the esd, if it is not running.
+            SDL_InitSubSystem(SDL_INIT_AUDIO)
             driver = audio.SDL_GetCurrentAudioDriver()
             # Do not handle wrong return values.
             if driver is not None:
                 self.assertEqual(drivername, driver)
                 success += 1
+            SDL_QuitSubSystem(SDL_INIT_AUDIO)
         self.assertGreaterEqual(success, 1,
                                 "Could not initialize any sound driver")
-        SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
     @unittest.skip("SDL_AudioCallback is not retained in SDL_AudioSpec")
     def test_SDL_OpenAudio(self):
