@@ -12,7 +12,8 @@ class SDLKeyboardTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        SDL_Init(SDL_INIT_VIDEO)
+        if SDL_Init(SDL_INIT_VIDEO) != 0:
+            raise unittest.SkipTest('Video subsystem not supported')
 
     @classmethod
     def tearDownClass(cls):
