@@ -25,7 +25,7 @@ class SDLVersionTest(unittest.TestCase):
         self.assertEqual(type(v), version.SDL_version)
         self.assertEqual(v.major, 2)
         self.assertEqual(v.minor, 0)
-        self.assertEqual(v.patch, 7)
+        self.assertGreaterEqual(v.patch, 7)
 
     def test_SDL_VERSIONNUM(self):
         self.assertEqual(version.SDL_VERSIONNUM(1, 2, 3), 1203)
