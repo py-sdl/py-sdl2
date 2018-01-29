@@ -17,28 +17,32 @@ class SDLTest(unittest.TestCase):
 
     def test_SDL_INIT_TIMER(self):
         ret = SDL_Init(SDL_INIT_TIMER)
-        self.assertEqual(ret, 0, SDL_GetError())
+        if ret != 0:
+            self.skipTest('Timer subsystem not supported')
         ret = SDL_WasInit(SDL_INIT_TIMER)
         self.assertEqual(ret, SDL_INIT_TIMER)
         SDL_QuitSubSystem(SDL_INIT_TIMER)
 
     def test_SDL_INIT_AUDIO(self):
         ret = SDL_Init(SDL_INIT_AUDIO)
-        self.assertEqual(ret, 0, SDL_GetError())
+        if ret != 0:
+            self.skipTest('Audio subsystem not supported')
         ret = SDL_WasInit(SDL_INIT_AUDIO)
         self.assertEqual(ret, SDL_INIT_AUDIO)
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
     def test_SDL_INIT_VIDEO(self):
         ret = SDL_Init(SDL_INIT_VIDEO)
-        self.assertEqual(ret, 0, SDL_GetError())
+        if ret != 0:
+            self.skipTest('Video subsystem not supported')
         ret = SDL_WasInit(SDL_INIT_VIDEO)
         self.assertEqual(ret, SDL_INIT_VIDEO)
         SDL_QuitSubSystem(SDL_INIT_VIDEO)
 
     def test_SDL_INIT_JOYSTICK(self):
         ret = SDL_Init(SDL_INIT_JOYSTICK)
-        self.assertEqual(ret, 0, SDL_GetError())
+        if ret != 0:
+            self.skipTest('Joystick subsystem not supported')
         ret = SDL_WasInit(SDL_INIT_JOYSTICK)
         self.assertEqual(ret, SDL_INIT_JOYSTICK)
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
@@ -47,7 +51,8 @@ class SDLTest(unittest.TestCase):
                      "FreeBSD des not support haptic input yet")
     def test_SDL_INIT_HAPTIC(self):
         ret = SDL_Init(SDL_INIT_HAPTIC)
-        self.assertEqual(ret, 0, SDL_GetError())
+        if ret != 0:
+            self.skipTest('Haptic subsystem not supported')
         ret = SDL_WasInit(SDL_INIT_HAPTIC)
         self.assertEqual(ret, SDL_INIT_HAPTIC)
         SDL_QuitSubSystem(SDL_INIT_HAPTIC)

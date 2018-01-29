@@ -32,7 +32,8 @@ class SDLVideoTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        video.SDL_VideoInit(None)
+        if video.SDL_VideoInit(None) != 0:
+            raise unittest.SkipTest('Video subsystem not supported')
 
     @classmethod
     def tearDownClass(cls):

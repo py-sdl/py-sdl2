@@ -9,7 +9,10 @@ class SDL2ExtTest(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     def test_init_quit(self):
-        sdl2ext.init()
+        try:
+            sdl2ext.init()
+        except sdl2ext.SDLError:
+            raise unittest.SkipTest('Video subsystem not supported')
         self.assertEqual(SDL_WasInit(SDL_INIT_VIDEO), SDL_INIT_VIDEO)
         sdl2ext.quit()
         self.assertNotEqual(SDL_WasInit(SDL_INIT_VIDEO), SDL_INIT_VIDEO)
@@ -25,7 +28,10 @@ class SDL2ExtTest(unittest.TestCase):
         self.assertNotEqual(SDL_WasInit(SDL_INIT_VIDEO), SDL_INIT_VIDEO)
 
     def test_get_events(self):
-        sdl2ext.init()
+        try:
+            sdl2ext.init()
+        except sdl2ext.SDLError:
+            raise unittest.SkipTest('Video subsystem not supported')
         SDL_FlushEvent(SDL_FIRSTEVENT, SDL_LASTEVENT)
         for x in range(10):
             event = SDL_Event()
@@ -39,7 +45,10 @@ class SDL2ExtTest(unittest.TestCase):
             self.assertEqual(ev.type, (SDL_USEREVENT + 1))
 
     def test_get_events_issue_6(self):
-        sdl2ext.init()
+        try:
+            sdl2ext.init()
+        except sdl2ext.SDLError:
+            raise unittest.SkipTest('Video subsystem not supported')
         SDL_FlushEvent(SDL_FIRSTEVENT, SDL_LASTEVENT)
         for x in range(12):
             event = SDL_Event()

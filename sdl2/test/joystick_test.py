@@ -10,7 +10,8 @@ class SDLJoystickTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        SDL_Init(SDL_INIT_JOYSTICK)
+        if SDL_Init(SDL_INIT_JOYSTICK) != 0:
+            raise unittest.SkipTest('Joystick subsystem not supported')
         cls.jcount = joystick.SDL_NumJoysticks()
 
     @classmethod

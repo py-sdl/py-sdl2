@@ -24,6 +24,8 @@ class SDLRenderTest(unittest.TestCase):
         cls._RENDERFLAGS = render.SDL_RENDERER_ACCELERATED
         SDL_Init(SDL_INIT_EVERYTHING)
         driver = video.SDL_GetCurrentVideoDriver()
+        if driver is None:
+            raise unittest.SkipTest('Video subsystem not supported')
         if driver == b"dummy":
             cls._RENDERFLAGS = render.SDL_RENDERER_SOFTWARE
 

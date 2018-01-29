@@ -16,7 +16,8 @@ class SDLTimerTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        SDL_Init(SDL_INIT_TIMER)
+        if SDL_Init(SDL_INIT_TIMER) != 0:
+            raise unittest.SkipTest('Timer subsystem not supported')
 
     @classmethod
     def tearDownClass(cls):
