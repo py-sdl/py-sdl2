@@ -65,9 +65,9 @@ def run():
     # that supports hardware-accelerated sprites or software-based ones.
     # The hardware-accelerated SpriteFactory requres a rendering context
     # (or SDL_Renderer), which will create the underlying textures for us.
+    renderer = sdl2.ext.Renderer(window)
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
-        renderer = sdl2.ext.Renderer(window)
         factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
@@ -143,7 +143,7 @@ def run():
             # Pass the SDL2 events to the UIProcessor, which takes care of
             # the user interface logic.
             uiprocessor.dispatch([button, checkbutton, entry], event)
-
+        renderer.clear(0)
         # Render all user interface elements on the window.
         spriterenderer.render((button, entry, checkbutton))
 
