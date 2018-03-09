@@ -930,7 +930,7 @@ class SDLVideoTest(unittest.TestCase):
         l, r, t, b = c_int(), c_int(), c_int(), c_int()
         ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
                                              byref(b), byref(r))
-        if sys.platform in ("win32", "cygwin", "darwin"):
+        if sys.platform in ("cygwin", "darwin"):
             self.assertEqual(ret, -1)
             self.assertEqual(t.value, 0)
             self.assertEqual(l.value, 0)
@@ -947,7 +947,7 @@ class SDLVideoTest(unittest.TestCase):
                                         video.SDL_WINDOW_BORDERLESS)
         ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
                                              byref(b), byref(r))
-        if sys.platform not in ("win32", "cygwin", "darwin"):
+        if sys.platform not in ("cygwin", "darwin"):
             self.assertEqual(ret, 0)
             self.assertEqual(t.value, 0)
             self.assertEqual(l.value, 0)
