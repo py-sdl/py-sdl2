@@ -42,19 +42,34 @@ class Window(object):
             position = self.DEFAULTPOS
         if flags is None:
             flags = self.DEFAULTFLAGS
-        window = video.SDL_CreateWindow(byteify(title, "utf-8"),
-                                        position[0], position[1],
-                                        size[0], size[1], flags)
-        if not window:
-            raise SDLError()
-        self.window = window.contents
+
+        self._title = title
+        self._position = position
+        self._flags = flags
+        self._size = size
+
+        self.window = None
+        self.create()
 
     def __del__(self):
         """Releases the resources of the Window, implicitly destroying the
         underlying SDL2 window."""
-        if getattr(self, "window", None):
-            video.SDL_DestroyWindow(self.window)
-            self.window = None
+        self.close()
+
+    @property
+    def position(self):
+        """The current window position as two-value tuple."""
+        x, y = c_int(), c_int()
+        video.SDL_GetWindowPosition(self.window, byref(x), byref(y))
+        return x.value, y.value
+
+    @position.setter
+    def position(self, value):
+        """The current window position as two-value tuple."""
+        if not self.window:
+            raise SDLError("The window is not available")
+        video.SDL_SetWindowPosition(self.window, value[0], value[1])
+        self._position = value[0], value[1]
 
     @property
     def title(self):
@@ -65,6 +80,7 @@ class Window(object):
     def title(self, value):
         """The title of the window."""
         video.SDL_SetWindowTitle(self.window, byteify(value, "utf-8"))
+        self._title = value
 
     @property
     def size(self):
@@ -72,6 +88,40 @@ class Window(object):
         w, h = c_int(), c_int()
         video.SDL_GetWindowSize(self.window, byref(w), byref(h))
         return w.value, h.value
+
+    @size.setter
+    def size(self, value):
+        """The size of the window."""
+        video.SDL_SetWindowSize(self.window, value[0], value[1])
+        self._size = value[0], value[1]
+
+    def create(self):
+        """Creates the window.
+
+        If the window already exists, this method will not do anything.
+        """
+        if self.window != None:
+            return
+        window = video.SDL_CreateWindow(byteify(self._title, "utf-8"),
+                                        self._position[0], self._position[1],
+                                        self._size[0], self._size[1],
+                                        self._flags)
+        if not window:
+            raise SDLError()
+        self.window = window.contents
+
+    def open(self):
+        """Creates and shows the window."""
+        if self.window is None:
+            self.create()
+        self.show()
+
+    def close(self):
+        """Closes the window, implicitly destroying the underlying SDL2
+        window."""
+        if self.window != None:
+            video.SDL_DestroyWindow(self.window)
+            self.window = None
 
     def show(self):
         """Show the window on the display."""

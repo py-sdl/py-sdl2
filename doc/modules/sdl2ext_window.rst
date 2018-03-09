@@ -35,6 +35,23 @@ Window routines to manage on-screen windows
 
       The size of the :class:`Window`.
 
+   .. attibute:: position
+
+      The current position of the :class:`Window` top-left corner.
+
+   .. method:: create() -> None
+
+      Creates the underlying SDL2 window. This method does nothing, if the
+      window was already created.
+
+   .. method:: open() -> None
+
+      Creates and shows the window.
+
+   .. method:: close() -> None
+
+      Closes the window, implicitly destroying the underlying SDL2 window.
+
    .. method:: show() -> None
 
       Show the :class:`Window` on the display.

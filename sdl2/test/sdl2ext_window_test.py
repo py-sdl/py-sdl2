@@ -24,6 +24,7 @@ class SDL2ExtWindowTest(unittest.TestCase):
         for w, h in sizes:
             window = sdl2ext.Window("Window", size=(w, h), flags=flags)
             self.assertEqual(window.size, (w, h))
+            window.close()
 
         #self.assertRaises(TypeError, video.Window, None, None, None, None)
         #self.assertRaises(TypeError, video.Window, None, None, None)
@@ -32,11 +33,13 @@ class SDL2ExtWindowTest(unittest.TestCase):
         self.assertRaises(TypeError, sdl2ext.Window, "Test", None, None)
         self.assertRaises(TypeError, sdl2ext.Window, "Test", None)
 
+
     def test_Window_title(self):
         window = sdl2ext.Window("Window", size=(10, 10))
         self.assertEqual(window.title, "Window")
         window.title = "Test1234"
         self.assertEqual(window.title, "Test1234")
+        window.close()
 
         #window.title = None
         #self.assertEqual(window.title, "None")
@@ -88,7 +91,35 @@ class SDL2ExtWindowTest(unittest.TestCase):
         window = sdl2ext.Window("Surface", size=(200, 200))
         sf = window.get_surface()
         self.assertIsInstance(sf, surface.SDL_Surface)
+        window.close()
 
+    @unittest.skip("not implemented")
+    def test_Window_open(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_Window_close(self):
+        pass
+
+    @unittest.skip("not implemented")
+    def test_Window_open(self):
+        pass
+
+    def test_Window_position(self):
+        window = sdl2ext.Window("Position", size=(200, 200), position=(100, 100))
+        self.assertEqual(window.position, (100, 100))
+        window.position = 70, 300
+        self.assertEqual(window.position, (70, 300))
+        window.close()
+
+    @unittest.skip("not implemented")
+    def test_Window_size(self):
+        # This may fail for fullscreen WMs or Win10 tablet modes
+        window = sdl2ext.Window("Size", size=(200, 200), flags=video.SDL_WINDOW_RESIZABLE)
+        self.assertEqual(window.size, (200, 200))
+        window.size = 150, 77
+        self.assertEqual(window.size, (150, 77))
+        window.close()
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
