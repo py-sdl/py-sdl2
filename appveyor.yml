@@ -1,4 +1,7 @@
 environment:
+  SDL_VIDEODRIVER: dummy
+  SDL_AUDIODRIVER: dummy
+  SDL_RENDER_DRIVER: software
   matrix:
     - PYTHON: "C:\\Python27"
       PYSDL2_DLL_PATH: "dlls\\32bit"
