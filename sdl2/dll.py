@@ -48,7 +48,7 @@ class DLL(object):
     def __init__(self, libinfo, libnames, path=None):
         self._dll = None
         foundlibs = _findlib(libnames, path)
-        dllmsg = "PYSDL2_DLL_PATH: %s" % (os.getenv("PYSDL2_DLL_PATH") or "unset")
+        dllmsg = "PYSDL2_DLL_PATH: %s" % (os.environ["PYSDL2_DLL_PATH"] or "unset")
         if len(foundlibs) == 0:
             raise RuntimeError("could not find any library for %s (%s)" %
                                (libinfo, dllmsg))
@@ -110,7 +110,7 @@ def nullfunc(*args):
     return
 
 try:
-    dll = DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL("SDL2", ["SDL2", "SDL2-2.0"], os.environ["PYSDL2_DLL_PATH"])
 except RuntimeError as exc:
     raise ImportError(exc)
 
