@@ -119,7 +119,7 @@ class Window(object):
     def close(self):
         """Closes the window, implicitly destroying the underlying SDL2
         window."""
-        if self.window != None:
+        if hasattr(self, "window") and self.window != None:
             video.SDL_DestroyWindow(self.window)
             self.window = None
 
