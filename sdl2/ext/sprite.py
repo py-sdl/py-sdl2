@@ -668,8 +668,12 @@ class SoftwareSpriteRenderSystem(SpriteRenderSystem):
     drawing context, so that GL operations, such as texture handling or
     using SDL renderers is not possible.
     """
-    def __init__(self, window):
-        """Creates a new SoftwareSpriteRenderSystem for a specific Window."""
+    def __init__(self, window, render_present=True):
+        """Creates a new SoftwareSpriteRenderSystem for a specific Window.
+        
+        If render_present is set to True (default), the render target
+        will be refreshed after rendering is done.
+        """
         super(SoftwareSpriteRenderSystem, self).__init__()
         if isinstance(window, Window):
             self.window = window.window
@@ -677,6 +681,7 @@ class SoftwareSpriteRenderSystem(SpriteRenderSystem):
             self.window = window
         else:
             raise TypeError("unsupported window type")
+        self.render_present = render_present
         self.target = window
         sfc = video.SDL_GetWindowSurface(self.window)
         if not sfc:
@@ -712,6 +717,20 @@ class SoftwareSpriteRenderSystem(SpriteRenderSystem):
                 r.x = x
                 r.y = y
             surface.SDL_BlitSurface(sprites.surface, None, self.surface, r)
+        if self.render_present:
+            self.present()
+
+    def present(self):
+        """Updates rendering target.
+
+        Before results of rendering are visible on the rendering target,
+        they have to be presented to the render taget with this method call.
+
+        By default the render method already calls this method and presents
+        rendering results to the rendering target.
+
+        See __init__ for details.
+        """
         video.SDL_UpdateWindowSurface(self.window)
 
 
@@ -721,12 +740,15 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
     The TextureSpriteRenderSystem class uses a SDL_Renderer as drawing
     device to display TextureSprite objects.
     """
-    def __init__(self, target):
+    def __init__(self, target, render_present=True):
         """Creates a new TextureSpriteRenderSystem.
 
         target can be a Window, SDL_Window, Renderer or SDL_Renderer.
         If it is a Window or SDL_Window instance, a Renderer will be
         created to acquire the SDL_Renderer.
+        
+        If render_present is set to True (default), the render target
+        will be refreshed after rendering is done.
         """
         super(TextureSpriteRenderSystem, self).__init__()
         if isinstance(target, (Window, video.SDL_Window)):
@@ -740,6 +762,7 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
             sdlrenderer = target
         else:
             raise TypeError("unsupported object type")
+        self.render_present = render_present
         self.sdlrenderer = sdlrenderer
         self.componenttypes = (TextureSprite,)
 
@@ -782,4 +805,18 @@ class TextureSpriteRenderSystem(SpriteRenderSystem):
             if rcopy(self.sdlrenderer, sprites.texture, None, r, sprites.angle,
                      sprites.center, sprites.flip) == -1:
                 raise SDLError()
+        if self.render_present:
+            self.present()
+
+    def present(self):
+        """Updates rendering target.
+
+        Before results of rendering are visible on the rendering target,
+        they have to be presented to the render taget with this method call.
+
+        By default the render method already calls this method and presents
+        rendering results to the rendering target.
+
+        See __init__ for details.
+        """
         render.SDL_RenderPresent(self.sdlrenderer)
