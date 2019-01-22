@@ -23,8 +23,6 @@ class SDL2ExtPixelAccessTest(unittest.TestCase):
     def tearDownClass(cls):
         sdl2ext.quit()
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
     def test_PixelView(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         sprite = factory.create_sprite(size=(10, 10), bpp=32)
@@ -49,8 +47,6 @@ class SDL2ExtPixelAccessTest(unittest.TestCase):
         sdl2ext.fill(sprite, 0x01, (2, 2, 2, 2))
         nparray = sdl2ext.pixels2d(sprite)
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
     @unittest.skipIf(not _HASNUMPY, "numpy module is not supported")
     def test_pixels3d(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
