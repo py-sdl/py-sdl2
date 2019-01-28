@@ -346,9 +346,10 @@ class FontManager(object):
             if not fontsf:
                 raise SDLError(sdlttf.TTF_GetError())
             if bg_color != pixels.SDL_Color(0, 0, 0):
+                fontsf = fontsf.contents
                 w, h = fontsf.w, fontsf.h
-                bpp = fontsf.format.BitsPerPixel
-                fmt = fontsf.format.format
+                bpp = fontsf.format.contents.BitsPerPixel
+                fmt = fontsf.format.contents.format
                 bgsf = surface.SDL_CreateRGBSurfaceWithFormat(0, w, h, bpp, fmt)
                 if not bgsf:
                     surface.SDL_FreeSurface(fontsf)
