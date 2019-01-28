@@ -5,6 +5,7 @@ from .common import SDLError
 from .compat import *
 from .sprite import SoftwareSprite
 from .color import Color, convert_to_color
+from .draw import prepare_color
 
 _HASSDLTTF = True
 try:
@@ -354,6 +355,8 @@ class FontManager(object):
                 if not bgsf:
                     surface.SDL_FreeSurface(fontsf)
                     raise SDLError()
+                bg_color = prepare_color(bg_color, bgsf.contents)
+                surface.SDL_FillRect(bgsf, None, bg_color)
                 surface.SDL_BlitSurface(fontsf, None, bgsf, None)
                 return bgsf.contents
             return fontsf.contents
