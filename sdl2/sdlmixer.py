@@ -27,7 +27,7 @@ __all__ = ["get_dll_file", "SDL_MIXER_MAJOR_VERSION", "SDL_MIXER_MINOR_VERSION",
            "Mix_LoadMUSType_RW", "Mix_QuickLoad_WAV", "Mix_QuickLoad_RAW",
            "Mix_FreeChunk", "Mix_FreeMusic", "Mix_GetNumChunkDecoders",
            "Mix_GetChunkDecoder", "Mix_GetNumMusicDecoders",
-           "Mix_HasChunkDecoder", "Mix_HasMusicDecoder",
+           "Mix_HasChunkDecoder", #"Mix_HasMusicDecoder",
            "Mix_GetMusicDecoder", "Mix_GetMusicType", "mix_func",
            "Mix_SetPostMix", "Mix_HookMusic", "music_finished",
            "Mix_HookMusicFinished", "Mix_GetMusicHookData", "channel_finished",
@@ -146,7 +146,7 @@ Mix_GetChunkDecoder = _bind("Mix_GetChunkDecoder", [c_int], c_char_p)
 Mix_HasChunkDecoder = _bind("Mix_HasChunkDecoder", [c_char_p], SDL_bool)
 Mix_GetNumMusicDecoders = _bind("Mix_GetNumMusicDecoders", None, c_int)
 Mix_GetMusicDecoder = _bind("Mix_GetMusicDecoder", [c_int], c_char_p)
-Mix_HasMusicDecoder = _bind("Mix_HasMusicDecoder", [c_char_p], SDL_bool)
+#Mix_HasMusicDecoder = _bind("Mix_HasMusicDecoder", [c_char_p], SDL_bool) # not actually implemented in SDL_mixer
 Mix_GetMusicType = _bind("Mix_GetMusicType", [POINTER(Mix_Music)], Mix_MusicType)
 mix_func = CFUNCTYPE(None, c_void_p, POINTER(Uint8), c_int)
 Mix_SetPostMix = _bind("Mix_SetPostMix", [mix_func, c_void_p])
