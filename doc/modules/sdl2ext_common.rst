@@ -2,7 +2,12 @@
 
 Initialization routines
 =======================
-TODO
+
+:func:`init()` simply calls :func:`SDL_Init()` to initialize only the video
+subsystem. If the call fails, :exc:`SDLError` is raised. See
+:ref:`pygamers_pygame` for a comparison between this function and
+:func:`pygame.init()`.
+
 
 API
 ---

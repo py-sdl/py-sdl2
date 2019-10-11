@@ -12,7 +12,6 @@ within PySDL2.
 
    More details, examples, etc.
 
-
 Technical differences
 ---------------------
 Pygame is implemented as a mixture of Python, C and Assembler code,
@@ -22,6 +21,8 @@ with the C interfaces of 3rd party libraries.
 
 API differences
 ---------------
+
+.. _pygamers_pygame:
 
 pygame
 ^^^^^^
@@ -39,6 +40,10 @@ pygame                  sdl2
 ``encode_string()``     No equivalent planned
 ``encode_file_path()``  No equivalent planned
 ======================= =================================================
+
+:func:`sdl2.ext.init()` initializes only the video subsystem. By comparison,
+:func:`pygame.init()` initializes all Pygame submodules (which includes
+initializing other SDL subsystems).
 
 pygame.cdrom
 ^^^^^^^^^^^^
