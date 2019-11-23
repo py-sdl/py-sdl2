@@ -12,11 +12,11 @@ def _findlib(libnames, path=None):
     """."""
     platform = sys.platform
     if platform in ("win32",):
-        pattern = "%s.dll"
+        patterns = ["{0}.dll"]
     elif platform == "darwin":
-        pattern = "lib%s.dylib"
+        patterns = ["lib{0}.dylib", "{0}.framework/{0}"]
     else:
-        pattern = "lib%s.so"
+        patterns = ["lib{0}.so"]
     searchfor = libnames
     if type(libnames) is dict:
         # different library names for the platforms
@@ -27,9 +27,10 @@ def _findlib(libnames, path=None):
     if path:
         for libname in searchfor:
             for subpath in str.split(path, os.pathsep):
-                dllfile = os.path.join(subpath, pattern % libname)
-                if os.path.exists(dllfile):
-                    results.append(dllfile)
+                for pattern in patterns:
+                    dllfile = os.path.join(subpath, pattern.format(libname))
+                    if os.path.exists(dllfile):
+                        results.append(dllfile)
     for libname in searchfor:
         dllfile = find_library(libname)
         if dllfile:
