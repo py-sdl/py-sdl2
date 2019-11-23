@@ -11,3 +11,4 @@ dlls
 dist
 build
 doc/html
+doc/_build

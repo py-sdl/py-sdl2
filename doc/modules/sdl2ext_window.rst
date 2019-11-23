@@ -35,7 +35,7 @@ Window routines to manage on-screen windows
 
       The size of the :class:`Window`.
 
-   .. attibute:: position
+   .. attribute:: position
 
       The current position of the :class:`Window` top-left corner.
 
