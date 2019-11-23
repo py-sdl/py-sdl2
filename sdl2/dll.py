@@ -11,7 +11,7 @@ __all__ = ["DLL", "nullfunc"]
 def _findlib(libnames, path=None):
     """."""
     platform = sys.platform
-    if platform in ("win32",):
+    if platform == "win32":
         patterns = ["{0}.dll"]
     elif platform == "darwin":
         patterns = ["lib{0}.dylib", "{0}.framework/{0}"]
