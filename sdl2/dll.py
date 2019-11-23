@@ -34,6 +34,9 @@ def _findlib(libnames, path=None):
     for libname in searchfor:
         dllfile = find_library(libname)
         if dllfile:
+            # For Python 3.8+ on Windows, need to specify relative or full path
+            if not ("/" in dllfile or "\\" in dllfile):
+                dllfile = "./" + dllfile
             results.append(dllfile)
     return results
 
