@@ -32,7 +32,7 @@ class Renderer(object):
         ignored.
         """
         self.sdlrenderer = None
-        self.rendertaget = None
+        self.rendertarget = None
         if isinstance(target, Window):
             self.sdlrenderer = render.SDL_CreateRenderer(target.window, index,
                                                          flags)
