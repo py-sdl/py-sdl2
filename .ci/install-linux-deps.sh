@@ -7,7 +7,6 @@ SDLMIXER_LIB=SDL2_mixer-2.0.2
 SDLIMAGE_LIB=SDL2_image-2.0.3
 SDLGFX_LIB=SDL2_gfx-1.0.3
 
-
 sudo apt-get -qq update
 sudo apt-get install build-essential mercurial make cmake autoconf automake \
     libtool libasound2-dev libpulse-dev libaudio-dev libx11-dev libxext-dev \
@@ -17,7 +16,7 @@ sudo apt-get install build-essential mercurial make cmake autoconf automake \
     fcitx-libs-dev libsamplerate0-dev libsndio-dev \
     libfreetype6-dev \
     libflac-dev libfluidsynth-dev libmikmod2-dev libogg-dev libvorbis-dev \
-    libjpeg-dev libpng-dev libtiff4-dev libwebp-dev zlib1g-dev
+    libjpeg-dev libpng-dev libtiff5-dev libwebp-dev zlib1g-dev
 
 wget https://www.libsdl.org/release/$SDL_LIB.tar.gz
 tar xzf $SDL_LIB.tar.gz
