@@ -34,9 +34,6 @@ def _findlib(libnames, path=None):
     for libname in searchfor:
         dllfile = find_library(libname)
         if dllfile:
-            # For Python 3.8+ on Windows, need to specify relative or full path
-            if os.name == "nt" and not ("/" in dllfile or "\\" in dllfile):
-                dllfile = "./" + dllfile
             results.append(dllfile)
     return results
 
@@ -52,6 +49,17 @@ class DLL(object):
     def __init__(self, libinfo, libnames, path=None):
         self._dll = None
         foundlibs = _findlib(libnames, path)
+
+        # For Python 3.8+ on Windows: Warn about local dll loading
+        if os.name == "nt" and sys.version_info >= (3, 8):
+            if len(foundlibs) == 1 and not ("/" in foundlibs[0] or "\\" in foundlibs[0]):
+                raise OSError((
+                    "Attempting to load dll from cwd. "
+                    "This is no longer possible from python 3.8 unless the directory is "
+                    "added to the search path. "
+                    "Try setting the PYSDL2_DLL_PATH environment variable."
+                ))
+
         dllmsg = "PYSDL2_DLL_PATH: %s" % (os.getenv("PYSDL2_DLL_PATH") or "unset")
         if len(foundlibs) == 0:
             raise RuntimeError("could not find any library for %s (%s)" %
