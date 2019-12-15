@@ -65,12 +65,13 @@ def run():
     # that supports hardware-accelerated sprites or software-based ones.
     # The hardware-accelerated SpriteFactory requres a rendering context
     # (or SDL_Renderer), which will create the underlying textures for us.
-    renderer = sdl2.ext.Renderer(window)
     if "-hardware" in sys.argv:
         print("Using hardware acceleration")
+        renderer = sdl2.ext.Renderer(window, flags=sdl2.render.SDL_RENDERER_ACCELERATED)
         factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
     else:
         print("Using software rendering")
+        renderer = sdl2.ext.Renderer(window, flags=sdl2.render.SDL_RENDERER_SOFTWARE)
         factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
 
     # Create a UI factory, which will handle several defaults for

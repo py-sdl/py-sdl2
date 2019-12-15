@@ -295,6 +295,18 @@ def run():
     # Create a rendering context for the window. The sdlgfx module requires it.
     context = sdl2.ext.Renderer(window)
 
+    # Retrieve and display renderer + available renderer info
+    info = sdl2.render.SDL_RendererInfo()
+    sdl2.SDL_GetRendererInfo(context.sdlrenderer, info)
+
+    print("\nUsing renderer: {0}".format(info.name))
+    print("\nAvailable renderers:")
+    num_drivers = sdl2.SDL_GetNumRenderDrivers()
+    for i in range(0, num_drivers):
+        info = sdl2.render.SDL_RendererInfo()
+        sdl2.SDL_GetRenderDriverInfo(i, info)
+        print(" - " + info.name)
+        
     # We implement the functionality as it was done in colorpalettes.py and
     # utilise a mapping table to look up the function to be executed, together
     # with the arguments they should receive
@@ -311,6 +323,7 @@ def run():
     # which function to execute next.
     curindex = 0
     draw_lines(context, 800, 600)
+    context.present()
 
     # The event loop is nearly the same as we used in colorpalettes.py. If you
     # do not know, what happens here, take a look at colorpalettes.py for a
@@ -332,8 +345,8 @@ def run():
                 # function with the arguments.
                 func, args = functions[curindex]
                 func(*args)
+                context.present()
                 break
-        context.present()
     sdl2.ext.quit()
     return 0
 

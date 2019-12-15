@@ -1,5 +1,6 @@
 .cache
 .settings
+**/*.DS_Store
 *project
 *.pyc
 *.pyo
