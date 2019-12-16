@@ -304,13 +304,13 @@ def run():
     info = sdl2.render.SDL_RendererInfo()
     sdl2.SDL_GetRendererInfo(context.sdlrenderer, info)
 
-    print("\nUsing renderer: {0}".format(info.name))
+    print("\nUsing renderer: {0}".format(info.name.decode('utf-8')))
     print("\nAvailable renderers:")
     num_drivers = sdl2.SDL_GetNumRenderDrivers()
     for i in range(0, num_drivers):
         info = sdl2.render.SDL_RendererInfo()
         sdl2.SDL_GetRenderDriverInfo(i, info)
-        print(" - " + info.name)
+        print(" - " + info.name.decode('utf-8'))
         
     # We implement the functionality as it was done in colorpalettes.py and
     # utilise a mapping table to look up the function to be executed, together
