@@ -9,7 +9,11 @@ __all__ = ["DLL", "nullfunc"]
 
 
 def _findlib(libnames, path=None):
-    """."""
+    """Finds SDL2 libraries and returns them in a list, with libraries found in the directory
+    optionally specified by 'path' being first (taking precedence) and libraries found in system
+    search paths following.
+    """
+
     platform = sys.platform
     if platform == "win32":
         patterns = ["{0}.dll"]
@@ -17,20 +21,32 @@ def _findlib(libnames, path=None):
         patterns = ["lib{0}.dylib", "{0}.framework/{0}"]
     else:
         patterns = ["lib{0}.so"]
+
     searchfor = libnames
-    if type(libnames) is dict:
-        # different library names for the platforms
-        if platform not in libnames:
-            platform = "DEFAULT"
-        searchfor = libnames[platform]
     results = []
     if path:
+        # First, find any libraries matching pattern exactly within given path
         for libname in searchfor:
             for subpath in str.split(path, os.pathsep):
                 for pattern in patterns:
                     dllfile = os.path.join(subpath, pattern.format(libname))
                     if os.path.exists(dllfile):
                         results.append(dllfile)
+
+        # Next, on Linux and similar, find any libraries with version suffixes matching pattern
+        # (e.g. libSDL2.so.2) at path and add them in descending version order (i.e. newest first)
+        if platform not in ("win32", "darwin"):
+            versioned = []
+            files = os.listdir(path)
+            for f in files:
+                for libname in searchfor:
+                    dllname = "lib{0}.so".format(libname)
+                    if dllname in f and not (dllname == f or f.startswith(".")):
+                        versioned.append(os.path.join(path, f))
+            versioned.sort(key = _so_version_num, reverse = True)
+            results = results + versioned
+
+    # Finally, search for library in system library search paths
     for libname in searchfor:
         dllfile = find_library(libname)
         if dllfile:
@@ -38,6 +54,7 @@ def _findlib(libnames, path=None):
             if os.name == "nt" and not ("/" in dllfile or "\\" in dllfile):
                 dllfile = "./" + dllfile
             results.append(dllfile)
+
     return results
 
 
@@ -107,6 +124,11 @@ def _nonexistent(funcname, func):
         return func(*fargs, **kw)
     wrapper.__name__ = func.__name__
     return wrapper
+
+
+def _so_version_num(libname):
+    """Extracts the version number from an .so filename as a list of ints."""
+    return list(map(int, libname.split('.so.')[1].split('.')))
 
 
 def nullfunc(*args):
