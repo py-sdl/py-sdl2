@@ -18,7 +18,7 @@ def _findlib(libnames, path=None):
     if platform == "win32":
         patterns = ["{0}.dll"]
     elif platform == "darwin":
-        patterns = ["lib{0}.dylib", "{0}.framework/{0}"]
+        patterns = ["lib{0}.dylib", "{0}.framework/{0}", "{0}.framework/Versions/A/{0}"]
     else:
         patterns = ["lib{0}.so"]
 
