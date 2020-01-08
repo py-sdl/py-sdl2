@@ -83,12 +83,22 @@ class SDLSurfaceTest(unittest.TestCase):
                 self.assertEqual(val, src.view[index])
 
     def test_SDL_ConvertSurface(self):
+        tenbit = [pixels.SDL_PACKEDLAYOUT_2101010, pixels.SDL_PACKEDLAYOUT_1010102]
         for idx in pixels.ALL_PIXELFORMATS:
-            if pixels.SDL_ISPIXELFORMAT_FOURCC(idx):
-                continue
             pfmt = pixels.SDL_AllocFormat(idx)
             for fmt in pixels.ALL_PIXELFORMATS:
-                if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+                idx_name = pixels.SDL_GetPixelFormatName(idx).decode('utf-8') # for debug
+                fmt_name = pixels.SDL_GetPixelFormatName(fmt).decode('utf-8') # for debug
+                # SDL2 doesn't support converting fancier formats (e.g YUV, 10bit)
+                if pixels.SDL_ISPIXELFORMAT_FOURCC(idx) or pixels.SDL_PIXELLAYOUT(idx) in tenbit:
+                    continue
+                if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt) or pixels.SDL_PIXELLAYOUT(fmt) in tenbit:
+                    continue
+                # SDL2 doesn't support converting to formats w/ less than 8 bpp
+                if pixels.SDL_BITSPERPIXEL(idx) < 8:
+                    continue
+                # SDL2 doesn't support converting from indexed formats w/ 4 bpp
+                if pixels.SDL_PIXELTYPE(fmt) == pixels.SDL_PIXELTYPE_INDEX4:
                     continue
                 bpp = c_int()
                 rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
@@ -126,11 +136,19 @@ class SDLSurfaceTest(unittest.TestCase):
         #######################################################################
 
     def test_SDL_ConvertSurfaceFormat(self):
+        tenbit = [pixels.SDL_PACKEDLAYOUT_2101010, pixels.SDL_PACKEDLAYOUT_1010102]
         for pfmt in pixels.ALL_PIXELFORMATS:
-            if pixels.SDL_ISPIXELFORMAT_FOURCC(pfmt):
-                continue
             for fmt in pixels.ALL_PIXELFORMATS:
-                if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+                # SDL2 doesn't support converting fancier formats (e.g YUV, 10bit)
+                if pixels.SDL_ISPIXELFORMAT_FOURCC(pfmt) or pixels.SDL_PIXELLAYOUT(pfmt) in tenbit:
+                    continue
+                if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt) or pixels.SDL_PIXELLAYOUT(fmt) in tenbit:
+                    continue
+                # SDL2 doesn't support converting to formats w/ less than 8 bpp
+                if pixels.SDL_BITSPERPIXEL(pfmt) < 8:
+                    continue
+                # SDL2 doesn't support converting from indexed formats w/ 4 bpp
+                if pixels.SDL_PIXELTYPE(fmt) == pixels.SDL_PIXELTYPE_INDEX4:
                     continue
                 bpp = c_int()
                 rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
