@@ -197,7 +197,7 @@ class FontManager(object):
         self.color = color
         self.bg_color = bg_color
         self.size = size
-        self._default_font = self.add(font_path, alias, index)
+        self._default_font = self.add(font_path, alias, size, index)
 
     def __del__(self):
         """Close all opened fonts."""

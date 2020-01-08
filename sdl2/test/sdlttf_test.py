@@ -39,7 +39,7 @@ class SDLTTFTest(unittest.TestCase):
         sdlttf.TTF_Init()
 
     def test_TTF_OpenCloseFont(self):
-        for x in range(-10, 15):
+        for x in range(6, 26):
             font = sdlttf.TTF_OpenFont(fontfile, x)
             self.assertIsInstance(font.contents, sdlttf.TTF_Font)
             sdlttf.TTF_CloseFont(font)
@@ -50,7 +50,7 @@ class SDLTTFTest(unittest.TestCase):
         #self.assertRaises(sdl.SDLError, sdlttf.open_font, "test", 10)
 
     def test_TTF_OpenFontIndex(self):
-        for x in range(-10, 15):
+        for x in range(6, 26):
             font = sdlttf.TTF_OpenFontIndex(fontfile, x, 0)
             self.assertIsInstance(font.contents, sdlttf.TTF_Font)
             sdlttf.TTF_CloseFont(font)
@@ -67,7 +67,7 @@ class SDLTTFTest(unittest.TestCase):
     def test_TTF_OpenFontRW(self):
         fp = open(fontfile, "rb")
         fontrw = rwops.rw_from_object(fp)
-        for x in range(-10, 15):
+        for x in range(6, 26):
             fp.seek(0)
             font = sdlttf.TTF_OpenFontRW(fontrw, 0, x)
             self.assertIsInstance(font.contents, sdlttf.TTF_Font)
@@ -81,7 +81,7 @@ class SDLTTFTest(unittest.TestCase):
     def test_TTF_OpenFontIndexRW(self):
         fp = open(fontfile, "rb")
         fontrw = rwops.rw_from_object(fp)
-        for x in range(-10, 15):
+        for x in range(6, 26):
             fp.seek(0)
             font = sdlttf.TTF_OpenFontIndexRW(fontrw, 0, x, 0)
             self.assertIsInstance(font.contents, sdlttf.TTF_Font)
@@ -132,7 +132,7 @@ class SDLTTFTest(unittest.TestCase):
     def test_TTF_GetSetFontOutline(self):
         font = sdlttf.TTF_OpenFont(fontfile, 10)
         self.assertEqual(sdlttf.TTF_GetFontOutline(font), 0)
-        for x in range(-10, 10):
+        for x in range(1, 11):
             sdlttf.TTF_SetFontOutline(font, x)
             self.assertEqual(sdlttf.TTF_GetFontOutline(font), x)
         #self.assertRaises(TypeError, sdlttf.set_font_outline, None, None)
@@ -169,7 +169,7 @@ class SDLTTFTest(unittest.TestCase):
 
     def test_TTF_FontHeight(self):
         last = cur = 0
-        for ptsize in range(-10, 10):
+        for ptsize in range(6, 26):
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontHeight(font)
             self.assertGreaterEqual(cur, last)
@@ -184,7 +184,7 @@ class SDLTTFTest(unittest.TestCase):
 
     def test_TTF_FontAscent(self):
         last = cur = 0
-        for ptsize in range(-10, 10):
+        for ptsize in range(6, 26):
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontAscent(font)
             self.assertGreaterEqual(cur, last)
@@ -199,7 +199,7 @@ class SDLTTFTest(unittest.TestCase):
 
     def test_TTF_FontDescent(self):
         last = cur = 0
-        for ptsize in range(-10, 10):
+        for ptsize in range(6, 26):
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontDescent(font)
             self.assertLessEqual(cur, last)
@@ -214,7 +214,7 @@ class SDLTTFTest(unittest.TestCase):
 
     def test_TTF_FontLineSkip(self):
         last = cur = 0
-        for ptsize in range(-10, 10):
+        for ptsize in range(6, 26):
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontLineSkip(font)
             self.assertGreaterEqual(cur, last)
