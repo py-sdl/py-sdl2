@@ -285,7 +285,7 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @unittest.skipIf(is32bit)
+    @unittest.skipIf(is32bit, "XCF broken on 32-bit as of SDL_image 2.0.5")
     def test_IMG_LoadXCF_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.xcf"), "rb")
