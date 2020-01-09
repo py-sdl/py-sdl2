@@ -5,7 +5,9 @@ from sdl2 import surface
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")
 
-formats = [  # Do not use bmp - it's contained in resources.zip
+is32bit = sys.maxsize <= 2**32
+
+formats = [ # Do not use bmp - it's contained in resources.zip
            "cur",
            "gif",
            "ico",
@@ -21,10 +23,13 @@ formats = [  # Do not use bmp - it's contained in resources.zip
            "tga",
            "tif",
            "webp",
-           "xcf",
            "xpm",
            # "xv",
            ]
+
+# As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
+if not is32bit:
+    formats.append("xcf")
 
 
 class SDL2ExtImageTest(unittest.TestCase):
