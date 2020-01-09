@@ -11,7 +11,7 @@ except:
     _HASSDLGFX=False
 
 @unittest.skipIf(not _HASSDLGFX, "SDL2_gfx library could not be loaded")
-class SDLTTFTest(unittest.TestCase):
+class SDLGFXTest(unittest.TestCase):
     __tags__ = ["sdl", "sdlgfx"]
 
     @classmethod

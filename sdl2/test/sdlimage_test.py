@@ -10,6 +10,9 @@ try:
 except:
     _HASSDLIMAGE=False
 
+
+is32bit = sys.maxsize <= 2**32
+
 formats = ["bmp",
            "cur",
            "gif",
@@ -26,11 +29,13 @@ formats = ["bmp",
            "tga",
            "tif",
            "webp",
-           "xcf",
            "xpm",
            #"xv",
            ]
 
+# As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
+if not is32bit:
+    formats.append("xcf")
 
 @unittest.skipIf(not _HASSDLIMAGE, "SDL2_image library could not be loaded")
 class SDLImageTest(unittest.TestCase):
@@ -280,6 +285,7 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
+    @unittest.skipIf(is32bit)
     def test_IMG_LoadXCF_RW(self):
         fp = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "resources", "surfacetest.xcf"), "rb")
