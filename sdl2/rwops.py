@@ -82,8 +82,11 @@ SDL_WriteLE64 = _bind("SDL_WriteLE64", [POINTER(SDL_RWops), Uint64], c_size_t)
 SDL_WriteBE64 = _bind("SDL_WriteBE64", [POINTER(SDL_RWops), Uint64], c_size_t)
 
 if sys.version_info[0] >= 3:
-    import collections
-    callable = lambda x: isinstance(x, collections.Callable)
+    try:
+	    from collections.abc import Callable
+    except ImportError:
+	    from collections import Callable
+    callable = lambda x: isinstance(x, Callable)
 
 def rw_from_object(obj):
     """Creats a SDL_RWops from any Python object.

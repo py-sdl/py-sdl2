@@ -2,8 +2,11 @@
 Python compatibility helpers.
 """
 import sys
-import collections
 import warnings
+try:
+	from collections.abc import Callable, Iterable
+except ImportError:
+	from collections import Callable, Iterable
 
 __all__ = ["stringify", "byteify", "isiterable", "ISPYTHON2", "ISPYTHON3",
            "platform_is_64bit", "deprecated", "deprecation",
@@ -25,11 +28,11 @@ else:
     stringify = lambda x, enc: x.decode(enc)
     long = int
     unichr = chr
-    callable = lambda x: isinstance(x, collections.Callable)
+    callable = lambda x: isinstance(x, Callable)
     ISPYTHON3 = True
     unicode = str
 
-isiterable = lambda x: isinstance(x, collections.Iterable)
+isiterable = lambda x: isinstance(x, Iterable)
 
 
 def platform_is_64bit():
