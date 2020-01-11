@@ -6,6 +6,7 @@ from sdl2 import surface
 RESOURCES = sdl2ext.Resources(__file__, "resources")
 
 is32bit = sys.maxsize <= 2**32
+ismacos = sys.platform == "darwin"
 
 formats = [ # Do not use bmp - it's contained in resources.zip
            "cur",
@@ -28,7 +29,8 @@ formats = [ # Do not use bmp - it's contained in resources.zip
            ]
 
 # As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
-if not is32bit:
+# XCF support is also broken in official SDL2_image macOS .frameworks
+if not (is32bit or ismacos):
     formats.append("xcf")
 
 
