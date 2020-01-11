@@ -1,7 +1,8 @@
 import os
 import sys
 import unittest
-from sdl2 import SDL_Init, SDL_Quit, rwops
+from ctypes import byref, c_int, c_uint16
+from sdl2 import SDL_Init, SDL_Quit, SDL_Color, surface, version, rwops
 
 try:
     from sdl2 import sdlttf
@@ -26,6 +27,13 @@ class SDLTTFTest(unittest.TestCase):
         sdlttf.TTF_Quit()
         SDL_Quit()
 
+    def test_TTF_Linked_Version(self):
+        v = sdlttf.TTF_Linked_Version()
+        self.assertIsInstance(v.contents, version.SDL_version)
+        self.assertEqual(v.contents.major, 2)
+        self.assertEqual(v.contents.minor, 0)
+        self.assertGreaterEqual(v.contents.patch, 12)
+
     def test_TTF_Font(self):
         font = sdlttf.TTF_Font()
         self.assertIsInstance(font, sdlttf.TTF_Font)
@@ -34,9 +42,12 @@ class SDLTTFTest(unittest.TestCase):
         sdlttf.TTF_Init()
         sdlttf.TTF_Init()
         sdlttf.TTF_Init()
+        self.assertTrue(sdlttf.TTF_WasInit())
         sdlttf.TTF_Quit()
         sdlttf.TTF_Quit()
+        self.assertFalse(sdlttf.TTF_WasInit())
         sdlttf.TTF_Init()
+        self.assertTrue(sdlttf.TTF_WasInit())
 
     def test_TTF_OpenCloseFont(self):
         for x in range(6, 26):
@@ -250,6 +261,10 @@ class SDLTTFTest(unittest.TestCase):
 #                          sdlttf.set_font_kerning, 1234, None)
         sdlttf.TTF_CloseFont(font)
 
+    @unittest.skip("not implemented")
+    def test_TTF_GetFontKerningSizeGlyphs(self):
+        pass
+
     def test_TTF_FontFaces(self):
         font = sdlttf.TTF_OpenFont(fontfile, 10)
         self.assertGreaterEqual(sdlttf.TTF_FontFaces(font), 1)
@@ -310,8 +325,113 @@ class SDLTTFTest(unittest.TestCase):
 #        self.assertRaises((AttributeError, TypeError),
 #                          sdlttf.glyph_is_provided, font, "test")
 
-    @unittest.skip("not implemented")
     def test_TTF_GlyphMetrics(self):
+        expected = {
+            'A': [1, 25, 0, 29, 25],
+            'j': [-3, 7, -9, 28, 9],
+            '.': [2, 7, -1, 4, 8]
+        }
+        font = sdlttf.TTF_OpenFont(fontfile, 40)
+        minX, maxX, minY, maxY = c_int(0), c_int(0), c_int(0), c_int(0)
+        adv = c_int(0)
+        for char in expected.keys():
+            sdlttf.TTF_GlyphMetrics(
+                font, ord(char),
+                byref(minX), byref(maxX), byref(minY), byref(maxY), byref(adv)
+            )
+            results = [x.value for x in (minX, maxX, minY, maxY, adv)]
+            self.assertListEqual(results, expected[char])
+        sdlttf.TTF_CloseFont(font)
+
+    def test_TTF_Size(self):
+        font = sdlttf.TTF_OpenFont(fontfile, 20)
+        w, h = c_int(0), c_int(0)
+        # Test TTF_SizeText
+        sdlttf.TTF_SizeText(font, b"Hi there!", w, h)
+        self.assertListEqual([w.value, h.value], [70, 21])
+        # Test TTF_SizeUTF8
+        sdlttf.TTF_SizeUTF8(font, u"Hï thère!".encode('utf-8'), w, h)
+        self.assertListEqual([w.value, h.value], [70, 21])
+        # Test TTF_SizeUNICODE
+        # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+        teststr = b"Hi there!"
+        strarr = (c_uint16 * len(teststr))()
+        strarr[:] = teststr
+        sdlttf.TTF_SizeUNICODE(font, strarr, w, h)
+        self.assertListEqual([w.value, h.value], [70, 21])
+        sdlttf.TTF_CloseFont(font)
+
+    def test_TTF_Render_Solid(self):
+        font = sdlttf.TTF_OpenFont(fontfile, 20)
+        color = SDL_Color(0, 0, 0)
+        # Test TTF_RenderText_Solid
+        sf = sdlttf.TTF_RenderText_Solid(font, b"Hi there!", color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderUTF8_Solid
+        teststr = u"Hï thère!".encode('utf-8')
+        sf = sdlttf.TTF_RenderUTF8_Solid(font, teststr, color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderUNICODE_Solid
+        # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+        teststr = b"Hi there!"
+        strarr = (c_uint16 * len(teststr))()
+        strarr[:] = teststr
+        sf = sdlttf.TTF_RenderUNICODE_Solid(font, teststr, color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderGlyph_Solid
+        sf = sdlttf.TTF_RenderGlyph_Solid(font, ord("A"), color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        sdlttf.TTF_CloseFont(font)
+
+    def test_TTF_Render_Shaded(self):
+        font = sdlttf.TTF_OpenFont(fontfile, 20)
+        color = SDL_Color(0, 0, 0)
+        bgcolor = SDL_Color(255, 255, 255)
+        # Test TTF_RenderText_Shaded
+        sf = sdlttf.TTF_RenderText_Shaded(font, b"Hi there!", color, bgcolor)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderUTF8_Shaded
+        teststr = u"Hï thère!".encode('utf-8')
+        sf = sdlttf.TTF_RenderUTF8_Shaded(font, teststr, color, bgcolor)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderUNICODE_Shaded
+        # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+        teststr = b"Hi there!"
+        strarr = (c_uint16 * len(teststr))()
+        strarr[:] = teststr
+        sf = sdlttf.TTF_RenderUNICODE_Shaded(font, teststr, color, bgcolor)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderGlyph_Solid
+        sf = sdlttf.TTF_RenderGlyph_Shaded(font, ord("A"), color, bgcolor)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        sdlttf.TTF_CloseFont(font)
+
+    def test_TTF_Render_Blended(self):
+        font = sdlttf.TTF_OpenFont(fontfile, 20)
+        color = SDL_Color(0, 0, 0, 255)
+        # Test TTF_RenderText_Blended
+        sf = sdlttf.TTF_RenderText_Blended(font, b"Hi there!", color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderUTF8_Blended
+        teststr = u"Hï thère!".encode('utf-8')
+        sf = sdlttf.TTF_RenderUTF8_Blended(font, teststr, color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderUNICODE_Blended
+        # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+        teststr = b"Hi there!"
+        strarr = (c_uint16 * len(teststr))()
+        strarr[:] = teststr
+        sf = sdlttf.TTF_RenderUNICODE_Blended(font, teststr, color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        # Test TTF_RenderGlyph_Solid
+        sf = sdlttf.TTF_RenderGlyph_Blended(font, ord("A"), color)
+        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        sdlttf.TTF_CloseFont(font)
+
+    @unittest.skip("not implemented")
+    def test_TTF_Render_Blended_Wrapped(self):
+        # TODO: Add tests for TTF_RenderText_Blended_Wrapped,
+        # TTF_RenderUTF8_Blended_Wrapped, and TTF_RenderUNICODE_Blended_Wrapped
         pass
 
 

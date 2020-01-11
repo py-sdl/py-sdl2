@@ -106,11 +106,13 @@ class SDL2ExtFontTest(unittest.TestCase):
         self.assertIsInstance(fm.fonts["tuffy"][16].contents, sdlttf.TTF_Font)
 
         # Do some metrics tests
+        # NOTE: Ascent & other font metrics changed in FreeType 2.10, so we 
+        # test against both < 2.10 and >= 2.10 values
         font = fm.fonts["tuffy"][16]
-        self.assertEqual(16, sdlttf.TTF_FontAscent(font))
+        self.assertIn(sdlttf.TTF_FontAscent(font), [13, 16])
         fm.add(RESOURCES.get_path("tuffy.ttf"), size=12)
         font = fm.fonts["tuffy"][12]
-        self.assertEqual(12, sdlttf.TTF_FontAscent(font))
+        self.assertIn(sdlttf.TTF_FontAscent(font), [10, 12])
 
         self.assertRaises(IOError, fm.add, "inexistent.ttf")
         # I don't find a scenario raising a TTF_Error.
