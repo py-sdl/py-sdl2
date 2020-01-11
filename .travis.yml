@@ -1,63 +1,102 @@
 language: python
 
-matrix:
-  fast_finish: true
-  include:
-    - os: linux
-      sudo: required
-      python: 2.7
-    - os: linux
-      sudo: required
-      python: 3.4
-    - os: linux
-      sudo: required
-      python: 3.5
-    - os: linux
-      sudo: required
-      python: 3.6
-    - os: linux
-      sudo: required
-      python: pypy
-    - os: linux
-      sudo: required
-      python: pypy3
-    - os: osx
-      language: generic
-      env: PYVER=3
-    - os: osx
-      language: generic
-      env: PYVER=2
-  allow_failures:
-    - os: linux
-      sudo: required
-      python: pypy
-    - os: linux
-      sudo: required
-      python: pypy3
-    - os: osx
-      language: generic
-      env: PYVER=3
-    - os: osx
-      language: generic
-      env: PYVER=2
-
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh .ci/install-linux-deps.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .ci/install-osx-deps.sh; fi
-
-install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh .ci/venv-osx.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source pysdl2-venv/bin/activate; fi
-  - pip install -U pip
-  - pip install -U numpy
-  - pip install -U pytest
-  - pip install .
-
 env:
   global:
   - SDL_VIDEODRIVER=dummy
   - SDL_AUDIODRIVER=dummy
   - SDL_RENDER_DRIVER=software
 
+matrix:
+  fast_finish:
+  include:
+    - os: linux
+      python: 2.7
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.10
+
+    - os: linux
+      python: 3.5
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.10
+
+    - os: linux
+      python: 3.6
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.10
+
+    - os: linux
+      python: 3.7
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.10
+
+    - os: linux
+      python: 3.8
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.10
+
+    - os: linux
+      python: pypy
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.10
+
+    - os: linux
+      python: pypy3
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.10
+
+    - name: "Python 3.7 on macOS w/ latest SDL2"
+      os: osx
+      language: shell
+      env: PYSDL2_DLL_VERSION=2.0.10
+      before_install: export PATH="/usr/local/opt/python/libexec/bin:/usr/local/bin:$PATH"
+
+    - name: "Python 2.7 on macOS w/ latest SDL2"
+      os: osx
+      language: shell
+      env: PYSDL2_DLL_VERSION=2.0.10
+      before_install: brew link python@2
+
+    - name: "Python 3.7 on macOS w/ SDL2 2.0.8"
+      os: osx
+      language: shell
+      env: PYSDL2_DLL_VERSION=2.0.8
+      before_install: export PATH="/usr/local/opt/python/libexec/bin:/usr/local/bin:$PATH"
+
+    - name: "Python 3.7 on macOS w/ SDL2 2.0.7"
+      os: osx
+      language: shell
+      env: PYSDL2_DLL_VERSION=2.0.7
+      before_install: export PATH="/usr/local/opt/python/libexec/bin:/usr/local/bin:$PATH"
+
+    - name: "Python 3.7 on macOS w/ latest Homebrew SDL2"
+      os: osx
+      language: shell
+      before_install: 
+        - export PATH="/usr/local/opt/python/libexec/bin:/usr/local/bin:$PATH" # sets Python to 3.x
+        - brew install sdl2 sdl2_mixer sdl2_ttf sdl2_image sdl2_gfx
+
+  allow_failures:
+    - python: pypy
+    - python: pypy3
+    - name: "Python 3.7 on macOS w/ latest Homebrew SDL2"
+
+
+before_install:
+  # Install SDL2 build dependencies on Linux (overridden on macOS)
+  - sudo apt-get -qq update
+  - sudo apt-get build-dep libsdl2 libsdl2-mixer libsdl2-ttf libsdl2-image libsdl2-gfx
+
+cache:
+  # Avoids re-compiling SDL2 libraries on Linux every build
+  directories:
+    - dlls 
+
+install:
+  - python -m pip install --upgrade pip
+  - if [[ -z "$(ls -A dlls)" ]]; then python .ci/getsdl2.py; fi
+  - export PYSDL2_DLL_PATH=$(pwd)/dlls
+  - python -m pip install --upgrade numpy pytest
+  - python -m pip install .
+
 script:
-  - python -B -m pytest -v
+  - python -B -m pytest -vvl

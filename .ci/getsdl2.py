@@ -1,9 +1,11 @@
 import os
 import sys
 import shutil
+import tarfile
 import subprocess as sub
 from zipfile import ZipFile 
 from distutils.util import get_platform
+import subprocess as sub
 
 try:
     from urllib.request import urlopen # Python 3.x
@@ -110,9 +112,61 @@ def getDLLs(platform_name, version):
                         
     else:
 
-        # Download source?
-        pass
+        suffix = '.tar.gz' # source code
+        gfxsrc = 'http://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-{0}.tar.gz'
+        basedir = os.getcwd()
 
+        libdir = os.path.join(basedir, 'sdlprefix')
+        if os.path.isdir(libdir):
+            shutil.rmtree(libdir)
+        os.mkdir(libdir)
+
+        for lib in libraries:
+
+            libversion = libversions[version][lib]
+            print('\n======= Downloading {0} {1} =======\n'.format(lib, libversion))
+            
+            # Download tar archive containing source
+            liburl = sdl2_urls[lib].format(libversion, suffix)
+            if lib == 'SDL2_gfx':
+                liburl = gfxsrc.format(libversion)
+            srctar = urlopen(liburl)
+            outpath = os.path.join('temp', lib + suffix)
+            with open(outpath, 'wb') as out:
+                out.write(srctar.read())
+            
+            # Extract source from archive
+            sourcepath = os.path.join('temp', lib + '-' + libversion)
+            with tarfile.open(outpath, 'r:gz') as z:
+                z.extractall(path='temp')
+
+            # Build the library
+            print('======= Compiling {0} {1} =======\n'.format(lib, libversion))
+            buildcmds = [
+                ['./configure', '--prefix={0}'.format(libdir)],
+                ['make'],
+                ['make', 'install']
+            ]
+            os.chdir(sourcepath)
+            for cmd in buildcmds:
+                p = sub.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+                p.communicate()
+                if p.returncode != 0:
+                    raise RuntimeError("Error building {0}".format(lib))
+            os.chdir(basedir)
+
+            # Copy built library to dll folder and reset working dir
+            print('\n======= {0} {1} built sucessfully =======\n'.format(lib, libversion))
+            for f in os.listdir(os.path.join(libdir, 'lib')):
+                if f == "lib{0}.so".format(lib):
+                    fpath = os.path.join(libdir, 'lib', f)
+                    if os.path.islink(fpath):
+                        fpath = os.path.realpath(fpath)
+                    shutil.copy(fpath, dlldir)
+
+        print("Installed binaries:")
+        print(os.listdir(dlldir))
+            
 
 if __name__ == '__main__':
     version = os.getenv('PYSDL2_DLL_VERSION')
