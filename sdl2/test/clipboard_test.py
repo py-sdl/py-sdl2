@@ -9,7 +9,7 @@ def is_win_or_mac():
     return sys.platform in ("win32", "cygwin", "darwin")
 
 
-class SDLClipboardTest(unittest.TestCase):
+class TestSDLClipboard(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -50,7 +50,3 @@ class SDLClipboardTest(unittest.TestCase):
     #     self.assertEquals(clipboard.SDL_SetClipboardText(None), 0)
     #     retval = clipboard.SDL_GetClipboardText()
     #     self.assertEqual(retval, b"")
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

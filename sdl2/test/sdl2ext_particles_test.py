@@ -3,7 +3,7 @@ import unittest
 from sdl2.ext import particles
 
 
-class SDL2ExtParticlesTest(unittest.TestCase):
+class TestSDL2ExtParticles(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
     def test_Particle(self):
@@ -119,7 +119,3 @@ class SDL2ExtParticlesTest(unittest.TestCase):
         engine.process(world, plist)
         world["runs"] = 2
         engine.process(world, plist)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

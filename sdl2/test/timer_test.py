@@ -11,7 +11,7 @@ if sys.version_info[0] >= 3:
 calls = []
 
 
-class SDLTimerTest(unittest.TestCase):
+class TestSDLTimer(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -88,7 +88,3 @@ class SDLTimerTest(unittest.TestCase):
         timer.SDL_RemoveTimer(timerid)
         # Wait a bit, so the last executing handlers can finish
         timer.SDL_Delay(10)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

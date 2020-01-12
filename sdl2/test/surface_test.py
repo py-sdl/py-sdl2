@@ -45,7 +45,7 @@ blitpositions = (
 
 
 # TODO: mostly covers positive tests right now - fix this!
-class SDLSurfaceTest(unittest.TestCase):
+class TestSDLSurface(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -655,15 +655,9 @@ class SDLSurfaceTest(unittest.TestCase):
         palette = pixels.SDL_AllocPalette(1 << 16)
         sf = surface.SDL_CreateRGBSurface(0, 10, 10, 16, 0, 0, 0, 0)
 
-#        self.assertRaises((AttributeError, TypeError),
-#                          surface.set_surface_palette, None, None)
-#        self.assertRaises((AttributeError, TypeError),
-#                          surface.set_surface_palette, None, palette)
         self.assertFalse(sf.contents.format.contents.palette)
         surface.SDL_SetSurfacePalette(sf, palette)
         self.assertIsNotNone(sf.contents.format.contents.palette.contents)
-#        self.assertRaises(sdl.SDLError, surface.set_surface_palette, sf,
-#                          invpalette)
         self.assertIsNotNone(sf.contents.format.contents.palette.contents)
         surface.SDL_SetSurfacePalette(sf, None)
         self.assertFalse(sf.contents.format.contents.palette)
@@ -684,18 +678,10 @@ class SDLSurfaceTest(unittest.TestCase):
         surface.SDL_FreeSurface(imgsurface)
         imgrw.close(imgrw)
 
-#        self.assertRaises(TypeError, surface.load_bmp_rw, "Test")
-#        self.assertRaises(TypeError, surface.load_bmp_rw, None)
-#        self.assertRaises(TypeError, surface.load_bmp_rw, 1234)
-
     def test_SDL_LoadBMP(self):
         imgsurface = surface.SDL_LoadBMP(self.testfile.encode("utf-8"))
         self.assertIsInstance(imgsurface.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(imgsurface)
-
-#        self.assertRaises(sdl.SDLError, surface.load_bmp, "invalid path")
-#        self.assertRaises(sdl.SDLError, surface.load_bmp, None)
-#        self.assertRaises(sdl.SDLError, surface.load_bmp, 1234)
 
     @unittest.skip("not implemented")
     def test_SDL_SaveBMP_RW(self):
@@ -712,7 +698,3 @@ class SDLSurfaceTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_GetYUVConversionModeForResolution(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

@@ -138,7 +138,7 @@ def ltrbyte32(val, pos):
             raise IndexError("invalid position")
 
 
-class SDL2ExtArrayTest(unittest.TestCase):
+class TestSDL2ExtArray(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
     def test_to_ctypes(self):
@@ -359,7 +359,3 @@ class SDL2ExtArrayTest(unittest.TestCase):
                 self.assertEqual(parr[0], 0x03020100)
         for i in (0, 3, 5, 6, 7, 9, 10, 12, "test", self):
             self.assertRaises(TypeError, sdlextarray.create_array, barr, i)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

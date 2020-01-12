@@ -34,7 +34,7 @@ if not (is32bit or ismacos):
     formats.append("xcf")
 
 
-class SDL2ExtImageTest(unittest.TestCase):
+class TestSDL2ExtImage(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
@@ -78,7 +78,3 @@ class SDL2ExtImageTest(unittest.TestCase):
             # Force only sdlimage
             sf = sdl2ext.load_image(filename, enforce="SDL")
             self.assertIsInstance(sf, surface.SDL_Surface)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

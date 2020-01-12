@@ -5,7 +5,7 @@ from ctypes import cast, c_char_p, addressof
 from sdl2 import filesystem, SDL_free
 
 
-class SDLFileSystemTest(unittest.TestCase):
+class TestSDLFileSystem(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test_SDL_GetBasePath(self):
@@ -21,7 +21,3 @@ class SDLFileSystemTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_GetPrefPath(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

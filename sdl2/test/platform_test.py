@@ -3,7 +3,7 @@ import unittest
 from sdl2 import platform
 
 
-class SDLPlatformTest(unittest.TestCase):
+class TestSDLPlatform(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test_SDL_GetPlatform(self):
@@ -18,7 +18,3 @@ class SDLPlatformTest(unittest.TestCase):
             self.assertEqual(retval, b"Mac OS X")
         # Do not check others atm, since we are unsure about what Python will
         # return here.
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

@@ -7,7 +7,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
 from sdl2 import audio
 
 
-class SDLAudioTest(unittest.TestCase):
+class TestSDLAudio(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -162,8 +162,6 @@ class SDLAudioTest(unittest.TestCase):
                 founddummy = True
         self.assertTrue(founddummy, "could not find dummy driver")
         # self.assertRaises(SDLError, audio.SDL_GetAudioDriver, -1)
-        # self.assertRaises(SDLError, audio.get_audio_driver,
-        #                  drivercount + 1)
         self.assertRaises((ctypes.ArgumentError, TypeError),
                           audio.SDL_GetAudioDriver, "Test")
         self.assertRaises((ctypes.ArgumentError, TypeError),
@@ -228,12 +226,7 @@ class SDLAudioTest(unittest.TestCase):
         for x in range(innum):
             name = audio.SDL_GetAudioDeviceName(x, True)
             self.assertIsNotNone(name)
-        # self.assertRaises(SDLError, audio.get_audio_device_name, -1)
-        # self.assertRaises(SDLError, audio.get_audio_device_name, -1, True)
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
-
-        # self.assertRaises(SDLError, audio.get_audio_device_name, 0)
-        # self.assertRaises(SDLError, audio.get_audio_device_name, 0, True)
 
     @unittest.skip("SDL_AudioCallback is not retained in SDL_AudioSpec")
     def test_SDL_OpenCloseAudioDevice(self):
@@ -328,7 +321,3 @@ class SDLAudioTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_DequeueAudio(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

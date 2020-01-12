@@ -27,7 +27,7 @@ def get_opengl_path():
 
 
 # TODO: mostly covers positive tests right now - fix this!
-class SDLVideoTest(unittest.TestCase):
+class TestSDLVideo(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -962,6 +962,3 @@ class SDLVideoTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_SetWindowInputFocus(self):
         pass
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

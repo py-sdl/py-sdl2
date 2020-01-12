@@ -16,7 +16,7 @@ else:
 
 
 # TODO: mostly positive tests, improve this!
-class SDLRenderTest(unittest.TestCase):
+class TestSDLRender(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -844,6 +844,3 @@ seems to fail on creating the second renderer of the window, if any""")
         self.assertEqual(render.SDL_RenderGetIntegerScale(renderer), SDL_FALSE)
         render.SDL_DestroyRenderer(renderer)
         surface.SDL_FreeSurface(sf)
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

@@ -5,7 +5,7 @@ from sdl2 import SDL_WasInit, SDL_INIT_VIDEO, SDL_FlushEvent, SDL_USEREVENT, \
     SDL_FIRSTEVENT, SDL_LASTEVENT, SDL_Event, SDL_UserEvent, SDL_PushEvent
 
 
-class SDL2ExtTest(unittest.TestCase):
+class TestSDL2Ext(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     def test_init_quit(self):
@@ -63,7 +63,3 @@ class SDL2ExtTest(unittest.TestCase):
     def test_TestEventProcessor(self):
         proc = sdl2ext.TestEventProcessor()
         self.assertIsInstance(proc, sdl2ext.TestEventProcessor)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

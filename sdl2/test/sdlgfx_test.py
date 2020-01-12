@@ -11,7 +11,7 @@ except:
     _HASSDLGFX=False
 
 @unittest.skipIf(not _HASSDLGFX, "SDL2_gfx library could not be loaded")
-class SDLGFXTest(unittest.TestCase):
+class TestSDLGFX(unittest.TestCase):
     __tags__ = ["sdl", "sdlgfx"]
 
     @classmethod
@@ -323,7 +323,3 @@ class SDLGFXTest(unittest.TestCase):
 
         surface.SDL_FreeSurface(rotsf)
         surface.SDL_FreeSurface(sf)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

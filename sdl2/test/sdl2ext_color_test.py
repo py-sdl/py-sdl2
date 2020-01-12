@@ -57,7 +57,7 @@ def _assign_item(x, p, y):
     x[p] = y
 
 
-class SDL2ExtColorTest(unittest.TestCase):
+class TestSDL2ExtColor(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
     def test_Color(self):
@@ -771,7 +771,3 @@ class SDL2ExtColorTest(unittest.TestCase):
 
         self.assertRaises(ValueError, color.convert_to_color, self)
         self.assertRaises(ValueError, color.convert_to_color, "Test")
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

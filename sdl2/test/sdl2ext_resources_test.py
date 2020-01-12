@@ -9,7 +9,7 @@ else:
 from sdl2.ext import resources
 
 
-class SDL2ExtResourcesTest(unittest.TestCase):
+class TestSDL2ExtResources(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
     def test_open_zipfile(self):
@@ -236,6 +236,3 @@ class SDL2ExtResourcesTest(unittest.TestCase):
         res.scan(fpath, "resources")
         self.assertIsNotNone(res.get("rwopstest.txt"))
         self.assertIsNotNone(res.get("surfacetest.bmp"))
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

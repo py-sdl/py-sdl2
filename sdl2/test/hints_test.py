@@ -5,7 +5,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from sdl2 import hints
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 
-class SDLHintsTest(unittest.TestCase):
+class TestSDLHints(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def setUp(self):
@@ -85,7 +85,3 @@ class SDLHintsTest(unittest.TestCase):
                                   udata)
         hints.SDL_SetHint(hints.SDL_HINT_ALLOW_TOPMOST, b"false")
         self.assertEqual(len(calls), 2)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

@@ -7,7 +7,7 @@ from sdl2 import rect
 to_ctypes = lambda seq, dtype: (dtype * len(seq))(*seq)
 
 
-class SDLRectTest(unittest.TestCase):
+class TestSDLRect(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test_SDL_Point(self):
@@ -434,6 +434,3 @@ class SDLRectTest(unittest.TestCase):
         self.assertFalse(rect.SDL_PointInRect(p, r1))
         p = rect.SDL_Point(4, 2)
         self.assertTrue(rect.SDL_PointInRect(p, r1))
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

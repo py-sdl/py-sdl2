@@ -9,7 +9,7 @@ except:
     _HASMP = False
 
 
-class SDLCPUInfoTest(unittest.TestCase):
+class TestSDLCPUInfo(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test_SDL_GetCPUCacheLineSize(self):
@@ -70,7 +70,3 @@ class SDLCPUInfoTest(unittest.TestCase):
     def test_SDL_HasNEON(self):
         ret = cpuinfo.SDL_HasNEON()
         self.assertIn(ret, (0, 1))
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

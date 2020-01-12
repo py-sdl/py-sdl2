@@ -30,7 +30,7 @@ class MSprite(sdl2ext.Sprite):
         return self._size
 
 
-class SDL2ExtSpriteTest(unittest.TestCase):
+class TestSDL2ExtSprite(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
@@ -712,7 +712,3 @@ class SDL2ExtSpriteTest(unittest.TestCase):
         self.check_areas(view, 128, 128, [(5, 5, 10, 10), (20, 15, 8, 10)],
                          0x0000FF, (0x0,))
         del view
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

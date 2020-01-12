@@ -4,7 +4,7 @@ from sdl2.ext.color import Color, COLOR
 from sdl2 import ext as sdl2ext
 
 
-class SDL2ExtDrawTest(unittest.TestCase):
+class TestSDL2ExtDraw(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
@@ -79,7 +79,3 @@ class SDL2ExtDrawTest(unittest.TestCase):
             c = sdl2ext.prepare_color(color, sprite)
             cc = COLOR(color)
             self.assertEqual(c, int(cc))
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

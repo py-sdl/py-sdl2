@@ -13,7 +13,7 @@ def mp_do_nothing(sender, *args):
     pass
 
 
-class SDL2ExtEventsTest(unittest.TestCase):
+class TestSDL2ExtEvents(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
     def test_EventHandler(self):
@@ -201,7 +201,3 @@ class SDL2ExtEventsTest(unittest.TestCase):
         self.assertEqual(len(results), 10)
         for v in results:
             self.assertIsNone(v)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

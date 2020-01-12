@@ -3,7 +3,7 @@ import unittest
 from sdl2.ext import algorithms
 
 
-class SDL2ExtAlgorithmsTest(unittest.TestCase):
+class TestSDL2ExtAlgorithms(unittest.TestCase):
     __tags__ = ["sdl2ext"]
 
     @unittest.skip("not implemented")
@@ -20,7 +20,3 @@ class SDL2ExtAlgorithmsTest(unittest.TestCase):
 
     def test_point_on_line(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

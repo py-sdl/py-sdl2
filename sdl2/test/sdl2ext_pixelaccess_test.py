@@ -9,7 +9,7 @@ except:
     _HASNUMPY = False
 
 
-class SDL2ExtPixelAccessTest(unittest.TestCase):
+class TestSDL2ExtPixelAccess(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
@@ -68,7 +68,3 @@ class SDL2ExtPixelAccessTest(unittest.TestCase):
         self.assertFalse(numpy.all([nparray[0, 1], [0xAA, 0xBB, 0xCC, 0xDD]]))
         self.assertFalse(numpy.all([nparray[3, 6], [0xAA, 0xBB, 0xCC, 0xDD]]))
         self.assertFalse(numpy.all([nparray[4, 6], [0xAA, 0xBB, 0xCC, 0xDD]]))
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

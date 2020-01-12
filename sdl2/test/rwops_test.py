@@ -18,7 +18,7 @@ testfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 # TODO: extended checks for r/w operations outside of buffer ranges, invalid
 # values, etc.!
-class SDLRWopsTest(unittest.TestCase):
+class TestSDLRWops(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test_SDL_RWops(self):
@@ -392,6 +392,3 @@ class SDLRWopsTest(unittest.TestCase):
         rwops.SDL_RWseek(rw, 4, rwops.RW_SEEK_SET)
         rwops.SDL_WriteBE64(rw, value)
         self.assertEqual(stringify(buf.getvalue(), "utf-8"), "qwbkqwbkacfz")
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

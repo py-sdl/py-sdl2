@@ -4,7 +4,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
 from sdl2 import blendmode
 
 
-class SDLBlendmodeTest(unittest.TestCase):
+class TestSDLBlendmode(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -19,7 +19,3 @@ class SDLBlendmodeTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_ComposeCustomBlendMode(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

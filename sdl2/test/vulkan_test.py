@@ -2,7 +2,7 @@ import unittest
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
 from sdl2 import vulkan
 
-class SDLVulkanTest(unittest.TestCase):
+class TestSDLVulkan(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -37,7 +37,3 @@ class SDLVulkanTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_Vulkan_GetDrawableSize(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

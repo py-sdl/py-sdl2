@@ -17,7 +17,7 @@ FONTMAP = ["0123456789",
            ]
 
 
-class SDL2ExtFontTest(unittest.TestCase):
+class TestSDL2ExtFont(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
@@ -147,7 +147,3 @@ text long enough to have it wrapped at 100 px width.""", size=20, width=100)
         self.assertTrue(text_surf.w > 1)
         self.assertTrue(text_surf.w == 100)
         self.assertRaises(KeyError, fm.render, "text", alias="inexistent")
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

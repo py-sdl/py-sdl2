@@ -4,7 +4,7 @@ import unittest
 from sdl2 import version, __version__, version_info
 
 
-class SDLVersionTest(unittest.TestCase):
+class TestSDLVersion(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test___version__(self):
@@ -48,7 +48,3 @@ class SDLVersionTest(unittest.TestCase):
             self.assertGreaterEqual(version.SDL_GetRevisionNumber(), 0)
         else:
             self.assertGreaterEqual(version.SDL_GetRevisionNumber(), 7000)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

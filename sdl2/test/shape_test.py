@@ -5,7 +5,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from sdl2 import video, shape, surface
 
 
-class SDLShapeTest(unittest.TestCase):
+class TestSDLShape(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -107,7 +107,3 @@ class SDLShapeTest(unittest.TestCase):
             ret = shape.SDL_GetShapedWindowMode(window, ctypes.byref(mode))
             self.assertEqual(ret, 0)
             video.SDL_DestroyWindow(window)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

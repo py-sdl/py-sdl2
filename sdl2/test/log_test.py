@@ -3,7 +3,7 @@ import unittest
 import ctypes
 from sdl2 import log
 
-class SDLLogTest(unittest.TestCase):
+class TestSDLLog(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def setUp(self):
@@ -268,7 +268,3 @@ class SDLLogTest(unittest.TestCase):
                           log.SDL_LOG_PRIORITY_INFO, b"output test"))
 
         log.SDL_LogSetOutputFunction(origfunc, userdata)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

@@ -3,7 +3,7 @@ import unittest
 from sdl2 import ext as sdl2ext
 
 
-class SDL2ExtGUITest(unittest.TestCase):
+class TestSDL2ExtGUI(unittest.TestCase):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
@@ -84,7 +84,3 @@ class SDL2ExtGUITest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_UIProcessor_textinput(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

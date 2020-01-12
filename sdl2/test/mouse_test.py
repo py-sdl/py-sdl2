@@ -4,7 +4,7 @@ from sdl2 import mouse
 
 
 @unittest.skip("not implemented")
-class SDLMouseTest(unittest.TestCase):
+class TestSDLMouse(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def setUp(self):
@@ -54,6 +54,3 @@ class SDLMouseTest(unittest.TestCase):
 
     def test_SDL_GetGlobalMouseState(self):
         pass
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

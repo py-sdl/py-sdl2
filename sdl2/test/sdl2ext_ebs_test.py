@@ -56,7 +56,7 @@ class MovementApplicator(Applicator):
             p.y += m.vy
 
 
-class SDL2ExtEBSTest(unittest.TestCase):
+class TestSDL2ExtEBS(unittest.TestCase):
     __tags__ = ["ebs", "sdl2ext"]
 
     def test_Entity(self):
@@ -306,7 +306,3 @@ class SDL2ExtEBSTest(unittest.TestCase):
         for c in world2.components[Position].values():
             self.assertEqual(c.x, 2)
             self.assertEqual(c.y, 2)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

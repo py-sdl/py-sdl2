@@ -7,7 +7,7 @@ from sdl2 import rect, keyboard, scancode, keycode, video
 byteify = lambda x: x.encode("utf-8")
 
 
-class SDLKeyboardTest(unittest.TestCase):
+class TestSDLKeyboard(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -90,10 +90,6 @@ class SDLKeyboardTest(unittest.TestCase):
             self.assertEqual(key, 49 + p)
             p += 1
 
-        # self.assertRaises(TypeError, keyboard.get_key_from_scancode, self)
-        # self.assertRaises(ValueError, keyboard.get_key_from_scancode, "Test")
-        # self.assertRaises(TypeError, keyboard.get_key_from_scancode, None)
-
     def test_SDL_GetKeyName(self):
         x = 65  # SDL maps everything against upper-case letters
         for key in range(ord('a'), ord('z')):
@@ -127,10 +123,6 @@ class SDLKeyboardTest(unittest.TestCase):
 
         key = keyboard.SDL_GetScancodeFromKey(477)
         self.assertEqual(key, scancode.SDL_SCANCODE_UNKNOWN)
-
-        # self.assertRaises(TypeError, keyboard.get_scancode_from_key, None)
-        # self.assertRaises(ValueError, keyboard.get_scancode_from_key, "Test")
-        # self.assertRaises(TypeError, keyboard.get_scancode_from_key, self)
 
     def test_SDL_GetScancodeFromName(self):
         codes = range(scancode.SDL_SCANCODE_A, scancode.SDL_SCANCODE_Z)
@@ -168,10 +160,6 @@ class SDLKeyboardTest(unittest.TestCase):
         # self.assertRaises(ValueError, keyboard.SDL_GetScancodeName,
         #                   scancode.SDL_NUM_SCANCODES)
 
-        # self.assertRaises(TypeError, keyboard.get_scancode_from_key, None)
-        # self.assertRaises(ValueError, keyboard.get_scancode_from_key, "Test")
-        # self.assertRaises(TypeError, keyboard.get_scancode_from_key, self)
-
     def test_SDL_SetTextInputRect(self):
         # TODO: this test is a bit pointless
         coords = [(0, 0, 0, 0), (-10, -70, 3, 6), (10, 10, 10, 10)]
@@ -187,6 +175,3 @@ class SDLKeyboardTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_StopTextInput(self):
         keyboard.SDL_StopTextInput()
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

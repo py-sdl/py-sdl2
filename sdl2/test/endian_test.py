@@ -4,7 +4,7 @@ import unittest
 from sdl2 import endian
 
 
-class SDLEndianTest(unittest.TestCase):
+class TestSDLEndian(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def test_SDL_BYTEORDER(self):
@@ -92,7 +92,3 @@ class SDLEndianTest(unittest.TestCase):
         else:
             self.assertNotEqual(endian.SDL_SwapFloat, endian.SDL_SwapFloatBE)
             self.assertEqual(endian.SDL_SwapFloat, endian.SDL_SwapFloatLE)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

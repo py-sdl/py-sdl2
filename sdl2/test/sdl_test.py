@@ -6,7 +6,7 @@ from sdl2 import SDL_Init, SDL_WasInit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_INIT_VIDEO, SDL_GetError
 
 
-class SDLTest(unittest.TestCase):
+class TestSDL(unittest.TestCase):
     __tags__ = ["sdl"]
 
     def setUp(self):
@@ -56,7 +56,3 @@ class SDLTest(unittest.TestCase):
         ret = SDL_WasInit(SDL_INIT_HAPTIC)
         self.assertEqual(ret, SDL_INIT_HAPTIC)
         SDL_QuitSubSystem(SDL_INIT_HAPTIC)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

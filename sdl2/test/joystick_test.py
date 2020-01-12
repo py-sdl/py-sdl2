@@ -5,7 +5,7 @@ from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
 from sdl2 import joystick
 
 
-class SDLJoystickTest(unittest.TestCase):
+class TestSDLJoystick(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -214,7 +214,3 @@ class SDLJoystickTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_JoystickGetDeviceInstanceID(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

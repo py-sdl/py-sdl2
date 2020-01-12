@@ -43,7 +43,7 @@ if not (is32bit or ismacos):
 
 
 @unittest.skipIf(not _HASSDLIMAGE, "SDL2_image library could not be loaded")
-class SDLImageTest(unittest.TestCase):
+class TestSDLImage(unittest.TestCase):
     __tags__ = ["sdl", "sdlimage"]
 
     @classmethod
@@ -524,6 +524,3 @@ class SDLImageTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_IMG_SaveJPG_RW(self):
         pass
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

@@ -4,7 +4,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_JOYSTICK
 from sdl2 import gamecontroller
 
 
-class SDLGamecontrollerTest(unittest.TestCase):
+class TestSDLGamecontroller(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -127,7 +127,3 @@ class SDLGamecontrollerTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_GameControllerMappingForIndex(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

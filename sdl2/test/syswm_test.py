@@ -5,7 +5,7 @@ from sdl2.stdinc import SDL_TRUE
 from sdl2 import video, syswm, version
 
 
-class SDLSysWMTest(unittest.TestCase):
+class TestSDLSysWM(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -39,7 +39,3 @@ class SDLSysWMTest(unittest.TestCase):
             self.assertEqual(wminfo.subsystem, syswm.SDL_SYSWM_COCOA)
         video.SDL_DestroyWindow(window)
         # TODO: not sure, what to test here specifically
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

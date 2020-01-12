@@ -3,7 +3,7 @@ import unittest
 from sdl2 import SDL_Init, SDL_Quit, error
 
 
-class SDLTest(unittest.TestCase):
+class TestSDL(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -29,7 +29,3 @@ class SDLTest(unittest.TestCase):
         error.SDL_ClearError()
         error.SDL_SetError(b"123456789")
         self.assertEqual(error.SDL_GetError(), b"123456789")
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

@@ -5,7 +5,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from sdl2 import events
 
 
-class SDLEventsTest(unittest.TestCase):
+class TestSDLEvents(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -200,7 +200,3 @@ class SDLEventsTest(unittest.TestCase):
     @unittest.skip("not implemented")
     def test_SDL_QuitRequested(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

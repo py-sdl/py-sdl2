@@ -11,7 +11,7 @@ except:
     _HASSDLMIXER=False
 
 @unittest.skipIf(not _HASSDLMIXER, "SDL2_mixer library could not be loaded")
-class SDLMixerTest(unittest.TestCase):
+class TestSDLMixer(unittest.TestCase):
     __tags__ = ["sdl", "sdlmixer"]
 
     @classmethod
@@ -28,6 +28,3 @@ class SDLMixerTest(unittest.TestCase):
         self.assertEqual(v.contents.major, 2)
         self.assertEqual(v.contents.minor, 0)
         self.assertGreaterEqual(v.contents.patch, 2)
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

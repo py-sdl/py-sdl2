@@ -8,7 +8,7 @@ from sdl2.pixels import SDL_Color
 from sdl2.stdinc import Uint8, Uint16, Uint32
 
 
-class SDLPixelsTest(unittest.TestCase):
+class TestSDLPixels(unittest.TestCase):
     __tags__ = ["sdl"]
 
     @classmethod
@@ -587,7 +587,3 @@ class SDLPixelsTest(unittest.TestCase):
         # self.assertRaises(ValueError, seta,  c1, 256)
         self.assertRaises(TypeError, seta, c1, "Test")
         self.assertRaises(TypeError, seta, c1, None)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())
