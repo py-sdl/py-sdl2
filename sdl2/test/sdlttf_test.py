@@ -40,10 +40,13 @@ class SDLTTFTest(unittest.TestCase):
         self.assertIsInstance(font, sdlttf.TTF_Font)
 
     def test_TTF_InitQuit(self):
-        sdlttf.TTF_Init()
+        # Every time TTF_Init() is run, internal number increments by 1,
+        # every time TTF_Quit() is run, internal number decrements by 1 and
+        # only actually quits when internal number == 0
         sdlttf.TTF_Init()
         sdlttf.TTF_Init()
         self.assertTrue(sdlttf.TTF_WasInit())
+        sdlttf.TTF_Quit()
         sdlttf.TTF_Quit()
         sdlttf.TTF_Quit()
         self.assertFalse(sdlttf.TTF_WasInit())
@@ -347,19 +350,30 @@ class SDLTTFTest(unittest.TestCase):
     def test_TTF_Size(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
         w, h = c_int(0), c_int(0)
+        expected_w = [
+            70, # SDL2_ttf <= 2.0.15 w/ FreeType <= 2.9.1
+            73  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
+        ]
+        expected_h = [
+            25, # SDL2_ttf < 2.0.15
+            24, # SDL2_ttf == 2.0.15 w/ FreeType 2.9.1
+            21  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
+        ]
         # Test TTF_SizeText
         sdlttf.TTF_SizeText(font, b"Hi there!", w, h)
-        self.assertListEqual([w.value, h.value], [70, 21])
+        self.assertIn(w.value, expected_w)
+        self.assertIn(h.value, expected_h)
         # Test TTF_SizeUTF8
         sdlttf.TTF_SizeUTF8(font, u"Hï thère!".encode('utf-8'), w, h)
-        self.assertListEqual([w.value, h.value], [70, 21])
+        self.assertIn(w.value, expected_w)
+        self.assertIn(h.value, expected_h)
         # Test TTF_SizeUNICODE
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
-        teststr = b"Hi there!"
-        strarr = (c_uint16 * len(teststr))()
-        strarr[:] = teststr
+        teststr = u"Hi there!"
+        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
         sdlttf.TTF_SizeUNICODE(font, strarr, w, h)
-        self.assertListEqual([w.value, h.value], [70, 21])
+        self.assertIn(w.value, expected_w)
+        self.assertIn(h.value, expected_h)
         sdlttf.TTF_CloseFont(font)
 
     def test_TTF_Render_Solid(self):
@@ -374,10 +388,9 @@ class SDLTTFTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderUNICODE_Solid
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
-        teststr = b"Hi there!"
-        strarr = (c_uint16 * len(teststr))()
-        strarr[:] = teststr
-        sf = sdlttf.TTF_RenderUNICODE_Solid(font, teststr, color)
+        teststr = u"Hi there!"
+        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
+        sf = sdlttf.TTF_RenderUNICODE_Solid(font, strarr, color)
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderGlyph_Solid
         sf = sdlttf.TTF_RenderGlyph_Solid(font, ord("A"), color)
@@ -397,10 +410,9 @@ class SDLTTFTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderUNICODE_Shaded
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
-        teststr = b"Hi there!"
-        strarr = (c_uint16 * len(teststr))()
-        strarr[:] = teststr
-        sf = sdlttf.TTF_RenderUNICODE_Shaded(font, teststr, color, bgcolor)
+        teststr = u"Hi there!"
+        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
+        sf = sdlttf.TTF_RenderUNICODE_Shaded(font, strarr, color, bgcolor)
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderGlyph_Solid
         sf = sdlttf.TTF_RenderGlyph_Shaded(font, ord("A"), color, bgcolor)
@@ -419,10 +431,9 @@ class SDLTTFTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderUNICODE_Blended
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
-        teststr = b"Hi there!"
-        strarr = (c_uint16 * len(teststr))()
-        strarr[:] = teststr
-        sf = sdlttf.TTF_RenderUNICODE_Blended(font, teststr, color)
+        teststr = u"Hi there!"
+        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
+        sf = sdlttf.TTF_RenderUNICODE_Blended(font, strarr, color)
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderGlyph_Solid
         sf = sdlttf.TTF_RenderGlyph_Blended(font, ord("A"), color)
