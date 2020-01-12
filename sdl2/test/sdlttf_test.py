@@ -16,7 +16,7 @@ fontfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "resources", "tuffy.ttf").encode("utf-8")
 
 @pytest.mark.skipif(not _HASSDLTTF, reason="SDL2_ttf library could not be loaded")
-class test_SDLTTF(object):
+class TestSDLTTF(object):
     __tags__ = ["sdl", "sdlttf"]
 
     @classmethod
