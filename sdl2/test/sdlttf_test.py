@@ -2,6 +2,7 @@
 import os
 import sys
 import unittest
+from struct import unpack
 from ctypes import byref, c_int, c_uint16
 from sdl2 import SDL_Init, SDL_Quit, SDL_Color, surface, version, rwops
 
@@ -370,7 +371,9 @@ class SDLTTFTest(unittest.TestCase):
         # Test TTF_SizeUNICODE
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
         teststr = u"Hi there!"
-        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
+        strlen = len(teststr) + 1 # +1 for byte-order mark
+        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
+        strarr = (c_uint16 * strlen)(*intstr)
         sdlttf.TTF_SizeUNICODE(font, strarr, w, h)
         self.assertIn(w.value, expected_w)
         self.assertIn(h.value, expected_h)
@@ -389,7 +392,9 @@ class SDLTTFTest(unittest.TestCase):
         # Test TTF_RenderUNICODE_Solid
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
         teststr = u"Hi there!"
-        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
+        strlen = len(teststr) + 1 # +1 for byte-order mark
+        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
+        strarr = (c_uint16 * strlen)(*intstr)
         sf = sdlttf.TTF_RenderUNICODE_Solid(font, strarr, color)
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderGlyph_Solid
@@ -411,7 +416,9 @@ class SDLTTFTest(unittest.TestCase):
         # Test TTF_RenderUNICODE_Shaded
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
         teststr = u"Hi there!"
-        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
+        strlen = len(teststr) + 1 # +1 for byte-order mark
+        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
+        strarr = (c_uint16 * strlen)(*intstr)
         sf = sdlttf.TTF_RenderUNICODE_Shaded(font, strarr, color, bgcolor)
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderGlyph_Solid
@@ -432,7 +439,9 @@ class SDLTTFTest(unittest.TestCase):
         # Test TTF_RenderUNICODE_Blended
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
         teststr = u"Hi there!"
-        strarr = (c_uint16 * len(teststr))(*[ord(i) for i in teststr])
+        strlen = len(teststr) + 1 # +1 for byte-order mark
+        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
+        strarr = (c_uint16 * strlen)(*intstr)
         sf = sdlttf.TTF_RenderUNICODE_Blended(font, strarr, color)
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderGlyph_Solid
