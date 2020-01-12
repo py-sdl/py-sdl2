@@ -15,17 +15,17 @@ except:
 fontfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "resources", "tuffy.ttf").encode("utf-8")
 
-@pytest.mark.skipif(not _HASSDLTTF, "SDL2_ttf library could not be loaded")
-class SDLTTFTest(object):
+@pytest.mark.skipif(not _HASSDLTTF, reason="SDL2_ttf library could not be loaded")
+class test_SDLTTF(object):
     __tags__ = ["sdl", "sdlttf"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         SDL_Init(0)
         sdlttf.TTF_Init()
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         sdlttf.TTF_Quit()
         SDL_Quit()
 
