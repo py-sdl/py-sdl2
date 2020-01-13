@@ -99,4 +99,4 @@ install:
   - python -m pip install .
 
 script:
-  - python -B -m pytest -vvl
+  - python -B -m pytest -vvl -rxXP
