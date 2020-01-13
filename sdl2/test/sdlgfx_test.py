@@ -4,14 +4,9 @@ import pytest
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
 from sdl2 import surface
 
-try:
-    from sdl2 import sdlgfx
-    _HASSDLGFX=True
-except:
-    _HASSDLGFX=False
+sdlgfx = pytest.importorskip("sdl2.sdlgfx")
 
-@pytest.mark.skipif(not _HASSDLGFX, 
-    reason="SDL2_gfx library could not be loaded")
+
 class TestSDLGFX(object):
     __tags__ = ["sdl", "sdlgfx"]
 

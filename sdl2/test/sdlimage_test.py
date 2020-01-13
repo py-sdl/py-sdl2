@@ -4,13 +4,11 @@ import ctypes
 import pytest
 from sdl2 import SDL_Init, SDL_Quit, version, surface, rwops, render
 
-try:
-    from sdl2 import sdlimage
-    _HASSDLIMAGE=True
-    v = sdlimage.IMG_Linked_Version().contents
-    libversion = v.major * 1000 + v.minor * 100 + v.patch
-except:
-    _HASSDLIMAGE=False
+sdlimage = pytest.importorskip("sdl2.sdlimage")
+
+
+v = sdlimage.IMG_Linked_Version().contents
+libversion = v.major * 1000 + v.minor * 100 + v.patch
 
 is32bit = sys.maxsize <= 2**32
 ismacos = sys.platform == "darwin"
@@ -41,32 +39,46 @@ if not (is32bit or ismacos):
     formats.append("xcf")
 
 
-@pytest.mark.skipif(not _HASSDLIMAGE, 
-    reason="SDL2_image library could not be loaded")
+def test_IMG_Linked_Version():
+    v = sdlimage.IMG_Linked_Version()
+    assert isinstance(v.contents, version.SDL_version)
+    assert v.contents.major == 2
+    assert v.contents.minor == 0
+    assert v.contents.patch >= 2
+
+def test_IMG_Init():
+    SDL_Init(0)
+    libs = {
+        'JPEG': sdlimage.IMG_INIT_JPG,
+        'PNG': sdlimage.IMG_INIT_PNG,
+        'TIFF': sdlimage.IMG_INIT_TIF,
+        'WEBP': sdlimage.IMG_INIT_WEBP
+    }
+    for lib in libs.keys():
+        flags = libs[lib]
+        ret = sdlimage.IMG_Init(flags)
+        err = sdlimage.IMG_GetError()
+        assert ret & flags == flags
+        sdlimage.IMG_Quit()
+    SDL_Quit()
+
+
 class TestSDLImage(object):
     __tags__ = ["sdl", "sdlimage"]
 
     @classmethod
     def setup_class(cls):
+        flags = (
+            sdlimage.IMG_INIT_JPG | sdlimage.IMG_INIT_PNG |
+            sdlimage.IMG_INIT_TIF  | sdlimage.IMG_INIT_WEBP
+        )
         SDL_Init(0)
-        sdlimage.IMG_Init(sdlimage.IMG_INIT_JPG | sdlimage.IMG_INIT_PNG |
-                          sdlimage.IMG_INIT_TIF | sdlimage.IMG_INIT_WEBP)
+        sdlimage.IMG_Init(flags)
 
     @classmethod
     def teardown_class(cls):
         sdlimage.IMG_Quit()
         SDL_Quit()
-
-    @pytest.mark.skip("not implemented")
-    def test_IMG_InitQuit(self):
-        pass
-
-    def test_IMG_Linked_Version(self):
-        v = sdlimage.IMG_Linked_Version()
-        assert isinstance(v.contents, version.SDL_version)
-        assert v.contents.major == 2
-        assert v.contents.minor == 0
-        assert v.contents.patch >= 2
 
     def test_IMG_Load(self):
         fname = "surfacetest.%s"

@@ -6,16 +6,12 @@ from struct import unpack
 from ctypes import byref, c_int, c_uint16
 from sdl2 import SDL_Init, SDL_Quit, SDL_Color, surface, version, rwops
 
-try:
-    from sdl2 import sdlttf
-    _HASSDLTTF=True
-except:
-    _HASSDLTTF=False
+sdlttf = pytest.importorskip("sdl2.sdlttf")
+
 
 fontfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "resources", "tuffy.ttf").encode("utf-8")
 
-@pytest.mark.skipif(not _HASSDLTTF, reason="SDL2_ttf library could not be loaded")
 class TestSDLTTF(object):
     __tags__ = ["sdl", "sdlttf"]
 
