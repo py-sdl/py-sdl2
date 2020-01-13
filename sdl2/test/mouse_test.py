@@ -7,10 +7,12 @@ from sdl2 import mouse
 class TestSDLMouse(object):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setup_class(cls):
         pass
 
-    def tearDown(self):
+    @classmethod
+    def teardown_class(cls):
         pass
 
     def test_SDL_GetMouseFocus(self):

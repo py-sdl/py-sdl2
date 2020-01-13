@@ -519,14 +519,11 @@ class TestSDL2ExtColor(object):
                 assert tuple(c2) == cx
 
                 c2.hsva = c.hsva
-                assert abs(c2.r - c.r <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.g - c.g <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.b - c.b <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.a - c.a <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
+                err = "Failed for color '%s' and cx '%s': %s" % (c, cx, c2)
+                assert abs(c2.r - c.r <= 1), err
+                assert abs(c2.g - c.g <= 1), err
+                assert abs(c2.b - c.b <= 1), err
+                assert abs(c2.a - c.a <= 1), err
 
     def test_Color_hsla(self):
         for c in color_combos():
@@ -541,14 +538,11 @@ class TestSDL2ExtColor(object):
                 assert tuple(c2) == cx
 
                 c2.hsla = c.hsla
-                assert abs(c2.r - c.r <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.g - c.g <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.b - c.b <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.a - c.a <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
+                err = "Failed for color '%s' and cx '%s': %s" % (c, cx, c2)
+                assert abs(c2.r - c.r <= 1), err
+                assert abs(c2.g - c.g <= 1), err
+                assert abs(c2.b - c.b <= 1), err
+                assert abs(c2.a - c.a <= 1), err
 
     def test_Color_i1i2i3(self):
         for c in color_combos():
@@ -562,13 +556,11 @@ class TestSDL2ExtColor(object):
                 assert tuple(c2) == cx
 
                 c2.i1i2i3 = c.i1i2i3
+                err = "Failed for color '%s' and cx '%s': %s" % (c, cx, c2)
                 # I1I2I3 ignores the alpha channel, thus we won't check it
-                assert abs(c2.r - c.r <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.g - c.g <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
-                assert abs(c2.b - c.b <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (c, cx, c2))
+                assert abs(c2.r - c.r <= 1), err
+                assert abs(c2.g - c.g <= 1), err
+                assert abs(c2.b - c.b <= 1), err
 
     def test_Color_cmy(self):
         for val in color_combos():
@@ -582,13 +574,11 @@ class TestSDL2ExtColor(object):
                 assert tuple(c2) == cx
 
                 c2.cmy = val.cmy
+                err = "Failed for color '%s' and cx '%s': %s" % (c, cx, c2)
                 # CMY ignores the alpha channel, thus we won't check it
-                assert abs(c2.r - val.r <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (val, cx, c2))
-                assert abs(c2.g - val.g <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (val, cx, c2))
-                assert abs(c2.b - val.b <= 1,
-                    "Failed for color '%s' and cx '%s': %s" % (val, cx, c2))
+                assert abs(c2.r - val.r <= 1), err
+                assert abs(c2.g - val.g <= 1), err
+                assert abs(c2.b - val.b <= 1), err
 
     def test_Color_normalize(self):
         c = Color(204, 38, 194, 55)

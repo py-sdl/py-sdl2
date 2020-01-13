@@ -9,10 +9,10 @@ from sdl2 import SDL_Init, SDL_WasInit, SDL_InitSubSystem, SDL_QuitSubSystem, \
 class TestSDL(object):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    def setup_method(self):
         SDL_Init(0)
 
-    def tearDown(self):
+    def teardown_method(self):
         SDL_Quit()
 
     def test_SDL_INIT_TIMER(self):

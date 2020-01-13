@@ -8,10 +8,10 @@ from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 class TestSDLHints(object):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    def setup_method(self):
         SDL_Init(SDL_INIT_EVERYTHING)
 
-    def tearDown(self):
+    def teardown_method(self):
         SDL_QuitSubSystem(SDL_INIT_EVERYTHING)
         SDL_Quit()
 

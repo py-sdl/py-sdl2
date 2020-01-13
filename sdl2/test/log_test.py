@@ -6,9 +6,8 @@ from sdl2 import log
 class TestSDLLog(object):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    def setup_method(self):
         self.logdata = []
-
         def logfunc(userdata, category, priority, message):
             if userdata:
                 userdata = ctypes.cast(userdata, ctypes.c_char_p).value
@@ -19,7 +18,7 @@ class TestSDLLog(object):
         log.SDL_LogSetOutputFunction(self.funcptr, None)
         log.SDL_LogSetAllPriority(log.SDL_LOG_PRIORITY_VERBOSE)
 
-    def tearDown(self):
+    def teardown_method(self):
         log.SDL_LogSetOutputFunction(log.SDL_LogOutputFunction(), None)
         del self.funcptr
 
