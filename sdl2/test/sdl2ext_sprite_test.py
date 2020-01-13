@@ -570,7 +570,7 @@ class TestSDL2ExtSprite(object):
         # Deprecated
         renderer = sdl2ext.Renderer(sf)
         assert renderer.rendertarget == sf
-        assert isinstance(renderer.renderer.contents, SDL_Renderer)
+        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         del renderer
 
 

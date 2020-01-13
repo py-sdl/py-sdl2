@@ -58,7 +58,8 @@ class TestSDL2ExtPixelAccess(object):
                                        masks=(0xFF000000, 0x00FF0000,
                                               0x0000FF00, 0x000000FF))
         sdl2ext.fill(sprite, 0xAABBCCDD, (1, 2, 3, 4))
-        nparray = sdl2ext.pixels3d(sprite)
+        with pytest.warns(sdl2ext.compat.ExperimentalWarning):
+            nparray = sdl2ext.pixels3d(sprite)
         for x in range(1, 4):
             for y in range(2, 6):
                 assert numpy.all([nparray[x, y],
