@@ -132,7 +132,6 @@ class TestSDLImage(object):
                 continue
             testdir = os.path.dirname(os.path.abspath(__file__))
             filename = os.path.join(testdir, "resources", fname % fmt)
-            print(filename)
             with open(filename, "rb") as fp:
                 tex = sdlimage.IMG_LoadTexture_RW(rd, rwops.rw_from_object(fp), 0)
                 assert tex is not None
@@ -152,7 +151,6 @@ class TestSDLImage(object):
                 continue
             testdir = os.path.dirname(os.path.abspath(__file__))
             filename = os.path.join(testdir, "resources", fname % fmt)
-            print(filename)
             with open(filename, "rb") as fp:
                 rw = rwops.rw_from_object(fp)
                 fmtx = fmt.upper().encode("utf-8")

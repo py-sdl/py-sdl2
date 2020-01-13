@@ -219,10 +219,7 @@ class TestSDLTTF(object):
 
     def test_TTF_SizeText(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
-        expected_w = [
-            70, # SDL2_ttf <= 2.0.15 w/ FreeType <= 2.9.1
-            73  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
-        ]
+        expected_w = 70
         expected_h = [
             25, # SDL2_ttf < 2.0.15
             24, # SDL2_ttf == 2.0.15 w/ FreeType 2.9.1
@@ -230,17 +227,13 @@ class TestSDLTTF(object):
         ]
         w, h = c_int(0), c_int(0)
         sdlttf.TTF_SizeText(font, b"Hi there!", w, h)
-        print("w = {0}, h = {1}".format(w.value, h.value))
-        assert w.value in expected_w
+        assert w.value == expected_w
         assert h.value in expected_h
         sdlttf.TTF_CloseFont(font)
 
     def test_TTF_SizeUTF8(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
-        expected_w = [
-            70, # SDL2_ttf <= 2.0.15 w/ FreeType <= 2.9.1
-            73  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
-        ]
+        expected_w = 73
         expected_h = [
             25, # SDL2_ttf < 2.0.15
             24, # SDL2_ttf == 2.0.15 w/ FreeType 2.9.1
@@ -248,18 +241,14 @@ class TestSDLTTF(object):
         ]
         w, h = c_int(0), c_int(0)
         sdlttf.TTF_SizeUTF8(font, u"Hï thère!".encode('utf-8'), w, h)
-        print("w = {0}, h = {1}".format(w.value, h.value))
-        assert w.value in expected_w
+        assert w.value == expected_w
         assert h.value in expected_h
         sdlttf.TTF_CloseFont(font)
 
-    #@pytest.mark.xfail(reason="Highly unstable under pytest for some reason")
+    @pytest.mark.xfail(reason="Highly unstable under pytest for some reason")
     def test_TTF_SizeUNICODE(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
-        expected_w = [
-            70, # SDL2_ttf <= 2.0.15 w/ FreeType <= 2.9.1
-            73  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
-        ]
+        expected_w = 70
         expected_h = [
             25, # SDL2_ttf < 2.0.15
             24, # SDL2_ttf == 2.0.15 w/ FreeType 2.9.1
@@ -273,7 +262,7 @@ class TestSDLTTF(object):
         sdlttf.TTF_SizeUNICODE(font, strarr, w, h)
         print(list(strarr))
         print("w = {0}, h = {1}".format(w.value, h.value))
-        assert w.value in expected_w
+        assert w.value == expected_w
         assert h.value in expected_h
         sdlttf.TTF_CloseFont(font)
 
