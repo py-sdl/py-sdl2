@@ -34,7 +34,7 @@ def test_Mix_Init():
         sdlmixer.Mix_Quit()
     SDL_Quit()
 
-@pytest.mark.xfail("not sure this will work with CI")
+@pytest.mark.xfail(reason="not sure this will work with CI")
 def test_Mix_OpenAudio(self):
     SDL_Init(sdl2.SDL_INIT_AUDIO)
     sdlmixer.Mix_Init(0)
