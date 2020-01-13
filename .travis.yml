@@ -88,11 +88,10 @@ before_install:
   - sudo apt-get libmpg123-dev libopus-dev
 
 cache:
-  # Avoids recompiling numpy every time on PyPy
-  - pip
   # Avoids re-compiling SDL2 libraries on Linux every build
   directories:
     - dlls 
+    - $HOME/.cache/pip # Avoids recompiling numpy every time on PyPy
 
 install:
   - python -m pip install --upgrade pip
