@@ -15,6 +15,53 @@ except:
 fontfile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "resources", "tuffy.ttf").encode("utf-8")
 
+def test_TTF_Render_Solid():
+    SDL_Init(0)
+    sdlttf.TTF_Init()
+    font = sdlttf.TTF_OpenFont(fontfile, 20)
+    color = SDL_Color(0, 0, 0)
+    # Test TTF_RenderText_Solid
+    sf = sdlttf.TTF_RenderText_Solid(font, b"Hi there!", color)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    # Test TTF_RenderUTF8_Solid
+    teststr = u"Hï thère!".encode('utf-8')
+    sf = sdlttf.TTF_RenderUTF8_Solid(font, teststr, color)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    # Test TTF_RenderUNICODE_Solid
+    # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+    teststr = u"Hi there!"
+    strlen = len(teststr) + 1 # +1 for byte-order mark
+    intstr = unpack('H' * strlen, teststr.encode('utf-16'))
+    strarr = (c_uint16 * strlen)(*intstr)
+    sf = sdlttf.TTF_RenderUNICODE_Solid(font, strarr, color)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    # Test TTF_RenderGlyph_Solid
+    sf = sdlttf.TTF_RenderGlyph_Solid(font, ord("A"), color)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    sdlttf.TTF_CloseFont(font)
+    sdlttf.TTF_Quit()
+    SDL_Quit()
+
+
+def test_TTF_SizeUNICODE():
+    SDL_Init(0)
+    sdlttf.TTF_Init()
+    font = sdlttf.TTF_OpenFont(fontfile, 20)
+    w, h = c_int(0), c_int(0)
+    expected_w = [70, 73] # see above
+    expected_h = [25, 24, 21] # see above
+    teststr = u"Hi there!"
+    strlen = len(teststr) + 1 # +1 for byte-order mark
+    intstr = unpack('H' * strlen, teststr.encode('utf-16'))
+    strarr = (c_uint16 * strlen)(*intstr)
+    sdlttf.TTF_SizeUNICODE(font, strarr, w, h)
+    assert w.value in expected_w
+    assert h.value in expected_h
+    sdlttf.TTF_CloseFont(font)
+    sdlttf.TTF_Quit()
+    SDL_Quit()
+
+
 @pytest.mark.skipif(not _HASSDLTTF, reason="SDL2_ttf library could not be loaded")
 class TestSDLTTF(object):
     __tags__ = ["sdl", "sdlttf"]
@@ -237,43 +284,6 @@ class TestSDLTTF(object):
         sdlttf.TTF_SizeUTF8(font, u"Hï thère!".encode('utf-8'), w, h)
         assert w.value in expected_w
         assert h.value in expected_h
-        sdlttf.TTF_CloseFont(font)
-
-    def test_TTF_SizeUNICODE(self):
-        font = sdlttf.TTF_OpenFont(fontfile, 20)
-        w, h = c_int(0), c_int(0)
-        expected_w = [70, 73] # see above
-        expected_h = [25, 24, 21] # see above
-        teststr = u"Hi there!"
-        strlen = len(teststr) + 1 # +1 for byte-order mark
-        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
-        strarr = (c_uint16 * strlen)(*intstr)
-        sdlttf.TTF_SizeUNICODE(font, strarr, w, h)
-        assert w.value in expected_w
-        assert h.value in expected_h
-        sdlttf.TTF_CloseFont(font)
-
-    def test_TTF_Render_Solid(self):
-        font = sdlttf.TTF_OpenFont(fontfile, 20)
-        color = SDL_Color(0, 0, 0)
-        # Test TTF_RenderText_Solid
-        sf = sdlttf.TTF_RenderText_Solid(font, b"Hi there!", color)
-        assert isinstance(sf.contents, surface.SDL_Surface)
-        # Test TTF_RenderUTF8_Solid
-        teststr = u"Hï thère!".encode('utf-8')
-        sf = sdlttf.TTF_RenderUTF8_Solid(font, teststr, color)
-        assert isinstance(sf.contents, surface.SDL_Surface)
-        # Test TTF_RenderUNICODE_Solid
-        # NOTE: no unicode chars because number -> glyph lookup is os-dependent
-        teststr = u"Hi there!"
-        strlen = len(teststr) + 1 # +1 for byte-order mark
-        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
-        strarr = (c_uint16 * strlen)(*intstr)
-        sf = sdlttf.TTF_RenderUNICODE_Solid(font, strarr, color)
-        assert isinstance(sf.contents, surface.SDL_Surface)
-        # Test TTF_RenderGlyph_Solid
-        sf = sdlttf.TTF_RenderGlyph_Solid(font, ord("A"), color)
-        assert isinstance(sf.contents, surface.SDL_Surface)
         sdlttf.TTF_CloseFont(font)
 
     def test_TTF_Render_Shaded(self):

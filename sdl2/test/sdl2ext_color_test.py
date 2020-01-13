@@ -76,6 +76,7 @@ class TestSDL2ExtColor(object):
         with pytest.raises(ValueError):
             Color(10, 105, 44, 257)
 
+
     def test_Color__copy__(self):
         copy_copy = copy.copy
         for c in color_combos():
@@ -83,6 +84,7 @@ class TestSDL2ExtColor(object):
             assert c == c2
             c2 = ~c2
             assert c != c2
+
 
     def test_Color__eq__(self):
         assert Color(255, 0, 0, 0) == Color(255, 0, 0, 0)
@@ -115,6 +117,7 @@ class TestSDL2ExtColor(object):
         assert not (int(Color(0, 0, 0, 0)) == 0x0000ff00)
         assert not (int(Color(0, 0, 0, 0)) == 0x000000ff)
 
+
     def test_Color__ne__(self):
         assert Color(0, 0, 0, 0) != Color(255, 0, 0, 0)
         assert Color(0, 0, 0, 0) != Color(0, 255, 0, 0)
@@ -146,10 +149,12 @@ class TestSDL2ExtColor(object):
         assert not (int(Color(0, 0, 255, 0)) != 0x0000ff00)
         assert not (int(Color(0, 0, 0, 255)) != 0x000000ff)
 
+
     def test_Color__repr__(self):
         c = Color(68, 38, 26, 69)
         c1 = eval(repr(c))
         assert c == c1
+
 
     def test_Color__int__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
@@ -166,6 +171,7 @@ class TestSDL2ExtColor(object):
         assert c.a == 0x33
         assert int(c) == int(0x72759233)
 
+
     def test_Color__long__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
         assert c.r == 0x00
@@ -180,6 +186,7 @@ class TestSDL2ExtColor(object):
         assert c.b == 0x92
         assert c.a == 0x33
         assert long(c) == long(0x72759233)
+
 
     def test_Color__float__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
@@ -196,6 +203,7 @@ class TestSDL2ExtColor(object):
         assert c.a == 0x33
         assert float(c) == float(0x72759233)
 
+
     def test_Color__oct__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
         assert c.r == 0x00
@@ -210,6 +218,7 @@ class TestSDL2ExtColor(object):
         assert c.b == 0x92
         assert c.a == 0x33
         assert oct(c) == oct(0x72759233)
+
 
     def test_Color__hex__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
@@ -226,6 +235,7 @@ class TestSDL2ExtColor(object):
         assert c.a == 0x33
         assert hex(c) == hex(0x72759233)
 
+
     def test_Color__invert__(self):
         assert ~Color() == Color(0, 0, 0, 0)
         assert ~Color(0, 0, 0, 0) == Color(255, 255, 255, 255)
@@ -237,6 +247,7 @@ class TestSDL2ExtColor(object):
 
         assert ~Color(1, 2, 3, 4) == Color(254, 253, 252, 251)
         assert ~Color(127, 127, 127, 0) == Color(128, 128, 128, 255)
+
 
     def test_Color__mod__(self):
         c1 = Color()
@@ -256,6 +267,7 @@ class TestSDL2ExtColor(object):
         assert c3.g == 3
         assert c3.b == 7
         assert c3.a == 15
+
 
     def test_Color__div__(self):
         c1 = Color(128, 128, 128, 128)
@@ -282,6 +294,7 @@ class TestSDL2ExtColor(object):
         assert c3.b == 2
         assert c3.a == 0
 
+
     def test_Color__mul__(self):
         c1 = Color(1, 1, 1, 1)
         assert c1.r == 1
@@ -306,6 +319,7 @@ class TestSDL2ExtColor(object):
         assert c3.g == 25
         assert c3.b == 9
         assert c3.a == 255
+
 
     def test_Color__sub__(self):
         c1 = Color(255, 255, 255, 255)
@@ -332,6 +346,7 @@ class TestSDL2ExtColor(object):
         assert c3.b == 91
         assert c3.a == 0
 
+
     def test_Color__add__(self):
         c1 = Color(0, 0, 0, 0)
         assert c1.r == 0
@@ -357,11 +372,13 @@ class TestSDL2ExtColor(object):
         assert c3.b == 164
         assert c3.a == 255
 
+
     def test_Color__len__(self):
         c = Color(204, 38, 194, 55)
         assert len(c) == 4
         assert len(Color()) == 4
         assert len(Color(2)) == 4
+
 
     def test_Color__getitem__(self):
         c = Color(204, 38, 194, 55)
@@ -369,6 +386,7 @@ class TestSDL2ExtColor(object):
         assert c[1] == 38
         assert c[2] == 194
         assert c[3] == 55
+
 
     def test_Color__setitem(self):
         c = Color(204, 38, 194, 55)
@@ -394,6 +412,7 @@ class TestSDL2ExtColor(object):
             _assign_item(c, 2, "Hello")
         assert c[2] == 173
 
+
     def test_Color_r(self):
         c = Color(100, 100, 100)
         assert c.r == 100
@@ -407,6 +426,7 @@ class TestSDL2ExtColor(object):
         assert c.r == 200
         c.r += 22
         assert c.r == 222
+
 
     def test_Color_g(self):
         c = Color(100, 100, 100)
@@ -422,6 +442,7 @@ class TestSDL2ExtColor(object):
         c.g += 22
         assert c.g == 222
 
+
     def test_Color_b(self):
         c = Color(100, 100, 100)
         assert c.b == 100
@@ -436,6 +457,7 @@ class TestSDL2ExtColor(object):
         c.b += 22
         assert c.b == 222
 
+
     def test_Color_a(self):
         c = Color(100, 100, 100)
         assert c.a == 255
@@ -449,6 +471,7 @@ class TestSDL2ExtColor(object):
         assert c.a == 200
         c.a += 22
         assert c.a == 222
+
 
     def test_Color_rgba(self):
         c = Color(0)
@@ -506,6 +529,7 @@ class TestSDL2ExtColor(object):
         assert c.g == 55
         assert c.b == 77
 
+
     def test_Color_hsva(self):
         for c in color_combos():
             h, s, v, a = c.hsva
@@ -524,6 +548,7 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.g - c.g <= 1), err
                 assert abs(c2.b - c.b <= 1), err
                 assert abs(c2.a - c.a <= 1), err
+
 
     def test_Color_hsla(self):
         for c in color_combos():
@@ -544,6 +569,7 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.b - c.b <= 1), err
                 assert abs(c2.a - c.a <= 1), err
 
+
     def test_Color_i1i2i3(self):
         for c in color_combos():
             i1, i2, i3 = c.i1i2i3
@@ -562,6 +588,7 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.g - c.g <= 1), err
                 assert abs(c2.b - c.b <= 1), err
 
+
     def test_Color_cmy(self):
         for val in color_combos():
             c, m, y = val.cmy
@@ -579,6 +606,7 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.r - val.r <= 1), err
                 assert abs(c2.g - val.g <= 1), err
                 assert abs(c2.b - val.b <= 1), err
+
 
     def test_Color_normalize(self):
         c = Color(204, 38, 194, 55)
@@ -611,6 +639,7 @@ class TestSDL2ExtColor(object):
         # 52 / 255 ~= .20
         assert round(abs(t[3]-0.2), 2) == 0
 
+
     def test_is_rgb_color(self):
         for v in color_combos():
             assert color.is_rgba_color(v)
@@ -623,6 +652,7 @@ class TestSDL2ExtColor(object):
             assert not color.is_rgba_color(v)
         for v in hash_combos():
             assert not color.is_rgba_color(v)
+
 
     def test_is_rgba_color(self):
         for v in color_combos():
@@ -637,7 +667,9 @@ class TestSDL2ExtColor(object):
         for v in hash_combos():
             assert not color.is_rgba_color(v)
 
+
     def test_rgba_argb_to_color(self):
+
         assert color.RGBA == color.rgba_to_color
         assert color.ARGB == color.argb_to_color
 
@@ -650,7 +682,7 @@ class TestSDL2ExtColor(object):
                 continue
 
             assert color.RGBA(val) == c, "Failed for '%s'" % val
-            assert color.ARGB(val) == c, "Failed for '0x%.8x'" % val
+            assert not color.ARGB(val) == c, "Failed for '0x%.8x'" % val
 
         for index, val in enumerate(argb_combos()):
             c = cvals[index]
@@ -660,7 +692,8 @@ class TestSDL2ExtColor(object):
                 continue
 
             assert color.ARGB(val) == c, "Failed for '%s'" % val
-            assert color.RGBA(val) == c, "Failed for '0x%.8x'" % val
+            assert not color.RGBA(val) == c, "Failed for '0x%.8x'" % val
+
 
     def test_string_to_color(self):
         for method in (color.string_to_color, color.convert_to_color,
@@ -749,6 +782,7 @@ class TestSDL2ExtColor(object):
             color.string_to_color(0xff000000)
         with pytest.raises(TypeError):
             color.string_to_color(Color())
+
 
     def test_convert_to_color(self):
         assert color.COLOR == color.convert_to_color
