@@ -1,20 +1,20 @@
 import sys
-import unittest
+import pytest
 from sdl2.ext import algorithms
 
 
-class TestSDL2ExtAlgorithms(unittest.TestCase):
+class TestSDL2ExtAlgorithms(object):
     __tags__ = ["sdl2ext"]
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_cohensutherland(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_liangbarsky(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_clipline(self):
         pass
 

@@ -1,11 +1,11 @@
 import os
 import sys
-import unittest
+import pytest
 from ctypes import cast, c_char_p, addressof
 from sdl2 import filesystem, SDL_free
 
 
-class TestSDLFileSystem(unittest.TestCase):
+class TestSDLFileSystem(object):
     __tags__ = ["sdl"]
 
     def test_SDL_GetBasePath(self):
@@ -15,9 +15,9 @@ class TestSDLFileSystem(unittest.TestCase):
         ppath = ppath.decode("utf-8")
         if sys.version_info[0] < 3:
             execprefix = unicode(execprefix)
-        self.assertTrue(execprefix.lower() in ppath.lower())
+        assert execprefix.lower() in ppath.lower()
         SDL_free(path)
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_GetPrefPath(self):
         pass

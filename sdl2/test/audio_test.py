@@ -1,17 +1,17 @@
 import os
 import sys
 import ctypes
-import unittest
 from sdl2 import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_INIT_AUDIO
 from sdl2 import audio
+import pytest
 
 
-class TestSDLAudio(unittest.TestCase):
+class TestSDLAudio(object):
     __tags__ = ["sdl"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         SDL_Init(0)
 
         def audio_cb(userdata, audiobytes, length):
@@ -20,157 +20,157 @@ class TestSDLAudio(unittest.TestCase):
         cls.audiocallback = audio.SDL_AudioCallback(audio_cb)
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         SDL_Quit()
 
     def test_SDL_AUDIO_BITSIZE(self):
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U8), 8)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S8), 8)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U16LSB), 16)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S16LSB), 16)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U16MSB), 16)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S16MSB), 16)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U16), 16)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S16), 16)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S32LSB), 32)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S32MSB), 32)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S32), 32)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_F32LSB), 32)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_F32MSB), 32)
-        self.assertEqual(audio.SDL_AUDIO_BITSIZE(audio.AUDIO_F32), 32)
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U8) == 8
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S8) == 8
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U16LSB) == 16
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S16LSB) == 16
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U16MSB) == 16
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S16MSB) == 16
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_U16) == 16
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S16) == 16
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S32LSB) == 32
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S32MSB) == 32
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_S32) == 32
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_F32LSB) == 32
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_F32MSB) == 32
+        assert audio.SDL_AUDIO_BITSIZE(audio.AUDIO_F32) == 32
 
     def test_SDL_AUDIO_ISFLOAT(self):
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U8))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S8))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U16LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S16LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U16MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S16MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U16))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S16))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S32LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S32MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S32))
-        self.assertTrue(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_F32LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_F32MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_F32))
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U8)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S8)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U16LSB)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S16LSB)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U16MSB)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S16MSB)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_U16)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S16)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S32LSB)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S32MSB)
+        assert not audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_S32)
+        assert audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_F32LSB)
+        assert audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_F32MSB)
+        assert audio.SDL_AUDIO_ISFLOAT(audio.AUDIO_F32)
 
     def test_SDL_AUDIO_ISBIGENDIAN(self):
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U8))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S8))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U16LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S16LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U16MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S16MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U16))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S16))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S32LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S32MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S32))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_F32LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_F32MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_F32))
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U8)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S8)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U16LSB)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S16LSB)
+        assert audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U16MSB)
+        assert audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S16MSB)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_U16)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S16)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S32LSB)
+        assert audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S32MSB)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_S32)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_F32LSB)
+        assert audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_F32MSB)
+        assert not audio.SDL_AUDIO_ISBIGENDIAN(audio.AUDIO_F32)
 
     def test_SDL_AUDIO_ISSIGNED(self):
-        self.assertFalse(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U8))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S8))
-        self.assertFalse(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U16LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S16LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U16MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S16MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U16))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S16))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S32LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S32MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S32))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_F32LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_F32MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_F32))
+        assert not audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U8)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S8)
+        assert not audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U16LSB)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S16LSB)
+        assert not audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U16MSB)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S16MSB)
+        assert not audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_U16)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S16)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S32LSB)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S32MSB)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_S32)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_F32LSB)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_F32MSB)
+        assert audio.SDL_AUDIO_ISSIGNED(audio.AUDIO_F32)
 
     def test_SDL_AUDIO_ISINT(self):
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_U8))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_S8))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_U16LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_S16LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_U16MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_S16MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_U16))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_S16))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_S32LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_S32MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISINT(audio.AUDIO_S32))
-        self.assertFalse(audio.SDL_AUDIO_ISINT(audio.AUDIO_F32LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISINT(audio.AUDIO_F32MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISINT(audio.AUDIO_F32))
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_U8)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_S8)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_U16LSB)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_S16LSB)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_U16MSB)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_S16MSB)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_U16)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_S16)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_S32LSB)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_S32MSB)
+        assert audio.SDL_AUDIO_ISINT(audio.AUDIO_S32)
+        assert not audio.SDL_AUDIO_ISINT(audio.AUDIO_F32LSB)
+        assert not audio.SDL_AUDIO_ISINT(audio.AUDIO_F32MSB)
+        assert not audio.SDL_AUDIO_ISINT(audio.AUDIO_F32)
 
     def test_SDL_AUDIO_ISLITTLEENDIAN(self):
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U8))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S8))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U16LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S16LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U16MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S16MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U16))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S16))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S32LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S32MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S32))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_F32LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_F32MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_F32))
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U8)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S8)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U16LSB)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S16LSB)
+        assert not audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U16MSB)
+        assert not audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S16MSB)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_U16)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S16)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S32LSB)
+        assert not audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S32MSB)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_S32)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_F32LSB)
+        assert not audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_F32MSB)
+        assert audio.SDL_AUDIO_ISLITTLEENDIAN(audio.AUDIO_F32)
 
     def test_SDL_AUDIO_ISUNSIGNED(self):
-        self.assertTrue(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U8))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S8))
-        self.assertTrue(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U16LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S16LSB))
-        self.assertTrue(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U16MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S16MSB))
-        self.assertTrue(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U16))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S16))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S32LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S32MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S32))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_F32LSB))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_F32MSB))
-        self.assertFalse(audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_F32))
+        assert audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U8)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S8)
+        assert audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U16LSB)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S16LSB)
+        assert audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U16MSB)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S16MSB)
+        assert audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_U16)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S16)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S32LSB)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S32MSB)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_S32)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_F32LSB)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_F32MSB)
+        assert not audio.SDL_AUDIO_ISUNSIGNED(audio.AUDIO_F32)
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_AudioSpec(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_AudioCVT(self):
         pass
 
     def test_SDL_GetNumAudioDrivers(self):
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
-            self.skipTest('Audio subsystem not supported')
+            pytest.skip('Audio subsystem not supported')
         count = audio.SDL_GetNumAudioDrivers()
-        self.assertGreaterEqual(count, 1)
+        assert count >= 1
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
     def test_SDL_GetAudioDriver(self):
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
-            self.skipTest('Audio subsystem not supported')
+            pytest.skip('Audio subsystem not supported')
         founddummy = False
         drivercount = audio.SDL_GetNumAudioDrivers()
         for index in range(drivercount):
             drivername = audio.SDL_GetAudioDriver(index)
-            self.assertIsInstance(drivername, (str, bytes))
+            assert isinstance(drivername, (str, bytes))
             if drivername == b"dummy":
                 founddummy = True
-        self.assertTrue(founddummy, "could not find dummy driver")
+        assert founddummy, "could not find dummy driver"
         # self.assertRaises(SDLError, audio.SDL_GetAudioDriver, -1)
-        self.assertRaises((ctypes.ArgumentError, TypeError),
-                          audio.SDL_GetAudioDriver, "Test")
-        self.assertRaises((ctypes.ArgumentError, TypeError),
-                          audio.SDL_GetAudioDriver, None)
+        with pytest.raises((ctypes.ArgumentError, TypeError)):
+            audio.SDL_GetAudioDriver("Test")
+        with pytest.raises((ctypes.ArgumentError, TypeError)):
+            audio.SDL_GetAudioDriver(None)
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
     def test_SDL_GetCurrentAudioDriver(self):
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
-            self.skipTest('Audio subsystem not supported')
+            pytest.skip('Audio subsystem not supported')
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
         success = 0
         for index in range(audio.SDL_GetNumAudioDrivers()):
@@ -182,142 +182,141 @@ class TestSDLAudio(unittest.TestCase):
             driver = audio.SDL_GetCurrentAudioDriver()
             # Do not handle wrong return values.
             if driver is not None:
-                self.assertEqual(drivername, driver)
+                assert drivername == driver
                 success += 1
             SDL_QuitSubSystem(SDL_INIT_AUDIO)
-        self.assertGreaterEqual(success, 1,
-                                "Could not initialize any sound driver")
+        assert success >= 1, "Could not initialize any sound driver"
 
-    @unittest.skip("SDL_AudioCallback is not retained in SDL_AudioSpec")
+    @pytest.mark.skip("SDL_AudioCallback is not retained in SDL_AudioSpec")
     def test_SDL_OpenAudio(self):
         os.environ["SDL_AUDIODRIVER"] = "dummy"
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
-            self.skipTest('Audio subsystem not supported')
+            pytest.skip('Audio subsystem not supported')
         reqspec = audio.SDL_AudioSpec(44100, audio.AUDIO_U16SYS, 2, 8192,
                                       self.audiocallback, None)
         spec = audio.SDL_AudioSpec(0, 0, 0, 0)
         ret = audio.SDL_OpenAudio(reqspec, ctypes.byref(spec))
-        self.assertEqual(ret, 0)
-        self.assertEqual(spec.format, reqspec.format)
-        self.assertEqual(spec.freq, reqspec.freq)
-        self.assertEqual(spec.channels, reqspec.channels)
+        assert ret == 0
+        assert spec.format == reqspec.format
+        assert spec.freq == reqspec.freq
+        assert spec.channels == reqspec.channels
         audio.SDL_CloseAudio()
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
     def test_SDL_GetNumAudioDevices(self):
         os.environ["SDL_AUDIODRIVER"] = "dummy"
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
-            self.skipTest('Audio subsystem not supported')
+            pytest.skip('Audio subsystem not supported')
         outnum = audio.SDL_GetNumAudioDevices(False)
-        self.assertGreaterEqual(outnum, 1)
+        assert outnum >= 1
         innum = audio.SDL_GetNumAudioDevices(True)
-        self.assertGreaterEqual(innum, 0)
+        assert innum >= 0
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
     def test_SDL_GetAudioDeviceName(self):
         os.environ["SDL_AUDIODRIVER"] = "dummy"
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
-            self.skipTest('Audio subsystem not supported')
+            pytest.skip('Audio subsystem not supported')
         outnum = audio.SDL_GetNumAudioDevices(False)
         for x in range(outnum):
             name = audio.SDL_GetAudioDeviceName(x, False)
-            self.assertIsNotNone(name)
+            assert name is not None
         innum = audio.SDL_GetNumAudioDevices(True)
         for x in range(innum):
             name = audio.SDL_GetAudioDeviceName(x, True)
-            self.assertIsNotNone(name)
+            assert name is not None
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
-    @unittest.skip("SDL_AudioCallback is not retained in SDL_AudioSpec")
+    @pytest.mark.skip("SDL_AudioCallback is not retained in SDL_AudioSpec")
     def test_SDL_OpenCloseAudioDevice(self):
         os.environ["SDL_AUDIODRIVER"] = "dummy"
         if SDL_InitSubSystem(SDL_INIT_AUDIO) != 0:
-            self.skipTest('Audio subsystem not supported')
+            pytest.skip('Audio subsystem not supported')
         reqspec = audio.SDL_AudioSpec(44100, audio.AUDIO_U16SYS, 2, 8192,
                                       self.audiocallback, None)
         outnum = audio.SDL_GetNumAudioDevices(0)
         for x in range(outnum):
             spec = audio.SDL_AudioSpec()
             name = audio.SDL_GetAudioDeviceName(x, 0)
-            self.assertIsNotNone(name)
+            assert name is not None
             deviceid = audio.SDL_OpenAudioDevice(None, 0, reqspec,
                                                  ctypes.byref(spec), 1)
-            self.assertGreaterEqual(deviceid, 2)
-            self.assertIsInstance(spec, audio.SDL_AudioSpec)
-            self.assertEqual(spec.format, reqspec.format)
-            self.assertEqual(spec.freq, reqspec.freq)
-            self.assertEqual(spec.channels, reqspec.channels)
+            assert deviceid >= 2
+            assert isinstance(spec, audio.SDL_AudioSpec)
+            assert spec.format == reqspec.format
+            assert spec.freq == reqspec.freq
+            assert spec.channels == reqspec.channels
             audio.SDL_CloseAudioDevice(deviceid)
         SDL_QuitSubSystem(SDL_INIT_AUDIO)
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_GetAudioStatus(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_GetAudioDeviceStatus(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_PauseAudio(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_PauseAudioDevice(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_LoadWAV_RW(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_LoadWAV(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_FreeWAV(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_BuildAudioCVT(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_ConvertAudio(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_MixAudio(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_MixAudioFormat(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_LockUnlockAudio(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_LockUnlockAudioDevice(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_CloseAudio(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_QueueAudio(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_GetQueuedAudioSize(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_ClearQueuedAudio(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_DequeueAudio(self):
         pass

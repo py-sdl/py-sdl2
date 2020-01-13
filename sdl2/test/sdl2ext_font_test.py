@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-import unittest
+import pytest
 from sdl2 import ext as sdl2ext
 from sdl2.ext.compat import byteify
 from sdl2 import surface, sdlttf
@@ -17,104 +17,105 @@ FONTMAP = ["0123456789",
            ]
 
 
-class TestSDL2ExtFont(unittest.TestCase):
+class TestSDL2ExtFont(object):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         try:
             sdl2ext.init()
         except sdl2ext.SDLError:
-            raise unittest.SkipTest('Video subsystem not supported')
+            raise pytest.skip('Video subsystem not supported')
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         sdl2ext.quit()
 
     def test_BitmapFont(self):
         sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
                                          "utf-8"))
-        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        assert isinstance(sf.contents, surface.SDL_Surface)
         font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
-        self.assertIsInstance(font, sdl2ext.BitmapFont)
+        assert isinstance(font, sdl2ext.BitmapFont)
 
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
-        self.assertIsInstance(sprite, sdl2ext.SoftwareSprite)
+        assert isinstance(sprite, sdl2ext.SoftwareSprite)
         font = sdl2ext.BitmapFont(sprite, (32, 32), FONTMAP)
-        self.assertIsInstance(font, sdl2ext.BitmapFont)
+        assert isinstance(font, sdl2ext.BitmapFont)
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_BitmapFont_render(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_BitmapFont_render_on(self):
         pass
 
     def test_BitmapFont_contains(self):
         sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
                                          "utf-8"))
-        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        assert isinstance(sf.contents, surface.SDL_Surface)
         font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
-        self.assertIsInstance(font, sdl2ext.BitmapFont)
+        assert isinstance(font, sdl2ext.BitmapFont)
 
         for ch in "abcde12345.-,+":
-            self.assertTrue(font.contains(ch))
+            assert font.contains(ch)
         for ch in "äöüß":
-            self.assertFalse(font.contains(ch))
+            assert not font.contains(ch)
 
     def test_BitmapFont_can_render(self):
         sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
                                          "utf-8"))
-        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        assert isinstance(sf.contents, surface.SDL_Surface)
         font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
-        self.assertIsInstance(font, sdl2ext.BitmapFont)
+        assert isinstance(font, sdl2ext.BitmapFont)
 
-        self.assertTrue(font.can_render("text"))
-        self.assertTrue(font.can_render("473285435hfsjadfhriuewtrhefd"))
-        self.assertFalse(font.can_render("testä"))
+        assert font.can_render("text")
+        assert font.can_render("473285435hfsjadfhriuewtrhefd")
+        assert not font.can_render("testä")
 
     def test_FontManager(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"),
                                  bg_color=(100, 0, 0))
-        self.assertIsInstance(fm, sdl2ext.FontManager)
-        self.assertEqual(fm.default_font, "tuffy")
-        self.assertEqual(fm.size, 16)
-        self.assertEqual(fm.bg_color, sdl2ext.Color(100, 0, 0, 0))
+        assert isinstance(fm, sdl2ext.FontManager)
+        assert fm.default_font == "tuffy"
+        assert fm.size == 16
+        assert fm.bg_color == sdl2ext.Color(100, 0, 0, 0)
 
     def test_FontManager_default_font(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
-        self.assertEqual(fm.default_font, "tuffy")
-        self.assertEqual(fm.size, 16)
-        with self.assertRaises(ValueError):
+        assert fm.default_font == "tuffy"
+        assert fm.size == 16
+        with pytest.raises(ValueError):
             fm.default_font = "Inexistent Alias"
         fm.add(RESOURCES.get_path("tuffy.copy.ttf"), size = 10)
         fm.default_font = "tuffy.copy"
         fm.size = 10
-        self.assertEqual(fm.default_font, "tuffy.copy")
-        self.assertEqual(fm.size, 10)
+        assert fm.default_font == "tuffy.copy"
+        assert fm.size == 10
         fm.default_font = "tuffy.copy"
         fm.size = 16
-        self.assertEqual(fm.default_font, "tuffy.copy")
-        self.assertEqual(fm.size, 16)
+        assert fm.default_font == "tuffy.copy"
+        assert fm.size == 16
 
     def test_FontManager_add(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
-        self.assertIn("tuffy", fm.aliases)
-        self.assertIn("tuffy", fm.fonts)
-        self.assertIn(16, fm.fonts["tuffy"])
-        self.assertIsInstance(fm.fonts["tuffy"][16].contents, sdlttf.TTF_Font)
+        assert "tuffy" in fm.aliases
+        assert "tuffy" in fm.fonts
+        assert 16 in fm.fonts["tuffy"]
+        assert isinstance(fm.fonts["tuffy"][16].contents, sdlttf.TTF_Font)
 
         # Do some metrics tests
         # NOTE: Ascent & other font metrics changed in FreeType 2.10, so we 
         # test against both < 2.10 and >= 2.10 values
         font = fm.fonts["tuffy"][16]
-        self.assertIn(sdlttf.TTF_FontAscent(font), [13, 16])
+        assert sdlttf.TTF_FontAscent(font) in [13, 16]
         fm.add(RESOURCES.get_path("tuffy.ttf"), size=12)
         font = fm.fonts["tuffy"][12]
-        self.assertIn(sdlttf.TTF_FontAscent(font), [10, 12])
+        assert sdlttf.TTF_FontAscent(font) in [10, 12]
 
-        self.assertRaises(IOError, fm.add, "inexistent.ttf")
+        with pytest.raises(IOError):
+            fm.add("inexistent.ttf")
         # I don't find a scenario raising a TTF_Error.
         # self.assertRaises(sdl2ext.SDLError, fm.add, "resources/tuffy.ttf",
         #                   size=-1)
@@ -122,28 +123,29 @@ class TestSDL2ExtFont(unittest.TestCase):
         # Close the font manager and add a new font
         fm.close()
         fm.add(RESOURCES.get_path("tuffy.ttf"), size=12)
-        self.assertIsInstance(fm.fonts["tuffy"][12].contents, sdlttf.TTF_Font)
+        assert isinstance(fm.fonts["tuffy"][12].contents, sdlttf.TTF_Font)
 
     def test_FontManager_close(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
         fm.add(RESOURCES.get_path("tuffy.ttf"), size=20)
         fm.add(RESOURCES.get_path("tuffy.ttf"), alias="Foo", size=10)
         fm.close()
-        self.assertEqual(fm.fonts, {})
+        assert fm.fonts == {}
         # How to make sure TTF_CloseFont was called on each loaded font?
 
     def test_FontManager_render(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
         text_surf = fm.render("text")
-        self.assertIsInstance(text_surf, surface.SDL_Surface)
-        self.assertTrue(text_surf.w > 1)
+        assert isinstance(text_surf, surface.SDL_Surface)
+        assert text_surf.w > 1
 
         text_surf = fm.render("text", size=10)
-        self.assertIsInstance(text_surf, surface.SDL_Surface)
+        assert isinstance(text_surf, surface.SDL_Surface)
 
         text_surf = fm.render("""
 text long enough to have it wrapped at 100 px width.""", size=20, width=100)
-        self.assertIsInstance(text_surf, surface.SDL_Surface)
-        self.assertTrue(text_surf.w > 1)
-        self.assertTrue(text_surf.w == 100)
-        self.assertRaises(KeyError, fm.render, "text", alias="inexistent")
+        assert isinstance(text_surf, surface.SDL_Surface)
+        assert text_surf.w > 1
+        assert text_surf.w == 100
+        with pytest.raises(KeyError):
+            fm.render("text", alias="inexistent")

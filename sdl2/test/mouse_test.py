@@ -1,10 +1,10 @@
 import sys
-import unittest
+import pytest
 from sdl2 import mouse
 
 
-@unittest.skip("not implemented")
-class TestSDLMouse(unittest.TestCase):
+@pytest.mark.skip("not implemented")
+class TestSDLMouse(object):
     __tags__ = ["sdl"]
 
     def setUp(self):

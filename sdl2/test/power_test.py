@@ -1,11 +1,11 @@
 import sys
 import os
-import unittest
+import pytest
 from ctypes import c_int, byref
 from sdl2 import power
 
 
-class TestSDLPower(unittest.TestCase):
+class TestSDLPower(object):
     __tags__ = ["sdl"]
 
     # @interactive("Do the shown numbers match your power supply status?")

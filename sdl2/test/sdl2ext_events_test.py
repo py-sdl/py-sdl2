@@ -1,5 +1,5 @@
 import sys
-import unittest
+import pytest
 try:
     import multiprocessing
     _HASMP = True
@@ -13,21 +13,22 @@ def mp_do_nothing(sender, *args):
     pass
 
 
-class TestSDL2ExtEvents(unittest.TestCase):
+class TestSDL2ExtEvents(object):
     __tags__ = ["sdl2ext"]
 
     def test_EventHandler(self):
-        self.assertRaises(TypeError, events.EventHandler)
-        self.assertIsInstance(events.EventHandler(None), events.EventHandler)
-        self.assertIsInstance(events.EventHandler(132), events.EventHandler)
-        self.assertIsInstance(events.EventHandler("Test"), events.EventHandler)
+        with pytest.raises(TypeError):
+            events.EventHandler()
+        assert isinstance(events.EventHandler(None), events.EventHandler)
+        assert isinstance(events.EventHandler(132), events.EventHandler)
+        assert isinstance(events.EventHandler("Test"), events.EventHandler)
 
         ev = events.EventHandler(None)
-        self.assertEqual(ev.sender, None)
+        assert ev.sender == None
         ev = events.EventHandler("Test")
-        self.assertEqual(ev.sender, "Test")
-        self.assertEqual(len(ev), 0)
-        self.assertEqual(len(ev.callbacks), 0)
+        assert ev.sender == "Test"
+        assert len(ev) == 0
+        assert len(ev.callbacks) == 0
 
     def test_EventHandler_add__iadd__(self):
         ev = events.EventHandler(None)
@@ -38,27 +39,33 @@ class TestSDL2ExtEvents(unittest.TestCase):
         def callback():
             pass
 
-        self.assertRaises(TypeError, doadd, ev, None)
-        self.assertRaises(TypeError, doadd, ev, "Test")
-        self.assertRaises(TypeError, doadd, ev, 1234)
+        with pytest.raises(TypeError):
+            doadd(ev, None)
+        with pytest.raises(TypeError):
+            doadd(ev, "Test")
+        with pytest.raises(TypeError):
+            doadd(ev, 1234)
 
-        self.assertEqual(len(ev), 0)
+        assert len(ev) == 0
         ev += callback
-        self.assertEqual(len(ev), 1)
+        assert len(ev) == 1
         for x in range(4):
             ev += callback
-        self.assertEqual(len(ev), 5)
+        assert len(ev) == 5
 
-        self.assertRaises(TypeError, ev.add, None)
-        self.assertRaises(TypeError, ev.add, "Test")
-        self.assertRaises(TypeError, ev.add, 1234)
+        with pytest.raises(TypeError):
+            ev.add(None)
+        with pytest.raises(TypeError):
+            ev.add("Test")
+        with pytest.raises(TypeError):
+            ev.add(1234)
 
-        self.assertEqual(len(ev), 5)
+        assert len(ev) == 5
         ev.add(callback)
-        self.assertEqual(len(ev), 6)
+        assert len(ev) == 6
         for x in range(4):
             ev.add(callback)
-        self.assertEqual(len(ev), 10)
+        assert len(ev) == 10
 
     def test_EventHandler_remove__isub__(self):
         ev = events.EventHandler(None)
@@ -71,59 +78,60 @@ class TestSDL2ExtEvents(unittest.TestCase):
 
         for x in range(10):
             ev += callback
-        self.assertEqual(len(ev), 10)
+        assert len(ev) == 10
 
-        self.assertRaises(TypeError, ev.remove)
-        for invval in ("Test", None, 1234, self.assertEqual):
-            self.assertRaises(ValueError, ev.remove, invval)
-            self.assertRaises(ValueError, doremove, ev, invval)
-        self.assertEqual(len(ev), 10)
+        with pytest.raises(TypeError):
+            ev.remove()
+        for invval in ("Test", None, 1234):
+            with pytest.raises(ValueError):
+                ev.remove(invval)
+            with pytest.raises(ValueError):
+                doremove(ev, invval)
+        assert len(ev) == 10
         ev.remove(callback)
-        self.assertEqual(len(ev), 9)
+        assert len(ev) == 9
         ev -= callback
-        self.assertEqual(len(ev), 8)
+        assert len(ev) == 8
         for x in range(3):
             ev.remove(callback)
             ev -= callback
-        self.assertEqual(len(ev), 2)
+        assert len(ev) == 2
 
     def test_EventHandler__call__(self):
         ev = events.EventHandler("Test")
         testsum = []
 
         def callback(sender, sumval):
-            self.assertEqual(sender, "Test")
+            assert sender == "Test"
             sumval.append(1)
 
         for x in range(10):
             ev += callback
-        self.assertEqual(len(ev), 10)
+        assert len(ev) == 10
         results = ev(testsum)
-        self.assertEqual(len(testsum), 10)
+        assert len(testsum) == 10
         for v in testsum:
-            self.assertEqual(v, 1)
-        self.assertEqual(len(results), 10)
+            assert v == 1
+        assert len(results) == 10
         for v in results:
-            self.assertIsNone(v)
+            assert v is None
 
-    @unittest.skipIf(not _HASMP, "multiprocessing is not supported")
+    @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
     def test_MPEventHandler(self):
-        self.assertRaises(TypeError, events.MPEventHandler)
-        self.assertIsInstance(events.MPEventHandler(None),
-                              events.MPEventHandler)
-        self.assertIsInstance(events.MPEventHandler(132),
-                              events.MPEventHandler)
-        self.assertIsInstance(events.MPEventHandler("Test"),
-                              events.MPEventHandler)
+        with pytest.raises(TypeError):
+            events.MPEventHandler()
+        assert isinstance(events.MPEventHandler(None), events.MPEventHandler)
+        assert isinstance(events.MPEventHandler(132), events.MPEventHandler)
+        assert isinstance(events.MPEventHandler("Test"), events.MPEventHandler)
 
         ev = events.MPEventHandler(None)
-        self.assertEqual(ev.sender, None)
+        assert ev.sender == None
         ev = events.MPEventHandler("Test")
-        self.assertEqual(ev.sender, "Test")
-        self.assertEqual(len(ev), 0)
-        self.assertEqual(len(ev.callbacks), 0)
+        assert ev.sender == "Test"
+        assert len(ev) == 0
+        assert len(ev.callbacks) == 0
 
-    @unittest.skipIf(not _HASMP, "multiprocessing is not supported")
+    @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
     def test_MPEventHandler_add__iadd__(self):
         ev = events.MPEventHandler(None)
 
@@ -133,29 +141,35 @@ class TestSDL2ExtEvents(unittest.TestCase):
         def callback():
             pass
 
-        self.assertRaises(TypeError, doadd, ev, None)
-        self.assertRaises(TypeError, doadd, ev, "Test")
-        self.assertRaises(TypeError, doadd, ev, 1234)
+        with pytest.raises(TypeError):
+            doadd(ev, None)
+        with pytest.raises(TypeError):
+            doadd(ev, "Test")
+        with pytest.raises(TypeError):
+            doadd(ev, 1234)
 
-        self.assertEqual(len(ev), 0)
+        assert len(ev) == 0
         ev += callback
-        self.assertEqual(len(ev), 1)
+        assert len(ev) == 1
         for x in range(4):
             ev += callback
-        self.assertEqual(len(ev), 5)
+        assert len(ev) == 5
 
-        self.assertRaises(TypeError, ev.add, None)
-        self.assertRaises(TypeError, ev.add, "Test")
-        self.assertRaises(TypeError, ev.add, 1234)
+        with pytest.raises(TypeError):
+            ev.add(None)
+        with pytest.raises(TypeError):
+            ev.add("Test")
+        with pytest.raises(TypeError):
+            ev.add(1234)
 
-        self.assertEqual(len(ev), 5)
+        assert len(ev) == 5
         ev.add(callback)
-        self.assertEqual(len(ev), 6)
+        assert len(ev) == 6
         for x in range(4):
             ev.add(callback)
-        self.assertEqual(len(ev), 10)
+        assert len(ev) == 10
 
-    @unittest.skipIf(not _HASMP, "multiprocessing is not supported")
+    @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
     def test_MPEventHandler_remove__isub__(self):
         ev = events.MPEventHandler(None)
 
@@ -167,37 +181,40 @@ class TestSDL2ExtEvents(unittest.TestCase):
 
         for x in range(10):
             ev += callback
-        self.assertEqual(len(ev), 10)
+        assert len(ev) == 10
 
-        self.assertRaises(TypeError, ev.remove)
-        for invval in ("Test", None, 1234, self.assertEqual):
-            self.assertRaises(ValueError, ev.remove, invval)
-            self.assertRaises(ValueError, doremove, ev, invval)
-        self.assertEqual(len(ev), 10)
+        with pytest.raises(TypeError):
+            ev.remove()
+        for invval in ("Test", None, 1234):
+            with pytest.raises(ValueError):
+                ev.remove(invval)
+            with pytest.raises(ValueError):
+                doremove(ev, invval)
+        assert len(ev) == 10
         ev.remove(callback)
-        self.assertEqual(len(ev), 9)
+        assert len(ev) == 9
         ev -= callback
-        self.assertEqual(len(ev), 8)
+        assert len(ev) == 8
         for x in range(3):
             ev.remove(callback)
             ev -= callback
-        self.assertEqual(len(ev), 2)
+        assert len(ev) == 2
 
-    @unittest.skipIf(not _HASMP, "multiprocessing is not supported")
-    @unittest.skipIf(sys.platform == "win32",
-                     "relative import will create a fork bomb")
+    @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
+    @pytest.mark.skipif(sys.platform == "win32",
+        reason="relative import will create a fork bomb")
     def test_MPEventHandler__call__(self):
         ev = events.MPEventHandler("Test")
 
         for x in range(10):
             ev += mp_do_nothing
-        self.assertEqual(len(ev), 10)
+        assert len(ev) == 10
         results = ev().get(timeout=1)
-        self.assertEqual(len(results), 10)
+        assert len(results) == 10
         for v in results:
-            self.assertIsNone(v)
+            assert v is None
 
         results = ev("Test", 1234, "MoreArgs").get(timeout=1)
-        self.assertEqual(len(results), 10)
+        assert len(results) == 10
         for v in results:
-            self.assertIsNone(v)
+            assert v is None
