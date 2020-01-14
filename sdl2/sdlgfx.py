@@ -6,6 +6,11 @@ from .stdinc import Uint8, Uint32, Sint16
 from .render import SDL_Renderer
 from .surface import SDL_Surface
 
+# NOTE: This module is currently missing wrappers for the image filtering
+# functions in SDL2_imageFilter.h. However, because we have Pillow on Python
+# this isn't really a pressing concern. Time permitting, these functions may
+# be wrapped at a later date for the sake of completeness.
+
 __all__ = ["get_dll_file", "FPS_UPPER_LIMIT", "FPS_LOWER_LIMIT", "FPS_DEFAULT",
            "FPSManager", "SDL_initFramerate", "SDL_getFramerate",
            "SDL_setFramerate", "SDL_getFramecount", "SDL_framerateDelay",
@@ -68,7 +73,7 @@ SDL_framerateDelay = _bind("SDL_framerateDelay", [POINTER(FPSManager)], Uint32)
 
 SDL2_GFXPRIMITIVES_MAJOR = 1
 SDL2_GFXPRIMITIVES_MINOR = 0
-SDL2_GFXPRIMITIVES_MICRO = 0
+SDL2_GFXPRIMITIVES_MICRO = 4
 
 pixelColor = _bind("pixelColor", [POINTER(SDL_Renderer), Sint16, Sint16, Uint32], c_int)
 pixelRGBA = _bind("pixelRGBA", [POINTER(SDL_Renderer), Sint16, Sint16, Uint8, Uint8, Uint8, Uint8], c_int)
