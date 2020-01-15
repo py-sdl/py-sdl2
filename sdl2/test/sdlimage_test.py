@@ -8,8 +8,6 @@ from sdl2 import SDL_Init, SDL_Quit, version, surface, rwops, render
 try:
     from sdl2 import sdlimage
     _HASSDLIMAGE=True
-    v = sdlimage.IMG_Linked_Version().contents
-    libversion = v.major * 1000 + v.minor * 100 + v.patch
 except:
     _HASSDLIMAGE=False
 
@@ -32,14 +30,19 @@ formats = ["bmp",
            "tga",
            "tif",
            "webp",
+           "xcf",
            "xpm",
            #"xv",
            ]
 
+# SVG unsupported on SDL2_image < 2.0.2
+if sdlimage.dll.version < 2002:
+    formats.remove("svg")
+
 # As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
 # XCF support is also broken in official SDL2_image macOS .frameworks
-if not (is32bit or ismacos):
-    formats.append("xcf")
+if is32bit or ismacos:
+    formats.remove("xcf")
 
 
 @unittest.skipIf(not _HASSDLIMAGE, "SDL2_image library could not be loaded")
@@ -66,7 +69,7 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(v.contents, version.SDL_version)
         self.assertEqual(v.contents.major, 2)
         self.assertEqual(v.contents.minor, 0)
-        self.assertGreaterEqual(v.contents.patch, 2)
+        self.assertGreaterEqual(v.contents.patch, 1)
 
     def test_IMG_Load(self):
         fname = "surfacetest.%s"
@@ -249,6 +252,7 @@ class SDLImageTest(unittest.TestCase):
         self.assertIsInstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
+    @pytest.mark.skipif(sdlimage.dll.version < 2002, reason="Added in 2.0.2")
     def test_IMG_LoadSVG_RW(self):
         testdir = os.path.dirname(os.path.abspath(__file__))
         fp = open(os.path.join(testdir, "resources", "surfacetest.svg"), "rb")
@@ -415,6 +419,7 @@ class SDLImageTest(unittest.TestCase):
                 else:
                     self.assertFalse(sdlimage.IMG_isPNM(imgrw))
 
+    @pytest.mark.skipif(sdlimage.dll.version < 2002, reason="Added in 2.0.2")
     def test_IMG_isSVG(self):
         fname = "surfacetest.%s"
         for fmt in formats:
