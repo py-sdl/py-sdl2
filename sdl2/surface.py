@@ -1,5 +1,5 @@
 from ctypes import CFUNCTYPE, Structure, POINTER, c_int, c_void_p
-from .dll import _bind, nullfunc
+from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
 from .rect import SDL_Rect
@@ -65,7 +65,7 @@ SDL_FreeSurface = _bind("SDL_FreeSurface", [POINTER(SDL_Surface)])
 SDL_SetSurfacePalette = _bind("SDL_SetSurfacePalette", [POINTER(SDL_Surface), POINTER(SDL_Palette)], c_int)
 SDL_LockSurface = _bind("SDL_LockSurface", [POINTER(SDL_Surface)], c_int)
 SDL_UnlockSurface = _bind("SDL_UnlockSurface", [POINTER(SDL_Surface)])
-SDL_DuplicateSurface = _bind("SDL_DuplicateSurface", [POINTER(SDL_Surface)], POINTER(SDL_Surface))
+SDL_DuplicateSurface = _bind("SDL_DuplicateSurface", [POINTER(SDL_Surface)], POINTER(SDL_Surface), added='2.0.6')
 
 SDL_LoadBMP_RW = _bind("SDL_LoadBMP_RW", [POINTER(SDL_RWops), c_int], POINTER(SDL_Surface))
 SDL_LoadBMP = lambda fname: SDL_LoadBMP_RW(SDL_RWFromFile(fname, b"rb"), 1)
@@ -97,6 +97,6 @@ SDL_UpperBlitScaled = _bind("SDL_UpperBlitScaled", [POINTER(SDL_Surface), POINTE
 SDL_BlitScaled = SDL_UpperBlitScaled
 SDL_LowerBlitScaled = _bind("SDL_LowerBlitScaled", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
 
-SDL_SetYUVConversionMode = _bind("SDL_SetYUVConversionMode", [SDL_YUV_CONVERSION_MODE], None, nullfunc)
-SDL_GetYUVConversionMode = _bind("SDL_GetYUVConversionMode", None, SDL_YUV_CONVERSION_MODE, nullfunc)
-SDL_GetYUVConversionModeForResolution = _bind("SDL_GetYUVConversionModeForResolution", [c_int, c_int], SDL_YUV_CONVERSION_MODE, nullfunc)
+SDL_SetYUVConversionMode = _bind("SDL_SetYUVConversionMode", [SDL_YUV_CONVERSION_MODE], None, added='2.0.8')
+SDL_GetYUVConversionMode = _bind("SDL_GetYUVConversionMode", None, SDL_YUV_CONVERSION_MODE, added='2.0.8')
+SDL_GetYUVConversionModeForResolution = _bind("SDL_GetYUVConversionModeForResolution", [c_int, c_int], SDL_YUV_CONVERSION_MODE, added='2.0.8')

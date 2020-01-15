@@ -1,6 +1,6 @@
 from ctypes import Structure, POINTER, c_int, c_char_p, c_void_p, c_float, \
     c_double
-from .dll import _bind, nullfunc
+from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
 from .rect import SDL_Point, SDL_Rect
@@ -133,5 +133,5 @@ SDL_DestroyRenderer = _bind("SDL_DestroyRenderer", [POINTER(SDL_Renderer)])
 SDL_GL_BindTexture = _bind("SDL_GL_BindTexture", [POINTER(SDL_Texture), POINTER(c_float), POINTER(c_float)], c_int)
 SDL_GL_UnbindTexture = _bind("SDL_GL_UnbindTexture", [POINTER(SDL_Texture)], c_int)
 SDL_UpdateYUVTexture = _bind("SDL_UpdateYUVTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(Uint8), c_int, POINTER(Uint8), c_int, POINTER(Uint8), c_int], c_int)
-SDL_RenderGetMetalLayer = _bind("SDL_RenderGetMetalLayer", [POINTER(SDL_Renderer)], c_void_p, nullfunc)
-SDL_RenderGetMetalCommandEncoder = _bind("SDL_RenderGetMetalCommandEncoder", [POINTER(SDL_Renderer)], c_void_p, nullfunc)
+SDL_RenderGetMetalLayer = _bind("SDL_RenderGetMetalLayer", [POINTER(SDL_Renderer)], c_void_p, added='2.0.8')
+SDL_RenderGetMetalCommandEncoder = _bind("SDL_RenderGetMetalCommandEncoder", [POINTER(SDL_Renderer)], c_void_p, added='2.0.8')
