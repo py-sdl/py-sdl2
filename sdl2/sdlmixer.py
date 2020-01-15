@@ -131,7 +131,7 @@ class Mix_Music(Structure):
     pass
 
 Mix_OpenAudio = _bind("Mix_OpenAudio", [c_int, Uint16, c_int, c_int], c_int)
-Mix_OpenAudioDevice = _bind("Mix_OpenAudioDevice", [c_int, Uint16, c_int, c_int, c_char_p, c_int], c_int)
+Mix_OpenAudioDevice = _bind("Mix_OpenAudioDevice", [c_int, Uint16, c_int, c_int, c_char_p, c_int], c_int, added='2.0.2')
 Mix_AllocateChannels = _bind("Mix_AllocateChannels", [c_int], c_int)
 Mix_QuerySpec = _bind("Mix_QuerySpec", [POINTER(c_int), POINTER(Uint16), POINTER(c_int)], c_int)
 Mix_LoadWAV_RW = _bind("Mix_LoadWAV_RW", [POINTER(SDL_RWops), c_int], POINTER(Mix_Chunk))
@@ -145,7 +145,7 @@ Mix_FreeChunk = _bind("Mix_FreeChunk", [POINTER(Mix_Chunk)])
 Mix_FreeMusic = _bind("Mix_FreeMusic", [POINTER(Mix_Music)])
 Mix_GetNumChunkDecoders = _bind("Mix_GetNumChunkDecoders", None, c_int)
 Mix_GetChunkDecoder = _bind("Mix_GetChunkDecoder", [c_int], c_char_p)
-Mix_HasChunkDecoder = _bind("Mix_HasChunkDecoder", [c_char_p], SDL_bool)
+Mix_HasChunkDecoder = _bind("Mix_HasChunkDecoder", [c_char_p], SDL_bool, added='2.0.2')
 Mix_GetNumMusicDecoders = _bind("Mix_GetNumMusicDecoders", None, c_int)
 Mix_GetMusicDecoder = _bind("Mix_GetMusicDecoder", [c_int], c_char_p)
 #Mix_HasMusicDecoder = _bind("Mix_HasMusicDecoder", [c_char_p], SDL_bool) # not actually implemented in SDL_mixer

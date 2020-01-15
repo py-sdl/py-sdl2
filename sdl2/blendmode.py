@@ -40,4 +40,4 @@ SDL_BLENDFACTOR_DST_ALPHA           = 0x9
 SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA = 0xA
 SDL_BlendFactor = c_int
 
-SDL_ComposeCustomBlendMode = _bind("SDL_ComposeCustomBlendMode", [SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation, SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation], SDL_BlendMode)
+SDL_ComposeCustomBlendMode = _bind("SDL_ComposeCustomBlendMode", [SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation, SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation], SDL_BlendMode, added='2.0.6')

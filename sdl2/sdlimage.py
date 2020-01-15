@@ -78,7 +78,7 @@ IMG_isLBM = _bind("IMG_isLBM", [POINTER(SDL_RWops)], c_int)
 IMG_isPCX = _bind("IMG_isPCX", [POINTER(SDL_RWops)], c_int)
 IMG_isPNG = _bind("IMG_isPNG", [POINTER(SDL_RWops)], c_int)
 IMG_isPNM = _bind("IMG_isPNM", [POINTER(SDL_RWops)], c_int)
-IMG_isSVG = _bind("IMG_isSVG", [POINTER(SDL_RWops)], c_int)
+IMG_isSVG = _bind("IMG_isSVG", [POINTER(SDL_RWops)], c_int, added='2.0.2')
 IMG_isTIF = _bind("IMG_isTIF", [POINTER(SDL_RWops)], c_int)
 IMG_isXCF = _bind("IMG_isXCF", [POINTER(SDL_RWops)], c_int)
 IMG_isXPM = _bind("IMG_isXPM", [POINTER(SDL_RWops)], c_int)
@@ -94,7 +94,7 @@ IMG_LoadLBM_RW = _bind("IMG_LoadLBM_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surfa
 IMG_LoadPCX_RW = _bind("IMG_LoadPCX_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadPNG_RW = _bind("IMG_LoadPNG_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadPNM_RW = _bind("IMG_LoadPNM_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
-IMG_LoadSVG_RW = _bind("IMG_LoadSVG_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
+IMG_LoadSVG_RW = _bind("IMG_LoadSVG_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface), added='2.0.2')
 IMG_LoadTGA_RW = _bind("IMG_LoadTGA_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadTIF_RW = _bind("IMG_LoadTIF_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
 IMG_LoadXCF_RW = _bind("IMG_LoadXCF_RW", [POINTER(SDL_RWops)], POINTER(SDL_Surface))
@@ -104,8 +104,8 @@ IMG_LoadWEBP_RW = _bind("IMG_LoadWEBP_RW", [POINTER(SDL_RWops)], POINTER(SDL_Sur
 
 IMG_ReadXPMFromArray = _bind("IMG_ReadXPMFromArray", [POINTER(c_char_p)], POINTER(SDL_Surface))
 
-IMG_SaveJPG = _bind("IMG_SaveJPG", [POINTER(SDL_Surface), c_char_p, c_int], c_int)
-IMG_SaveJPG_RW = _bind("IMG_SaveJPG_RW", [POINTER(SDL_Surface), POINTER(SDL_RWops), c_int, c_int], c_int)
+IMG_SaveJPG = _bind("IMG_SaveJPG", [POINTER(SDL_Surface), c_char_p, c_int], c_int, added='2.0.2')
+IMG_SaveJPG_RW = _bind("IMG_SaveJPG_RW", [POINTER(SDL_Surface), POINTER(SDL_RWops), c_int, c_int], c_int, added='2.0.2')
 IMG_SavePNG = _bind("IMG_SavePNG", [POINTER(SDL_Surface), c_char_p], c_int)
 IMG_SavePNG_RW = _bind("IMG_SavePNG_RW", [POINTER(SDL_Surface), POINTER(SDL_RWops), c_int], c_int)
 
