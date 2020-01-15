@@ -371,6 +371,7 @@ class TestSDLTTF(object):
         assert h.value in expected_h
         sdlttf.TTF_CloseFont(font)
 
+    @pytest.mark.xfail(reason="Highly unstable under pytest for some reason")
     def test_TTF_SizeUNICODE(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
         w, h = c_int(0), c_int(0)
