@@ -1,3 +1,4 @@
+import io
 import sys
 from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_size_t, c_void_p, \
     c_char_p, memmove, string_at, Union
@@ -192,10 +193,17 @@ def rw_from_object(obj):
         try:
             # string_at feels wrong, since we access a raw byte buffer...
             retval = obj.write(string_at(ptr, size * num))
-            if retval is None:
-                # No return value; we assume that everything is okay.
+            if issubclass(type(obj), io.IOBase):
+                if retval is None: # Means write error
+                    return 0
+                return retval // size
+            # If not an io object, try to interpret retval as bytes written
+            # and, failing that, just assume success if no exception raised
+            # and return num
+            try:
+                return int(retval) // size
+            except TypeError:
                 return num
-            return retval
         except Exception:
             #print(e)
             return 0
