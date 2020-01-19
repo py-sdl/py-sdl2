@@ -6,6 +6,7 @@ from .keyboard import SDL_Keysym
 from .joystick import SDL_JoystickID
 from .touch import SDL_FingerID, SDL_TouchID
 from .gesture import SDL_GestureID
+from .syswm import SDL_SysWMmsg
 
 __all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING",
            "SDL_APP_LOWMEMORY", "SDL_APP_WILLENTERBACKGROUND",
@@ -331,10 +332,6 @@ class SDL_UserEvent(Structure):
                 ("data1", c_void_p),
                 ("data2", c_void_p)
                 ]
-
-# TODO
-class SDL_SysWMmsg(Structure):
-    pass
 
 class SDL_SysWMEvent(Structure):
     _fields_ = [("type", Uint32),
