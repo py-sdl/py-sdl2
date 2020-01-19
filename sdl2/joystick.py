@@ -1,4 +1,4 @@
-from ctypes import Structure, c_int, c_char_p, POINTER
+from ctypes import Structure, c_int, c_char_p, c_void_p, POINTER
 from .dll import _bind, nullfunc
 from .stdinc import Sint16, Sint32, Uint16, Uint8, SDL_bool
 
@@ -57,7 +57,7 @@ SDL_JOYSTICK_TYPE_ARCADE_PAD = 8
 SDL_JOYSTICK_TYPE_THROTTLE = 9
 
 
-class SDL_Joystick(Structure):
+class SDL_Joystick(c_void_p):
     pass
 
 class SDL_JoystickGUID(Structure):

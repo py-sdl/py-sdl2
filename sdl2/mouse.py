@@ -1,4 +1,4 @@
-from ctypes import Structure, POINTER, c_int
+from ctypes import Structure, POINTER, c_int, c_void_p
 from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .video import SDL_Window
@@ -25,7 +25,7 @@ __all__ = ["SDL_Cursor", "SDL_SYSTEM_CURSOR_ARROW", "SDL_SYSTEM_CURSOR_IBEAM",
            "SDL_MOUSEWHEEL_FLIPPED", "SDL_MouseWheelDirection" ]
 
 
-class SDL_Cursor(Structure):
+class SDL_Cursor(c_void_p):
     pass
 
 

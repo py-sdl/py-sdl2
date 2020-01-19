@@ -58,11 +58,15 @@ class _dfbmsg(Structure):
 
 
 class _cocoamsg(Structure):
-    pass
+    _fields_ = [("dummy", c_int)]
 
 
 class _uikitmsg(Structure):
-    pass
+    _fields_ = [("dummy", c_int)]
+
+
+class _vivantemsg(Structure):
+    _fields_ = [("dummy", c_int)]
 
 
 class _msg(Union):
@@ -71,6 +75,7 @@ class _msg(Union):
                 ("dfb", _dfbmsg),
                 ("cocoa", _cocoamsg),
                 ("uikit", _uikitmsg),
+                ("vivante", _vivantemsg),
                 ("dummy", c_int)
                ]
 

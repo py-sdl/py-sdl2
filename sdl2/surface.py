@@ -38,7 +38,7 @@ SDL_YUV_CONVERSION_BT601 = 1
 SDL_YUV_CONVERSION_BT709 = 2
 SDL_YUV_CONVERSION_AUTOMATIC = 3
 
-class SDL_BlitMap(Structure):
+class SDL_BlitMap(c_void_p):
     pass
 
 class SDL_Surface(Structure):

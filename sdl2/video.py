@@ -129,7 +129,7 @@ class SDL_DisplayMode(Structure):
         return self.format != mode.format or self.w != mode.w or \
             self.h != mode.h or self.refresh_rate != mode.refresh_rate
 
-class SDL_Window(Structure):
+class SDL_Window(c_void_p):
     pass
 
 SDL_WindowFlags = c_int
