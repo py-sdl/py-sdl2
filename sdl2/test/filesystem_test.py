@@ -19,5 +19,5 @@ class TestSDLFileSystem(object):
     def test_SDL_GetPrefPath(self):
         path = filesystem.SDL_GetPrefPath(b"OrgName", b"AppName")
         path = path.decode("utf-8")
-        self.assertTrue("OrgName" in path)
-        self.assertTrue("AppName" in path)
+        assert "OrgName" in path
+        assert "AppName" in path
