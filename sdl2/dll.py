@@ -2,10 +2,18 @@
 import os
 import sys
 import warnings
-from ctypes import CDLL
+from ctypes import CDLL, POINTER, Structure, c_uint8
 from ctypes.util import find_library
 
 __all__ = ["DLL", "nullfunc"]
+
+
+# For determining DLL version on load
+class SDL_version(Structure):
+    _fields_ = [("major", c_uint8),
+                ("minor", c_uint8),
+                ("patch", c_uint8),
+                ]
 
 
 def _findlib(libnames, path=None):
@@ -68,6 +76,8 @@ class DLL(object):
     """
     def __init__(self, libinfo, libnames, path=None):
         self._dll = None
+        self._libname = libinfo
+        self._version = None
         foundlibs = _findlib(libnames, path)
         dllmsg = "PYSDL2_DLL_PATH: %s" % (os.getenv("PYSDL2_DLL_PATH") or "unset")
         if len(foundlibs) == 0:
@@ -77,6 +87,7 @@ class DLL(object):
             try:
                 self._dll = CDLL(libfile)
                 self._libfile = libfile
+                self._version = self._get_version(libinfo, self._dll)
                 break
             except Exception as exc:
                 # Could not load the DLL, move to the next, but inform the user
@@ -90,31 +101,84 @@ class DLL(object):
             path in self._libfile:
             os.environ["PATH"] = "%s;%s" % (path, os.environ["PATH"])
 
-    def bind_function(self, funcname, args=None, returns=None, optfunc=None):
+    def bind_function(self, funcname, args=None, returns=None, added=None):
         """Binds the passed argument and return value types to the specified
-        function."""
+        function. If the version of the loaded library is older than the
+        version where the function was added, an informative exception will
+        be raised if the bound function is called.
+        
+        Args:
+            funcname (str): The name of the function to bind.
+            args (List or None, optional): The data types of the C function's 
+                arguments. Should be 'None' if function takes no arguments.
+            returns (optional): The return type of the bound C function. Should
+                be 'None' if function returns 'void'.
+            added (str, optional): The version of the library in which the
+                function was added, in the format '2.x.x'.
+        """
         func = getattr(self._dll, funcname, None)
-        warnings.warn\
-            ("function '%s' not found in %r, using replacement" %
-             (funcname, self._dll), ImportWarning)
+        min_version = self._version_str_to_int(added) if added else None
         if not func:
-            if optfunc:
-                warnings.warn\
-                    ("function '%s' not found in %r, using replacement" %
-                     (funcname, self._dll), ImportWarning)
-                func = _nonexistent(funcname, optfunc)
+            versionstr = self._version_int_to_str(self._version)
+            if min_version and min_version > self._version:
+                e = "'{0}' requires {1} <= {2}, but the loaded version is {3}."
+                errmsg = e.format(funcname, self._libname, added, versionstr)
+                return _unavailable(errmsg)
             else:
-                raise ValueError("could not find function '%s' in %r" %
-                                 (funcname, self._dll))
+                e = "Could not find function '%s' in %s (%s)"
+                libver = self._libname + ' ' + versionstr
+                raise ValueError(e % (funcname, self._libfile, libver))
         func.argtypes = args
         func.restype = returns
         return func
 
+    def _version_str_to_int(self, s):
+        v = [int(n) for n in s.split('.')]
+        return v[0] * 1000 + v[1] * 100 + v[2]
+
+    def _version_int_to_str(self, i):
+        v = str(i)
+        v = [v[0], v[1], str(int(v[2:4]))]
+        return ".".join(v)
+
+    def _get_version(self, libname, dll):
+        """Gets the version of the linked SDL library"""
+        if libname == "SDL2":
+            dll.SDL_GetVersion.argtypes = [POINTER(SDL_version)]
+            v = SDL_version()
+            dll.SDL_GetVersion(v)
+        else:
+            if libname == "SDL2_mixer":
+                func = dll.Mix_Linked_Version
+            elif libname == "SDL2_ttf":
+                func = dll.TTF_Linked_Version
+            elif libname == "SDL2_image":
+                func = dll.IMG_Linked_Version
+            elif libname == "SDL2_gfx":
+                return 1004 # not supported in SDL2_gfx, so just assume latest
+            func.argtypes = None
+            func.restype = POINTER(SDL_version)
+            v = func().contents
+        return v.major * 1000 + v.minor * 100 + v.patch
+
     @property
     def libfile(self):
-        """Gets the filename of the loaded library."""
+        """str: The filename of the loaded library."""
         return self._libfile
 
+    @property
+    def version(self):
+        """int: The version of the loaded library in the form of a 4-digit
+        integer (e.g. '2008' for SDL 2.0.8, '2010' for SDL 2.0.10).
+        """
+        return self._version
+
+
+def _unavailable(err):
+    """A wrapper that raises a RuntimeError if a function is not supported."""
+    def wrapper(*fargs, **kw):
+        raise RuntimeError(err)
+    return wrapper
 
 def _nonexistent(funcname, func):
     """A simple wrapper to mark functions and methods as nonexistent."""

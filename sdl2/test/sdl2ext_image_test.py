@@ -3,6 +3,12 @@ import pytest
 from sdl2 import ext as sdl2ext
 from sdl2 import surface
 
+try:
+    from sdl2 import sdlimage
+    _HASSDLIMAGE=True
+except:
+    _HASSDLIMAGE=False
+
 RESOURCES = sdl2ext.Resources(__file__, "resources")
 
 is32bit = sys.maxsize <= 2**32
@@ -24,14 +30,19 @@ formats = [ # Do not use bmp - it's contained in resources.zip
            "tga",
            "tif",
            "webp",
+           "xcf",
            "xpm",
            # "xv",
            ]
 
+# SVG unsupported on SDL2_image < 2.0.2
+if _HASSDLIMAGE and sdlimage.dll.version < 2002:
+    formats.remove("svg")
+
 # As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
 # XCF support is also broken in official SDL2_image macOS .frameworks
-if not (is32bit or ismacos):
-    formats.append("xcf")
+if is32bit or ismacos:
+    formats.remove("xcf")
 
 
 class TestSDL2ExtImage(object):
@@ -71,7 +82,7 @@ class TestSDL2ExtImage(object):
             assert isinstance(sf, surface.SDL_Surface)
 
             # Force only PIL
-            if _HASPIL and fmt not in ("webp", "xcf", "lbm"):
+            if _HASPIL and fmt not in ("webp", "xcf", "lbm", "svg"):
                 sf = sdl2ext.load_image(filename, enforce="PIL")
                 assert isinstance(sf, surface.SDL_Surface)
 

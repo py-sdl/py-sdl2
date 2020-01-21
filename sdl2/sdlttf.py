@@ -138,7 +138,7 @@ TTF_CloseFont = _bind("TTF_CloseFont", [POINTER(TTF_Font)])
 TTF_Quit = _bind("TTF_Quit")
 TTF_WasInit = _bind("TTF_WasInit", None, c_int)
 TTF_GetFontKerningSize = _bind("TTF_GetFontKerningSize", [POINTER(TTF_Font), c_int, c_int], c_int)
-TTF_GetFontKerningSizeGlyphs = _bind("TTF_GetFontKerningSizeGlyphs", [POINTER(TTF_Font), Uint16, Uint16], c_int)
+TTF_GetFontKerningSizeGlyphs = _bind("TTF_GetFontKerningSizeGlyphs", [POINTER(TTF_Font), Uint16, Uint16], c_int, added='2.0.14')
 TTF_SetError = SDL_SetError
 TTF_GetError = SDL_GetError
 

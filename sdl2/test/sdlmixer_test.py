@@ -7,8 +7,6 @@ from sdl2 import SDL_Init, SDL_Quit, rwops, version
 
 sdlmixer = pytest.importorskip("sdl2.sdlmixer")
 
-v = sdlmixer.Mix_Linked_Version().contents
-libversion = v.major * 1000 + v.minor * 100 + v.patch
 
 # TODO: Add full list of fuctions to test
 # TODO: Add actual tests for most functions (can base off of SDL_Mixer docs)
@@ -20,7 +18,7 @@ def test_Mix_Linked_Version():
     assert v.contents.minor == 0
     assert v.contents.patch >= 0
 
-@pytest.mark.skipif(libversion < 2004, reason="Broken in official binaries")
+@pytest.mark.skipif(sdlmixer.dll.version < 2004, reason="Broken in official binaries")
 def test_Mix_Init():
     SDL_Init(sdl2.SDL_INIT_AUDIO)
     supported = []

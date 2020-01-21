@@ -52,7 +52,7 @@ SDL_RWFromConstMem = _bind("SDL_RWFromConstMem", [c_void_p, c_int], POINTER(SDL_
 SDL_AllocRW = _bind("SDL_AllocRW", None, POINTER(SDL_RWops))
 SDL_FreeRW = _bind("SDL_FreeRW", [POINTER(SDL_RWops)])
 
-SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t), c_int], c_void_p)
+SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t), c_int], c_void_p, added='2.0.6')
 SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, "rb"), ds, 1)
 
 RW_SEEK_SET = 0
