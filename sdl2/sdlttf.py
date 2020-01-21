@@ -1,5 +1,5 @@
 import os
-from ctypes import Structure, POINTER, c_int, c_long, c_char_p
+from ctypes import Structure, POINTER, c_int, c_long, c_char_p, c_void_p
 from .dll import DLL
 from .version import SDL_version, SDL_VERSIONNUM
 from .rwops import SDL_RWops
@@ -75,7 +75,7 @@ UNICODE_BOM_SWAPPED = 0xFFFE
 TTF_ByteSwappedUNICODE = _bind("TTF_ByteSwappedUNICODE", [c_int])
 
 
-class TTF_Font(Structure):
+class TTF_Font(c_void_p):
     pass
 
 TTF_Init = _bind("TTF_Init", None, c_int)

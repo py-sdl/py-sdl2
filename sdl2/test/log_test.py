@@ -1,14 +1,13 @@
 import sys
-import unittest
+import pytest
 import ctypes
 from sdl2 import log
 
-class SDLLogTest(unittest.TestCase):
+class TestSDLLog(object):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    def setup_method(self):
         self.logdata = []
-
         def logfunc(userdata, category, priority, message):
             if userdata:
                 userdata = ctypes.cast(userdata, ctypes.c_char_p).value
@@ -19,7 +18,7 @@ class SDLLogTest(unittest.TestCase):
         log.SDL_LogSetOutputFunction(self.funcptr, None)
         log.SDL_LogSetAllPriority(log.SDL_LOG_PRIORITY_VERBOSE)
 
-    def tearDown(self):
+    def teardown_method(self):
         log.SDL_LogSetOutputFunction(log.SDL_LogOutputFunction(), None)
         del self.funcptr
 
@@ -27,15 +26,16 @@ class SDLLogTest(unittest.TestCase):
         self.logdata = []  # reset the log
         log.SDL_LogMessage(log.SDL_LOG_CATEGORY_APPLICATION,
                            log.SDL_LOG_PRIORITY_VERBOSE, b"test")
-        self.assertEqual(self.logdata[0], (None,
-                                           log.SDL_LOG_CATEGORY_APPLICATION,
-                                           log.SDL_LOG_PRIORITY_VERBOSE,
-                                           b"test"))
+        assert self.logdata[0] == (
+            None,   log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_VERBOSE, b"test"
+        )
         log.SDL_LogMessage(log.SDL_LOG_CATEGORY_CUSTOM,
                            log.SDL_LOG_PRIORITY_CRITICAL, b"test2")
-        self.assertEqual(self.logdata[1], (None, log.SDL_LOG_CATEGORY_CUSTOM,
-                                           log.SDL_LOG_PRIORITY_CRITICAL,
-                                           b"test2"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_CUSTOM,
+            log.SDL_LOG_PRIORITY_CRITICAL, b"test2"
+        )
 
         #self.assertRaises(TypeError, log.SDL_LogMessage, None, None, None)
         #self.assertRaises(ValueError, log.SDL_LogMessage, 123, None, None)
@@ -51,24 +51,28 @@ class SDLLogTest(unittest.TestCase):
     def test_SDL_Log(self):
         self.logdata = []  # reset the log
         log.SDL_Log(b"test")
-        self.assertEqual(self.logdata[0],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_INFO, b"test"))
+        assert self.logdata[0] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_INFO, b"test"
+        )
         log.SDL_Log(b"abcdeghijk")
-        self.assertEqual(self.logdata[1],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_INFO, b"abcdeghijk"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_INFO, b"abcdeghijk"
+        )
 
     def test_SDL_LogCritical(self):
         self.logdata = []  # reset the log
         log.SDL_LogCritical(log.SDL_LOG_CATEGORY_APPLICATION, b"test")
-        self.assertEqual(self.logdata[0],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_CRITICAL, b"test"))
+        assert self.logdata[0] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_CRITICAL, b"test"
+        )
         log.SDL_LogCritical(log.SDL_LOG_CATEGORY_SYSTEM, b"test")
-        self.assertEqual(self.logdata[1],
-                         (None, log.SDL_LOG_CATEGORY_SYSTEM,
-                          log.SDL_LOG_PRIORITY_CRITICAL, b"test"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_SYSTEM,
+            log.SDL_LOG_PRIORITY_CRITICAL, b"test"
+        )
 
         #self.assertRaises(TypeError, log.SDL_LogCritical, None, None)
         #self.assertRaises(ValueError, log.SDL_LogCritical, 123, None)
@@ -77,13 +81,15 @@ class SDLLogTest(unittest.TestCase):
     def test_SDL_LogDebug(self):
         self.logdata = []  # reset the log
         log.SDL_LogDebug(log.SDL_LOG_CATEGORY_APPLICATION, b"test")
-        self.assertEqual(self.logdata[0],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_DEBUG, b"test"))
+        assert self.logdata[0] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_DEBUG, b"test"
+        )
         log.SDL_LogDebug(log.SDL_LOG_CATEGORY_SYSTEM, b"test")
-        self.assertEqual(self.logdata[1], (None, log.SDL_LOG_CATEGORY_SYSTEM,
-                                           log.SDL_LOG_PRIORITY_DEBUG,
-                                           b"test"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_SYSTEM,
+            log.SDL_LOG_PRIORITY_DEBUG, b"test"
+        )
 
         #self.assertRaises(TypeError, log.SDL_LogDebug, None, None)
         #self.assertRaises(ValueError, log.SDL_LogDebug, 123, None)
@@ -92,13 +98,15 @@ class SDLLogTest(unittest.TestCase):
     def test_SDL_LogError(self):
         self.logdata = []  # reset the log
         log.SDL_LogError(log.SDL_LOG_CATEGORY_APPLICATION, b"test")
-        self.assertEqual(self.logdata[0],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_ERROR, b"test"))
+        assert self.logdata[0] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_ERROR, b"test"
+        )
         log.SDL_LogError(log.SDL_LOG_CATEGORY_SYSTEM, b"test")
-        self.assertEqual(self.logdata[1], (None, log.SDL_LOG_CATEGORY_SYSTEM,
-                                           log.SDL_LOG_PRIORITY_ERROR,
-                                           b"test"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_SYSTEM,
+            log.SDL_LOG_PRIORITY_ERROR, b"test"
+        )
 
         #self.assertRaises(TypeError, log.SDL_LogError, None, None)
         #self.assertRaises(ValueError, log.SDL_LogError, 123, None)
@@ -107,13 +115,15 @@ class SDLLogTest(unittest.TestCase):
     def test_SDL_LogInfo(self):
         self.logdata = []  # reset the log
         log.SDL_LogInfo(log.SDL_LOG_CATEGORY_APPLICATION, b"test")
-        self.assertEqual(self.logdata[0],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_INFO, b"test"))
+        assert self.logdata[0] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_INFO, b"test"
+        )
         log.SDL_LogInfo(log.SDL_LOG_CATEGORY_SYSTEM, b"test")
-        self.assertEqual(self.logdata[1], (None, log.SDL_LOG_CATEGORY_SYSTEM,
-                                           log.SDL_LOG_PRIORITY_INFO,
-                                           b"test"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_SYSTEM,
+            log.SDL_LOG_PRIORITY_INFO, b"test"
+        )
 
         #self.assertRaises(TypeError, log.SDL_LogInfo, None, None)
         #self.assertRaises(ValueError, log.SDL_LogInfo, 123, None)
@@ -122,13 +132,15 @@ class SDLLogTest(unittest.TestCase):
     def test_SDL_LogVerbose(self):
         self.logdata = []  # reset the log
         log.SDL_LogVerbose(log.SDL_LOG_CATEGORY_APPLICATION, b"test")
-        self.assertEqual(self.logdata[0],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_VERBOSE, b"test"))
+        assert self.logdata[0] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_VERBOSE, b"test"
+        )
         log.SDL_LogVerbose(log.SDL_LOG_CATEGORY_SYSTEM, b"test")
-        self.assertEqual(self.logdata[1], (None, log.SDL_LOG_CATEGORY_SYSTEM,
-                                           log.SDL_LOG_PRIORITY_VERBOSE,
-                                           b"test"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_SYSTEM,
+            log.SDL_LOG_PRIORITY_VERBOSE, b"test"
+        )
 
         #self.assertRaises(TypeError, log.SDL_LogVerbose, None, None)
         #self.assertRaises(ValueError, log.SDL_LogVerbose, 123, None)
@@ -137,31 +149,30 @@ class SDLLogTest(unittest.TestCase):
     def test_SDL_LogWarn(self):
         self.logdata = []  # reset the log
         log.SDL_LogWarn(log.SDL_LOG_CATEGORY_APPLICATION, b"test")
-        self.assertEqual(self.logdata[0],
-                         (None, log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_WARN, b"test"))
+        assert self.logdata[0] == (
+            None, log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_WARN, b"test"
+        )
         log.SDL_LogWarn(log.SDL_LOG_CATEGORY_SYSTEM, b"test")
-        self.assertEqual(self.logdata[1], (None, log.SDL_LOG_CATEGORY_SYSTEM,
-                                           log.SDL_LOG_PRIORITY_WARN, b"test"))
+        assert self.logdata[1] == (
+            None, log.SDL_LOG_CATEGORY_SYSTEM,
+            log.SDL_LOG_PRIORITY_WARN, b"test"
+        )
 
         #self.assertRaises(TypeError, log.SDL_LogWarn, None, None)
         #self.assertRaises(ValueError, log.SDL_LogWarn, 123, None)
         #self.assertRaises(ValueError, log.SDL_LogWarn, 123, "Test")
 
     def test_SDL_LogSetAllPriority(self):
-        self.assertEqual(log.SDL_LogGetPriority
-                         (log.SDL_LOG_CATEGORY_APPLICATION),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
-        self.assertEqual(log.SDL_LogGetPriority
-                         (log.SDL_LOG_CATEGORY_SYSTEM),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_APPLICATION) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
         log.SDL_LogSetAllPriority(log.SDL_LOG_PRIORITY_WARN)
-        self.assertEqual(log.SDL_LogGetPriority
-                         (log.SDL_LOG_CATEGORY_APPLICATION),
-                         log.SDL_LOG_PRIORITY_WARN)
-        self.assertEqual(log.SDL_LogGetPriority
-                         (log.SDL_LOG_CATEGORY_SYSTEM),
-                         log.SDL_LOG_PRIORITY_WARN)
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_APPLICATION) == \
+                                      log.SDL_LOG_PRIORITY_WARN
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM) == \
+                                      log.SDL_LOG_PRIORITY_WARN
         # self.assertRaises(ValueError, log.SDL_LogSetAllPriority, 123)
         # self.assertRaises(TypeError, log.SDL_LogSetAllPriority, None)
         # self.assertRaises(TypeError, log.SDL_LogSetAllPriority, "test")
@@ -170,31 +181,28 @@ class SDLLogTest(unittest.TestCase):
         log.SDL_LogSetAllPriority(log.SDL_LOG_PRIORITY_VERBOSE)
 
     def test_SDL_LogGetSetPriority(self):
-        self.assertEqual(log.SDL_LogGetPriority
-                         (log.SDL_LOG_CATEGORY_APPLICATION),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
-        self.assertEqual(log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
-        self.assertEqual(log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_CUSTOM),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_APPLICATION) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_CUSTOM) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
         log.SDL_LogSetPriority(log.SDL_LOG_CATEGORY_CUSTOM,
                                log.SDL_LOG_PRIORITY_INFO)
-        self.assertEqual(log.SDL_LogGetPriority
-                         (log.SDL_LOG_CATEGORY_APPLICATION),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
-        self.assertEqual(log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
-        self.assertEqual(log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_CUSTOM),
-                         log.SDL_LOG_PRIORITY_INFO)
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_APPLICATION) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_CUSTOM) == \
+                                      log.SDL_LOG_PRIORITY_INFO
         log.SDL_LogSetPriority(log.SDL_LOG_CATEGORY_SYSTEM,
                                log.SDL_LOG_PRIORITY_ERROR)
-        self.assertEqual(log.SDL_LogGetPriority
-                         (log.SDL_LOG_CATEGORY_APPLICATION),
-                         log.SDL_LOG_PRIORITY_VERBOSE)
-        self.assertEqual(log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM),
-                         log.SDL_LOG_PRIORITY_ERROR)
-        self.assertEqual(log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_CUSTOM),
-                         log.SDL_LOG_PRIORITY_INFO)
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_APPLICATION) == \
+                                      log.SDL_LOG_PRIORITY_VERBOSE
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_SYSTEM) == \
+                                      log.SDL_LOG_PRIORITY_ERROR
+        assert log.SDL_LogGetPriority(log.SDL_LOG_CATEGORY_CUSTOM) == \
+                                      log.SDL_LOG_PRIORITY_INFO
         #self.assertRaises(TypeError, log.SDL_LogSetPriority, None, None)
         #self.assertRaises(TypeError, log.SDL_LogSetPriority, "Test", None)
         #self.assertRaises(ValueError, log.SDL_LogSetPriority, 123, None)
@@ -225,12 +233,12 @@ class SDLLogTest(unittest.TestCase):
             )
         for cat in categories:
             priority = log.SDL_LogGetPriority(cat)
-            self.assertEqual(priority, defpriority)
+            assert priority == defpriority
 
         log.SDL_LogResetPriorities()
         for cat in categories:
             priority = log.SDL_LogGetPriority(cat)
-            self.assertNotEqual(priority, defpriority)
+            assert priority != defpriority
 
         log.SDL_LogSetAllPriority(log.SDL_LOG_PRIORITY_VERBOSE)
 
@@ -247,12 +255,11 @@ class SDLLogTest(unittest.TestCase):
         origdata = ctypes.c_void_p(0)
         log.SDL_LogGetOutputFunction(ctypes.byref(origfunc),
                                      ctypes.byref(origdata))
-        self.assertFalse(origdata)
+        assert not origdata
         logcount = len(self.logdata)
         origfunc(None, 0, 0, b"test_log_get_set_output_function")
-        self.assertEqual(len(self.logdata), logcount + 1)
-        self.assertEqual(self.logdata[logcount][3],
-                         b"test_log_get_set_output_function")
+        assert len(self.logdata) == logcount + 1
+        assert self.logdata[logcount][3] == b"test_log_get_set_output_function"
 
         logptr = log.SDL_LogOutputFunction(__log)
         userdata = ctypes.c_char_p(b"Testobject")
@@ -261,14 +268,11 @@ class SDLLogTest(unittest.TestCase):
         userdata = ctypes.c_void_p(0)
         log.SDL_LogGetOutputFunction(ctypes.byref(ptr), ctypes.byref(userdata))
         userdata = ctypes.cast(userdata, ctypes.c_char_p)
-        self.assertEqual(userdata.value, b"Testobject")
+        assert userdata.value == b"Testobject"
         log.SDL_Log(b"output test")
-        self.assertEqual(logentries[0],
-                         (b"Testobject", log.SDL_LOG_CATEGORY_APPLICATION,
-                          log.SDL_LOG_PRIORITY_INFO, b"output test"))
+        assert logentries[0] == (
+            b"Testobject", log.SDL_LOG_CATEGORY_APPLICATION,
+            log.SDL_LOG_PRIORITY_INFO, b"output test"
+        )
 
         log.SDL_LogSetOutputFunction(origfunc, userdata)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

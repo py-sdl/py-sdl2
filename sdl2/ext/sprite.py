@@ -400,8 +400,9 @@ class TextureSprite(Sprite):
 
     def __del__(self):
         """Releases the bound SDL_Texture."""
-        if self.free and self.texture:
-            render.SDL_DestroyTexture(self.texture)
+        if self.free:
+            if self.texture != None:
+                render.SDL_DestroyTexture(self.texture)
         self.texture = None
 
     @property

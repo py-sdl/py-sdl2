@@ -37,4 +37,4 @@ install:
 build: off
 
 test_script:
-  - "python -B -m pytest -vvl"
+  - "python -B -m pytest -vvl -rxXP"

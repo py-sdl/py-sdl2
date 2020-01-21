@@ -1,25 +1,21 @@
 import sys
-import unittest
+import pytest
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
 from sdl2 import blendmode
 
 
-class SDLBlendmodeTest(unittest.TestCase):
+class TestSDLBlendmode(object):
     __tags__ = ["sdl"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         if SDL_Init(SDL_INIT_VIDEO) != 0:
-            raise unittest.SkipTest('Video subsystem not supported')
+            raise pytest.skip('Video subsystem not supported')
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         SDL_Quit()
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_ComposeCustomBlendMode(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

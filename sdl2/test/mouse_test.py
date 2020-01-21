@@ -1,16 +1,18 @@
 import sys
-import unittest
+import pytest
 from sdl2 import mouse
 
 
-@unittest.skip("not implemented")
-class SDLMouseTest(unittest.TestCase):
+@pytest.mark.skip("not implemented")
+class TestSDLMouse(object):
     __tags__ = ["sdl"]
 
-    def setUp(self):
+    @classmethod
+    def setup_class(cls):
         pass
 
-    def tearDown(self):
+    @classmethod
+    def teardown_class(cls):
         pass
 
     def test_SDL_GetMouseFocus(self):
@@ -54,6 +56,3 @@ class SDLMouseTest(unittest.TestCase):
 
     def test_SDL_GetGlobalMouseState(self):
         pass
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

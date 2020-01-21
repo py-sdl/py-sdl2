@@ -1,5 +1,5 @@
 import sys
-import unittest
+import pytest
 from sdl2.ext.ebs import Entity, System, Applicator, World
 
 
@@ -56,7 +56,7 @@ class MovementApplicator(Applicator):
             p.y += m.vy
 
 
-class SDL2ExtEBSTest(unittest.TestCase):
+class TestSDL2ExtEBS(object):
     __tags__ = ["ebs", "sdl2ext"]
 
     def test_Entity(self):
@@ -65,41 +65,41 @@ class SDL2ExtEBSTest(unittest.TestCase):
 
         e = Entity(world)
         e2 = Entity(world)
-        self.assertIsInstance(e, Entity)
-        self.assertIsInstance(e2, Entity)
-        self.assertNotEqual(e, e2)
+        assert isinstance(e, Entity)
+        assert isinstance(e2, Entity)
+        assert e != e2
 
         p = PositionEntity(world)
-        self.assertIsInstance(p, PositionEntity)
-        self.assertIsInstance(p, Entity)
+        assert isinstance(p, PositionEntity)
+        assert isinstance(p, Entity)
 
     def test_Entity_id(self):
         world = World()
         ent1 = Entity(world)
         ent2 = Entity(world)
-        self.assertNotEqual(ent1.id, ent2.id)
+        assert ent1.id != ent2.id
 
     def test_Entity_world(self):
         world = World()
         world2 = World()
         ent1 = Entity(world)
         ent2 = Entity(world2)
-        self.assertEqual(ent1.world, world)
-        self.assertNotEqual(ent1.world, world2)
-        self.assertEqual(ent2.world, world2)
-        self.assertNotEqual(ent2.world, world)
-        self.assertNotEqual(ent1.world, ent2.world)
+        assert ent1.world == world
+        assert ent1.world != world2
+        assert ent2.world == world2
+        assert ent2.world != world
+        assert ent1.world != ent2.world
 
     def test_Entity_delete(self):
         w = World()
         e1 = Entity(w)
         e2 = Entity(w)
 
-        self.assertEqual(len(w.entities), 2)
+        assert len(w.entities) == 2
         e1.delete()
-        self.assertEqual(len(w.entities), 1)
+        assert len(w.entities) == 1
         e2.delete()
-        self.assertEqual(len(w.entities), 0)
+        assert len(w.entities) == 0
 
         # The next two should have no effect
         e1.delete()
@@ -111,9 +111,9 @@ class SDL2ExtEBSTest(unittest.TestCase):
         pos1 = PositionEntity(world)
         pos2 = PositionEntity(world, 10, 10)
         for p in (pos1, pos2):
-            self.assertIsInstance(p, PositionEntity)
-            self.assertIsInstance(p, Entity)
-            self.assertIsInstance(p.position, Position)
+            assert isinstance(p, PositionEntity)
+            assert isinstance(p, Entity)
+            assert isinstance(p.position, Position)
 
     def test_Entity__access(self):
         world = World()
@@ -125,15 +125,16 @@ class SDL2ExtEBSTest(unittest.TestCase):
         # components are _always_ identified by a lower-case class name.
         def sx(p, v):
             p.pos.x = v
-        self.assertRaises(AttributeError, sx, pos2, 10)
+        with pytest.raises(AttributeError):
+            sx(pos2, 10)
 
     def test_World(self):
         w = World()
-        self.assertIsInstance(w, World)
+        assert isinstance(w, World)
 
     def test_World_add_remove_system(self):
         world = World()
-        self.assertIsInstance(world, World)
+        assert isinstance(world, World)
 
         class SimpleSystem(object):
             def __init__(self):
@@ -144,50 +145,51 @@ class SDL2ExtEBSTest(unittest.TestCase):
 
         for method in (world.add_system, world.remove_system):
             for val in (None, "Test", Position, Entity(world)):
-                self.assertRaises(ValueError, method, val)
+                with pytest.raises(ValueError):
+                    method(val)
 
         psystem = SimpleSystem()
         world.add_system(psystem)
-        self.assertTrue(len(world.systems) != 0)
-        self.assertTrue(psystem in world.systems)
+        assert len(world.systems) != 0
+        assert psystem in world.systems
         world.remove_system(psystem)
-        self.assertTrue(len(world.systems) == 0)
-        self.assertTrue(psystem not in world.systems)
+        assert len(world.systems) == 0
+        assert psystem not in world.systems
 
         psystem = PositionSystem()
         world.add_system(psystem)
-        self.assertTrue(len(world.systems) != 0)
-        self.assertTrue(psystem in world.systems)
+        assert len(world.systems) != 0
+        assert psystem in world.systems
 
         entity = PositionEntity(world)
-        self.assertIsInstance(entity.position, Position)
+        assert isinstance(entity.position, Position)
 
         world.remove_system(psystem)
-        self.assertTrue(len(world.systems) == 0)
-        self.assertTrue(psystem not in world.systems)
+        assert len(world.systems) == 0
+        assert psystem not in world.systems
 
         # The data must stay intact in the world, even if the processing
         # system has been removed.
-        self.assertIsInstance(entity.position, Position)
+        assert isinstance(entity.position, Position)
 
     def test_World_entities(self):
         w = World()
-        self.assertEqual(len(w.entities), 0)
+        assert len(w.entities) == 0
 
         for x in range(100):
             Entity(w)
-        self.assertEqual(len(w.entities), 100)
+        assert len(w.entities) == 100
 
     def test_World_delete(self):
         w = World()
         e1 = Entity(w)
         e2 = Entity(w)
 
-        self.assertEqual(len(w.entities), 2)
+        assert len(w.entities) == 2
         w.delete(e1)
-        self.assertEqual(len(w.entities), 1)
+        assert len(w.entities) == 1
         w.delete(e2)
-        self.assertEqual(len(w.entities), 0)
+        assert len(w.entities) == 0
 
         # The next two should have no effect
         w.delete(e1)
@@ -198,9 +200,9 @@ class SDL2ExtEBSTest(unittest.TestCase):
         e1 = Entity(w)
         e2 = Entity(w)
 
-        self.assertEqual(len(w.entities), 2)
+        assert len(w.entities) == 2
         w.delete_entities((e1, e2))
-        self.assertEqual(len(w.entities), 0)
+        assert len(w.entities) == 0
         # The next should have no effect
         w.delete_entities((e1, e2))
 
@@ -208,15 +210,18 @@ class SDL2ExtEBSTest(unittest.TestCase):
         w = World()
         e1 = PositionEntity(w, 1, 1)
         e2 = PositionEntity(w, 1, 2)
-        self.assertEqual(len(w.get_entities(e1.position)), 1)
+        assert len(w.get_entities(e1.position)) == 1
         e2.position.y = 1
-        self.assertEqual(len(w.get_entities(e1.position)), 2)
+        assert len(w.get_entities(e1.position)) == 2
 
     def test_System(self):
         world = World()
-        self.assertRaises(ValueError, world.add_system, None)
-        self.assertRaises(ValueError, world.add_system, 1234)
-        self.assertRaises(ValueError, world.add_system, "Test")
+        with pytest.raises(ValueError):
+            world.add_system(None)
+        with pytest.raises(ValueError):
+            world.add_system(1234)
+        with pytest.raises(ValueError):
+            world.add_system("Test")
 
         class ErrornousSystem(System):
             def __init__(self):
@@ -224,12 +229,13 @@ class SDL2ExtEBSTest(unittest.TestCase):
 
         esystem = ErrornousSystem()
         # No component types defined.
-        self.assertRaises(ValueError, world.add_system, esystem)
-        self.assertEqual(len(world.systems), 0)
+        with pytest.raises(ValueError):
+            world.add_system(esystem)
+        assert len(world.systems) == 0
 
         psystem = PositionSystem()
         world.add_system(psystem)
-        self.assertTrue(psystem in world.systems)
+        assert psystem in world.systems
 
     def test_System_process(self):
         world = World()
@@ -243,23 +249,24 @@ class SDL2ExtEBSTest(unittest.TestCase):
         world.add_system(esystem)
         for x in range(10):
             PositionEntity(world)
-        self.assertTrue(esystem in world.systems)
-        self.assertRaises(NotImplementedError, world.process)
+        assert esystem in world.systems
+        with pytest.raises(NotImplementedError):
+            world.process()
 
         world2 = World()
         psystem = PositionSystem()
         world2.add_system(psystem)
         for x in range(10):
             PositionEntity(world2)
-        self.assertTrue(psystem in world2.systems)
+        assert psystem in world2.systems
         world2.process()
         for c in world2.components[Position].values():
-            self.assertEqual(c.x, 1)
-            self.assertEqual(c.y, 1)
+            assert c.x == 1
+            assert c.y == 1
         world2.process()
         for c in world2.components[Position].values():
-            self.assertEqual(c.x, 2)
-            self.assertEqual(c.y, 2)
+            assert c.x == 2
+            assert c.y == 2
 
     def test_Applicator(self):
         world = World()
@@ -270,12 +277,13 @@ class SDL2ExtEBSTest(unittest.TestCase):
 
         eapplicator = ErrornousApplicator()
         # No component types defined.
-        self.assertRaises(ValueError, world.add_system, eapplicator)
-        self.assertEqual(len(world.systems), 0)
+        with pytest.raises(ValueError):
+            world.add_system(eapplicator)
+        assert len(world.systems) == 0
 
         mapplicator = MovementApplicator()
         world.add_system(mapplicator)
-        self.assertTrue(mapplicator in world.systems)
+        assert mapplicator in world.systems
 
     def test_Applicator_process(self):
         world = World()
@@ -289,24 +297,21 @@ class SDL2ExtEBSTest(unittest.TestCase):
         world.add_system(eapplicator)
         for x in range(10):
             MovingEntity(world)
-        self.assertTrue(eapplicator in world.systems)
-        self.assertRaises(NotImplementedError, world.process)
+        assert eapplicator in world.systems
+        with pytest.raises(NotImplementedError):
+            world.process()
 
         world2 = World()
         mapplicator = MovementApplicator()
         world2.add_system(mapplicator)
         for x in range(10):
             MovingEntity(world2, vx=1, vy=1)
-        self.assertTrue(mapplicator in world2.systems)
+        assert mapplicator in world2.systems
         world2.process()
         for c in world2.components[Position].values():
-            self.assertEqual(c.x, 1)
-            self.assertEqual(c.y, 1)
+            assert c.x == 1
+            assert c.y == 1
         world2.process()
         for c in world2.components[Position].values():
-            self.assertEqual(c.x, 2)
-            self.assertEqual(c.y, 2)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())
+            assert c.x == 2
+            assert c.y == 2

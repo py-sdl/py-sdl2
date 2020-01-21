@@ -1,4 +1,5 @@
-from ctypes import Structure, Union, POINTER, c_int, c_uint, c_float, c_char_p
+from ctypes import Structure, Union, POINTER, c_int, c_uint, c_float, \
+    c_char_p, c_void_p
 from .dll import _bind
 from .stdinc import Uint8, Uint16, Uint32, Sint16, Sint32
 from .joystick import SDL_Joystick
@@ -29,7 +30,7 @@ __all__ = ["SDL_Haptic", "SDL_HAPTIC_CONSTANT", "SDL_HAPTIC_SINE",
            "SDL_HapticRumblePlay", "SDL_HapticRumbleStop"
            ]
 
-class SDL_Haptic(Structure):
+class SDL_Haptic(c_void_p):
     pass
 
 SDL_HAPTIC_CONSTANT = 1 << 0

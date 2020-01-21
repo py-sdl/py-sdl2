@@ -127,7 +127,7 @@ MUS_FLAC = 9
 MUS_MODPLUG_UNUSED = 10
 MUS_OPUS = 11
 
-class Mix_Music(Structure):
+class Mix_Music(c_void_p):
     pass
 
 Mix_OpenAudio = _bind("Mix_OpenAudio", [c_int, Uint16, c_int, c_int], c_int)

@@ -72,9 +72,10 @@ SDL_FLIP_NONE = 0x00000000
 SDL_FLIP_HORIZONTAL = 0x00000001
 SDL_FLIP_VERTICAL = 0x00000002
 
-class SDL_Renderer(Structure):
+class SDL_Renderer(c_void_p):
     pass
-class SDL_Texture(Structure):
+
+class SDL_Texture(c_void_p):
     pass
 
 SDL_GetNumRenderDrivers = _bind("SDL_GetNumRenderDrivers", None, c_int)

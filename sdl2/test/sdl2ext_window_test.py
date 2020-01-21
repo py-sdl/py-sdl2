@@ -1,21 +1,21 @@
 import sys
-import unittest
+import pytest
 from sdl2 import ext as sdl2ext
 from sdl2 import surface, video
 
 
-class SDL2ExtWindowTest(unittest.TestCase):
+class TestSDL2ExtWindow(object):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         try:
             sdl2ext.init()
         except sdl2ext.SDLError:
-            raise unittest.SkipTest('Video subsystem not supported')
+            raise pytest.skip('Video subsystem not supported')
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         sdl2ext.quit()
 
     def test_Window(self):
@@ -23,22 +23,22 @@ class SDL2ExtWindowTest(unittest.TestCase):
         sizes = ((1, 1), (10, 10), (10, 20), (200, 17), (640, 480), (800, 600))
         for w, h in sizes:
             window = sdl2ext.Window("Window", size=(w, h), flags=flags)
-            self.assertEqual(window.size, (w, h))
+            assert window.size == (w, h)
             window.close()
 
-        #self.assertRaises(TypeError, video.Window, None, None, None, None)
-        #self.assertRaises(TypeError, video.Window, None, None, None)
-        #self.assertRaises(TypeError, video.Window, None, None)
-        self.assertRaises(TypeError, sdl2ext.Window, "Test", None, None, None)
-        self.assertRaises(TypeError, sdl2ext.Window, "Test", None, None)
-        self.assertRaises(TypeError, sdl2ext.Window, "Test", None)
+        with pytest.raises(TypeError):
+            sdl2ext.Window("Test", None, None, None)
+        with pytest.raises(TypeError):
+            sdl2ext.Window("Test", None, None)
+        with pytest.raises(TypeError):
+            sdl2ext.Window("Test", None)
 
 
     def test_Window_title(self):
         window = sdl2ext.Window("Window", size=(10, 10))
-        self.assertEqual(window.title, "Window")
+        assert window.title == "Window"
         window.title = "Test1234"
-        self.assertEqual(window.title, "Test1234")
+        assert window.title == "Test1234"
         window.close()
 
         #window.title = None
@@ -83,43 +83,36 @@ class SDL2ExtWindowTest(unittest.TestCase):
 #         window.minimize()
 #         doprint("Please check, if the window was minimized properly")
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_Window_refresh(self):
         pass
 
     def test_Window_get_surface(self):
         window = sdl2ext.Window("Surface", size=(200, 200))
         sf = window.get_surface()
-        self.assertIsInstance(sf, surface.SDL_Surface)
+        assert isinstance(sf, surface.SDL_Surface)
         window.close()
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_Window_open(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_Window_close(self):
-        pass
-
-    @unittest.skip("not implemented")
-    def test_Window_open(self):
         pass
 
     def test_Window_position(self):
         window = sdl2ext.Window("Position", size=(200, 200), position=(100, 100))
-        self.assertEqual(window.position, (100, 100))
+        assert window.position == (100, 100)
         window.position = 70, 300
-        self.assertEqual(window.position, (70, 300))
+        assert window.position == (70, 300)
         window.close()
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_Window_size(self):
         # This may fail for fullscreen WMs or Win10 tablet modes
         window = sdl2ext.Window("Size", size=(200, 200), flags=video.SDL_WINDOW_RESIZABLE)
-        self.assertEqual(window.size, (200, 200))
+        assert window.size == (200, 200)
         window.size = 150, 77
-        self.assertEqual(window.size, (150, 77))
+        assert window.size == (150, 77)
         window.close()
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

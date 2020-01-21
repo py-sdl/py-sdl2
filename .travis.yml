@@ -85,11 +85,13 @@ before_install:
   # Install SDL2 build dependencies on Linux (overridden on macOS)
   - sudo apt-get -qq update
   - sudo apt-get build-dep libsdl2 libsdl2-mixer libsdl2-ttf libsdl2-image libsdl2-gfx
+  - sudo apt-get install libmpg123-dev libopus-dev
 
 cache:
   # Avoids re-compiling SDL2 libraries on Linux every build
   directories:
     - dlls 
+    - $HOME/.cache/pip # Avoids recompiling numpy every time on PyPy
 
 install:
   - python -m pip install --upgrade pip
@@ -99,4 +101,4 @@ install:
   - python -m pip install .
 
 script:
-  - python -B -m pytest -vvl
+  - python -B -m pytest -vvl -rxXP

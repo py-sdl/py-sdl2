@@ -1,11 +1,11 @@
 import sys
 import os
-import unittest
+import pytest
 from ctypes import c_int, byref
 from sdl2 import power
 
 
-class SDLPowerTest(unittest.TestCase):
+class TestSDLPower(object):
     __tags__ = ["sdl"]
 
     # @interactive("Do the shown numbers match your power supply status?")
@@ -27,7 +27,3 @@ class SDLPowerTest(unittest.TestCase):
     #     output += "Percent left (-1 = undetermined): %d" % percent.value
     #     output += os.linesep
     #     doprint(output)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

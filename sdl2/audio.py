@@ -133,7 +133,7 @@ SDL_AudioCVT._fields_ = [("needed", c_int),
                          ("filter_index", c_int)
                         ]
 
-class SDL_AudioStream(Structure):
+class SDL_AudioStream(c_void_p):
     pass
 
 SDL_GetNumAudioDrivers = _bind("SDL_GetNumAudioDrivers", None, c_int)

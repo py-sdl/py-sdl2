@@ -1,4 +1,4 @@
-from ctypes import Structure, Union, c_int, c_char_p, POINTER
+from ctypes import Structure, Union, c_int, c_char_p, c_void_p, POINTER
 from .dll import _bind
 from .stdinc import SDL_bool, Sint16, Uint16, Uint8
 from .joystick import SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID
@@ -41,7 +41,7 @@ __all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
            "SDL_GameControllerNumMappings", "SDL_GameControllerMappingForIndex"
           ]
 
-class SDL_GameController(Structure):
+class SDL_GameController(c_void_p):
     pass
 
 SDL_CONTROLLER_BINDTYPE_NONE = 0

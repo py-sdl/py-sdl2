@@ -1,6 +1,7 @@
+import io
 import sys
 from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_size_t, c_void_p, \
-    c_char_p, memmove, string_at, Union
+    c_char_p, memmove, string_at, Union, _Pointer
 from .dll import _bind
 from .stdinc import Sint64, Uint8, Uint16, Uint32, Uint64, SDL_bool
 
@@ -58,12 +59,20 @@ RW_SEEK_SET = 0
 RW_SEEK_CUR = 1
 RW_SEEK_END = 2
 
-SDL_RWsize = lambda ctx: ctx.size(ctx)
-SDL_RWseek = lambda ctx, offset, whence: ctx.seek(ctx, offset, whence)
-SDL_RWtell = lambda ctx: ctx.seek(ctx, 0, RW_SEEK_CUR)
-SDL_RWread = lambda ctx, ptr, size, n: ctx.read(ctx, ptr, size, n)
-SDL_RWwrite = lambda ctx, ptr, size, n: ctx.write(ctx, ptr, size, n)
-SDL_RWclose = lambda ctx: ctx.close(ctx)
+def _ptr2obj(ptr):
+    """If a pointer, returns its contents. Otherwise, returns the passed object.
+    """
+    if isinstance(ptr, _Pointer):
+        return ptr.contents
+    return ptr
+
+_p = _ptr2obj # allow pointers to be passed directly to these functions
+SDL_RWsize = lambda ctx: _p(ctx).size(_p(ctx))
+SDL_RWseek = lambda ctx, offset, whence: _p(ctx).seek(_p(ctx), offset, whence)
+SDL_RWtell = lambda ctx: _p(ctx).seek(_p(ctx), 0, RW_SEEK_CUR)
+SDL_RWread = lambda ctx, ptr, size, n: _p(ctx).read(_p(ctx), ptr, size, n)
+SDL_RWwrite = lambda ctx, ptr, size, n: _p(ctx).write(_p(ctx), ptr, size, n)
+SDL_RWclose = lambda ctx: _p(ctx).close(_p(ctx))
 
 SDL_ReadU8 = _bind("SDL_ReadU8", [POINTER(SDL_RWops)], Uint8)
 SDL_ReadLE16 = _bind("SDL_ReadLE16", [POINTER(SDL_RWops)], Uint16)
@@ -192,10 +201,17 @@ def rw_from_object(obj):
         try:
             # string_at feels wrong, since we access a raw byte buffer...
             retval = obj.write(string_at(ptr, size * num))
-            if retval is None:
-                # No return value; we assume that everything is okay.
+            if issubclass(type(obj), io.IOBase):
+                if retval is None: # Means write error
+                    return 0
+                return retval // size
+            # If not an io object, try to interpret retval as bytes written
+            # and, failing that, just assume success if no exception raised
+            # and return num
+            try:
+                return int(retval) // size
+            except TypeError:
                 return num
-            return retval
         except Exception:
             #print(e)
             return 0
