@@ -1,5 +1,5 @@
 import sys
-import unittest
+import pytest
 from sdl2 import ext as sdl2ext
 from sdl2 import surface
 
@@ -34,25 +34,25 @@ if not (is32bit or ismacos):
     formats.append("xcf")
 
 
-class SDL2ExtImageTest(unittest.TestCase):
+class TestSDL2ExtImage(object):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         try:
             sdl2ext.init()
         except sdl2ext.SDLError:
-            raise unittest.SkipTest('Video subsystem not supported')
+            raise pytest.skip('Video subsystem not supported')
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         sdl2ext.quit()
 
     def test_get_image_formats(self):
-        self.assertIsInstance(sdl2ext.get_image_formats(), tuple)
+        assert isinstance(sdl2ext.get_image_formats(), tuple)
         supformats = sdl2ext.get_image_formats()
         for fmt in formats:
-            self.assertTrue(fmt in supformats)
+            assert fmt in supformats
 
     def test_load_image(self):
         # TODO: add image comparision to check, if it actually does the
@@ -68,17 +68,13 @@ class SDL2ExtImageTest(unittest.TestCase):
         for fmt in formats:
             filename = RESOURCES.get_path(fname % fmt)
             sf = sdl2ext.load_image(filename)
-            self.assertIsInstance(sf, surface.SDL_Surface)
+            assert isinstance(sf, surface.SDL_Surface)
 
             # Force only PIL
             if _HASPIL and fmt not in ("webp", "xcf", "lbm"):
                 sf = sdl2ext.load_image(filename, enforce="PIL")
-                self.assertIsInstance(sf, surface.SDL_Surface)
+                assert isinstance(sf, surface.SDL_Surface)
 
             # Force only sdlimage
             sf = sdl2ext.load_image(filename, enforce="SDL")
-            self.assertIsInstance(sf, surface.SDL_Surface)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())
+            assert isinstance(sf, surface.SDL_Surface)

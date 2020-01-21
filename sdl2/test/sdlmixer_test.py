@@ -1,33 +1,146 @@
 import os
 import sys
-import unittest
+import pytest
 import ctypes
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, rwops, version
 
-try:
-    from sdl2 import sdlmixer
-    _HASSDLMIXER=True
-except:
-    _HASSDLMIXER=False
+sdlmixer = pytest.importorskip("sdl2.sdlmixer")
 
-@unittest.skipIf(not _HASSDLMIXER, "SDL2_mixer library could not be loaded")
-class SDLMixerTest(unittest.TestCase):
+v = sdlmixer.Mix_Linked_Version().contents
+libversion = v.major * 1000 + v.minor * 100 + v.patch
+
+# TODO: Add full list of fuctions to test
+# TODO: Add actual tests for most functions (can base off of SDL_Mixer docs)
+
+def test_Mix_Linked_Version():
+    v = sdlmixer.Mix_Linked_Version()
+    assert isinstance(v.contents, version.SDL_version)
+    assert v.contents.major == 2
+    assert v.contents.minor == 0
+    assert v.contents.patch >= 0
+
+@pytest.mark.skipif(libversion < 2004, reason="Broken in official binaries")
+def test_Mix_Init():
+    SDL_Init(sdl2.SDL_INIT_AUDIO)
+    supported = []
+    libs = {
+        'FLAC': sdlmixer.MIX_INIT_FLAC,
+        'MOD': sdlmixer.MIX_INIT_MOD,
+        'MP3': sdlmixer.MIX_INIT_MP3,
+        'OGG': sdlmixer.MIX_INIT_OGG,
+        'MID': sdlmixer.MIX_INIT_MID
+    }
+    for lib in libs.keys():
+        flags = libs[lib]
+        ret = sdlmixer.Mix_Init(flags)
+        err = sdlmixer.Mix_GetError()
+        if ret & flags == flags:
+            supported.append(lib)
+        sdlmixer.Mix_Quit()
+    assert len(supported) # only fail if none supported
+    print("Supported formats:")
+    print(supported)
+    SDL_Quit()
+
+@pytest.mark.xfail(reason="not sure this will work with CI")
+def test_Mix_OpenAudio(self):
+    SDL_Init(sdl2.SDL_INIT_AUDIO)
+    sdlmixer.Mix_Init(0)
+    ret = sdlmixer.Mix_OpenAudio(22050, sdlmixer.MIX_DEFAULT_FORMAT, 1, 1024)
+    assert ret == 0
+    sdlmixer.Mix_CloseAudio()
+    sdlmixer.Mix_Quit()
+    SDL_Quit()
+
+@pytest.mark.skip("not sure this will work with CI")
+class TestSDLMixer(object):
     __tags__ = ["sdl", "sdlmixer"]
 
     @classmethod
-    def setUpClass(cls):
-        sdlmixer.Mix_Init(0)
+    def setup_class(cls):
+        # TODO: once audio tests working with CI, make sure this only loads
+        # supported libraries to avoid failures
+        flags = (
+            sdlmixer.MIX_INIT_FLAC | sdlmixer.MIX_INIT_MOD |
+            sdlmixer.MIX_INIT_MP3  | sdlmixer.MIX_INIT_OGG |
+            sdlmixer.MIX_INIT_MID
+        )
+        SDL_Init(sdl2.SDL_INIT_AUDIO)
+        sdlmixer.Mix_Init(flags)
+        sdlmixer.Mix_OpenAudio(22050, sdlmixer.MIX_DEFAULT_FORMAT, 1, 1024)
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
+        sdlmixer.Mix_CloseAudio()
         sdlmixer.Mix_Quit()
+        SDL_Quit()
 
-    def test_Mix_Linked_Version(self):
-        v = sdlmixer.Mix_Linked_Version()
-        self.assertIsInstance(v.contents, version.SDL_version)
-        self.assertEqual(v.contents.major, 2)
-        self.assertEqual(v.contents.minor, 0)
-        self.assertGreaterEqual(v.contents.patch, 2)
+    @pytest.mark.skip("not implemented")
+    def test_Mix_QuerySpec(self):
+        pass
 
-if __name__ == '__main__':
-    sys.exit(unittest.main())
+    @pytest.mark.skip("not implemented")
+    def test_Mix_AllocateChannels(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_ChunkDecoders(self):
+        # Mix_GetNumChunkDecoders
+        # Mix_GetChunkDecoder
+        # Mix_HasChunkDecoder
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_MusicDecoders(self):
+        # Mix_GetNumMusicDecoders
+        # Mix_GetMusicDecoder
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_LoadWAV(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_LoadWAV_RW(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_LoadMUS(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_LoadMUS_RW(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_LoadMUSType_RW(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_QuickLoad_WAV(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_QuickLoad_RAW(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_GetMusicType(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_Chunk(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_Music(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_MusicType(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_Mix_Fading(self):
+        pass

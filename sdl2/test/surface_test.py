@@ -1,7 +1,7 @@
 import os
 import sys
 import array
-import unittest
+import pytest
 from ctypes import c_int, byref, cast, POINTER, c_void_p
 from sdl2.ext import CTypesView
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
@@ -45,23 +45,23 @@ blitpositions = (
 
 
 # TODO: mostly covers positive tests right now - fix this!
-class SDLSurfaceTest(unittest.TestCase):
+class TestSDLSurface(object):
     __tags__ = ["sdl"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         cls.testfile = os.path.join(os.path.dirname
                                      (os.path.abspath(__file__)),
                                      "resources", "surfacetest.bmp")
         SDL_Init(SDL_INIT_EVERYTHING)
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         SDL_Quit()
 
     def test_SDL_Surface(self):
         sf = surface.SDL_Surface()
-        self.assertIsInstance(sf, surface.SDL_Surface)
+        assert isinstance(sf, surface.SDL_Surface)
         # TODO: property checks
 
     def test_SDL_ConvertPixels(self):
@@ -78,9 +78,9 @@ class SDLSurfaceTest(unittest.TestCase):
             dstp = cast(dst, POINTER(Uint8))
             ret = surface.SDL_ConvertPixels(16, 16, fmt, srcp, 16 * bytecount,
                                             fmt, dstp, 16 * bytecount)
-            self.assertEqual(ret, 0)
+            assert ret == 0
             for index, val in enumerate(dst):
-                self.assertEqual(val, src.view[index])
+                assert val == src.view[index]
 
     def test_SDL_ConvertSurface(self):
         tenbit = [pixels.SDL_PACKEDLAYOUT_2101010, pixels.SDL_PACKEDLAYOUT_1010102]
@@ -105,13 +105,13 @@ class SDLSurfaceTest(unittest.TestCase):
                 ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                         byref(rmask), byref(gmask),
                                                         byref(bmask), byref(amask))
-                self.assertEqual(ret, SDL_TRUE)
+                assert ret == SDL_TRUE
                 sf = surface.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask, gmask,
                                                   bmask, amask)
-                self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                assert isinstance(sf.contents, surface.SDL_Surface)
                 csf = surface.SDL_ConvertSurface(sf, pfmt, 0)
-                self.assertTrue(csf, error.SDL_GetError())
-                self.assertIsInstance(csf.contents, surface.SDL_Surface)
+                assert csf, error.SDL_GetError()
+                assert isinstance(csf.contents, surface.SDL_Surface)
                 surface.SDL_FreeSurface(sf)
                 surface.SDL_FreeSurface(csf)
             pixels.SDL_FreeFormat(pfmt)
@@ -155,13 +155,13 @@ class SDLSurfaceTest(unittest.TestCase):
                 ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                         byref(rmask), byref(gmask),
                                                         byref(bmask), byref(amask))
-                self.assertEqual(ret, SDL_TRUE)
+                assert ret == SDL_TRUE
                 sf = surface.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask, gmask,
                                                   bmask, amask)
-                self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                assert isinstance(sf.contents, surface.SDL_Surface)
                 csf = surface.SDL_ConvertSurfaceFormat(sf, pfmt, 0)
-                self.assertTrue(csf, error.SDL_GetError())
-                self.assertIsInstance(csf.contents, surface.SDL_Surface)
+                assert csf, error.SDL_GetError()
+                assert isinstance(csf.contents, surface.SDL_Surface)
                 surface.SDL_FreeSurface(sf)
                 surface.SDL_FreeSurface(csf)
 
@@ -170,7 +170,7 @@ class SDLSurfaceTest(unittest.TestCase):
             for h in range(1, 100, 5):
                 for bpp in alldepths:
                     sf = surface.SDL_CreateRGBSurface(0, w, h, bpp, 0, 0, 0, 0)
-                    self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                    assert isinstance(sf.contents, surface.SDL_Surface)
                     surface.SDL_FreeSurface(sf)
 
         bpp = c_int()
@@ -185,10 +185,10 @@ class SDLSurfaceTest(unittest.TestCase):
                                                             byref(gmask),
                                                             byref(bmask),
                                                             byref(amask))
-                    self.assertEqual(ret, SDL_TRUE)
+                    assert ret == SDL_TRUE
                     sf = surface.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask,
                                                       gmask, bmask, amask)
-                    self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                    assert isinstance(sf.contents, surface.SDL_Surface)
                     surface.SDL_FreeSurface(sf)
 
         # Broken ones
@@ -225,7 +225,7 @@ class SDLSurfaceTest(unittest.TestCase):
                             continue
                         sf = surface.SDL_CreateRGBSurfaceWithFormat(0, w, h,
                                                                     bpp, fmt)
-                        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+                        assert isinstance(sf.contents, surface.SDL_Surface)
                         surface.SDL_FreeSurface(sf)
 
     def test_SDL_CreateRGBSurfaceWithFormatFrom(self):
@@ -238,7 +238,7 @@ class SDLSurfaceTest(unittest.TestCase):
             bufptr = cast(bytebuf.to_bytes(), POINTER(Uint8))
             sf = surface.SDL_CreateRGBSurfaceWithFormatFrom(bufptr, 16, 16,
                     bpp, pitch, fmt)
-            self.assertIsInstance(sf.contents, surface.SDL_Surface)
+            assert isinstance(sf.contents, surface.SDL_Surface)
             surface.SDL_FreeSurface(sf)
 
     def test_SDL_CreateRGBSurfaceFrom(self):
@@ -252,7 +252,7 @@ class SDLSurfaceTest(unittest.TestCase):
             sf = surface.SDL_CreateRGBSurfaceFrom(bufptr, 16, 16, bpp,
                                                   pitch, masks[0], masks[1],
                                                   masks[2], masks[3])
-            self.assertIsInstance(sf.contents, surface.SDL_Surface)
+            assert isinstance(sf.contents, surface.SDL_Surface)
             surface.SDL_FreeSurface(sf)
 
     def test_SDL_FillRect(self):
@@ -276,7 +276,7 @@ class SDLSurfaceTest(unittest.TestCase):
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             for w in range(1, 100, 5):
                 for h in range(1, 100, 5):
                     sf = surface.SDL_CreateRGBSurface(0, w, h, bpp, rmask,
@@ -284,7 +284,7 @@ class SDLSurfaceTest(unittest.TestCase):
                     for r in rectlist:
                         # TODO: check for changed pixels
                         ret = surface.SDL_FillRect(sf, r, 0xff00ff00)
-                        self.assertEqual(ret, 0)
+                        assert ret == 0
                     surface.SDL_FreeSurface(sf)
 
     def test_SDL_FillRects(self):
@@ -306,7 +306,7 @@ class SDLSurfaceTest(unittest.TestCase):
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             for w in range(1, 100, 5):
                 for h in range(1, 100, 5):
                     sf = surface.SDL_CreateRGBSurface(0, w, h, bpp, rmask,
@@ -336,7 +336,7 @@ class SDLSurfaceTest(unittest.TestCase):
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             sf = surface.SDL_CreateRGBSurface(0, 5, 5, bpp, rmask, gmask,
                                               bmask, amask)
             surface.SDL_FreeSurface(sf)
@@ -356,17 +356,16 @@ class SDLSurfaceTest(unittest.TestCase):
 
         clip = rect.SDL_Rect()
         sf = surface.SDL_CreateRGBSurface(0, 15, 15, 32, 0, 0, 0, 0)
-        self.assertIsInstance(sf.contents, surface.SDL_Surface)
+        assert isinstance(sf.contents, surface.SDL_Surface)
         surface.SDL_GetClipRect(sf, byref(clip))
-        self.assertEqual(clip, rect.SDL_Rect(0, 0, 15, 15))
+        assert clip == rect.SDL_Rect(0, 0, 15, 15)
 
         for r, clipsetval, cmpval in rectlist:
             retval = surface.SDL_SetClipRect(sf, r)
             surface.SDL_GetClipRect(sf, byref(clip))
-            self.assertEqual(retval, clipsetval,
-                "retval: Could not set clip rect %s" % r)
-            self.assertEqual(clip == r, cmpval,
-                "clip: Could not set clip rect %s" % r)
+            err = "Could not set clip rect %s" % r
+            assert retval == clipsetval, "retval: " + err
+            assert (clip == r) == cmpval, "clip: " + err
         surface.SDL_FreeSurface(sf)
 
     def test_SDL_GetSetColorKey(self):
@@ -384,11 +383,11 @@ class SDLSurfaceTest(unittest.TestCase):
             if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
                 continue
             pformat = pixels.SDL_AllocFormat(fmt)
-            self.assertIsInstance(pformat.contents, pixels.SDL_PixelFormat)
+            assert isinstance(pformat.contents, pixels.SDL_PixelFormat)
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             sf = surface.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
                                               bmask, amask)
             for r, g, b in colorkeys:
@@ -396,9 +395,10 @@ class SDLSurfaceTest(unittest.TestCase):
                 surface.SDL_SetColorKey(sf, 1, key)
                 skey = Uint32()
                 ret = surface.SDL_GetColorKey(sf, byref(skey))
-                self.assertEqual(ret, 0)
-                self.assertEqual(skey.value, key,
-                    "Could not set color key (%d, %d, %d)" % (r, g, b))
+                errmsg = "Could not set color key (%d, %d, %d)" % (r, g, b)
+                assert ret == 0
+                assert skey.value == key, errmsg
+                    
             pixels.SDL_FreeFormat(pformat)
             surface.SDL_FreeSurface(sf)
 
@@ -411,19 +411,19 @@ class SDLSurfaceTest(unittest.TestCase):
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             sf = surface.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
                                               bmask, amask)
             salpha = Uint8()
             ret = surface.SDL_GetSurfaceAlphaMod(sf, byref(salpha))
-            self.assertEqual(ret, 0)
-            self.assertEqual(salpha.value, 255)
+            assert ret == 0
+            assert salpha.value == 255
             for alpha in range(0, 255):
                 ret = surface.SDL_SetSurfaceAlphaMod(sf, alpha)
-                self.assertEqual(ret, 0)
+                assert ret == 0
                 ret = surface.SDL_GetSurfaceAlphaMod(sf, byref(salpha))
-                self.assertEqual(ret, 0)
-                self.assertEqual(salpha.value, alpha)
+                assert ret == 0
+                assert salpha.value == alpha
             surface.SDL_FreeSurface(sf)
 
     def test_SDL_GetSetSurfaceBlendMode(self):
@@ -440,15 +440,15 @@ class SDLSurfaceTest(unittest.TestCase):
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             sf = surface.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
                                               bmask, amask)
             for mode in modes:
                 smode = blendmode.SDL_BlendMode()
                 ret = surface.SDL_SetSurfaceBlendMode(sf, mode)
-                self.assertEqual(ret, 0)
+                assert ret == 0
                 surface.SDL_GetSurfaceBlendMode(sf, byref(smode))
-                self.assertEqual(smode.value, mode)
+                assert smode.value == mode
             surface.SDL_FreeSurface(sf)
 
     def test_SDL_GetSetSurfaceColorMod(self):
@@ -468,7 +468,7 @@ class SDLSurfaceTest(unittest.TestCase):
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             sf = surface.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
                                               bmask, amask)
             for r, g, b in colormods:
@@ -476,8 +476,8 @@ class SDLSurfaceTest(unittest.TestCase):
                 surface.SDL_SetSurfaceColorMod(sf, r, g, b)
                 ret = surface.SDL_GetSurfaceColorMod(sf, byref(sr), byref(sg),
                                                      byref(sb))
-                self.assertEqual(ret, 0)
-                self.assertEqual((sr.value, sg.value, sb.value), (r, g, b))
+                assert ret == 0
+                assert (sr.value, sg.value, sb.value) == (r, g, b)
             surface.SDL_FreeSurface(sf)
 
     def test_SDL_LockUnlockMUSTLOCKSurface(self):
@@ -489,24 +489,24 @@ class SDLSurfaceTest(unittest.TestCase):
             ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
                                                     byref(rmask), byref(gmask),
                                                     byref(bmask), byref(amask))
-            self.assertEqual(ret, SDL_TRUE)
+            assert ret == SDL_TRUE
             sf = surface.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
                                               bmask, amask)
             # TODO: locking seems to be only necessary for RLE surfaces...
             if surface.SDL_MUSTLOCK(sf.contents):
-                self.assertFalse(sf.contents.locked)
+                assert not sf.contents.locked
                 surface.SDL_LockSurface(sf)
-                self.assertTrue(sf.contents.locked)
+                assert sf.contents.locked
                 surface.SDL_LockSurface(sf)
-                self.assertTrue(sf.contents.locked)
+                assert sf.contents.locked
                 surface.SDL_LockSurface(sf)
-                self.assertTrue(sf.contents.locked)
+                assert sf.contents.locked
                 surface.SDL_LockSurface(sf)
-                self.assertTrue(sf.contents.locked)
+                assert sf.contents.locked
                 surface.SDL_LockSurface(sf)
-                self.assertTrue(sf.contents.locked)
+                assert sf.contents.locked
                 surface.SDL_UnlockSurface(sf)
-                self.assertFalse(sf.contents.locked)
+                assert not sf.contents.locked
             surface.SDL_FreeSurface(sf)
 
     def test_SDL_LowerBlit(self):
@@ -536,23 +536,22 @@ class SDLSurfaceTest(unittest.TestCase):
                 iview = pbuf.to_uint32()
                 pw = drect.x + drect.w
                 ph = drect.y + drect.h
+                e = "color mismatch at %d,%d for %s: %d != %d"
                 for y in range(dest.contents.h):
                     for x in range(dest.contents.w):
                         col = iview[y * rowlen + x]
-                        if y >= drect.y and y < ph and \
-                                x >= drect.x and x < pw:
-                            self.assertEqual(col, 0xFFFFFFFF, msg="""color
- mismatch at %d,%d for %s: %d != %d""" % (y, x, pos, col, 0xFFFFFFFF))
+                        if y >= drect.y and y < ph and x >= drect.x and x < pw:
+                            assert col == 0xFFFFFFFF, \
+                                   e % (y, x, pos, col, 0xFFFFFFFF)
                         else:
-                            self.assertEqual(col, 0x0, msg="""color mismatch
- at %d,%d for %s: %d != %d""" % (y, x, pos, col, 0x0))
+                            assert col == 0x0, e % (y, x, pos, col, 0x0)
 
         while len(sources) > 0:
             sf = sources.pop()
             surface.SDL_FreeSurface(sf)
         surface.SDL_FreeSurface(dest)
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_LowerBlitScaled(self):
         pass
 
@@ -583,16 +582,15 @@ class SDLSurfaceTest(unittest.TestCase):
                 iview = pbuf.to_uint32()
                 pw = drect.x + drect.w
                 ph = drect.y + drect.h
+                e = "color mismatch at %d,%d for %s: %d != %d"
                 for y in range(dest.contents.h):
                     for x in range(dest.contents.w):
                         col = iview[y * rowlen + x]
-                        if y >= drect.y and y < ph and \
-                                x >= drect.x and x < pw:
-                            self.assertEqual(col, 0xFFFFFFFF, msg="""color
- mismatch at %d,%d for %s: %d != %d""" % (x, y, pos, col, 0xFFFFFFFF))
+                        if y >= drect.y and y < ph and x >= drect.x and x < pw:
+                            assert col == 0xFFFFFFFF, \
+                                   e % (x, y, pos, col, 0xFFFFFFFF)
                         else:
-                            self.assertEqual(col, 0x0, msg="""color mismatch
- at %d,%d for %s: %d != %d""" % (x, y, pos, col, 0x0))
+                            assert col == 0x0, e % (x, y, pos, col, 0x0)
 
         while len(sources) > 0:
             sf = sources.pop()
@@ -626,27 +624,26 @@ class SDLSurfaceTest(unittest.TestCase):
                 iview = pbuf.to_uint32()
                 pw = drect.x + drect.w
                 ph = drect.y + drect.h
+                e = "color mismatch at %d,%d for %s: %d != %d"
                 for y in range(dest.contents.h):
                     for x in range(dest.contents.w):
                         col = iview[y * rowlen + x]
-                        if y >= drect.y and y < ph and \
-                                x >= drect.x and x < pw:
-                            self.assertEqual(col, 0xFFFFFFFF, msg="""color
- mismatch at %d,%d for %s: %d != %d""" % (y, x, pos, col, 0xFFFFFFFF))
+                        if y >= drect.y and y < ph and x >= drect.x and x < pw:
+                            assert col == 0xFFFFFFFF, \
+                                   e % (y, x, pos, col, 0xFFFFFFFF)
                         else:
-                            self.assertEqual(col, 0x0, msg="""color mismatch
- at %d,%d for %s: %d != %d""" % (y, x, pos, col, 0x0))
+                            assert col == 0x0, e % (y, x, pos, col, 0x0)
 
         while len(sources) > 0:
             sf = sources.pop()
             surface.SDL_FreeSurface(sf)
         surface.SDL_FreeSurface(dest)
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_UpperBlitScaled(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_SoftStretch(self):
         pass
 
@@ -655,24 +652,18 @@ class SDLSurfaceTest(unittest.TestCase):
         palette = pixels.SDL_AllocPalette(1 << 16)
         sf = surface.SDL_CreateRGBSurface(0, 10, 10, 16, 0, 0, 0, 0)
 
-#        self.assertRaises((AttributeError, TypeError),
-#                          surface.set_surface_palette, None, None)
-#        self.assertRaises((AttributeError, TypeError),
-#                          surface.set_surface_palette, None, palette)
-        self.assertFalse(sf.contents.format.contents.palette)
+        assert not sf.contents.format.contents.palette
         surface.SDL_SetSurfacePalette(sf, palette)
-        self.assertIsNotNone(sf.contents.format.contents.palette.contents)
-#        self.assertRaises(sdl.SDLError, surface.set_surface_palette, sf,
-#                          invpalette)
-        self.assertIsNotNone(sf.contents.format.contents.palette.contents)
+        assert sf.contents.format.contents.palette.contents is not None
+        assert sf.contents.format.contents.palette.contents is not None
         surface.SDL_SetSurfacePalette(sf, None)
-        self.assertFalse(sf.contents.format.contents.palette)
+        assert not sf.contents.format.contents.palette
 
         surface.SDL_FreeSurface(sf)
         pixels.SDL_FreePalette(invpalette)
         pixels.SDL_FreePalette(palette)
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_SetSurfaceRLE(self):
         pass
 
@@ -680,39 +671,27 @@ class SDLSurfaceTest(unittest.TestCase):
         fp = open(self.testfile, "rb")
         imgrw = rwops.rw_from_object(fp)
         imgsurface = surface.SDL_LoadBMP_RW(imgrw, 0)
-        self.assertIsInstance(imgsurface.contents, surface.SDL_Surface)
+        assert isinstance(imgsurface.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(imgsurface)
         imgrw.close(imgrw)
 
-#        self.assertRaises(TypeError, surface.load_bmp_rw, "Test")
-#        self.assertRaises(TypeError, surface.load_bmp_rw, None)
-#        self.assertRaises(TypeError, surface.load_bmp_rw, 1234)
-
     def test_SDL_LoadBMP(self):
         imgsurface = surface.SDL_LoadBMP(self.testfile.encode("utf-8"))
-        self.assertIsInstance(imgsurface.contents, surface.SDL_Surface)
+        assert isinstance(imgsurface.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(imgsurface)
 
-#        self.assertRaises(sdl.SDLError, surface.load_bmp, "invalid path")
-#        self.assertRaises(sdl.SDLError, surface.load_bmp, None)
-#        self.assertRaises(sdl.SDLError, surface.load_bmp, 1234)
-
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_SaveBMP_RW(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_SaveBMP(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_GetSetYUVConversionMode(self):
         pass
 
-    @unittest.skip("not implemented")
+    @pytest.mark.skip("not implemented")
     def test_SDL_GetYUVConversionModeForResolution(self):
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

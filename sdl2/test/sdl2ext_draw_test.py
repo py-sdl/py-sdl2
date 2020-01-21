@@ -1,25 +1,25 @@
 import sys
-import unittest
+import pytest
 from sdl2.ext.color import Color, COLOR
 from sdl2 import ext as sdl2ext
 
 
-class SDL2ExtDrawTest(unittest.TestCase):
+class TestSDL2ExtDraw(object):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         try:
             sdl2ext.init()
         except sdl2ext.SDLError:
-            raise unittest.SkipTest('Video subsystem not supported')
+            raise pytest.skip('Video subsystem not supported')
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         sdl2ext.quit()
 
-    @unittest.skipIf(hasattr(sys, "pypy_version_info"),
-                     "PyPy's ctypes can't do byref(value, offset)")
+    @pytest.mark.skipif(hasattr(sys, "pypy_version_info"),
+        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_fill(self):
         # TODO: add exceptions and more bounding tests.
         rects = ((0, 0, 3, 2),
@@ -38,14 +38,12 @@ class SDL2ExtDrawTest(unittest.TestCase):
                 for x, col in enumerate(row):
                     if y >= rect[1] and y < (rect[1] + rect[3]):
                         if x >= rect[0] and x < (rect[0] + rect[2]):
-                            self.assertEqual(col, colorval,
-                                             "color mismatch at (x, y)")
+                            assert col == colorval, "color mismatch at (x, y)"
                         else:
-                            self.assertEqual(col, 0,
-                                             "color mismatch at (x, y)")
+                            assert col == 0, "color mismatch at (x, y)"
 
                     else:
-                        self.assertEqual(col, 0, "color mismatch at (x, y)")
+                        assert col == 0, "color mismatch at (x, y)"
 
     def test_prepare_color(self):
         rcolors = (Color(0, 0, 0, 0),
@@ -70,16 +68,12 @@ class SDL2ExtDrawTest(unittest.TestCase):
 
         for color in rcolors:
             c = sdl2ext.prepare_color(color, sprite)
-            self.assertEqual(c, int(color))
+            assert c == int(color)
         for color in icolors:
             c = sdl2ext.prepare_color(color, sprite)
             cc = COLOR(color)
-            self.assertEqual(c, int(cc))
+            assert c == int(cc)
         for color in scolors:
             c = sdl2ext.prepare_color(color, sprite)
             cc = COLOR(color)
-            self.assertEqual(c, int(cc))
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())
+            assert c == int(cc)
