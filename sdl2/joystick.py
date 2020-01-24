@@ -115,8 +115,9 @@ if sys.version_info >= (3, 8, 0, 'final'):
     SDL_JoystickGetGUIDString = _bind("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int])
 else:
     def SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
-        s = b""
+        s = ""
         for g in guid.data:
-            s += b"{:x}".format(g >> 4)
-            s += b"{:x}".format(g & 0x0F)
+            s += "{:x}".format(g >> 4)
+            s += "{:x}".format(g & 0x0F)
+        s = s.encode('utf-8')
         pszGUID.value = s[:(cbGUID * 2)]
