@@ -28,7 +28,7 @@ environment:
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - "pip install -U pip"
+  - "python -m pip install -U pip"
   - "python .ci/getsdl2.py"
   - "set PYSDL2_DLL_PATH=C:\\projects\\py-sdl2\\dlls"
   - "pip install -U numpy pytest"
