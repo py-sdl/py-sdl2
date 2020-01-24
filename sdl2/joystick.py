@@ -1,3 +1,4 @@
+import sys
 from ctypes import Structure, c_int, c_char_p, c_void_p, POINTER
 from .dll import _bind
 from .stdinc import Sint16, Sint32, Uint16, Uint8, SDL_bool
@@ -109,11 +110,13 @@ SDL_JoystickGetDeviceInstanceID = _bind("SDL_JoystickGetDeviceInstanceID", [c_in
 SDL_LockJoysticks = _bind("SDL_LockJoysticks", None, None, added='2.0.7')
 SDL_UnlockJoysticks = _bind("SDL_UnlockJoysticks", None, None, added='2.0.7')
 
-#SDL_JoystickGetGUIDString = _bind("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int])
-def SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
-    # Reimplemented in Python due to crash-causing ctypes bug (fixed in 3.8)
-    s = b""
-    for g in guid.data:
-        s += "{:x}".format(g >> 4)
-        s += "{:x}".format(g & 0x0F)
-    pszGUID.value = s[:(cbGUID * 2)]
+# Reimplemented in Python due to crash-causing ctypes bug (fixed in 3.8)
+if sys.version_info >= (3, 8, 0, 'final'):
+    SDL_JoystickGetGUIDString = _bind("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int])
+else:
+    def SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
+        s = b""
+        for g in guid.data:
+            s += "{:x}".format(g >> 4)
+            s += "{:x}".format(g & 0x0F)
+        pszGUID.value = s[:(cbGUID * 2)]
