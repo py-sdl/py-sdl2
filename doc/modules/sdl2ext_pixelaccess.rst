@@ -25,12 +25,18 @@
        columns and can be considered as slow in contrast to optimised
        ndim-array solutions such as :mod:`numpy`.
 
-.. function:: pixels2d(source : object)
+.. function:: pixels2d(source : object, transpose : bool)
 
    Creates a 2D pixel array, based on ``numpy.ndarray``, from the passed
    *source*. *source* can be a :class:`SoftwareSprite` or
    :class:`sdl2.SDL_Surface`. The ``SDL_Surface`` of the *source* will be
    locked and unlocked automatically.
+
+   By default, the returned array is formatted so that the first dimension
+   corresponds to height on the source and the second dimension corresponds
+   to width, contrary to PIL and PyOpenGL convention. To obtain an array where
+   the first dimension is width and second dimension is height, set the
+   `transpose` argument to False.
 
    The *source* pixels will be accessed and manipulated directly.
 
@@ -40,12 +46,18 @@
       within the target environment. If numpy could not be imported, a
       :exc:`sdl2.ext.compat.UnsupportedError` will be raised.
 
-.. function:: pixels3d(source : object)
+.. function:: pixels3d(source : object, transpose : bool)
 
    Creates a 3D pixel array, based on ``numpy.ndarray``, from the passed
    *source*. *source* can be a :class:`SoftwareSprite`
    or :class:`sdl2.SDL_Surface`. The ``SDL_Surface`` of the *source*
    will be locked and unlocked automatically.
+
+   By default, the returned array is formatted so that the first dimension
+   corresponds to height on the source and the second dimension corresponds
+   to width, contrary to PIL and PyOpenGL convention. To obtain an array where
+   the first dimension is width and second dimension is height, set the
+   `transpose` argument to False.
 
    The *source* pixels will be accessed and manipulated directly.
 

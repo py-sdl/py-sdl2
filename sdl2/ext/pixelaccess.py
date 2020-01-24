@@ -121,7 +121,7 @@ except ImportError:
 
 
 @experimental
-def pixels2d(source):
+def pixels2d(source, transpose=True):
     """Creates a 2D pixel array from the passed source."""
     if not _HASNUMPY:
         raise UnsupportedError(pixels2d, "numpy module could not be loaded")
@@ -136,25 +136,26 @@ def pixels2d(source):
     if bpp < 1 or bpp > 4:
         raise ValueError("unsupported bpp")
     strides = (psurface.pitch, bpp)
-    srcsize = psurface.h * psurface.pitch
+    sz = psurface.h * psurface.pitch
     shape = psurface.h, psurface.w   # surface.pitch // bpp
 
-    dtypes = {1: numpy.uint8,
-              2: numpy.uint16,
-              3: numpy.uint32,
-              4: numpy.uint32
-             }
+    dtypes = {
+        1: numpy.uint8,
+        2: numpy.uint16,
+        3: numpy.uint32,
+        4: numpy.uint32
+    }
 
     if SDL_MUSTLOCK(psurface):
         SDL_LockSurface(psurface)
-    pxbuf = ctypes.cast(psurface.pixels,
-                        ctypes.POINTER(ctypes.c_ubyte * srcsize)).contents
-    return SurfaceArray(shape, dtypes[bpp], pxbuf, 0, strides, "C", source,
-                        psurface).transpose()
+    pxbuf = ctypes.cast(psurface.pixels, ctypes.POINTER(ctypes.c_ubyte * sz))
+    arr = SurfaceArray(shape, dtypes[bpp], pxbuf.contents, 0, strides, "C",
+                       source, psurface)
+    return arr.transpose() if transpose else arr
 
 
 @experimental
-def pixels3d(source):
+def pixels3d(source, transpose=True):
     """Creates a 3D pixel array from the passed source.
     """
     if not _HASNUMPY:
@@ -170,12 +171,12 @@ def pixels3d(source):
     if bpp < 1 or bpp > 4:
         raise ValueError("unsupported bpp")
     strides = (psurface.pitch, bpp, 1)
-    srcsize = psurface.h * psurface.pitch
+    sz = psurface.h * psurface.pitch
     shape = psurface.h, psurface.w, bpp
 
     if SDL_MUSTLOCK(psurface):
         SDL_LockSurface(psurface)
-    pxbuf = ctypes.cast(psurface.pixels,
-                        ctypes.POINTER(ctypes.c_ubyte * srcsize)).contents
-    return SurfaceArray(shape, numpy.uint8, pxbuf, 0, strides, "C", source,
-                        psurface).transpose(1, 0, 2)
+    pxbuf = ctypes.cast(psurface.pixels, ctypes.POINTER(ctypes.c_ubyte * sz))
+    arr = SurfaceArray(shape, numpy.uint8, pxbuf.contents, 0, strides, "C",
+                       source, psurface)
+    return arr.transpose(1, 0, 2) if transpose else arr

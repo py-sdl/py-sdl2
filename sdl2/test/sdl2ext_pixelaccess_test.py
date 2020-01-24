@@ -1,6 +1,9 @@
+import os
 import sys
 import pytest
 from sdl2 import ext as sdl2ext
+from sdl2.ext import color
+from sdl2 import surface, pixels
 
 try:
     import numpy
@@ -14,6 +17,10 @@ class TestSDL2ExtPixelAccess(object):
 
     @classmethod
     def setup_class(cls):
+        cls.testfile = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "resources", "surfacetest.bmp"
+        )
         try:
             sdl2ext.init()
         except sdl2ext.SDLError:
@@ -38,32 +45,54 @@ class TestSDL2ExtPixelAccess(object):
                 for col in row:
                     assert col == 0x0
 
-    @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(not _HASNUMPY, reason="numpy module is not supported")
     def test_pixels2d(self):
-        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
-        sprite = factory.create_sprite(size=(5, 10), bpp=32,
-                                       masks=(0xFF000000, 0x00FF0000,
-                                              0x0000FF00, 0x000000FF))
-        sdl2ext.fill(sprite, 0x01, (2, 2, 2, 2))
-        nparray = sdl2ext.pixels2d(sprite)
+        colors = {
+            'red': color.Color(255, 0, 0, 255),
+            'blue': color.Color(0, 0, 255, 255),
+            'black': color.Color(0, 0, 0, 255),
+            'white': color.Color(255, 255, 255, 255)
+        }
+        # Import test image, convert to RGBA, and open pixels2d view
+        imgsurf = surface.SDL_LoadBMP(self.testfile.encode("utf-8"))
+        with pytest.warns(sdl2ext.compat.ExperimentalWarning):
+            nparray = sdl2ext.pixels2d(imgsurf.contents, transpose=False)
+        assert nparray.shape == (32, 32)
+        # Test different coordinates on surface
+        assert color.ARGB(nparray[0][0]) == colors['red']
+        assert color.ARGB(nparray[0][16]) == colors['blue']
+        assert color.ARGB(nparray[0][31]) == colors['white']
+        assert color.ARGB(nparray[31][31]) == colors['black']
+        # Try modifying surface, test if changes persist 
+        nparray[31][0] = 0xFF808080 # medium grey in ARGB
+        with pytest.warns(sdl2ext.compat.ExperimentalWarning):
+            nparray2 = sdl2ext.pixels2d(imgsurf.contents, transpose=False)
+        assert nparray2[31][0] == 0xFF808080
 
 
     @pytest.mark.skipif(not _HASNUMPY, reason="numpy module is not supported")
     def test_pixels3d(self):
-        factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
-        sprite = factory.create_sprite(size=(5, 10), bpp=32,
-                                       masks=(0xFF000000, 0x00FF0000,
-                                              0x0000FF00, 0x000000FF))
-        sdl2ext.fill(sprite, 0xAABBCCDD, (1, 2, 3, 4))
+        colors = {
+            'red': color.Color(255, 0, 0, 255),
+            'blue': color.Color(0, 0, 255, 255),
+            'black': color.Color(0, 0, 0, 255),
+            'white': color.Color(255, 255, 255, 255)
+        }
+        rgba = pixels.SDL_PIXELFORMAT_ABGR8888
+        # Import test image, convert to RGBA, and open pixels3d view
+        imgsurf = surface.SDL_LoadBMP(self.testfile.encode("utf-8"))
+        imgsurf = surface.SDL_ConvertSurfaceFormat(imgsurf.contents, rgba, 0)
         with pytest.warns(sdl2ext.compat.ExperimentalWarning):
-            nparray = sdl2ext.pixels3d(sprite)
-        for x in range(1, 4):
-            for y in range(2, 6):
-                assert numpy.all([nparray[x, y],
-                                           [0xAA, 0xBB, 0xCC, 0xDD]])
-        assert not numpy.all([nparray[0, 0], [0xAA, 0xBB, 0xCC, 0xDD]])
-        assert not numpy.all([nparray[1, 0], [0xAA, 0xBB, 0xCC, 0xDD]])
-        assert not numpy.all([nparray[0, 1], [0xAA, 0xBB, 0xCC, 0xDD]])
-        assert not numpy.all([nparray[3, 6], [0xAA, 0xBB, 0xCC, 0xDD]])
-        assert not numpy.all([nparray[4, 6], [0xAA, 0xBB, 0xCC, 0xDD]])
+            nparray = sdl2ext.pixels3d(imgsurf.contents, transpose=False)
+        assert nparray.shape == (32, 32, 4)
+        # Test different coordinates on surface
+        assert color.Color(*nparray[0][0]) == colors['red']
+        assert color.Color(*nparray[0][16]) == colors['blue']
+        assert color.Color(*nparray[0][31]) == colors['white']
+        assert color.Color(*nparray[31][31]) == colors['black']
+        # Try modifying surface, test if changes persist 
+        grey = [128, 128, 128, 255]
+        nparray[31][0][:] = grey
+        with pytest.warns(sdl2ext.compat.ExperimentalWarning):
+            nparray2 = sdl2ext.pixels3d(imgsurf.contents, transpose=False)
+        assert color.Color(*nparray2[31][0]) == color.Color(*grey)
