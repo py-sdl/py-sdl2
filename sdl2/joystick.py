@@ -117,6 +117,6 @@ else:
     def SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
         s = b""
         for g in guid.data:
-            s += "{:x}".format(g >> 4)
-            s += "{:x}".format(g & 0x0F)
+            s += b"{:x}".format(g >> 4)
+            s += b"{:x}".format(g & 0x0F)
         pszGUID.value = s[:(cbGUID * 2)]
