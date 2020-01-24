@@ -1,5 +1,6 @@
 import sys
 import pytest
+from ctypes import create_string_buffer
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_JOYSTICK
 from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
 from sdl2 import joystick
@@ -49,13 +50,18 @@ class TestSDLJoystick(object):
     def test_SDL_JoystickGetGUID(self):
         pass
 
-    @pytest.mark.skip("not implemented")
-    def test_SDL_JoystickGetGUIDString(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
     def test_SDL_JoystickGetGUIDFromString(self):
-        pass
+        guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
+        expected = [3, 0, 0, 0, 126, 5, 0, 0, 6, 3, 0, 0, 28, 58, 0, 0]
+        guid = joystick.SDL_JoystickGetGUIDFromString(guid_str)
+        assert list(guid.data) == expected
+
+    def test_SDL_JoystickGetGUIDString(self):
+        guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
+        guid = joystick.SDL_JoystickGetGUIDFromString(guid_str)
+        buff = create_string_buffer(33)
+        joystick.SDL_JoystickGetGUIDString(guid, buff, 33) # Get GUID string
+        assert guid_str == buff.value
 
     @pytest.mark.skip("not implemented")
     def test_SDL_JoystickGetAttached(self):

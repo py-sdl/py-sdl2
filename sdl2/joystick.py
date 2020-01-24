@@ -1,3 +1,4 @@
+import sys
 from ctypes import Structure, c_int, c_char_p, c_void_p, POINTER
 from .dll import _bind
 from .stdinc import Sint16, Sint32, Uint16, Uint8, SDL_bool
@@ -71,7 +72,6 @@ SDL_JoystickOpen = _bind("SDL_JoystickOpen", [c_int], POINTER(SDL_Joystick))
 SDL_JoystickName = _bind("SDL_JoystickName", [POINTER(SDL_Joystick)], c_char_p)
 SDL_JoystickGetDeviceGUID = _bind("SDL_JoystickGetDeviceGUID", [c_int], SDL_JoystickGUID)
 SDL_JoystickGetGUID = _bind("SDL_JoystickGetGUID", [POINTER(SDL_Joystick)], SDL_JoystickGUID)
-SDL_JoystickGetGUIDString = _bind("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int])
 SDL_JoystickGetGUIDFromString = _bind("SDL_JoystickGetGUIDFromString", [c_char_p], SDL_JoystickGUID)
 SDL_JoystickGetAttached = _bind("SDL_JoystickGetAttached", [POINTER(SDL_Joystick)], SDL_bool)
 SDL_JoystickInstanceID = _bind("SDL_JoystickInstanceID", [POINTER(SDL_Joystick)], SDL_JoystickID)
@@ -109,3 +109,15 @@ SDL_JoystickGetDeviceType = _bind("SDL_JoystickGetDeviceType", [c_int], SDL_Joys
 SDL_JoystickGetDeviceInstanceID = _bind("SDL_JoystickGetDeviceInstanceID", [c_int], SDL_JoystickID, added='2.0.6')
 SDL_LockJoysticks = _bind("SDL_LockJoysticks", None, None, added='2.0.7')
 SDL_UnlockJoysticks = _bind("SDL_UnlockJoysticks", None, None, added='2.0.7')
+
+# Reimplemented in Python due to crash-causing ctypes bug (fixed in 3.8)
+if sys.version_info >= (3, 8, 0, 'final'):
+    SDL_JoystickGetGUIDString = _bind("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int])
+else:
+    def SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
+        s = ""
+        for g in guid.data:
+            s += "{:x}".format(g >> 4)
+            s += "{:x}".format(g & 0x0F)
+        s = s.encode('utf-8')
+        pszGUID.value = s[:(cbGUID * 2)]

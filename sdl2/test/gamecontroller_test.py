@@ -1,28 +1,50 @@
 import sys
 import pytest
-from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_JOYSTICK
-from sdl2 import gamecontroller
+from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_GAMECONTROLLER
+from sdl2 import gamecontroller, joystick
+
+# Make sure gamecontroller subsystem works before running tests
+ret = SDL_Init(SDL_INIT_GAMECONTROLLER)
+SDL_Quit()
+skipmsg = 'Game controller subsystem not supported'
+pytestmark = pytest.mark.skipif(ret != 0, reason=skipmsg)
 
 
 class TestSDLGamecontroller(object):
     __tags__ = ["sdl"]
 
-    @classmethod
-    def setup_class(cls):
-        if SDL_Init(SDL_INIT_JOYSTICK) != 0:
-            raise pytest.skip('Joystick subsystem not supported')
+    def setup_method(self):
+        SDL_Init(SDL_INIT_GAMECONTROLLER)
 
-    @classmethod
-    def teardown_class(cls):
+    def teardown_method(self):
         SDL_Quit()
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerAddMapping(self):
-        pass
+        newmap = (
+            b"030000005e0400002700000006010000,Microsoft SideWinder,"
+            b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
+            b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
+        )
+        n1 = gamecontroller.SDL_GameControllerNumMappings()
+        ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+        assert ret != -1
+        n2 = gamecontroller.SDL_GameControllerNumMappings()
+        assert n2 == n1 + 1
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerMappingForGUID(self):
-        pass
+        newmap = (
+            b"030000005e0400002700000006010000,Microsoft SideWinder,"
+            b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
+            b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
+        )
+        ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+        assert ret != 0
+        # Get GUID for new mapping
+        guid_str = newmap.split(b",")[0]
+        guid = joystick.SDL_JoystickGetGUIDFromString(guid_str)
+        # Get mapping for GUID
+        retmap = gamecontroller.SDL_GameControllerMappingForGUID(guid)
+        assert retmap == newmap
 
     @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerMapping(self):
@@ -60,13 +82,25 @@ class TestSDLGamecontroller(object):
     def test_SDL_GameControllerUpdate(self):
         pass
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetAxisFromString(self):
-        pass
+        expected = {
+            b'lefty': gamecontroller.SDL_CONTROLLER_AXIS_LEFTY,
+            b'lefttrigger': gamecontroller.SDL_CONTROLLER_AXIS_TRIGGERLEFT,
+            b'notanaxis': gamecontroller.SDL_CONTROLLER_AXIS_INVALID
+        }
+        for string in expected.keys():
+            a = gamecontroller.SDL_GameControllerGetAxisFromString(string)
+            assert a == expected[string]
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetStringForAxis(self):
-        pass
+        expected = {
+            gamecontroller.SDL_CONTROLLER_AXIS_LEFTY: b'lefty',
+            gamecontroller.SDL_CONTROLLER_AXIS_TRIGGERLEFT: b'lefttrigger',
+            gamecontroller.SDL_CONTROLLER_AXIS_INVALID: None
+        }
+        for axis in expected.keys():
+            s = gamecontroller.SDL_GameControllerGetStringForAxis(axis)
+            assert s == expected[axis]
 
     @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetBindForAxis(self):
@@ -76,13 +110,25 @@ class TestSDLGamecontroller(object):
     def test_SDL_GameControllerGetAxis(self):
         pass
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetButtonFromString(self):
-        pass
+        expected = {
+            b'x': gamecontroller.SDL_CONTROLLER_BUTTON_X,
+            b'dpup': gamecontroller.SDL_CONTROLLER_BUTTON_DPAD_UP,
+            b'notabutton': gamecontroller.SDL_CONTROLLER_BUTTON_INVALID
+        }
+        for string in expected.keys():
+            b = gamecontroller.SDL_GameControllerGetButtonFromString(string)
+            assert b == expected[string]
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetStringForButton(self):
-        pass
+        expected = {
+            gamecontroller.SDL_CONTROLLER_BUTTON_X: b'x',
+            gamecontroller.SDL_CONTROLLER_BUTTON_DPAD_UP: b'dpup',
+            gamecontroller.SDL_CONTROLLER_BUTTON_INVALID: None
+        }
+        for button in expected.keys():
+            s = gamecontroller.SDL_GameControllerGetStringForButton(button)
+            assert s == expected[button]
 
     @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetBindForButton(self):
@@ -120,10 +166,18 @@ class TestSDLGamecontroller(object):
     def test_SDL_GameControllerGetProductVersion(self):
         pass
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerNumMappings(self):
-        pass
+        num = gamecontroller.SDL_GameControllerNumMappings()
+        assert num > 0
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerMappingForIndex(self):
-        pass
+        newmap = (
+            b"030000005e0400002700000006010000,Microsoft SideWinder,"
+            b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
+            b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
+        )
+        ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+        assert ret != 0
+        num = gamecontroller.SDL_GameControllerNumMappings()
+        retmap = gamecontroller.SDL_GameControllerMappingForIndex(num - 1)
+        assert newmap == retmap

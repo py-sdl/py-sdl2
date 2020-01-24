@@ -1,7 +1,10 @@
-from ctypes import Structure, Union, c_int, c_char_p, c_void_p, POINTER
+import sys
+from ctypes import Structure, Union, c_int, c_char_p, c_void_p, POINTER, \
+    create_string_buffer
 from .dll import _bind
 from .stdinc import SDL_bool, Sint16, Uint16, Uint8
-from .joystick import SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID
+from .joystick import SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID, \
+    SDL_JoystickGetGUIDString
 from .rwops import SDL_RWops, SDL_RWFromFile
 
 
@@ -60,7 +63,6 @@ class SDL_GameControllerButtonBind(Structure):
     _fields_ = [("bindType", SDL_GameControllerBindType), ("value", _gcvalue)]
 
 SDL_GameControllerAddMapping = _bind("SDL_GameControllerAddMapping", [c_char_p], c_int)
-SDL_GameControllerMappingForGUID = _bind("SDL_GameControllerMappingForGUID", [SDL_JoystickGUID], c_char_p)
 SDL_GameControllerMapping = _bind("SDL_GameControllerMapping", [POINTER(SDL_GameController)], c_char_p)
 SDL_IsGameController = _bind("SDL_IsGameController", [c_int], SDL_bool)
 SDL_GameControllerNameForIndex = _bind("SDL_GameControllerNameForIndex", [c_int], c_char_p)
@@ -114,3 +116,20 @@ SDL_GameControllerGetProduct = _bind("SDL_GameControllerGetProduct", [POINTER(SD
 SDL_GameControllerGetProductVersion = _bind("SDL_GameControllerGetProductVersion", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerNumMappings = _bind("SDL_GameControllerNumMappings", None, c_int, added='2.0.6')
 SDL_GameControllerMappingForIndex = _bind("SDL_GameControllerMappingForIndex", [c_int], c_char_p, added='2.0.6')
+
+# Reimplemented w/ other functions due to crash-causing ctypes bug (fixed in 3.8)
+if sys.version_info >= (3, 8, 0, 'final'):
+    SDL_GameControllerMappingForGUID = _bind("SDL_GameControllerMappingForGUID", [SDL_JoystickGUID], c_char_p)
+else:
+    def SDL_GameControllerMappingForGUID(guid):
+        buff = create_string_buffer(33)
+        SDL_JoystickGetGUIDString(guid, buff, 33) # Get GUID string
+        guid_str = buff.value
+        # Iterate over controller mappings and look for a GUID match
+        # Note: iterates in reverse, so user-defined mappings are checked first
+        num = SDL_GameControllerNumMappings()
+        for i in range(num - 1, -1, -1): 
+            m = SDL_GameControllerMappingForIndex(i)
+            if m.split(b',')[0] == guid_str:
+                return m
+        return None
