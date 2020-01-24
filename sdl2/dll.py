@@ -5,6 +5,12 @@ import warnings
 from ctypes import CDLL, POINTER, Structure, c_uint8
 from ctypes.util import find_library
 
+# Use DLLs from pysdl2-dll, if installed and DLL path not explicitly set
+try:
+    import sdl2dll
+except ImportError:
+    pass
+
 __all__ = ["DLL", "nullfunc"]
 
 
