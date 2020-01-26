@@ -2,7 +2,7 @@ import sys
 from ctypes import Structure, Union, c_int, c_char_p, c_void_p, POINTER, \
     create_string_buffer
 from .dll import _bind
-from .stdinc import SDL_bool, Sint16, Uint16, Uint8
+from .stdinc import SDL_bool, Sint16, Uint32, Uint16, Uint8
 from .joystick import SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID, \
     SDL_JoystickGetGUIDString
 from .rwops import SDL_RWops, SDL_RWFromFile
@@ -39,9 +39,12 @@ __all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
            "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
            "SDL_GameControllerClose", "SDL_GameControllerAddMappingsFromFile",
            "SDL_GameControllerAddMappingsFromRW",
-           "SDL_GameControllerFromInstanceID", "SDL_GameControllerGetVendor",
-           "SDL_GameControllerGetProduct", "SDL_GameControllerGetProductVersion",
-           "SDL_GameControllerNumMappings", "SDL_GameControllerMappingForIndex"
+           "SDL_GameControllerFromInstanceID", "SDL_GameControllerGetPlayerIndex",
+           "SDL_GameControllerGetVendor", "SDL_GameControllerGetProduct",
+           "SDL_GameControllerGetProductVersion", "SDL_GameControllerNumMappings",
+           "SDL_GameControllerMappingForIndex", 
+           "SDL_GameControllerMappingForDeviceIndex", "SDL_GameControllerRumble"
+
           ]
 
 class SDL_GameController(c_void_p):
@@ -111,11 +114,14 @@ SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameCont
 SDL_GameControllerAddMappingsFromRW = _bind("SDL_GameControllerAddMappingsFromRW", [POINTER(SDL_RWops), c_int], c_int)
 SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
 SDL_GameControllerFromInstanceID = _bind("SDL_GameControllerFromInstanceID", [SDL_JoystickID], POINTER(SDL_GameController))
+SDL_GameControllerGetPlayerIndex = _bind("SDL_GameControllerGetPlayerIndex", [POINTER(SDL_GameController)], c_int, added='2.0.9')
 SDL_GameControllerGetVendor = _bind("SDL_GameControllerGetVendor", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerGetProduct = _bind("SDL_GameControllerGetProduct", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerGetProductVersion = _bind("SDL_GameControllerGetProductVersion", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerNumMappings = _bind("SDL_GameControllerNumMappings", None, c_int, added='2.0.6')
 SDL_GameControllerMappingForIndex = _bind("SDL_GameControllerMappingForIndex", [c_int], c_char_p, added='2.0.6')
+SDL_GameControllerMappingForDeviceIndex = _bind("SDL_GameControllerMappingForDeviceIndex", [c_int], c_char_p, added='2.0.9')
+SDL_GameControllerRumble = _bind("SDL_GameControllerRumble", [POINTER(SDL_GameController), Uint16, Uint16, Uint32], c_int, added='2.0.9')
 
 # Reimplemented w/ other functions due to crash-causing ctypes bug (fixed in 3.8)
 if sys.version_info >= (3, 8, 0, 'final'):

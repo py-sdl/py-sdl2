@@ -29,6 +29,11 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_WINDOWEVENT_LEAVE", "SDL_WINDOWEVENT_FOCUS_GAINED",
            "SDL_WINDOWEVENT_FOCUS_LOST", "SDL_WINDOWEVENT_CLOSE",
            "SDL_WINDOWEVENT_TAKE_FOCUS", "SDL_WINDOWEVENT_HIT_TEST",
+           "SDL_DisplayEventID", "SDL_DISPLAYEVENT_NONE",
+           "SDL_DISPLAYEVENT_ORIENTATION", "SDL_DisplayOrientation",
+           "SDL_ORIENTATION_UNKNOWN", "SDL_ORIENTATION_LANDSCAPE",
+           "SDL_ORIENTATION_LANDSCAPE_FLIPPED", "SDL_ORIENTATION_PORTRAIT",
+           "SDL_ORIENTATION_PORTRAIT_FLIPPED",
            "SDL_GLContext", "SDL_GLattr", "SDL_GL_RED_SIZE",
            "SDL_GL_GREEN_SIZE", "SDL_GL_BLUE_SIZE", "SDL_GL_ALPHA_SIZE",
            "SDL_GL_BUFFER_SIZE", "SDL_GL_DOUBLEBUFFER", "SDL_GL_DEPTH_SIZE",
@@ -53,7 +58,8 @@ __all__ = ["SDL_DisplayMode", "SDL_Window", "SDL_WindowFlags",
            "SDL_GetVideoDriver", "SDL_VideoInit", "SDL_VideoQuit",
            "SDL_GetCurrentVideoDriver", "SDL_GetNumVideoDisplays",
            "SDL_GetDisplayName", "SDL_GetDisplayBounds",
-           "SDL_GetNumDisplayModes", "SDL_GetDisplayMode",
+           "SDL_GetDisplayOrientation", "SDL_GetNumDisplayModes",
+           "SDL_GetDisplayMode",
            "SDL_GetDesktopDisplayMode", "SDL_GetCurrentDisplayMode",
            "SDL_GetClosestDisplayMode", "SDL_GetWindowDisplayIndex",
            "SDL_SetWindowDisplayMode", "SDL_GetWindowDisplayMode",
@@ -110,6 +116,7 @@ class SDL_DisplayMode(Structure):
                 ("refresh_rate", c_int),
                 ("driverdata", c_void_p)
                ]
+
     def __init__(self, format_=0, w=0, h=0, refresh_rate=0):
         super(SDL_DisplayMode, self).__init__()
         self.format = format_
@@ -129,10 +136,13 @@ class SDL_DisplayMode(Structure):
         return self.format != mode.format or self.w != mode.w or \
             self.h != mode.h or self.refresh_rate != mode.refresh_rate
 
+
 class SDL_Window(c_void_p):
     pass
 
+
 SDL_WindowFlags = c_int
+
 SDL_WINDOW_FULLSCREEN = 0x00000001
 SDL_WINDOW_OPENGL = 0x00000002
 SDL_WINDOW_SHOWN = 0x00000004
@@ -166,8 +176,8 @@ SDL_WINDOWPOS_CENTERED_DISPLAY = lambda x: (SDL_WINDOWPOS_CENTERED_MASK | x)
 SDL_WINDOWPOS_CENTERED = SDL_WINDOWPOS_CENTERED_DISPLAY(0)
 SDL_WINDOWPOS_ISCENTERED = lambda x: ((x & 0xFFFF0000) == SDL_WINDOWPOS_CENTERED_MASK)
 
-SDL_WindowEventID = c_int
 
+SDL_WindowEventID = c_int
 SDL_WINDOWEVENT_NONE = 0
 SDL_WINDOWEVENT_SHOWN = 1
 SDL_WINDOWEVENT_HIDDEN = 2
@@ -185,6 +195,20 @@ SDL_WINDOWEVENT_FOCUS_LOST = 13
 SDL_WINDOWEVENT_CLOSE = 14
 SDL_WINDOWEVENT_TAKE_FOCUS = 15
 SDL_WINDOWEVENT_HIT_TEST = 16
+
+
+SDL_DisplayEventID = c_int
+SDL_DISPLAYEVENT_NONE = 0
+SDL_DISPLAYEVENT_ORIENTATION = 1
+
+
+SDL_DisplayOrientation = c_int
+SDL_ORIENTATION_UNKNOWN = 0
+SDL_ORIENTATION_LANDSCAPE = 1
+SDL_ORIENTATION_LANDSCAPE_FLIPPED = 2
+SDL_ORIENTATION_PORTRAIT = 3
+SDL_ORIENTATION_PORTRAIT_FLIPPED = 4
+
 
 SDL_GLContext = c_void_p
 SDL_GLattr = c_int
@@ -216,10 +240,12 @@ SDL_GL_CONTEXT_RELEASE_BEHAVIOR = 24
 SDL_GL_CONTEXT_RESET_NOTIFICATION = 25
 SDL_GL_CONTEXT_NO_ERROR = 26
 
+
 SDL_GLprofile = c_int
 SDL_GL_CONTEXT_PROFILE_CORE = 0x0001
 SDL_GL_CONTEXT_PROFILE_COMPATIBILITY = 0x0002
 SDL_GL_CONTEXT_PROFILE_ES = 0x0004
+
 
 SDL_GLcontextFlag = c_int
 SDL_GL_CONTEXT_DEBUG_FLAG = 0x0001
@@ -227,13 +253,16 @@ SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG = 0x0002
 SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG = 0x0004
 SDL_GL_CONTEXT_RESET_ISOLATION_FLAG = 0x0008
 
+
 SDL_GLcontextReleaseFlag = c_int
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE = 0x0000
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH = 0x0001
 
+
 SDL_GLContextResetNotification = c_int
 SDL_GL_CONTEXT_RESET_NO_NOTIFICATION = 0x0000
 SDL_GL_CONTEXT_RESET_LOSE_CONTEXT = 0x0001
+
 
 SDL_HitTestResult = c_int
 SDL_HITTEST_NORMAL = 0
@@ -248,6 +277,7 @@ SDL_HITTEST_RESIZE_BOTTOMLEFT = 8
 SDL_HITTEST_RESIZE_LEFT = 9
 SDL_HitTest = CFUNCTYPE(SDL_HitTestResult, POINTER(SDL_Window), POINTER(SDL_Point), c_void_p)
 
+
 SDL_GetNumVideoDrivers = _bind("SDL_GetNumVideoDrivers", None, c_int)
 SDL_GetVideoDriver = _bind("SDL_GetVideoDriver", [c_int], c_char_p)
 SDL_VideoInit = _bind("SDL_VideoInit", [c_char_p], c_int)
@@ -256,6 +286,7 @@ SDL_GetCurrentVideoDriver = _bind("SDL_GetCurrentVideoDriver", None, c_char_p)
 SDL_GetNumVideoDisplays = _bind("SDL_GetNumVideoDisplays", None, c_int)
 SDL_GetDisplayName = _bind("SDL_GetDisplayName", [c_int], c_char_p)
 SDL_GetDisplayBounds = _bind("SDL_GetDisplayBounds", [c_int, POINTER(SDL_Rect)], c_int)
+SDL_GetDisplayOrientation = _bind("SDL_GetDisplayOrientation", [c_int], SDL_DisplayOrientation, added='2.0.9')
 SDL_GetNumDisplayModes = _bind("SDL_GetNumDisplayModes", [c_int], c_int)
 SDL_GetDisplayMode = _bind("SDL_GetDisplayMode", [c_int, c_int, POINTER(SDL_DisplayMode)], c_int)
 SDL_GetDesktopDisplayMode = _bind("SDL_GetDesktopDisplayMode", [c_int, POINTER(SDL_DisplayMode)], c_int)

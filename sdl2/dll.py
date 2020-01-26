@@ -209,3 +209,4 @@ def get_dll_file():
     return dll.libfile
 
 _bind = dll.bind_function
+version = dll.version

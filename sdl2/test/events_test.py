@@ -121,6 +121,7 @@ class TestSDLEvents(object):
         # TODO: x
         # self.assertEqual(eventwatch[0][1], udata)
 
+    @pytest.mark.skip("not implemented")
     def test_SDL_EventState(self):
         pass
         # state = events.SDL_EventState(events.SDL_USEREVENT, events.SDL_QUERY)

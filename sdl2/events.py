@@ -26,8 +26,8 @@ __all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING",
            "SDL_DROPBEGIN", "SDL_DROPCOMPLETE",
            "SDL_RENDER_TARGETS_RESET", "SDL_RENDER_DEVICE_RESET",
            "SDL_USEREVENT", "SDL_LASTEVENT", "SDL_AUDIODEVICEADDED",
-           "SDL_AUDIODEVICEREMOVED",
-           "SDL_EventType","SDL_CommonEvent", "SDL_WindowEvent",
+           "SDL_AUDIODEVICEREMOVED", "SDL_DISPLAYEVENT", "SDL_SENSORUPDATE",
+           "SDL_EventType","SDL_CommonEvent", "SDL_WindowEvent", 
            "SDL_KeyboardEvent", "SDL_TEXTEDITINGEVENT_TEXT_SIZE",
            "SDL_TextEditingEvent", "SDL_TEXTINPUTEVENT_TEXT_SIZE",
            "SDL_TextInputEvent", "SDL_MouseMotionEvent", "SDL_MouseButtonEvent",
@@ -36,7 +36,8 @@ __all__ = ["SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING",
            "SDL_ControllerAxisEvent", "SDL_ControllerButtonEvent",
            "SDL_ControllerDeviceEvent", "SDL_TouchFingerEvent",
            "SDL_MultiGestureEvent", "SDL_DollarGestureEvent", "SDL_DropEvent",
-           "SDL_QuitEvent", "SDL_UserEvent", "SDL_SysWMmsg", "SDL_SysWMEvent",
+           "SDL_QuitEvent", "SDL_UserEvent", "SDL_SysWMEvent",
+           "SDL_DisplayEvent", "SDL_SensorEvent",
            "SDL_Event", "SDL_PumpEvents", "SDL_ADDEVENT", "SDL_PEEKEVENT",
            "SDL_GETEVENT", "SDL_eventaction", "SDL_PeepEvents", "SDL_HasEvent",
            "SDL_HasEvents", "SDL_FlushEvent", "SDL_FlushEvents",
@@ -57,6 +58,7 @@ SDL_APP_WILLENTERBACKGROUND = 0x103
 SDL_APP_DIDENTERBACKGROUND = 0x104
 SDL_APP_WILLENTERFOREGROUND = 0x105
 SDL_APP_DIDENTERFOREGROUND = 0x106
+SDL_DISPLAYEVENT = 0x150
 SDL_WINDOWEVENT = 0x200
 SDL_SYSWMEVENT = 0x201
 SDL_KEYDOWN = 0x300
@@ -94,6 +96,7 @@ SDL_DROPBEGIN = 0x1002
 SDL_DROPCOMPLETE = 0x1003
 SDL_AUDIODEVICEADDED = 0x1100
 SDL_AUDIODEVICEREMOVED = 0x1101
+SDL_SENSORUPDATE = 0x1200
 SDL_RENDER_TARGETS_RESET = 0x2000
 SDL_RENDER_DEVICE_RESET = 0x2001
 SDL_USEREVENT = 0x8000
@@ -106,6 +109,17 @@ SDL_PRESSED = 1
 
 class SDL_CommonEvent(Structure):
     _fields_ = [("type", Uint32), ("timestamp", Uint32)]
+
+class SDL_DisplayEvent(Structure):
+    _fields_ = [("type", Uint32),
+                ("timestamp", Uint32),
+                ("display", Uint32),
+                ("event", Uint8),
+                ("padding1", Uint8),
+                ("padding2", Uint8),
+                ("padding3", Uint8),
+                ("data1", Sint32)
+                ]
 
 class SDL_WindowEvent(Structure):
     _fields_ = [("type", Uint32),
@@ -314,6 +328,13 @@ class SDL_DropEvent(Structure):
                 ("windowID", Uint32)
                 ]
 
+class SDL_SensorEvent(Structure):
+    _fields_ = [("type", Uint32),
+                ("timestamp", Uint32),
+                ("which", Sint32),
+                ("data", (c_float * 6))
+                ]
+
 class SDL_QuitEvent(Structure):
     _fields_ = [("type", Uint32),
                 ("timestamp", Uint32)
@@ -342,6 +363,7 @@ class SDL_SysWMEvent(Structure):
 class SDL_Event(Union):
     _fields_ = [("type", Uint32),
                 ("common", SDL_CommonEvent),
+                ("display", SDL_DisplayEvent),
                 ("window", SDL_WindowEvent),
                 ("key", SDL_KeyboardEvent),
                 ("edit", SDL_TextEditingEvent),
@@ -358,6 +380,7 @@ class SDL_Event(Union):
                 ("cbutton", SDL_ControllerButtonEvent),
                 ("cdevice", SDL_ControllerDeviceEvent),
                 ("adevice", SDL_AudioDeviceEvent),
+                ("sensor", SDL_SensorEvent),
                 ("quit", SDL_QuitEvent),
                 ("user", SDL_UserEvent),
                 ("syswm", SDL_SysWMEvent),

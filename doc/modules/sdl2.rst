@@ -100,18 +100,22 @@ more *'pythonic'*, via the :mod:`sdl2.ext` package.
 Missing interfaces
 ------------------
 The following functions, classes, constants and macros of SDL2 are *not*
-available within :mod:`sdl2`. 
+available within :mod:`sdl2`.
 
 * :c:data:`SDL_REVISION` and :c:data:`SDL_REVISION_NUMBER` from ``SDL_revision.h``
 * :c:data:`SDL_NAME()` from ``SDL_name.h``
-* :c:func:`SDL_MostSignificantBitIndex32` from ``SDL_bits.h``
+* :c:func:`SDL_MostSignificantBitIndex32` and `SDL_HasExactlyOneBitSet32` from
+  ``SDL_bits.h``
+* Most functions from ``SDL2_stdinc.h`` (most are for math and string operations
+  Python already has excellent built-in support for)
 * Everything from ``SDL_main.h``
 * Everything from ``SDL_system.h``
 * Everything from ``SDL_assert.h``
 * Everything from ``SDL_thread.h``
 * Everything from ``SDL_atomic.h``
-* Everything from ``SDL_opengl.h``
-* Everything from ``SDL_mutex.h`` 
+* Everything from ``SDL_opengl.h`` (see PyOpenGL for a compatible OpenGL API)
+* Everything from ``SDL_mutex.h``
+* Everything from ``SDL_sensor.h`` (currently only supports iOS & Android APIs)
 
 Additional interfaces
 ---------------------

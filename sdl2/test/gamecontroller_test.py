@@ -1,5 +1,6 @@
 import sys
 import pytest
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_GAMECONTROLLER
 from sdl2 import gamecontroller, joystick
 
@@ -155,6 +156,11 @@ class TestSDLGamecontroller(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_GameControllerGetPlayerIndex(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetVendor(self):
         pass
 
@@ -181,3 +187,13 @@ class TestSDLGamecontroller(object):
         num = gamecontroller.SDL_GameControllerNumMappings()
         retmap = gamecontroller.SDL_GameControllerMappingForIndex(num - 1)
         assert newmap == retmap
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_GameControllerMappingForDeviceIndex(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_GameControllerRumble(self):
+        pass

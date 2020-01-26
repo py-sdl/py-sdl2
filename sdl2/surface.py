@@ -11,8 +11,8 @@ __all__ = ["SDL_SWSURFACE", "SDL_PREALLOC", "SDL_RLEACCEL", "SDL_DONTFREE",
            "SDL_CreateRGBSurface", "SDL_CreateRGBSurfaceFrom", "SDL_FreeSurface",
            "SDL_SetSurfacePalette", "SDL_LockSurface", "SDL_UnlockSurface",
            "SDL_LoadBMP_RW", "SDL_LoadBMP", "SDL_SaveBMP_RW", "SDL_SaveBMP",
-           "SDL_SetSurfaceRLE", "SDL_SetColorKey", "SDL_GetColorKey",
-           "SDL_SetSurfaceColorMod", "SDL_GetSurfaceColorMod",
+           "SDL_SetSurfaceRLE", "SDL_HasColorKey", "SDL_SetColorKey",
+           "SDL_GetColorKey", "SDL_SetSurfaceColorMod", "SDL_GetSurfaceColorMod",
            "SDL_SetSurfaceAlphaMod", "SDL_GetSurfaceAlphaMod",
            "SDL_SetSurfaceBlendMode", "SDL_GetSurfaceBlendMode",
            "SDL_SetClipRect", "SDL_GetClipRect", "SDL_ConvertSurface",
@@ -73,6 +73,7 @@ SDL_SaveBMP_RW = _bind("SDL_SaveBMP_RW", [POINTER(SDL_Surface), POINTER(SDL_RWop
 SDL_SaveBMP = lambda surface, fname: SDL_SaveBMP_RW(surface, SDL_RWFromFile(fname, b"wb"), 1)
 
 SDL_SetSurfaceRLE = _bind("SDL_SetSurfaceRLE", [POINTER(SDL_Surface), c_int], c_int)
+SDL_HasColorKey = _bind("SDL_HasColorKey", [POINTER(SDL_Surface)], SDL_bool, added='2.0.9')
 SDL_SetColorKey = _bind("SDL_SetColorKey", [POINTER(SDL_Surface), c_int, Uint32], c_int)
 SDL_GetColorKey = _bind("SDL_GetColorKey", [POINTER(SDL_Surface), POINTER(Uint32)], c_int)
 SDL_SetSurfaceColorMod = _bind("SDL_SetSurfaceColorMod", [POINTER(SDL_Surface), Uint8, Uint8, Uint8], c_int)

@@ -3,6 +3,7 @@ import sys
 import array
 import pytest
 from ctypes import c_int, byref, cast, POINTER, c_void_p
+import sdl2
 from sdl2.ext import CTypesView
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
 from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
@@ -366,6 +367,15 @@ class TestSDLSurface(object):
             err = "Could not set clip rect %s" % r
             assert retval == clipsetval, "retval: " + err
             assert (clip == r) == cmpval, "clip: " + err
+        surface.SDL_FreeSurface(sf)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_HasColorKey(self):
+        sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+        assert surface.SDL_HasColorKey(sf) == SDL_FALSE
+        key = pixels.SDL_MapRGB(sf.contents.format, 255, 255, 255)
+        surface.SDL_SetColorKey(sf, 1, key)
+        assert surface.SDL_HasColorKey(sf) == SDL_TRUE
         surface.SDL_FreeSurface(sf)
 
     def test_SDL_GetSetColorKey(self):

@@ -46,16 +46,6 @@ class TestSDLHints(object):
                         b"", b"", hints.SDL_HINT_OVERRIDE) == 1
         assert hints.SDL_GetHint(b"") == b""
 
-
-        # self.assertRaises(ValueError, hints.SDL_SetHintWithPriority,
-        #                  "TEST", "123456789", 12)
-        # self.assertRaises(ValueError, hints.SDL_SetHintWithPriority,
-        #                  "TEST", "123456789", -78)
-        # self.assertRaises(ValueError, hints.SDL_SetHintWithPriority,
-        #                  "TEST", "123456789", None)
-        # self.assertRaises(ValueError, hints.SDL_SetHintWithPriority,
-        #                  "TEST", "123456789", "bananas")
-
     def test_SDL_GetHintBoolean(self):
         assert hints.SDL_SetHint(b"TEST", b"32") == 1
         assert hints.SDL_GetHintBoolean(b"TEST", SDL_TRUE) == SDL_TRUE

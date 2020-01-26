@@ -1,7 +1,7 @@
 import sys
 from ctypes import Structure, c_int, c_char_p, c_void_p, POINTER
 from .dll import _bind
-from .stdinc import Sint16, Sint32, Uint16, Uint8, SDL_bool
+from .stdinc import Sint16, Sint32, Uint32, Uint16, Uint8, SDL_bool
 
 __all__ = ["SDL_Joystick", "SDL_JoystickGUID", "SDL_JoystickID",
            "SDL_NumJoysticks", "SDL_JoystickNameForIndex", "SDL_JoystickOpen",
@@ -31,7 +31,8 @@ __all__ = ["SDL_Joystick", "SDL_JoystickGUID", "SDL_JoystickID",
            "SDL_JOYSTICK_TYPE_THROTTLE",
            "SDL_JoystickGetDeviceType", "SDL_JoystickGetType",
            "SDL_JoystickGetDeviceInstanceID", "SDL_LockJoysticks",
-           "SDL_UnlockJoysticks"
+           "SDL_UnlockJoysticks", "SDL_JoystickGetPlayerIndex",
+           "SDL_JoystickGetDevicePlayerIndex", "SDL_JoystickRumble"
           ]
 
 SDL_JoystickPowerLevel = c_int
@@ -109,6 +110,9 @@ SDL_JoystickGetDeviceType = _bind("SDL_JoystickGetDeviceType", [c_int], SDL_Joys
 SDL_JoystickGetDeviceInstanceID = _bind("SDL_JoystickGetDeviceInstanceID", [c_int], SDL_JoystickID, added='2.0.6')
 SDL_LockJoysticks = _bind("SDL_LockJoysticks", None, None, added='2.0.7')
 SDL_UnlockJoysticks = _bind("SDL_UnlockJoysticks", None, None, added='2.0.7')
+SDL_JoystickGetPlayerIndex = _bind("SDL_JoystickGetPlayerIndex", [POINTER(SDL_Joystick)], c_int, added='2.0.9')
+SDL_JoystickGetDevicePlayerIndex = _bind("SDL_JoystickGetDevicePlayerIndex", [c_int], c_int, added='2.0.9')
+SDL_JoystickRumble = _bind("SDL_JoystickRumble", [POINTER(SDL_Joystick), Uint16, Uint16, Uint32], c_int, added='2.0.9')
 
 # Reimplemented in Python due to crash-causing ctypes bug (fixed in 3.8)
 if sys.version_info >= (3, 8, 0, 'final'):

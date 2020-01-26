@@ -1,5 +1,6 @@
 import sys
 import pytest
+import sdl2
 from sdl2 import cpuinfo
 
 _HASMP = True
@@ -64,6 +65,11 @@ class TestSDLCPUInfo(object):
 
     def test_SDL_HasAVX2(self):
         ret = cpuinfo.SDL_HasAVX2()
+        assert ret in (0, 1)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_HasAVX512F(self):
+        ret = cpuinfo.SDL_HasAVX512F()
         assert ret in (0, 1)
 
     def test_SDL_HasNEON(self):

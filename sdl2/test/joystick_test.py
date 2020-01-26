@@ -1,9 +1,12 @@
 import sys
 import pytest
 from ctypes import create_string_buffer
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_JOYSTICK
 from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
 from sdl2 import joystick
+
+# TODO: Clean up so tests requiring joystick device are separate from others
 
 
 class TestSDLJoystick(object):
@@ -165,8 +168,7 @@ class TestSDLJoystick(object):
             stick = joystick.SDL_JoystickOpen(index)
             for button in range(joystick.SDL_JoystickNumButtons(stick)):
                 val = joystick.SDL_JoystickGetButton(stick, button)
-                # TODO: x
-                # self.assertIsInstance(val, bool)
+                assert val in [0, 1]
             joystick.SDL_JoystickClose(stick)
 
     @pytest.mark.skip("not implemented")
@@ -220,3 +222,33 @@ class TestSDLJoystick(object):
     @pytest.mark.skip("not implemented")
     def test_SDL_JoystickGetDeviceInstanceID(self):
         pass
+
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_JoystickGetPlayerIndex(self):
+        if self.jcount == 0:
+            pytest.skip("no joysticks detected")
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            player = joystick.SDL_JoystickGetDevicePlayerIndex(stick)
+            assert player in [-1, 0, 1, 2, 3]
+            joystick.SDL_JoystickClose(stick)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_JoystickGetDevicePlayerIndex(self):
+        if self.jcount == 0:
+            pytest.skip("no joysticks detected")
+        for index in range(self.jcount):
+            player = joystick.SDL_JoystickGetPlayerIndex(index)
+            assert player in [-1, 0, 1, 2, 3]
+
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_JoystickRumble(self):
+        # If we ever add an interactive test suite, this should be moved there
+        if self.jcount == 0:
+            pytest.skip("no joysticks detected")
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            # 50% strength low-frequency, 25% high-frequency rumble for 500ms
+            ret = joystick.SDL_JoystickRumble(stick, 32767, 16384, 500)
+            assert ret in [-1, 0]
+            joystick.SDL_JoystickClose(stick)

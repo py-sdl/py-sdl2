@@ -3,6 +3,7 @@ import sys
 from ctypes.util import find_library
 from ctypes import c_int, c_float, byref, cast, POINTER, py_object
 import pytest
+import sdl2
 from sdl2.stdinc import SDL_FALSE, SDL_TRUE
 from sdl2 import video, rect, surface, SDL_GetError
 
@@ -226,6 +227,12 @@ class TestSDLVideo(object):
         video.SDL_VideoQuit()
         video.SDL_VideoInit(None)
 
+    def test_SDL_GetDisplayName(self):
+        numdisplays = video.SDL_GetNumVideoDisplays()
+        for index in range(numdisplays):
+            name = video.SDL_GetDisplayName(index)
+            assert name != None
+
     def test_SDL_GetDisplayBounds(self):
         numdisplays = video.SDL_GetNumVideoDisplays()
         for index in range(numdisplays):
@@ -233,6 +240,13 @@ class TestSDLVideo(object):
             ret = video.SDL_GetDisplayBounds(index, byref(bounds))
             assert ret == 0
             assert not rect.SDL_RectEmpty(bounds)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+    def test_SDL_GetDisplayOrientation(self):
+        numdisplays = video.SDL_GetNumVideoDisplays()
+        for index in range(numdisplays):
+            orientation = video.SDL_GetDisplayOrientation(index)
+            assert isinstance(orientation, int)
 
     def test_screensaver(self):
         initial = video.SDL_IsScreenSaverEnabled()

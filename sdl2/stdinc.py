@@ -9,6 +9,9 @@ __all__ = ["SDL_FALSE", "SDL_TRUE", "SDL_bool", "Sint8", "Uint8", "Sint16",
            "SDL_memcpy"
            ]
 
+# NOTE: Lots of functions in SDL_stdinc.h are not yet added here, but they're
+# mostly for math and string operations that Python can do much more easily.
+
 SDL_FALSE = 0
 SDL_TRUE = 1
 
