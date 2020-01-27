@@ -85,7 +85,9 @@ before_install:
   # Install SDL2 build dependencies on Linux (overridden on macOS)
   - sudo apt-get -qq update
   - sudo apt-get build-dep libsdl2 libsdl2-mixer libsdl2-ttf libsdl2-image libsdl2-gfx
-  - sudo apt-get install libmpg123-dev libopus-dev
+  - sudo apt-get install libmpg123-dev libopus-dev dbus-x11 pulseaudio
+  - dbus-launch pulseaudio --start
+  - export SDL_AUDIODRIVER=pulse # Try using pulseaudio driver for Linux CI
 
 cache:
   # Avoids re-compiling SDL2 libraries on Linux every build
