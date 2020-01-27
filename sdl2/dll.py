@@ -16,9 +16,10 @@ def prettywarn(msg, warntype):
 
 # Use DLLs from pysdl2-dll, if installed and DLL path not explicitly set
 try:
-    path_in_env = os.getenv('PYSDL2_DLL_PATH')
+    prepath = os.getenv('PYSDL2_DLL_PATH')
     import sdl2dll
-    if not path_in_env:
+    postpath = os.getenv('PYSDL2_DLL_PATH')
+    if prepath != postpath:
         msg = "UserWarning: Using SDL2 binaries from pysdl2-dll {0}"
         prettywarn(msg.format(sdl2dll.__version__), UserWarning)
 except ImportError:
