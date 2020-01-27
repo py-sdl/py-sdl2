@@ -3,7 +3,11 @@ import sys
 import pytest
 import ctypes
 import sdl2
+import operator
+from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2 import SDL_Init, SDL_Quit, rwops, version
+if sys.version_info >= 3:
+    from functools import reduce
 
 sdlmixer = pytest.importorskip("sdl2.sdlmixer")
 
@@ -41,32 +45,43 @@ def test_Mix_Init():
     print(supported)
     SDL_Quit()
 
-@pytest.mark.xfail(reason="not sure this will work with CI")
-def test_Mix_OpenAudio(self):
+def test_Mix_OpenAudio():
     SDL_Init(sdl2.SDL_INIT_AUDIO)
     sdlmixer.Mix_Init(0)
-    ret = sdlmixer.Mix_OpenAudio(22050, sdlmixer.MIX_DEFAULT_FORMAT, 1, 1024)
+    ret = sdlmixer.Mix_OpenAudio(22050, sdlmixer.MIX_DEFAULT_FORMAT, 2, 1024)
     assert ret == 0
     sdlmixer.Mix_CloseAudio()
     sdlmixer.Mix_Quit()
     SDL_Quit()
 
-@pytest.mark.skip("not sure this will work with CI")
+
 class TestSDLMixer(object):
     __tags__ = ["sdl", "sdlmixer"]
 
     @classmethod
     def setup_class(cls):
-        # TODO: once audio tests working with CI, make sure this only loads
-        # supported libraries to avoid failures
-        flags = (
-            sdlmixer.MIX_INIT_FLAC | sdlmixer.MIX_INIT_MOD |
-            sdlmixer.MIX_INIT_MP3  | sdlmixer.MIX_INIT_OGG |
-            sdlmixer.MIX_INIT_MID
-        )
         SDL_Init(sdl2.SDL_INIT_AUDIO)
+        # Determine supported audio formats for Mix_Init
+        supported = []
+        libs = {
+            'FLAC': sdlmixer.MIX_INIT_FLAC,
+            'MOD': sdlmixer.MIX_INIT_MOD,
+            'MP3': sdlmixer.MIX_INIT_MP3,
+            'OGG': sdlmixer.MIX_INIT_OGG,
+            'MID': sdlmixer.MIX_INIT_MID
+        }
+        for lib in libs.keys():
+            flags = libs[lib]
+            ret = sdlmixer.Mix_Init(flags)
+            if ret & flags == flags:
+                supported.append(lib)
+            sdlmixer.Mix_Quit()
+        cls.supported = supported
+        # Only initialize audio formats that are supported in current binary
+        flaglist = [libs[lib] for lib in supported]
+        flags = reduce(operator.or_, flaglist) if len(flaglist) else 0
         sdlmixer.Mix_Init(flags)
-        sdlmixer.Mix_OpenAudio(22050, sdlmixer.MIX_DEFAULT_FORMAT, 1, 1024)
+        sdlmixer.Mix_OpenAudio(22050, sdlmixer.MIX_DEFAULT_FORMAT, 2, 1024)
 
     @classmethod
     def teardown_class(cls):
@@ -82,18 +97,27 @@ class TestSDLMixer(object):
     def test_Mix_AllocateChannels(self):
         pass
 
-    @pytest.mark.skip("not implemented")
     def test_ChunkDecoders(self):
-        # Mix_GetNumChunkDecoders
-        # Mix_GetChunkDecoder
-        # Mix_HasChunkDecoder
-        pass
+        decoders = []
+        num = sdlmixer.Mix_GetNumChunkDecoders()
+        assert num > 0
+        for i in range(0, num):
+            name = sdlmixer.Mix_GetChunkDecoder(i)
+            assert name is not None
+            assert sdlmixer.Mix_HasChunkDecoder(name) == SDL_TRUE
+            decoders.append(name.decode('utf-8'))
+        assert sdlmixer.Mix_HasChunkDecoder(b'blah') == SDL_FALSE
+        print("Available MixChunk decoders:\n{0}".format(str(decoders)))
 
-    @pytest.mark.skip("not implemented")
     def test_MusicDecoders(self):
-        # Mix_GetNumMusicDecoders
-        # Mix_GetMusicDecoder
-        pass
+        decoders = []
+        num = sdlmixer.Mix_GetNumMusicDecoders()
+        assert num > 0
+        for i in range(0, num):
+            name = sdlmixer.Mix_GetMusicDecoder(i)
+            assert name is not None
+            decoders.append(name.decode('utf-8'))
+        print("Available MixMusic decoders:\n{0}".format(str(decoders)))
 
     @pytest.mark.skip("not implemented")
     def test_Mix_LoadWAV(self):
