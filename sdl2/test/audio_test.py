@@ -174,16 +174,12 @@ class TestSDLAudio(object):
     def test_SDL_GetAudioDriver(self):
         founddummy = False
         drivercount = audio.SDL_GetNumAudioDrivers()
-        drivers = []
         for index in range(drivercount):
             drivername = audio.SDL_GetAudioDriver(index)
             assert isinstance(drivername, (str, bytes))
             if drivername == b"dummy":
                 founddummy = True
-            drivers.append(drivername.decode('utf-8'))
         assert founddummy, "could not find dummy driver"
-        print("Available audio drivers:")
-        print(drivers)
         with pytest.raises((ctypes.ArgumentError, TypeError)):
             audio.SDL_GetAudioDriver("Test")
         with pytest.raises((ctypes.ArgumentError, TypeError)):
@@ -226,25 +222,36 @@ class TestSDLAudio(object):
         assert innum >= 0
 
     def test_SDL_GetAudioDeviceName(self):
-        outnum = audio.SDL_GetNumAudioDevices(False)
-        innum = audio.SDL_GetNumAudioDevices(True)
-        if outnum + innum == 0:
-            pytest.skip("no available audio devices")
-        devices_out = []
-        for x in range(outnum):
-            name = audio.SDL_GetAudioDeviceName(x, False)
-            assert name is not None
-            devices_out.append(name.decode('utf-8'))
-        devices_in = []
-        for x in range(innum):
-            name = audio.SDL_GetAudioDeviceName(x, True)
-            assert name is not None
-            devices_in.append(name.decode('utf-8'))
-        print("Available audio output devices:")
-        print(devices_out)
-        print()
-        print("Available audio input devices:")
-        print(devices_in)
+        devices = {}
+        # Reset audio subsystem
+        SDL_Quit()
+        SDL_Init(0)
+        for index in range(audio.SDL_GetNumAudioDrivers()):
+            # Get input/output device names for each audio driver
+            drivername = audio.SDL_GetAudioDriver(index)
+            os.environ["SDL_AUDIODRIVER"] = drivername.decode("utf-8")
+            # Need to reinitialize subsystem for each driver
+            SDL_InitSubSystem(SDL_INIT_AUDIO)
+            driver = audio.SDL_GetCurrentAudioDriver()
+            if driver is not None:
+                driver = driver.decode("utf-8")
+                devices[driver] = {'input': [], 'output': []}
+                outnum = audio.SDL_GetNumAudioDevices(False)
+                innum = audio.SDL_GetNumAudioDevices(True)
+                for x in range(outnum):
+                    name = audio.SDL_GetAudioDeviceName(x, False)
+                    assert name is not None
+                    devices[driver]['output'].append(name.decode('utf-8'))
+                for x in range(innum):
+                    name = audio.SDL_GetAudioDeviceName(x, True)
+                    assert name is not None
+                    devices[driver]['input'].append(name.decode('utf-8'))
+            SDL_QuitSubSystem(SDL_INIT_AUDIO)
+        print("Available audio drivers and devices:")
+        for driver in devices.keys():
+            print(driver)
+            print(" - input: {0}".format(str(devices[driver]['input'])))
+            print(" - output: {0}".format(str(devices[driver]['output'])))
 
     def test_SDL_OpenCloseAudioDevice(self):
         #TODO: Add tests for callback
@@ -262,9 +269,10 @@ class TestSDLAudio(object):
             err = SDL_GetError()
             assert deviceid >= 2
             assert isinstance(spec, audio.SDL_AudioSpec)
-            assert spec.format == reqspec.format
-            assert spec.freq == reqspec.freq
-            assert spec.channels == reqspec.channels
+            assert spec.format in audio.AUDIO_FORMATS
+            assert spec.freq > 0
+            assert spec.channels > 0
+            assert spec.samples > 0
             audio.SDL_CloseAudioDevice(deviceid)
 
     @pytest.mark.skip("not implemented")
