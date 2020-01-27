@@ -1,12 +1,16 @@
 import sys
 import pytest
 from ctypes import byref, POINTER, c_int
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING, SDL_GetError
 import itertools
 from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
 from sdl2 import render, video, surface, pixels, blendmode, rect
 from sdl2.ext.pixelaccess import PixelView
 
+# TODO: Ensure all functions in module have corresponding tests
+# TODO: Write tests for more functions
+# TODO: Mostly positive tests, improve this!
 
 _ISPYPY = hasattr(sys, "pypy_version_info")
 if _ISPYPY:
@@ -16,7 +20,6 @@ else:
     dogc = lambda: None
 
 
-# TODO: mostly positive tests, improve this!
 class TestSDLRender(object):
     __tags__ = ["sdl"]
 
@@ -699,11 +702,70 @@ class TestSDLRender(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    def test_SDL_RenderCopyEx(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderDrawPointF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderDrawPointsF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderDrawLineF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderDrawLinesF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderDrawRectF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderDrawRectsF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderFillRectF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderFillRectsF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderCopyF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderCopyExF(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     def test_SDL_RenderReadPixels(self):
         pass
 
     @pytest.mark.skip("not implemented")
     def test_SDL_RenderPresent(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_RenderFlush(self):
         pass
 
     @pytest.mark.skip("not implemented")

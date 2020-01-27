@@ -3,7 +3,7 @@ from ctypes import Structure, POINTER, c_int, c_char_p, c_void_p, c_float, \
 from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
-from .rect import SDL_Point, SDL_Rect
+from .rect import SDL_Point, SDL_FPoint, SDL_Rect, SDL_FRect
 from .surface import SDL_Surface
 from .video import SDL_Window
 
@@ -35,8 +35,13 @@ __all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
            "SDL_RenderClear", "SDL_RenderDrawPoint", "SDL_RenderDrawPoints",
            "SDL_RenderDrawLine", "SDL_RenderDrawLines", "SDL_RenderDrawRect",
            "SDL_RenderDrawRects", "SDL_RenderFillRect", "SDL_RenderFillRects",
-           "SDL_RenderCopy", "SDL_RenderCopyEx", "SDL_RenderReadPixels",
-           "SDL_RenderPresent", "SDL_DestroyTexture", "SDL_DestroyRenderer",
+           "SDL_RenderCopy", "SDL_RenderCopyEx", "SDL_RenderDrawPointF",
+           "SDL_RenderDrawPointsF", "SDL_RenderDrawLineF",
+           "SDL_RenderDrawLinesF", "SDL_RenderDrawRectF",
+           "SDL_RenderDrawRectsF", "SDL_RenderFillRectF",
+           "SDL_RenderFillRectsF", "SDL_RenderCopyF", "SDL_RenderCopyExF",
+           "SDL_RenderReadPixels", "SDL_RenderPresent",
+           "SDL_DestroyTexture", "SDL_DestroyRenderer", "SDL_RenderFlush",
            "SDL_UpdateYUVTexture", "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
            "SDL_GetRendererOutputSize", "SDL_RenderGetIntegerScale",
            "SDL_RenderSetIntegerScale", "SDL_RenderGetMetalLayer",
@@ -127,10 +132,21 @@ SDL_RenderFillRect = _bind("SDL_RenderFillRect", [POINTER(SDL_Renderer), POINTER
 SDL_RenderFillRects = _bind("SDL_RenderFillRects", [POINTER(SDL_Renderer), POINTER(SDL_Rect), c_int], c_int)
 SDL_RenderCopy = _bind("SDL_RenderCopy", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(SDL_Rect)], c_int)
 SDL_RenderCopyEx = _bind("SDL_RenderCopyEx", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(SDL_Rect), c_double, POINTER(SDL_Point), SDL_RendererFlip], c_int)
+SDL_RenderDrawPointF = _bind("SDL_RenderDrawPointF", [POINTER(SDL_Renderer), c_float, c_float], c_int, added='2.0.10')
+SDL_RenderDrawPointsF = _bind("SDL_RenderDrawPointsF", [POINTER(SDL_Renderer), POINTER(SDL_FPoint), c_int], c_int, added='2.0.10')
+SDL_RenderDrawLineF = _bind("SDL_RenderDrawLineF", [POINTER(SDL_Renderer), c_float, c_float, c_float, c_float], c_int, added='2.0.10')
+SDL_RenderDrawLinesF = _bind("SDL_RenderDrawLinesF", [POINTER(SDL_Renderer), POINTER(SDL_FPoint), c_int], c_int, added='2.0.10')
+SDL_RenderDrawRectF = _bind("SDL_RenderDrawRectF", [POINTER(SDL_Renderer), POINTER(SDL_FRect)], c_int, added='2.0.10')
+SDL_RenderDrawRectsF = _bind("SDL_RenderDrawRectsF", [POINTER(SDL_Renderer), POINTER(SDL_FRect), c_int], c_int, added='2.0.10')
+SDL_RenderFillRectF = _bind("SDL_RenderFillRectF", [POINTER(SDL_Renderer), POINTER(SDL_FRect)], c_int, added='2.0.10')
+SDL_RenderFillRectsF = _bind("SDL_RenderFillRectsF", [POINTER(SDL_Renderer), POINTER(SDL_FRect), c_int], c_int, added='2.0.10')
+SDL_RenderCopyF = _bind("SDL_RenderCopyF", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(SDL_FRect)], c_int, added='2.0.10')
+SDL_RenderCopyExF = _bind("SDL_RenderCopyExF", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(SDL_FRect), c_double, POINTER(SDL_FPoint), SDL_RendererFlip], c_int, added='2.0.10')
 SDL_RenderReadPixels = _bind("SDL_RenderReadPixels", [POINTER(SDL_Renderer), POINTER(SDL_Rect), Uint32, c_void_p, c_int], c_int)
 SDL_RenderPresent = _bind("SDL_RenderPresent", [POINTER(SDL_Renderer)])
 SDL_DestroyTexture = _bind("SDL_DestroyTexture", [POINTER(SDL_Texture)])
 SDL_DestroyRenderer = _bind("SDL_DestroyRenderer", [POINTER(SDL_Renderer)])
+SDL_RenderFlush = _bind("SDL_RenderFlush", [POINTER(SDL_Renderer)], c_int, added='2.0.10')
 SDL_GL_BindTexture = _bind("SDL_GL_BindTexture", [POINTER(SDL_Texture), POINTER(c_float), POINTER(c_float)], c_int)
 SDL_GL_UnbindTexture = _bind("SDL_GL_UnbindTexture", [POINTER(SDL_Texture)], c_int)
 SDL_UpdateYUVTexture = _bind("SDL_UpdateYUVTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(Uint8), c_int, POINTER(Uint8), c_int, POINTER(Uint8), c_int], c_int)

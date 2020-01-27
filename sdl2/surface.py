@@ -7,7 +7,7 @@ from .pixels import SDL_PixelFormat, SDL_Palette
 from .rwops import SDL_RWops, SDL_RWFromFile
 
 __all__ = ["SDL_SWSURFACE", "SDL_PREALLOC", "SDL_RLEACCEL", "SDL_DONTFREE",
-           "SDL_MUSTLOCK", "SDL_BlitMap", "SDL_Surface", "SDL_Blit",
+           "SDL_SIMD_ALIGNED", "SDL_MUSTLOCK", "SDL_BlitMap", "SDL_Surface", "SDL_Blit",
            "SDL_CreateRGBSurface", "SDL_CreateRGBSurfaceFrom", "SDL_FreeSurface",
            "SDL_SetSurfacePalette", "SDL_LockSurface", "SDL_UnlockSurface",
            "SDL_LoadBMP_RW", "SDL_LoadBMP", "SDL_SaveBMP_RW", "SDL_SaveBMP",
@@ -29,6 +29,7 @@ SDL_SWSURFACE = 0
 SDL_PREALLOC = 0x00000001
 SDL_RLEACCEL = 0x00000002
 SDL_DONTFREE = 0x00000004
+SDL_SIMD_ALIGNED = 0x00000008
 
 SDL_MUSTLOCK = lambda s: ((s.flags & SDL_RLEACCEL) != 0)
 

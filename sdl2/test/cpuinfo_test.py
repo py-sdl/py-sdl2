@@ -75,3 +75,14 @@ class TestSDLCPUInfo(object):
     def test_SDL_HasNEON(self):
         ret = cpuinfo.SDL_HasNEON()
         assert ret in (0, 1)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_SIMDGetAlignment(self):
+        ret = cpuinfo.SDL_SIMDGetAlignment()
+        assert ret % 8 == 0 # Should be multiple of 8
+
+    @pytest.mark.skip("not implemented (no clue how)")
+    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+    def test_SDL_SIMDAllocFree(self):
+        # Should test both SDL_SIMDAlloc and SDL_SIMDFree
+        pass

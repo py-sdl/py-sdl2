@@ -107,6 +107,8 @@ def SDL_ISPIXELFORMAT_ALPHA(pformat):
               (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_BGRA))))
 
 SDL_ISPIXELFORMAT_FOURCC = lambda fmt: ((fmt) and (SDL_PIXELFLAG(fmt) != 1))
+
+SDL_PixelFormatEnum = c_int
 SDL_PIXELFORMAT_UNKNOWN = 0
 SDL_PIXELFORMAT_INDEX1LSB = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_INDEX1,
                                                    SDL_BITMAPORDER_4321,

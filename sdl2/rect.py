@@ -1,8 +1,9 @@
-from ctypes import Structure, c_int, POINTER
+from ctypes import Structure, c_int, c_float, POINTER
 from .dll import _bind
 from .stdinc import SDL_bool
 
-__all__ = ["SDL_Point", "SDL_Rect", "SDL_RectEmpty", "SDL_RectEquals",
+__all__ = ["SDL_Point", "SDL_FPoint", "SDL_Rect", "SDL_FRect",
+           "SDL_RectEmpty", "SDL_RectEquals",
            "SDL_HasIntersection", "SDL_IntersectRect", "SDL_UnionRect",
            "SDL_EnclosePoints", "SDL_IntersectRectAndLine",
            "SDL_PointInRect"
@@ -33,6 +34,30 @@ class SDL_Point(Structure):
         return self.x != pt.x or self.y != pt.y
 
 
+class SDL_FPoint(Structure):
+    _fields_ = [("x", c_float), ("y", c_float)]
+
+    def __init__(self, x=0.0, y=0.0):
+        super(SDL_FPoint, self).__init__()
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return "SDL_FPoint(x=%.3f, y=%.3f)" % (self.x, self.y)
+
+    def __copy__(self):
+        return SDL_FPoint(self.x, self.y)
+
+    def __deepcopy__(self, memo):
+        return SDL_FPoint(self.x, self.y)
+
+    def __eq__(self, pt):
+        return self.x == pt.x and self.y == pt.y
+
+    def __ne__(self, pt):
+        return self.x != pt.x or self.y != pt.y
+
+
 class SDL_Rect(Structure):
     _fields_ = [("x", c_int), ("y", c_int),
                 ("w", c_int), ("h", c_int)]
@@ -55,12 +80,46 @@ class SDL_Rect(Structure):
         return SDL_Rect(self.x, self.y, self.w, self.h)
 
     def __eq__(self, rt):
-        return self.x == rt.x and self.y == rt.y and \
-            self.w == rt.w and self.h == rt.h
+        origin_equal = self.x == rt.x and self.y == rt.y
+        size_equal = self.w == rt.w and self.h == rt.h
+        return origin_equal and size_equal
 
     def __ne__(self, rt):
-        return self.x != rt.x or self.y != rt.y or \
-            self.w != rt.w or self.h != rt.h
+        origin_equal = self.x == rt.x and self.y == rt.y
+        size_equal = self.w == rt.w and self.h == rt.h
+        return not (origin_equal and size_equal)
+
+
+class SDL_FRect(Structure):
+    _fields_ = [("x", c_float), ("y", c_float),
+                ("w", c_float), ("h", c_float)]
+
+    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
+        super(SDL_FRect, self).__init__()
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+
+    def __repr__(self):
+        dims = (self.x, self.y, self.w, self.h)
+        return "SDL_FRect(x=%.3f, y=%.3f, w=%.3f, h=%.3f)" % dims
+
+    def __copy__(self):
+        return SDL_FRect(self.x, self.y, self.w, self.h)
+
+    def __deepcopy__(self, memo):
+        return SDL_FRect(self.x, self.y, self.w, self.h)
+
+    def __eq__(self, rt):
+        origin_equal = self.x == rt.x and self.y == rt.y
+        size_equal = self.w == rt.w and self.h == rt.h
+        return origin_equal and size_equal
+
+    def __ne__(self, rt):
+        origin_equal = self.x == rt.x and self.y == rt.y
+        size_equal = self.w == rt.w and self.h == rt.h
+        return not (origin_equal and size_equal)
 
 
 SDL_RectEmpty = lambda x: ((not x) or (x.w <= 0) or (x.h <= 0))

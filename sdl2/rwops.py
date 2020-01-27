@@ -2,7 +2,7 @@ import io
 import sys
 from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_size_t, c_void_p, \
     c_char_p, memmove, string_at, Union, _Pointer
-from .dll import _bind
+from .dll import _bind, version
 from .stdinc import Sint64, Uint8, Uint16, Uint32, Uint64, SDL_bool
 
 __all__ = ["SDL_RWOPS_UNKNOWN", "SDL_RWOPS_WINFILE", "SDL_RWOPS_STDFILE",
@@ -53,7 +53,11 @@ SDL_AllocRW = _bind("SDL_AllocRW", None, POINTER(SDL_RWops))
 SDL_FreeRW = _bind("SDL_FreeRW", [POINTER(SDL_RWops)])
 
 SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t), c_int], c_void_p, added='2.0.6')
-SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, "rb"), ds, 1)
+# SDL_LoadFile was a macro in SDL <= 2.0.9, added as a function in 2.0.10
+if version >= 2010:
+    SDL_LoadFile = _bind("SDL_LoadFile", [c_char_p, c_size_t], c_void_p)
+else:
+    SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, "rb"), ds, 1)
 
 RW_SEEK_SET = 0
 RW_SEEK_CUR = 1
@@ -66,13 +70,24 @@ def _ptr2obj(ptr):
         return ptr.contents
     return ptr
 
-_p = _ptr2obj # allow pointers to be passed directly to these functions
-SDL_RWsize = lambda ctx: _p(ctx).size(_p(ctx))
-SDL_RWseek = lambda ctx, offset, whence: _p(ctx).seek(_p(ctx), offset, whence)
-SDL_RWtell = lambda ctx: _p(ctx).seek(_p(ctx), 0, RW_SEEK_CUR)
-SDL_RWread = lambda ctx, ptr, size, n: _p(ctx).read(_p(ctx), ptr, size, n)
-SDL_RWwrite = lambda ctx, ptr, size, n: _p(ctx).write(_p(ctx), ptr, size, n)
-SDL_RWclose = lambda ctx: _p(ctx).close(_p(ctx))
+# The following set of functions were macros in SDL <= 2.0.9 but became full
+# functions in SDL 2.0.10. Lambda functions are to mimic macro behaviour with
+# earlier SDL2 versions.
+if version >= 2010:
+    SDL_RWsize = _bind("SDL_RWsize", [POINTER(SDL_RWops)], Sint64)
+    SDL_RWseek = _bind("SDL_RWseek", [POINTER(SDL_RWops), Sint64, c_int], Sint64)
+    SDL_RWtell = _bind("SDL_RWtell", [POINTER(SDL_RWops)], Sint64)
+    SDL_RWread = _bind("SDL_RWread", [POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t], c_size_t)
+    SDL_RWwrite = _bind("SDL_RWwrite", [POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t], c_size_t)
+    SDL_RWclose = _bind("SDL_RWclose", [POINTER(SDL_RWops)], c_int)
+else:
+    _p = _ptr2obj # allow pointers to be passed directly to these functions
+    SDL_RWsize = lambda ctx: _p(ctx).size(_p(ctx))
+    SDL_RWseek = lambda ctx, offset, whence: _p(ctx).seek(_p(ctx), offset, whence)
+    SDL_RWtell = lambda ctx: _p(ctx).seek(_p(ctx), 0, RW_SEEK_CUR)
+    SDL_RWread = lambda ctx, ptr, size, n: _p(ctx).read(_p(ctx), ptr, size, n)
+    SDL_RWwrite = lambda ctx, ptr, size, n: _p(ctx).write(_p(ctx), ptr, size, n)
+    SDL_RWclose = lambda ctx: _p(ctx).close(_p(ctx))
 
 SDL_ReadU8 = _bind("SDL_ReadU8", [POINTER(SDL_RWops)], Uint8)
 SDL_ReadLE16 = _bind("SDL_ReadLE16", [POINTER(SDL_RWops)], Uint16)
