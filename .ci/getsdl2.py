@@ -58,6 +58,13 @@ libversions = {
         'SDL2_ttf': '2.0.14',
         'SDL2_image': '2.0.1',
         'SDL2_gfx': '1.0.4'
+    },
+    '2.0.5': {
+        'SDL2': '2.0.5',
+        'SDL2_mixer': '2.0.1',
+        'SDL2_ttf': '2.0.14',
+        'SDL2_image': '2.0.1',
+        'SDL2_gfx': '1.0.4'
     }
 }
 

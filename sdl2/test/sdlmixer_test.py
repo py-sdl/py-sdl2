@@ -5,7 +5,7 @@ import operator
 from ctypes import byref, c_int, c_uint16
 import sdl2
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
-from sdl2 import SDL_Init, SDL_Quit, rwops, version
+from sdl2 import SDL_Init, SDL_Quit, rwops, version, audio
 if sys.version_info[0] >= 3:
     from functools import reduce
 
@@ -55,6 +55,23 @@ def test_Mix_OpenAudio():
     sdlmixer.Mix_Quit()
     SDL_Quit()
 
+@pytest.mark.skipif(sdlmixer.dll.version < 2002, reason="Added in 2.0.2")
+def test_Mix_OpenAudioDevice():
+    SDL_Init(sdl2.SDL_INIT_AUDIO)
+    sdlmixer.Mix_Init(0)
+    # Get names of all audio output devices for current driver
+    ndevices = audio.SDL_GetNumAudioDevices(0)
+    devices = [audio.SDL_GetAudioDeviceName(i, 0) for i in range(0, ndevices)]
+    # Open and close each avaliable output device
+    fmt = sdlmixer.MIX_DEFAULT_FORMAT
+    flags = audio.SDL_AUDIO_ALLOW_ANY_CHANGE
+    for device in devices:
+        ret = sdlmixer.Mix_OpenAudioDevice(22050, fmt, 2, 1024, device, flags)
+        assert ret == 0
+        sdlmixer.Mix_CloseAudio()
+    sdlmixer.Mix_Quit()
+    SDL_Quit()
+
 
 class TestSDLMixer(object):
     __tags__ = ["sdl", "sdlmixer"]
@@ -98,7 +115,7 @@ class TestSDLMixer(object):
         assert ret != 0
         assert freq.value > 0 
         assert channels.value > 0
-        assert fmt.value in sdl2.audio.AUDIO_FORMATS
+        assert fmt.value in audio.AUDIO_FORMATS
 
     def test_Mix_AllocateChannels(self):
         # Get number currently allocated
@@ -117,10 +134,18 @@ class TestSDLMixer(object):
         for i in range(0, num):
             name = sdlmixer.Mix_GetChunkDecoder(i)
             assert name is not None
-            assert sdlmixer.Mix_HasChunkDecoder(name) == SDL_TRUE
             decoders.append(name.decode('utf-8'))
-        assert sdlmixer.Mix_HasChunkDecoder(b'blah') == SDL_FALSE
         print("Available MixChunk decoders:\n{0}".format(str(decoders)))
+
+    @pytest.mark.skipif(sdlmixer.dll.version < 2002, reason="Added in 2.0.2")
+    def test_Mix_HasChunkDecoder(self):
+        num = sdlmixer.Mix_GetNumChunkDecoders()
+        assert num > 0
+        for i in range(0, num):
+            name = sdlmixer.Mix_GetChunkDecoder(i)
+            assert name is not None
+            assert sdlmixer.Mix_HasChunkDecoder(name) == SDL_TRUE
+        assert sdlmixer.Mix_HasChunkDecoder(b'blah') == SDL_FALSE
 
     def test_MusicDecoders(self):
         decoders = []

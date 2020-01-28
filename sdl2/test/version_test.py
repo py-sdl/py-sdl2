@@ -25,7 +25,7 @@ class TestSDLVersion(object):
         assert type(v) == version.SDL_version
         assert v.major == 2
         assert v.minor == 0
-        assert v.patch >= 6
+        assert v.patch >= 5
 
     def test_SDL_VERSIONNUM(self):
         assert version.SDL_VERSIONNUM(1, 2, 3) == 1203
