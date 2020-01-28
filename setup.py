@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import re
 from distutils.core import setup
 
 VERSION = "0.9.6"
@@ -13,10 +14,11 @@ if __name__ == "__main__":
         VERSION = VERSION.replace("-beta", "b")
         VERSION = VERSION.replace("-rc", "r")
 
-    fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.rst")
-    readme = open(fname, "r")
-    long_desc = readme.read()
-    readme.close()
+    fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.md")
+    with open(fname, "r") as readme:
+        long_desc = readme.read()
+        # Strip out CI badges for PyPI releases
+        long_desc = re.sub(r"\[!\[Build Status(.*?)\n", "", long_desc)
 
     setupdata = {
         "name":  "PySDL2",
@@ -45,11 +47,10 @@ if __name__ == "__main__":
             "Programming Language :: Python",
             "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.2",
-            "Programming Language :: Python :: 3.3",
-            "Programming Language :: Python :: 3.4",
             "Programming Language :: Python :: 3.5",
             "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
             "Topic :: Software Development :: Libraries :: Python Modules",
