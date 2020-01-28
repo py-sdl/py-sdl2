@@ -96,8 +96,8 @@ class TestSDLMixer(object):
         fmt = c_uint16(0)
         ret = sdlmixer.Mix_QuerySpec(byref(freq), byref(fmt), byref(channels))
         assert ret != 0
-        assert freq > 0 
-        assert channels > 0
+        assert freq.value > 0 
+        assert channels.value > 0
         assert fmt.value in sdl2.audio.AUDIO_FORMATS
 
     def test_Mix_AllocateChannels(self):
