@@ -1,12 +1,12 @@
 import os
 import sys
 import pytest
-import ctypes
-import sdl2
 import operator
+from ctypes import byref, c_int, c_uint16
+import sdl2
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2 import SDL_Init, SDL_Quit, rwops, version
-if sys.version_info >= 3:
+if sys.version_info[0] >= 3:
     from functools import reduce
 
 sdlmixer = pytest.importorskip("sdl2.sdlmixer")
@@ -31,7 +31,8 @@ def test_Mix_Init():
         'MOD': sdlmixer.MIX_INIT_MOD,
         'MP3': sdlmixer.MIX_INIT_MP3,
         'OGG': sdlmixer.MIX_INIT_OGG,
-        'MID': sdlmixer.MIX_INIT_MID
+        'MID': sdlmixer.MIX_INIT_MID,
+        'OPUS': sdlmixer.MIX_INIT_OPUS
     }
     for lib in libs.keys():
         flags = libs[lib]
@@ -68,7 +69,8 @@ class TestSDLMixer(object):
             'MOD': sdlmixer.MIX_INIT_MOD,
             'MP3': sdlmixer.MIX_INIT_MP3,
             'OGG': sdlmixer.MIX_INIT_OGG,
-            'MID': sdlmixer.MIX_INIT_MID
+            'MID': sdlmixer.MIX_INIT_MID,
+            'OPUS': sdlmixer.MIX_INIT_OPUS
         }
         for lib in libs.keys():
             flags = libs[lib]
@@ -89,13 +91,24 @@ class TestSDLMixer(object):
         sdlmixer.Mix_Quit()
         SDL_Quit()
 
-    @pytest.mark.skip("not implemented")
     def test_Mix_QuerySpec(self):
-        pass
+        freq, channels = c_int(0), c_int(0)
+        fmt = c_uint16(0)
+        ret = sdlmixer.Mix_QuerySpec(byref(freq), byref(fmt), byref(channels))
+        assert ret != 0
+        assert freq > 0 
+        assert channels > 0
+        assert fmt.value in sdl2.audio.AUDIO_FORMATS
 
-    @pytest.mark.skip("not implemented")
     def test_Mix_AllocateChannels(self):
-        pass
+        # Get number currently allocated
+        current = sdlmixer.Mix_AllocateChannels(-1)
+        assert current > 0
+        # Try allocating a single channel
+        sdlmixer.Mix_AllocateChannels(1)
+        assert sdlmixer.Mix_AllocateChannels(-1) == 1
+        # Reset allocated channels
+        sdlmixer.Mix_AllocateChannels(current)
 
     def test_ChunkDecoders(self):
         decoders = []
