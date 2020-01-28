@@ -26,11 +26,16 @@ class TestSDLGamecontroller(object):
             b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
             b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
         )
-        n1 = gamecontroller.SDL_GameControllerNumMappings()
-        ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
-        assert ret != -1
-        n2 = gamecontroller.SDL_GameControllerNumMappings()
-        assert n2 == n1 + 1
+        if sdl2.dll.version >= 2006:
+            n1 = gamecontroller.SDL_GameControllerNumMappings()
+            ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+            assert ret != -1
+            n2 = gamecontroller.SDL_GameControllerNumMappings()
+            assert n2 == n1 + 1
+        else:
+            # NumMappings not available before 2.0.6
+            ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+            assert ret != -1
 
     def test_SDL_GameControllerMappingForGUID(self):
         newmap = (
@@ -161,21 +166,26 @@ class TestSDLGamecontroller(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_GameControllerGetVendor(self):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_GameControllerGetProduct(self):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_GameControllerGetProductVersion(self):
         pass
 
+    @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_GameControllerNumMappings(self):
         num = gamecontroller.SDL_GameControllerNumMappings()
         assert num > 0
 
+    @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_GameControllerMappingForIndex(self):
         newmap = (
             b"030000005e0400002700000006010000,Microsoft SideWinder,"
