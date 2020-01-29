@@ -8,7 +8,7 @@ from ctypes.util import find_library
 # Prints warning without stack or line info
 def prettywarn(msg, warntype):
     original = warnings.showwarning
-    def _warning(message, category = Warning, filename = '', lineno = -1):
+    def _warning(message, category, filename, lineno, file=None, line=None):
         print(message)
     warnings.showwarning = _warning
     warnings.warn(msg, warntype)
