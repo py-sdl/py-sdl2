@@ -4,13 +4,48 @@ This describes the latest changes between the PySDL2 releases.
 
 0.9.7
 -----
-Released on 2017-XX-XX.
+Released on 2020-XX-XX.
 
-* The minimum required SDL version is 2.0.7
-* The minimum required SDL_mixer version is 2.0.2
-* The minimum required SDL_image version is 2.0.2
+* The minimum required SDL version is 2.0.5
+* The minimum required SDL_ttf version is 2.0.14
+* The minimum required SDL_mixer version is 2.0.1
+* The minimum required SDL_image version is 2.0.1
 
-* updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.7)
+* Improved compatibility with older SDL2 releases by raising informative
+  exceptions whenever a function requiring a newer SDL2 binary is called
+* added support for loading SDL2 .framework binaries on macOS
+* added built-in support for pip installation of SDL2 binaries on macOS
+  and Windows using pysdl2-dll
+
+* fixed issue #75: :func:`sdl2.SDL_JoystickGetGUIDString()` and
+  :func:`sdl2.SDL_GameControllerMappingForGUID()` no longer cause a segfault
+  on Python < 3.8
+* fixed bug preventing use of background color with wrapped text using
+  :meth:`sdl2.ext.FontManager.render()` (PR #134)
+* fixed issue #112: allow easy moving and resizing of :obj:`sdl2.ext.Window()`
+  objects through 'position' and 'size' attributes, added 'open' and 'close'
+  methods to Window objects
+* fixed issue #126: the write method for RW objects created with
+  :func:`sdl2.rw_from_object()` now returns the correct value
+* fixed issue #130: SDL_RW* functions now accept pointers to RW objects
+* fixed issue #135: :func:`sdl2.SDL_GetPrefPath()` and
+  :func:`sdl2.SDL_GetPrefPath()` now return bytestrings instead of pointers
+  to strings.
+* fixed issue #136: :class:`sdl2.SysWMmsg` now properly defined and accessable
+  for syswm events.
+* fixed issue #148: added support for loading SDL2 .so binaries with numeric
+  suffixes on Unix-like OSes (e.g. 'libSDL2.so.2')
+* fixed issue #152: restored compatibility with recent versions of PyPy
+* updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.10)
+* updated :mod:`sdl2.sdlttf` to include the latest changes of SDL2_ttf (release
+  2.0.15)
+* updated :mod:`sdl2.sdlmixer` to include the latest changes of SDL2_mixer
+  (release 2.0.4)
+* updated :mod:`sdl2.sdlimage` to include the latest changes of SDL2_image
+  (release 2.0.5)
+
+Big thanks to all the GitHub users who filed bug reports and submitted pull
+requests for this release.
 
 0.9.6
 -----
