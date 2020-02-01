@@ -151,4 +151,9 @@ def load_image(fname, enforce=None):
             if ret != 0:
                 raise SDLError()
 
+            # If the image has a single transparent palette index, set
+            # that index as the color key to make blitting correct.
+            if 'transparency' in image.info and isinstance(image.info['transparency'], int):
+                sdl2.SDL_SetColorKey(imgsurface, True, image.info['transparency'])
+
     return imgsurface
