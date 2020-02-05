@@ -9,7 +9,9 @@ On importing...
 ---------------
 ... my script fails and complains that a SDL2 library could not be found!
     
-   Do you have the libraries properly installed? Did you follow the operating
+   Do you have the libraries properly installed? If on macOS or Windows, 
+   try running ``pip install pysdl2-dll`` and opening a fresh terminal
+   to fix the problem. If on Linux or similar, did you follow the operating
    system's way of installing or registering libraries? If you placed the
    libraries in some folder, make sure that the ``PYSDL2_DLL_PATH``
    environment variable points to the correct location.
@@ -60,4 +62,7 @@ Font handling...
    or typeface. It's not its job and PySDL2 likewise does not provide such
    functionality. If you need improved font detection support, you might want
    to take a look at the sysfont module of the python-utils project, which can
-   be found at https://bitbucket.org/marcusva/python-utils/.
+   be found at https://bitbucket.org/marcusva/python-utils/. That said, it's
+   usually a bad idea for a projects to rely on system fonts that may not be
+   available on every computer: finding a free-use font you like and bundling
+   it with your code is much safer.

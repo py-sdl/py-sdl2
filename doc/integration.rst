@@ -13,16 +13,37 @@ bundle.
 
 .. _importing-pysdl2:
 
-Importing
----------
+Bundling SDL2 with pysdl2-dll
+-----------------------------
 The :mod:`sdl2` package relies on an external SDL2 library for creating the
 wrapper functions. This means that the user needs to have SDL2 installed or
 that you ship a SDL2 library with your project.
 
+For macOS and Windows, the easiest and most flexible way to bundle and install
+the SDL2 binaries with your project is via the ``pysdl2-dll`` package on PyPI,
+which pysdl2 will load automatically if available. This approach allows you to
+add the SDL2 binaries as a dependency for your project in a requirements.txt
+file, a setup.py file, a Pipfile, or any other form of Python dependency
+tracking. You can also specify a minimum version of the SDL2 binaries for your
+project using this mechanism if your project depends on a function not
+available in earlier versions of SDL2.
+
+At present, pysdl2-dll does not provide binaries for Linux or other Unix-like
+OSes due to a lack of official pre-compiled releases, though Linux support
+may be added in the future with an appropriate build script and buildbot. On
+these platforms, you can require users to install the latest available SDL2
+binaries using their preferred package manager.
+
+Note that although it only provides binaries for certain platforms, pysdl2-dll
+will install without error on any OS, making it safe to add as a dependency for
+cross-platform projects. 
+
+Bundling SDL2 without pysdl2-dll
+--------------------------------
 If the user has a SDL2 library installed on the target system, the
 :mod:`ctypes` hooks of :mod:`sdl2` try to find it in the OS-specific standard
 locations via :func:`ctypes.util.find_library`. If you are going to ship your
-own SDL2 library with the project or can not rely on the standard mechanism of
+own SDL2 library with the project or cannot rely on the standard mechanism of
 :mod:`ctypes`, it is also possible to set the environment variable
 :envvar:`PYSDL2_DLL_PATH`, which shall point to the directory of the SDL2
 library or consist of a list of directories, in which the SDL2 libraries can
@@ -54,8 +75,8 @@ variable :envvar:`PYSDL2_DLL_PATH` before starting Python. ::
 You also can set the environment variable within Python using
 :data:`os.environ`. ::
 
-  os.environ["PYSDL2_DLL_PATH"] = "C:\\path\\to\\fancy_project\\third_party"
-  os.environ["PYSDL2_DLL_PATH"] = "/path/to/fancy_project/third_party"
+  dllpath = os.path.join('path', 'to', 'fancy_project', 'third_party')
+  os.environ["PYSDL2_DLL_PATH"] = dllpath
 
 .. note::
 
@@ -71,7 +92,21 @@ PySDL2 tries to provide interfaces to the most recent versions of the
 SDL2 libraries. Sometimes this means that PySDL2 tries to test for
 functions that might not be available for your very own project or that
 are not available on the target system due to a version of the specific
-library. To check, if the SDL2 libraries do not provide certain
-functions, you can enable the specific warnings for them.
+library.
 
->>> python -W"module"::ImportWarning:sdl2.dll yourfile.py
+If a PySDL2 function is called that requires a newer version
+of a binary than the one currently being used, it will raise a
+RuntimeWarning indicating the minimum version of SDL2 (or SDL2_mixer,
+or SDL2_ttf, etc.) required to use the called function. Additionally,
+if you already know what minimum versions your project needs, you can
+check the linked binary versions at runtime: ::
+
+  if not (sdl2.dll.version >= 2008 and sdl2.sdlttf.dll.version >= 2015):
+    err = ("This project requires SDL2 >= 2.0.8 and SDL2_ttf >= 2.0.15. "
+     "Please update your SDL2 binaries and relaunch.")
+    raise RuntimeError(err)
+
+Binary version numbers are stored as 4-digit integers, with the first digit
+being the major release, the second digit being the minor release, and the
+last two digits indicating the patch level. Thus, SDL2 2.0.10 would be
+version 2010 and SDL2 2.0.6 would be 2006.

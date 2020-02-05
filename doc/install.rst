@@ -6,7 +6,7 @@ various target platforms.
 Getting the sources
 -------------------
 You can download the official releases of PySDL2 from
-https://bitbucket.org/marcusva/py-sdl2/downloads. Download the most
+https://github.com/marcusva/py-sdl2/releases. Download the most
 recent release, unpack it and make sure that you installed the relevant
 prerequisites before continuing with the installation.
 
@@ -17,7 +17,7 @@ provide you full access to all of its features.
 
 You must have at least one of the following Python versions installed:
 
-* Python 2.7, 3.2+     (http://www.python.org)
+* Python 2.7, 3.5+     (http://www.python.org)
 * PyPy 1.8.0+          (http://www.pypy.org)
 
 Other Python versions or Python implementations might work, but are
@@ -26,7 +26,8 @@ distribution.
 
 You need to have a working SDL2 library on your target system. You can obtain
 the source code (to build it yourself) or a prebuilt version at
-http://www.libsdl.org.
+http://www.libsdl.org. Alternatively, on macOS and Windows, you can install
+the SDL2 binaries for PySDL2 using pip via the pysdl2-dll package.
 
 PySDL2 also offers support for the following SDL-related libraries:
 
@@ -35,7 +36,7 @@ PySDL2 also offers support for the following SDL-related libraries:
 * SDL2_ttf               (http://www.libsdl.org/projects/SDL_ttf/)
 * SDL2_gfx               (http://www.ferzkopp.net/Software/SDL_gfx-2.0/)
 
-Those are optional though and only necessary, if you want to use
+Those are optional though and only necessary if you want to use
 :mod:`sdl2.sdlimage`, :mod:`sdl2.sdlmixer`, :mod:`sdl2.sdlttf` or
 :mod:`sdl2.sdlgfx`.
 
@@ -73,13 +74,8 @@ for bourne shell compatibles or ::
 
    setenv PYTHONPATH /path/to/pysdl2:$PYTHONPATH
 
-for C shell compatibles. You can omit the `:$PYTHONPATH``, if you did not use
+for C shell compatibles. You can omit the `:$PYTHONPATH`, if you did not use
 it so far and if your environment settings do not define it.
-
-.. note::
-
-   If you are using IronPython, use ``IRONPYTHONPATH`` instead of
-   ``PYTHONPATH``.
 
 .. note::
 
