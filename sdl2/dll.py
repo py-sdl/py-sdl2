@@ -5,6 +5,26 @@ import warnings
 from ctypes import CDLL, POINTER, Structure, c_uint8
 from ctypes.util import find_library
 
+# Prints warning without stack or line info
+def prettywarn(msg, warntype):
+    original = warnings.showwarning
+    def _warning(message, category, filename, lineno, file=None, line=None):
+        print(message)
+    warnings.showwarning = _warning
+    warnings.warn(msg, warntype)
+    warnings.showwarning = original
+
+# Use DLLs from pysdl2-dll, if installed and DLL path not explicitly set
+try:
+    prepath = os.getenv('PYSDL2_DLL_PATH')
+    import sdl2dll
+    postpath = os.getenv('PYSDL2_DLL_PATH')
+    if prepath != postpath:
+        msg = "UserWarning: Using SDL2 binaries from pysdl2-dll {0}"
+        prettywarn(msg.format(sdl2dll.__version__), UserWarning)
+except ImportError:
+    pass
+
 __all__ = ["DLL", "nullfunc"]
 
 
@@ -32,7 +52,7 @@ def _findlib(libnames, path=None):
 
     searchfor = libnames
     results = []
-    if path:
+    if path and path.lower() != "system":
         # First, find any libraries matching pattern exactly within given path
         for libname in searchfor:
             for subpath in str.split(path, os.pathsep):
