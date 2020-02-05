@@ -36,6 +36,7 @@ Released on 2020-XX-XX.
 * fixed issue #148: added support for loading SDL2 .so binaries with numeric
   suffixes on Unix-like OSes (e.g. 'libSDL2.so.2')
 * fixed issue #152: restored compatibility with recent versions of PyPy
+* fixed transparency issues with pallete indexed PNGs (PR #159)
 * updated :mod:`sdl2` to include the latest changes of SDL2 (release 2.0.10)
 * updated :mod:`sdl2.sdlttf` to include the latest changes of SDL2_ttf (release
   2.0.15)
@@ -90,7 +91,7 @@ Released on 2016-07-07.
 * fixed issue #84: The setter of :attr:`sdl2.ext.Renderer.scale` works properly now
 * fixed issue #85: fix environment-dependent unit tests
 * fixed issue #87: fix incorrect MIX_INIT_* constants in :mod:`sdl2.sdlmixer`
-* fixed issue #88: use PILs `Image.tobyte()instead of the deprecated `Image.tostring()`
+* fixed issue #88: use PILs `Image.tobytes()` instead of the deprecated `Image.tostring()`
 * fixed horizontical and vertical line drawing in :func:`sdl2.ext.line()`
 * fixed a bug in :meth:`sdl2.ext.Renderer.draw_line()` for odd numbers of points
 * dropped IronPython support

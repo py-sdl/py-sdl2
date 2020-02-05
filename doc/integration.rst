@@ -110,3 +110,20 @@ Binary version numbers are stored as 4-digit integers, with the first digit
 being the major release, the second digit being the minor release, and the
 last two digits indicating the patch level. Thus, SDL2 2.0.10 would be
 version 2010 and SDL2 2.0.6 would be 2006.
+
+Known problems with SDL2 binaries
+---------------------------------
+The SDL2 libraries are designed to be highly consistent across platforms, but
+there are some occasional bugs/issues with certain common binaries that can
+result in unexpected problems. Here are the ones we are currently aware of:
+
+**Support for XCF images broken in SDL2_image**
+  Affects: official 32-bit Windows SDL2_image 2.0.5 binaries, all official
+  macOS SDL2_image binaries
+
+**Support for FLAC and MP3 missing by default in SDL2_mixer**
+  Affects: SDL2_mixer installed with Homebrew on macOS
+
+**Support for FLAC/MP3/OGG/MID/MOD broken in SDL2_mixer**
+  Affects: official SDL2_mixer 2.0.2 binaries for macOS and Windows (fixed
+  in 2.0.4)
