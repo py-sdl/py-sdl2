@@ -8,10 +8,10 @@ class TestSDLVersion(object):
     __tags__ = ["sdl"]
 
     def test___version__(self):
-        assert __version__ == "0.9.6"
+        assert __version__ == "0.9.7"
 
     def test_version_info(self):
-        assert version_info == (0, 9, 6, "")
+        assert version_info == (0, 9, 7, "")
 
     def test_SDL_version(self):
         v = version.SDL_version(0, 0, 0)

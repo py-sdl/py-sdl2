@@ -4,7 +4,7 @@ This describes the latest changes between the PySDL2 releases.
 
 0.9.7
 -----
-Released on 2020-XX-XX.
+Released on 2020-02-15.
 
 * The minimum required SDL version is 2.0.5
 * The minimum required SDL_ttf version is 2.0.14

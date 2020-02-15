@@ -4,7 +4,7 @@ import sys
 import re
 from distutils.core import setup
 
-VERSION = "0.9.6"
+VERSION = "0.9.7"
 
 if __name__ == "__main__":
 
