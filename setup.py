@@ -2,7 +2,8 @@
 import os
 import sys
 import re
-from distutils.core import setup
+# from distutils.core import setup
+from setuptools import setup
 
 VERSION = "0.9.7"
 
@@ -25,6 +26,7 @@ if __name__ == "__main__":
         "version": VERSION,
         "description": "Python SDL2 bindings",
         "long_description": long_desc,
+        "long_description_content_type": "text/markdown",
         "author": "Marcus von Appen",
         "author_email": "marcus@sysfault.org",
         "license": "Public Domain / zlib",
