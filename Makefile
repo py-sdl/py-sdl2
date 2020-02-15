@@ -12,8 +12,6 @@ SUBDIRS = \
 	$(top_srcdir)/doc/modules \
 	$(top_srcdir)/examples
 
-INTERPRETERS = python2.7 python3.3 python3.4 python3.5 pypy
-
 all: clean build
 
 dist: clean docs
@@ -59,28 +57,5 @@ docs:
 
 release: dist
 
-runtest:
-	@PYTHONPATH=$(PYTHONPATH) $(PYTHON) -B -m unittest discover sdl2.test -p *test.py -v
-
-testall:
-	@for interp in $(INTERPRETERS); do \
-		PYTHONPATH=$(PYTHONPATH) $$interp -B -m unittest discover sdl2.test -p *test.py -v || true; \
-	done
-
-# Do not run these in production environments! They are for testing
-# purposes only!
-
-buildall: clean
-	@for interp in $(INTERPRETERS); do \
-		$$interp setup.py build; \
-	done
-
-installall:
-	@for interp in $(INTERPRETERS); do \
-		$$interp setup.py install; \
-	done
-
-purge_installs:
-	@for interp in $(INTERPRETERS); do \
-		rm -rf /usr/local/lib/$$interp/site-packages/sdl2*; \
-	done
+test:
+	@$(PYTHON) -B -m pytest -vvl -rxXP
