@@ -82,10 +82,3 @@ it so far and if your environment settings do not define it.
    If you did not install SDL2 using the preferred way for your operation
    system, please read the information about :ref:`importing-pysdl2` in the
    section :doc:`integration`.
-
-Notes on Mercurial usage
-^^^^^^^^^^^^^^^^^^^^^^^^
-The Mercurial version of PySDL2 is not intended to be used in a
-production environment. Interfaces may change from one checkin to
-another, methods, classes or modules can be broken and so on. If you
-want more reliable code, please refer to the official releases.

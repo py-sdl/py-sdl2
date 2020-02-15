@@ -1,6 +1,7 @@
-This software packages was created and is maintained and improved by
+This software package was created and is maintained and improved by
 
 * Marcus von Appen <marcus@sysfault.org>
+* Austin Hurst
 
 with contributions from
 
@@ -14,4 +15,6 @@ Sven Eckelmann, Marcel Rodrigues, Michael McCandless, Andreas Schiefer,
 Franz Schrober, Roger Flores, otus, Mihail Latyshov, Todd Rovito, Bil Bas,
 Dan McCombs, William Manire, Radomir Dopieralski, Joe Polak, Jordan F, DR0ID,
 Filip M. Nowak, David Farler, Max Bareiss, Kenneth Long, Robert Winkler,
-Jones Romao, smea lum, Linus Heckemann, DBLobster, Michael Noronha, mgorny
+Jones Romao, smea lum, Linus Heckemann, DBLobster, Michael Noronha, mgorny,
+Szymon Zmilczak, Bao "Mantle" Rong, Zack Marvel, stillinbeta, Fabian Jarrett,
+Rob Rolls
