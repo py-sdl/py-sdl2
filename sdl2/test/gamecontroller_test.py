@@ -65,11 +65,21 @@ class TestSDLGamecontroller(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_GameControllerTypeForIndex(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerOpen(self):
         pass
 
     @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerName(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_GameControllerGetType(self):
         pass
 
     @pytest.mark.skip("not implemented")
@@ -161,8 +171,18 @@ class TestSDLGamecontroller(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_GameControllerFromPlayerIndex(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
     def test_SDL_GameControllerGetPlayerIndex(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_GameControllerSetPlayerIndex(self):
         pass
 
     @pytest.mark.skip("not implemented")

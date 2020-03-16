@@ -403,8 +403,46 @@ class TestSDLRender(object):
         video.SDL_DestroyWindow(window)
         dogc()
 
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_GetSetTextureScaleMode(self):
+        window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
+                                        video.SDL_WINDOW_HIDDEN)
+        assert isinstance(window.contents, video.SDL_Window)
+        renderer = render.SDL_CreateRenderer(window, -1, self._RENDERFLAGS)
+        assert isinstance(renderer.contents, render.SDL_Renderer)
+
+        tex = render.SDL_CreateTexture(
+            renderer, pixels.SDL_PIXELFORMAT_ARGB8888,
+            render.SDL_TEXTUREACCESS_STREAMING, 10, 10
+        )
+        assert isinstance(tex.contents, render.SDL_Texture)
+
+        modes = (render.SDL_ScaleModeNearest, render.SDL_ScaleModeLinear,
+                 render.SDL_ScaleModeBest)
+        for mode in modes:
+            ret = render.SDL_SetTextureScaleMode(tex, mode)
+            assert ret == 0
+            tmode = render.SDL_ScaleMode()
+            ret = render.SDL_GetTextureScaleMode(tex, byref(tmode))
+            assert ret == 0
+            assert tmode.value == mode
+
+        render.SDL_DestroyTexture(tex)
+        render.SDL_DestroyRenderer(renderer)
+        video.SDL_DestroyWindow(window)
+        dogc()
+
     @pytest.mark.skip("not implemented")
     def test_SDL_UpdateTexture(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_SDL_UpdateYUVTexture(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_LockTextureToSurface(self):
         pass
 
     @pytest.mark.skip("not implemented")

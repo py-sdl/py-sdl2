@@ -6,6 +6,9 @@ from .stdinc import Uint8, Uint16, Uint32, SDL_bool
 SDL_ALPHA_OPAQUE = 255
 SDL_ALPHA_TRANSPARENT = 0
 
+
+SDL_PixelType = c_int
+
 SDL_PIXELTYPE_UNKNOWN = 0
 SDL_PIXELTYPE_INDEX1 = 1
 SDL_PIXELTYPE_INDEX4 = 2
@@ -19,9 +22,15 @@ SDL_PIXELTYPE_ARRAYU32 = 9
 SDL_PIXELTYPE_ARRAYF16 = 10
 SDL_PIXELTYPE_ARRAYF32 = 11
 
+
+SDL_BitmapOrder = c_int
+
 SDL_BITMAPORDER_NONE = 0
 SDL_BITMAPORDER_4321 = 1
 SDL_BITMAPORDER_1234 = 2
+
+
+SDL_PackedOrder = c_int
 
 SDL_PACKEDORDER_NONE = 0
 SDL_PACKEDORDER_XRGB = 1
@@ -33,6 +42,9 @@ SDL_PACKEDORDER_BGRX = 6
 SDL_PACKEDORDER_ABGR = 7
 SDL_PACKEDORDER_BGRA = 8
 
+
+SDL_ArrayOrder = c_int
+
 SDL_ARRAYORDER_NONE = 0
 SDL_ARRAYORDER_RGB = 1
 SDL_ARRAYORDER_RGBA = 2
@@ -40,6 +52,9 @@ SDL_ARRAYORDER_ARGB = 3
 SDL_ARRAYORDER_BGR = 4
 SDL_ARRAYORDER_BGRA = 5
 SDL_ARRAYORDER_ABGR = 6
+
+
+SDL_PackedLayout = c_int
 
 SDL_PACKEDLAYOUT_NONE = 0
 SDL_PACKEDLAYOUT_332 = 1
@@ -50,6 +65,7 @@ SDL_PACKEDLAYOUT_565 = 5
 SDL_PACKEDLAYOUT_8888 = 6
 SDL_PACKEDLAYOUT_2101010 = 7
 SDL_PACKEDLAYOUT_1010102 = 8
+
 
 SDL_FOURCC = lambda a, b, c, d: (ord(a) << 0) | (ord(b) << 8) | (ord(c) << 16) | (ord(d) << 24)
 SDL_DEFINE_PIXELFOURCC = SDL_FOURCC
@@ -129,6 +145,9 @@ SDL_PIXELFORMAT_RGB332 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED8,
                                                 SDL_PACKEDLAYOUT_332, 8, 1)
 SDL_PIXELFORMAT_RGB444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
                                                 SDL_PACKEDORDER_XRGB,
+                                                SDL_PACKEDLAYOUT_4444, 12, 2)
+SDL_PIXELFORMAT_BGR444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
+                                                SDL_PACKEDORDER_XBGR,
                                                 SDL_PACKEDLAYOUT_4444, 12, 2)
 SDL_PIXELFORMAT_RGB555 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
                                                 SDL_PACKEDORDER_XRGB,
@@ -225,6 +244,7 @@ ALL_PIXELFORMATS = (
     SDL_PIXELFORMAT_INDEX8,
     SDL_PIXELFORMAT_RGB332,
     SDL_PIXELFORMAT_RGB444,
+    SDL_PIXELFORMAT_BGR444,
     SDL_PIXELFORMAT_RGB555,
     SDL_PIXELFORMAT_BGR555,
     SDL_PIXELFORMAT_ARGB4444,
@@ -297,6 +317,7 @@ class SDL_Color(Structure):
 
 SDL_Colour = SDL_Color
 
+
 class SDL_Palette(Structure):
     _fields_ = [("ncolors", c_int),
                 ("colors", POINTER(SDL_Color)),
@@ -326,6 +347,7 @@ SDL_PixelFormat._fields_ = \
      ("Ashift", Uint8),
      ("refcount", c_int),
      ("next", POINTER(SDL_PixelFormat))]
+
 
 SDL_GetPixelFormatName = _bind("SDL_GetPixelFormatName", [Uint32], c_char_p)
 SDL_PixelFormatEnumToMasks = _bind("SDL_PixelFormatEnumToMasks", [Uint32, POINTER(c_int), POINTER(Uint32), POINTER(Uint32), POINTER(Uint32), POINTER(Uint32)], SDL_bool)

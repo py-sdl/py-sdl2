@@ -72,6 +72,11 @@ class TestSDLCPUInfo(object):
         ret = cpuinfo.SDL_HasAVX512F()
         assert ret in (0, 1)
 
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_HasARMSIMD(self):
+        ret = cpuinfo.SDL_HasARMSIMD()
+        assert ret in (0, 1)
+
     @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_HasNEON(self):
         ret = cpuinfo.SDL_HasNEON()

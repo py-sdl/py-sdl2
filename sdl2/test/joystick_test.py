@@ -220,6 +220,11 @@ class TestSDLJoystick(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_JoystickFromPlayerIndex(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     def test_SDL_JoystickGetVendor(self):
         pass
 
@@ -274,6 +279,15 @@ class TestSDLJoystick(object):
             stick = joystick.SDL_JoystickOpen(index)
             player = joystick.SDL_JoystickGetPlayerIndex(stick)
             assert player in [-1, 0, 1, 2, 3]
+            joystick.SDL_JoystickClose(stick)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+    def test_SDL_JoystickSetPlayerIndex(self):
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            joystick.SDL_JoystickSetPlayerIndex(stick, index)
+            player = joystick.SDL_JoystickGetPlayerIndex(stick)
+            assert player == index
             joystick.SDL_JoystickClose(stick)
 
     @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")

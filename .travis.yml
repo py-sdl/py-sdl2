@@ -12,54 +12,54 @@ matrix:
     - os: linux
       python: 2.7
       sudo: required
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
 
     - os: linux
       python: 3.5
       sudo: required
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
 
     - os: linux
       python: 3.6
       sudo: required
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
 
     - os: linux
       python: 3.7
       sudo: required
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
 
     - os: linux
       python: 3.8
       sudo: required
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
 
     - os: linux
       python: pypy
       sudo: required
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
 
     - os: linux
       python: pypy3
       sudo: required
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
 
     - name: "Python 3.7 on macOS w/ latest SDL2"
       os: osx
       language: shell
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
       before_install: export PATH="/usr/local/opt/python/libexec/bin:/usr/local/bin:$PATH"
 
     - name: "Python 2.7 on macOS w/ latest SDL2"
       os: osx
       language: shell
-      env: PYSDL2_DLL_VERSION=2.0.10
+      env: PYSDL2_DLL_VERSION=2.0.12
       before_install: brew link python@2
 
-    - name: "Python 3.7 on macOS w/ SDL2 2.0.8"
+    - name: "Python 3.7 on macOS w/ SDL2 2.0.10"
       os: osx
       language: shell
-      env: PYSDL2_DLL_VERSION=2.0.8
+      env: PYSDL2_DLL_VERSION=2.0.10
       before_install: export PATH="/usr/local/opt/python/libexec/bin:/usr/local/bin:$PATH"
 
     - name: "Python 3.7 on macOS w/ SDL2 2.0.7"

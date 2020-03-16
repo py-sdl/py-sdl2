@@ -19,6 +19,7 @@ from .keyboard import *
 from .loadso import *
 from .log import *
 from .messagebox import *
+from .metal import *
 from .mouse import *
 from .pixels import *
 from .platform import *

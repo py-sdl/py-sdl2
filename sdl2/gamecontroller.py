@@ -11,10 +11,16 @@ from .rwops import SDL_RWops, SDL_RWFromFile
 __all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
            "SDL_CONTROLLER_BINDTYPE_BUTTON", "SDL_CONTROLLER_BINDTYPE_AXIS",
            "SDL_CONTROLLER_BINDTYPE_HAT", "SDL_GameControllerBindType",
+           "SDL_GameControllerType", "SDL_CONTROLLER_TYPE_UNKNOWN",
+           "SDL_CONTROLLER_TYPE_XBOX360", "SDL_CONTROLLER_TYPE_XBOXONE",
+           "SDL_CONTROLLER_TYPE_PS3", "SDL_CONTROLLER_TYPE_PS4",
+           "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO",
            "SDL_GameControllerButtonBind", "SDL_GameControllerAddMapping",
            "SDL_GameControllerMappingForGUID", "SDL_GameControllerMapping",
            "SDL_IsGameController", "SDL_GameControllerNameForIndex",
+           "SDL_GameControllerTypeForIndex",
            "SDL_GameControllerOpen", "SDL_GameControllerName",
+           "SDL_GameControllerGetType",
            "SDL_GameControllerGetAttached", "SDL_GameControllerGetJoystick",
            "SDL_GameControllerEventState", "SDL_GameControllerUpdate",
            "SDL_CONTROLLER_AXIS_INVALID", "SDL_CONTROLLER_AXIS_LEFTX",
@@ -39,7 +45,8 @@ __all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
            "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
            "SDL_GameControllerClose", "SDL_GameControllerAddMappingsFromFile",
            "SDL_GameControllerAddMappingsFromRW",
-           "SDL_GameControllerFromInstanceID", "SDL_GameControllerGetPlayerIndex",
+           "SDL_GameControllerFromInstanceID", "SDL_GameControllerFromPlayerIndex",
+           "SDL_GameControllerGetPlayerIndex", "SDL_GameControllerSetPlayerIndex",
            "SDL_GameControllerGetVendor", "SDL_GameControllerGetProduct",
            "SDL_GameControllerGetProductVersion", "SDL_GameControllerNumMappings",
            "SDL_GameControllerMappingForIndex", 
@@ -47,14 +54,23 @@ __all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
 
           ]
 
+
 class SDL_GameController(c_void_p):
     pass
 
+SDL_GameControllerBindType = c_int
 SDL_CONTROLLER_BINDTYPE_NONE = 0
 SDL_CONTROLLER_BINDTYPE_BUTTON = 1
 SDL_CONTROLLER_BINDTYPE_AXIS = 2
 SDL_CONTROLLER_BINDTYPE_HAT = 3
-SDL_GameControllerBindType = c_int
+
+SDL_GameControllerType = c_int
+SDL_CONTROLLER_TYPE_UNKNOWN = 0
+SDL_CONTROLLER_TYPE_XBOX360 = 1
+SDL_CONTROLLER_TYPE_XBOXONE = 2
+SDL_CONTROLLER_TYPE_PS3 = 3
+SDL_CONTROLLER_TYPE_PS4 = 4
+SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO = 5
 
 class _gchat(Structure):
     _fields_ = [("hat", c_int), ("hat_mask", c_int)]
@@ -65,16 +81,20 @@ class _gcvalue(Union):
 class SDL_GameControllerButtonBind(Structure):
     _fields_ = [("bindType", SDL_GameControllerBindType), ("value", _gcvalue)]
 
+
 SDL_GameControllerAddMapping = _bind("SDL_GameControllerAddMapping", [c_char_p], c_int)
 SDL_GameControllerMapping = _bind("SDL_GameControllerMapping", [POINTER(SDL_GameController)], c_char_p)
 SDL_IsGameController = _bind("SDL_IsGameController", [c_int], SDL_bool)
 SDL_GameControllerNameForIndex = _bind("SDL_GameControllerNameForIndex", [c_int], c_char_p)
+SDL_GameControllerTypeForIndex = _bind("SDL_GameControllerTypeForIndex", [c_int], SDL_GameControllerType, added='2.0.12')
 SDL_GameControllerOpen = _bind("SDL_GameControllerOpen", [c_int], POINTER(SDL_GameController))
 SDL_GameControllerName = _bind("SDL_GameControllerName", [POINTER(SDL_GameController)], c_char_p)
+SDL_GameControllerGetType = _bind("SDL_GameControllerGetType", [POINTER(SDL_GameController)], SDL_GameControllerType, added='2.0.12')
 SDL_GameControllerGetAttached = _bind("SDL_GameControllerGetAttached", [POINTER(SDL_GameController)], SDL_bool)
 SDL_GameControllerGetJoystick = _bind("SDL_GameControllerGetJoystick", [POINTER(SDL_GameController)], POINTER(SDL_Joystick))
 SDL_GameControllerEventState = _bind("SDL_GameControllerEventState", [c_int], c_int)
 SDL_GameControllerUpdate = _bind("SDL_GameControllerUpdate")
+
 SDL_CONTROLLER_AXIS_INVALID = -1
 SDL_CONTROLLER_AXIS_LEFTX = 0
 SDL_CONTROLLER_AXIS_LEFTY = 1
@@ -84,10 +104,12 @@ SDL_CONTROLLER_AXIS_TRIGGERLEFT = 4
 SDL_CONTROLLER_AXIS_TRIGGERRIGHT = 5
 SDL_CONTROLLER_AXIS_MAX = 6
 SDL_GameControllerAxis = c_int
+
 SDL_GameControllerGetAxisFromString = _bind("SDL_GameControllerGetAxisFromString", [c_char_p], SDL_GameControllerAxis)
 SDL_GameControllerGetStringForAxis = _bind("SDL_GameControllerGetStringForAxis", [SDL_GameControllerAxis], c_char_p)
 SDL_GameControllerGetBindForAxis = _bind("SDL_GameControllerGetBindForAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_GameControllerButtonBind)
 SDL_GameControllerGetAxis = _bind("SDL_GameControllerGetAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], Sint16)
+
 SDL_CONTROLLER_BUTTON_INVALID = -1
 SDL_CONTROLLER_BUTTON_A = 0
 SDL_CONTROLLER_BUTTON_B = 1
@@ -106,6 +128,7 @@ SDL_CONTROLLER_BUTTON_DPAD_LEFT = 13
 SDL_CONTROLLER_BUTTON_DPAD_RIGHT = 14
 SDL_CONTROLLER_BUTTON_MAX = 15
 SDL_GameControllerButton = c_int
+
 SDL_GameControllerGetButtonFromString = _bind("SDL_GameControllerGetButtonFromString", [c_char_p], SDL_GameControllerButton)
 SDL_GameControllerGetStringForButton = _bind("SDL_GameControllerGetStringForButton", [SDL_GameControllerButton], c_char_p)
 SDL_GameControllerGetBindForButton = _bind("SDL_GameControllerGetBindForButton", [POINTER(SDL_GameController), SDL_GameControllerButton], SDL_GameControllerButtonBind)
@@ -114,7 +137,9 @@ SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameCont
 SDL_GameControllerAddMappingsFromRW = _bind("SDL_GameControllerAddMappingsFromRW", [POINTER(SDL_RWops), c_int], c_int)
 SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
 SDL_GameControllerFromInstanceID = _bind("SDL_GameControllerFromInstanceID", [SDL_JoystickID], POINTER(SDL_GameController))
+SDL_GameControllerFromPlayerIndex = _bind("SDL_GameControllerFromPlayerIndex", [c_int], POINTER(SDL_GameController), added='2.0.12')
 SDL_GameControllerGetPlayerIndex = _bind("SDL_GameControllerGetPlayerIndex", [POINTER(SDL_GameController)], c_int, added='2.0.9')
+SDL_GameControllerSetPlayerIndex = _bind("SDL_GameControllerSetPlayerIndex", [POINTER(SDL_GameController), c_int], added='2.0.12')
 SDL_GameControllerGetVendor = _bind("SDL_GameControllerGetVendor", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerGetProduct = _bind("SDL_GameControllerGetProduct", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerGetProductVersion = _bind("SDL_GameControllerGetProductVersion", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
