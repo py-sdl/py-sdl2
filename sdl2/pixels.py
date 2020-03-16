@@ -1,5 +1,5 @@
 from ctypes import Structure, POINTER, c_int, c_char_p, c_float
-from .dll import _bind
+from .dll import _bind, version
 from .endian import SDL_BYTEORDER, SDL_BIG_ENDIAN, SDL_LIL_ENDIAN
 from .stdinc import Uint8, Uint16, Uint32, SDL_bool
 
@@ -236,7 +236,7 @@ SDL_PIXELFORMAT_NV12 = SDL_DEFINE_PIXELFOURCC('N', 'V', '1', '2')
 SDL_PIXELFORMAT_NV21 = SDL_DEFINE_PIXELFOURCC('N', 'V', '2', '1')
 SDL_PIXELFORMAT_EXTERNAL_OES = SDL_DEFINE_PIXELFOURCC('O', 'E', 'S', ' ')
 
-ALL_PIXELFORMATS = (
+ALL_PIXELFORMATS = [
     SDL_PIXELFORMAT_INDEX1LSB,
     SDL_PIXELFORMAT_INDEX1MSB,
     SDL_PIXELFORMAT_INDEX4LSB,
@@ -280,8 +280,10 @@ ALL_PIXELFORMATS = (
     SDL_PIXELFORMAT_NV12,
     SDL_PIXELFORMAT_NV21,
     SDL_PIXELFORMAT_EXTERNAL_OES
-    )
-
+]
+if version >= 2012:
+    ALL_PIXELFORMATS.append(SDL_PIXELFORMAT_BGR444)
+ALL_PIXELFORMATS = tuple(ALL_PIXELFORMATS)
 
 class SDL_Color(Structure):
     _fields_ = [("r", Uint8),
