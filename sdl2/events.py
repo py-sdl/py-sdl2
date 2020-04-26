@@ -295,7 +295,8 @@ class SDL_TouchFingerEvent(Structure):
                 ("y", c_float),
                 ("dx", c_float),
                 ("dy", c_float),
-                ("pressure", c_float)
+                ("pressure", c_float),
+                ("windowID", Uint32)
                 ]
 
 class SDL_MultiGestureEvent(Structure):

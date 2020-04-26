@@ -15,7 +15,8 @@ __all__ = ["SDL_MAX_LOG_MESSAGE", "SDL_LOG_CATEGORY_APPLICATION",
            "SDL_LOG_PRIORITY_DEBUG", "SDL_LOG_PRIORITY_INFO",
            "SDL_LOG_PRIORITY_WARN", "SDL_LOG_PRIORITY_ERROR",
            "SDL_LOG_PRIORITY_CRITICAL", "SDL_NUM_LOG_PRIORITIES",
-           "SDL_LogPriority", "SDL_LogSetAllPriority", "SDL_LogSetPriority",
+           "SDL_LogCategory", "SDL_LogPriority",
+           "SDL_LogSetAllPriority", "SDL_LogSetPriority",
            "SDL_LogGetPriority", "SDL_LogResetPriorities", "SDL_Log",
            "SDL_LogVerbose", "SDL_LogDebug", "SDL_LogInfo", "SDL_LogWarn",
            "SDL_LogError", "SDL_LogCritical", "SDL_LogMessage",
@@ -24,6 +25,10 @@ __all__ = ["SDL_MAX_LOG_MESSAGE", "SDL_LOG_CATEGORY_APPLICATION",
            ]
 
 SDL_MAX_LOG_MESSAGE = 4096
+
+
+SDL_LogCategory = c_int
+
 SDL_LOG_CATEGORY_APPLICATION = 0
 SDL_LOG_CATEGORY_ERROR = 1
 SDL_LOG_CATEGORY_ASSERT = 2
@@ -45,6 +50,9 @@ SDL_LOG_CATEGORY_RESERVED9 = 17
 SDL_LOG_CATEGORY_RESERVED10 = 18
 SDL_LOG_CATEGORY_CUSTOM = 19
 
+
+SDL_LogPriority = c_int
+
 SDL_LOG_PRIORITY_VERBOSE = 1
 SDL_LOG_PRIORITY_DEBUG = 2
 SDL_LOG_PRIORITY_INFO = 3
@@ -52,7 +60,7 @@ SDL_LOG_PRIORITY_WARN = 4
 SDL_LOG_PRIORITY_ERROR = 5
 SDL_LOG_PRIORITY_CRITICAL = 6
 SDL_NUM_LOG_PRIORITIES = 7
-SDL_LogPriority = c_int
+
 
 SDL_LogSetAllPriority = _bind("SDL_LogSetAllPriority", [SDL_LogPriority])
 SDL_LogSetPriority = _bind("SDL_LogSetPriority", [c_int, SDL_LogPriority])

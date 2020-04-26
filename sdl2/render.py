@@ -10,6 +10,8 @@ from .video import SDL_Window
 __all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
            "SDL_RENDERER_ACCELERATED", "SDL_RENDERER_PRESENTVSYNC",
            "SDL_RENDERER_TARGETTEXTURE", "SDL_RendererInfo",
+           "SDL_ScaleMode", "SDL_ScaleModeNearest", "SDL_ScaleModeLinear",
+           "SDL_ScaleModeBest",
            "SDL_TextureAccess", "SDL_TEXTUREACCESS_STATIC",
            "SDL_TEXTUREACCESS_STREAMING", "SDL_TEXTUREACCESS_TARGET",
            "SDL_TextureModulate", "SDL_TEXTUREMODULATE_NONE",
@@ -24,7 +26,9 @@ __all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
            "SDL_SetTextureColorMod", "SDL_GetTextureColorMod",
            "SDL_SetTextureAlphaMod", "SDL_GetTextureAlphaMod",
            "SDL_SetTextureBlendMode", "SDL_GetTextureBlendMode",
-           "SDL_UpdateTexture", "SDL_LockTexture", "SDL_UnlockTexture",
+           "SDL_SetTextureScaleMode", "SDL_GetTextureScaleMode",
+           "SDL_UpdateTexture", "SDL_LockTexture", "SDL_LockTextureToSurface",
+           "SDL_UnlockTexture",
            "SDL_RenderTargetSupported", "SDL_SetRenderTarget",
            "SDL_GetRenderTarget", "SDL_RenderSetLogicalSize",
            "SDL_RenderGetLogicalSize", "SDL_RenderSetViewport",
@@ -48,11 +52,13 @@ __all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
            "SDL_RenderGetMetalCommandEncoder"
            ]
 
+
 SDL_RendererFlags = c_int
 SDL_RENDERER_SOFTWARE = 0x00000001
 SDL_RENDERER_ACCELERATED = 0x00000002
 SDL_RENDERER_PRESENTVSYNC = 0x00000004
 SDL_RENDERER_TARGETTEXTURE = 0x00000008
+
 
 class SDL_RendererInfo(Structure):
     _fields_ = [("name", c_char_p),
@@ -61,6 +67,12 @@ class SDL_RendererInfo(Structure):
                 ("texture_formats", Uint32 * 16),
                 ("max_texture_width", c_int),
                 ("max_texture_height", c_int)]
+
+
+SDL_ScaleMode = c_int
+SDL_ScaleModeNearest = 0
+SDL_ScaleModeLinear = 1
+SDL_ScaleModeBest = 2
 
 SDL_TextureAccess = c_int
 SDL_TEXTUREACCESS_STATIC = 0
@@ -77,11 +89,13 @@ SDL_FLIP_NONE = 0x00000000
 SDL_FLIP_HORIZONTAL = 0x00000001
 SDL_FLIP_VERTICAL = 0x00000002
 
+
 class SDL_Renderer(c_void_p):
     pass
 
 class SDL_Texture(c_void_p):
     pass
+
 
 SDL_GetNumRenderDrivers = _bind("SDL_GetNumRenderDrivers", None, c_int)
 SDL_GetRenderDriverInfo = _bind("SDL_GetRenderDriverInfo", [c_int, POINTER(SDL_RendererInfo)], c_int)
@@ -100,8 +114,11 @@ SDL_SetTextureAlphaMod = _bind("SDL_SetTextureAlphaMod", [POINTER(SDL_Texture), 
 SDL_GetTextureAlphaMod = _bind("SDL_GetTextureAlphaMod", [POINTER(SDL_Texture), POINTER(Uint8)], c_int)
 SDL_SetTextureBlendMode = _bind("SDL_SetTextureBlendMode", [POINTER(SDL_Texture), SDL_BlendMode], c_int)
 SDL_GetTextureBlendMode = _bind("SDL_GetTextureBlendMode", [POINTER(SDL_Texture), POINTER(SDL_BlendMode)], c_int)
+SDL_SetTextureScaleMode = _bind("SDL_SetTextureScaleMode", [POINTER(SDL_Texture), SDL_ScaleMode], c_int, added='2.0.12')
+SDL_GetTextureScaleMode = _bind("SDL_GetTextureScaleMode", [POINTER(SDL_Texture), POINTER(SDL_ScaleMode)], c_int, added='2.0.12')
 SDL_UpdateTexture = _bind("SDL_UpdateTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), c_void_p, c_int], c_int)
 SDL_LockTexture = _bind("SDL_LockTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(c_void_p), POINTER(c_int)], c_int)
+SDL_LockTextureToSurface = _bind("SDL_LockTextureToSurface", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(POINTER(SDL_Surface))], c_int, added='2.0.12')
 SDL_UnlockTexture = _bind("SDL_UnlockTexture", [POINTER(SDL_Texture)])
 SDL_RenderTargetSupported = _bind("SDL_RenderTargetSupported", [POINTER(SDL_Renderer)], SDL_bool)
 SDL_SetRenderTarget = _bind("SDL_SetRenderTarget", [POINTER(SDL_Renderer), POINTER(SDL_Texture)], c_int)
