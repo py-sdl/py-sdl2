@@ -98,6 +98,13 @@ class DLL(object):
         self._dll = None
         self._libname = libinfo
         self._version = None
+        minversions = {
+            "SDL2": 2005,
+            "SDL2_mixer": 2001,
+            "SDL2_ttf": 2014,
+            "SDL2_image": 2001,
+            "SDL2_gfx": 1003
+        }
         foundlibs = _findlib(libnames, path)
         dllmsg = "PYSDL2_DLL_PATH: %s" % (os.getenv("PYSDL2_DLL_PATH") or "unset")
         if len(foundlibs) == 0:
@@ -108,11 +115,17 @@ class DLL(object):
                 self._dll = CDLL(libfile)
                 self._libfile = libfile
                 self._version = self._get_version(libinfo, self._dll)
+                if self._version < minversions[libinfo]:
+                    versionstr = self._version_int_to_str(self._version)
+                    err = "{0} (v{1}) is too old to be used by py-sdl2"
+                    err += " (minimum v{0})".format(minversions[libinfo])
+                    raise RuntimeError(err.format(libfile, versionstr))
                 break
             except Exception as exc:
                 # Could not load the DLL, move to the next, but inform the user
                 # about something weird going on - this may become noisy, but
                 # is better than confusing the users with the RuntimeError below
+                self._dll = None
                 warnings.warn(repr(exc), DLLWarning)
         if self._dll is None:
             raise RuntimeError("found %s, but it's not usable for the library %s" %
