@@ -49,12 +49,20 @@ matrix:
       python: 3.8
       sudo: required
       env: PYSDL2_DLL_VERSION=2.0.12
+      before_install:
+        - echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
+        - echo "deb-src http://archive.ubuntu.com/ubuntu xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
+        - sudo dpkg --add-architecture arm64
 
     - os: linux
       arch: ppc64le
       python: 3.8
       sudo: required
       env: PYSDL2_DLL_VERSION=2.0.12
+      before_install:
+        - echo "deb [arch=ppc64le] http://ports.ubuntu.com/ubuntu-ports xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
+        - echo "deb-src http://archive.ubuntu.com/ubuntu xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
+        - sudo dpkg --add-architecture ppc64le
 
     - name: "Python 3.7 on macOS w/ latest SDL2"
       os: osx
