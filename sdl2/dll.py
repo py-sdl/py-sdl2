@@ -117,8 +117,9 @@ class DLL(object):
                 self._version = self._get_version(libinfo, self._dll)
                 if self._version < minversions[libinfo]:
                     versionstr = self._version_int_to_str(self._version)
+                    minimumstr = self._version_int_to_str(minversions[libinfo])
                     err = "{0} (v{1}) is too old to be used by py-sdl2"
-                    err += " (minimum v{0})".format(minversions[libinfo])
+                    err += " (minimum v{0})".format(minimumstr)
                     raise RuntimeError(err.format(libfile, versionstr))
                 break
             except Exception as exc:
