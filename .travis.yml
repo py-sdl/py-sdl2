@@ -44,6 +44,18 @@ matrix:
       sudo: required
       env: PYSDL2_DLL_VERSION=2.0.12
 
+    - os: linux
+      arch: arm64
+      python: 3.8
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.12
+
+    - os: linux
+      arch: ppc64le
+      python: 3.8
+      sudo: required
+      env: PYSDL2_DLL_VERSION=2.0.12
+
     - name: "Python 3.7 on macOS w/ latest SDL2"
       os: osx
       language: shell
@@ -76,6 +88,8 @@ matrix:
         - brew install sdl2 sdl2_mixer sdl2_ttf sdl2_image sdl2_gfx
 
   allow_failures:
+    - arch: arm64
+    - arch: ppc64le
     - python: pypy
     - python: pypy3
     - name: "Python 3.7 on macOS w/ latest Homebrew SDL2"
