@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import tarfile
+import platform
 import subprocess as sub
 from zipfile import ZipFile 
 from distutils.util import get_platform
@@ -130,6 +131,7 @@ def getDLLs(platform_name, version):
         gfxsrc = 'http://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-{0}.tar.gz'
         cfgurl = 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f={0};hb=HEAD'
         basedir = os.getcwd()
+        arch = os.uname().machine
 
         libdir = os.path.join(basedir, 'sdlprefix')
         if os.path.isdir(libdir):
@@ -176,6 +178,8 @@ def getDLLs(platform_name, version):
                 ['make'],
                 ['make', 'install']
             ]
+            if lib == 'SDL2_gfx' and not arch in ['i386', 'x86_64']:
+                buildcmds[0].append('--disable-mmx')
             os.chdir(sourcepath)
             for cmd in buildcmds:
                 p = sub.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
