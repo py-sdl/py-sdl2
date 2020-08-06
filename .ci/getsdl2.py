@@ -162,7 +162,7 @@ def getDLLs(platform_name, version):
                 ['make', 'install']
             ]
             if lib == 'SDL2_gfx':
-                buildcmds = ['./autoconf.sh'] + buildcmds
+                buildcmds = ['./autogen.sh'] + buildcmds
             os.chdir(sourcepath)
             for cmd in buildcmds:
                 p = sub.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)

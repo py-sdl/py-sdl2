@@ -53,6 +53,9 @@ matrix:
         - echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
         - echo "deb-src http://archive.ubuntu.com/ubuntu xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
         - sudo dpkg --add-architecture arm64
+        - sudo apt-get -qq update
+        - sudo apt-get build-dep libsdl2 libsdl2-mixer libsdl2-ttf libsdl2-image libsdl2-gfx
+        - sudo apt-get install libmpg123-dev libopus-dev pulseaudio
 
     - os: linux
       arch: ppc64le
@@ -63,6 +66,9 @@ matrix:
         - echo "deb [arch=ppc64le] http://ports.ubuntu.com/ubuntu-ports xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
         - echo "deb-src http://archive.ubuntu.com/ubuntu xenial main universe multiverse restricted" | sudo tee -a /etc/apt/sources.list
         - sudo dpkg --add-architecture ppc64le
+        - sudo apt-get -qq update
+        - sudo apt-get build-dep libsdl2 libsdl2-mixer libsdl2-ttf libsdl2-image libsdl2-gfx
+        - sudo apt-get install libmpg123-dev libopus-dev pulseaudio
 
     - name: "Python 3.7 on macOS w/ latest SDL2"
       os: osx
