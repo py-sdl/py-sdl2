@@ -161,12 +161,13 @@ def getDLLs(platform_name, version):
             with tarfile.open(outpath, 'r:gz') as z:
                 z.extractall(path='temp')
 
-            # Update config.guess & config.sub files
+            # Update config.guess & config.sub files, if they exist
             for name in cfgnames:
                 filepath = os.path.join(sourcepath, name)
-                os.remove(filepath)
-                with open(filepath, 'wb') as out:
-                    out.write(cfgfiles[name])
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                    with open(filepath, 'wb') as out:
+                        out.write(cfgfiles[name])
 
             # Build the library
             print('======= Compiling {0} {1} =======\n'.format(lib, libversion))
