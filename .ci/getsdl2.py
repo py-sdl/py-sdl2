@@ -128,12 +128,19 @@ def getDLLs(platform_name, version):
 
         suffix = '.tar.gz' # source code
         gfxsrc = 'http://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-{0}.tar.gz'
+        cfgurl = 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f={0};hb=HEAD'
         basedir = os.getcwd()
 
         libdir = os.path.join(basedir, 'sdlprefix')
         if os.path.isdir(libdir):
             shutil.rmtree(libdir)
         os.mkdir(libdir)
+
+        # Pre-fetch updated config.guess and config.sub scripts (needed for gfx on ARM & PPC)
+        cfgfiles = {}
+        cfgnames = ['config.guess', 'config.sub']
+        for name in cfgnames:
+            cfgfiles[name] = urlopen(cfgurl.format(name)).read()
 
         for lib in libraries:
 
@@ -154,6 +161,13 @@ def getDLLs(platform_name, version):
             with tarfile.open(outpath, 'r:gz') as z:
                 z.extractall(path='temp')
 
+            # Update config.guess & config.sub files
+            for name in cfgnames:
+                filepath = os.path.join(sourcepath, name)
+                os.remove(filepath)
+                with open(filepath, 'wb') as out:
+                    out.write(cfgfiles[name])
+
             # Build the library
             print('======= Compiling {0} {1} =======\n'.format(lib, libversion))
             buildcmds = [
@@ -161,8 +175,6 @@ def getDLLs(platform_name, version):
                 ['make'],
                 ['make', 'install']
             ]
-            if lib == 'SDL2_gfx':
-                buildcmds = ['./autogen.sh'] + buildcmds
             os.chdir(sourcepath)
             for cmd in buildcmds:
                 p = sub.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
