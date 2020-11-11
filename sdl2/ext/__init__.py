@@ -19,4 +19,5 @@ from .image import *
 from .pixelaccess import *
 from .sprite import *
 from .surface import *
+from .time import *
 from .window import *
