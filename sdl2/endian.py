@@ -1,11 +1,16 @@
 import sys
 import array
 
-__all__ = ["SDL_LIL_ENDIAN", "SDL_BIG_ENDIAN", "SDL_BYTEORDER", "SDL_Swap16",
-           "SDL_Swap32", "SDL_Swap64", "SDL_SwapFloat", "SDL_SwapLE16",
-           "SDL_SwapLE32", "SDL_SwapLE64", "SDL_SwapFloatLE", "SDL_SwapBE16",
-           "SDL_SwapBE32", "SDL_SwapBE64", "SDL_SwapFloatBE"
-           ]
+__all__ = [
+    # Defines
+    "SDL_LIL_ENDIAN", "SDL_BIG_ENDIAN", "SDL_BYTEORDER",
+    
+    # Macro & Inline Functions
+    "SDL_Swap16", "SDL_Swap32", "SDL_Swap64", "SDL_SwapFloat",
+    "SDL_SwapLE16", "SDL_SwapLE32", "SDL_SwapLE64", "SDL_SwapFloatLE",
+    "SDL_SwapBE16", "SDL_SwapBE32", "SDL_SwapBE64", "SDL_SwapFloatBE"
+]
+
 
 SDL_LIL_ENDIAN = 1234
 SDL_BIG_ENDIAN = 4321

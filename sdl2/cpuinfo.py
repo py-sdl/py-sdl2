@@ -2,13 +2,19 @@ from ctypes import c_int, c_size_t, c_void_p
 from .dll import _bind
 from .stdinc import SDL_bool
 
-__all__ = ["SDL_CACHELINE_SIZE", "SDL_GetCPUCount", "SDL_GetCPUCacheLineSize",
-           "SDL_HasRDTSC", "SDL_HasAltiVec", "SDL_HasMMX", "SDL_Has3DNow",
-           "SDL_HasSSE", "SDL_HasSSE2", "SDL_HasSSE3", "SDL_HasSSE41",
-           "SDL_HasSSE42", "SDL_GetSystemRAM", "SDL_HasAVX", "SDL_HasAVX2",
-           "SDL_HasAVX512F", "SDL_HasARMSIMD", "SDL_HasNEON",
-           "SDL_SIMDGetAlignment", "SDL_SIMDAlloc", "SDL_SIMDFree"
-          ]
+__all__ = [
+    # Defines
+    "SDL_CACHELINE_SIZE",
+
+    # Functions
+    "SDL_GetCPUCount", "SDL_GetCPUCacheLineSize",
+    "SDL_HasRDTSC", "SDL_HasAltiVec", "SDL_HasMMX", "SDL_Has3DNow",
+    "SDL_HasSSE", "SDL_HasSSE2", "SDL_HasSSE3", "SDL_HasSSE41",
+    "SDL_HasSSE42", "SDL_GetSystemRAM", "SDL_HasAVX", "SDL_HasAVX2",
+    "SDL_HasAVX512F", "SDL_HasARMSIMD", "SDL_HasNEON",
+    "SDL_SIMDGetAlignment", "SDL_SIMDAlloc", "SDL_SIMDFree"
+]
+
 
 SDL_CACHELINE_SIZE = 128
 SDL_GetCPUCount = _bind("SDL_GetCPUCount", None, c_int)

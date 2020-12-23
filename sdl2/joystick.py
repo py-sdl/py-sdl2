@@ -3,39 +3,49 @@ from ctypes import Structure, c_int, c_char_p, c_void_p, POINTER
 from .dll import _bind
 from .stdinc import Sint16, Sint32, Uint32, Uint16, Uint8, SDL_bool
 
-__all__ = ["SDL_Joystick", "SDL_JoystickGUID", "SDL_JoystickID",
-           "SDL_NumJoysticks", "SDL_JoystickNameForIndex", "SDL_JoystickOpen",
-           "SDL_JoystickName", "SDL_JoystickGetDeviceGUID",
-           "SDL_JoystickGetGUID", "SDL_JoystickGetGUIDString",
-           "SDL_JoystickGetGUIDFromString", "SDL_JoystickGetAttached",
-           "SDL_JoystickInstanceID", "SDL_JoystickNumAxes",
-           "SDL_JoystickNumBalls", "SDL_JoystickNumHats",
-           "SDL_JoystickNumButtons", "SDL_JoystickUpdate",
-           "SDL_JoystickEventState", "SDL_JoystickGetAxis", "SDL_HAT_CENTERED",
-           "SDL_HAT_UP", "SDL_HAT_RIGHT", "SDL_HAT_DOWN", "SDL_HAT_LEFT",
-           "SDL_HAT_RIGHTUP", "SDL_HAT_RIGHTDOWN", "SDL_HAT_LEFTUP",
-           "SDL_HAT_LEFTDOWN", "SDL_JoystickGetHat", "SDL_JoystickGetBall",
-           "SDL_JoystickGetButton", "SDL_JoystickClose",
-           "SDL_JOYSTICK_POWER_UNKNOWN", "SDL_JOYSTICK_POWER_EMPTY",
-           "SDL_JOYSTICK_POWER_LOW", "SDL_JOYSTICK_POWER_MEDIUM",
-           "SDL_JOYSTICK_POWER_FULL", "SDL_JOYSTICK_POWER_WIRED",
-           "SDL_JOYSTICK_POWER_MAX", "SDL_JoystickPowerLevel",
-           "SDL_JoystickCurrentPowerLevel", "SDL_JoystickFromInstanceID",
-           "SDL_JoystickFromPlayerIndex",
-           "SDL_JoystickGetVendor", "SDL_JoystickGetProductVersion",
-           "SDL_JoystickGetProduct", "SDL_JoystickGetAxisInitialState",
-           "SDL_JoystickType", "SDL_JOYSTICK_TYPE_UNKNOWN",
-           "SDL_JOYSTICK_TYPE_GAMECONTROLLER", "SDL_JOYSTICK_TYPE_WHEEL",
-           "SDL_JOYSTICK_TYPE_ARCADE_STICK", "SDL_JOYSTICK_TYPE_FLIGHT_STICK",
-           "SDL_JOYSTICK_TYPE_DANCE_PAD", "SDL_JOYSTICK_TYPE_GUITAR",
-           "SDL_JOYSTICK_TYPE_DRUM_KIT", "SDL_JOYSTICK_TYPE_ARCADE_PAD",
-           "SDL_JOYSTICK_TYPE_THROTTLE",
-           "SDL_JoystickGetDeviceType", "SDL_JoystickGetType",
-           "SDL_JoystickGetDeviceInstanceID", "SDL_LockJoysticks",
-           "SDL_UnlockJoysticks", "SDL_JoystickGetPlayerIndex",
-           "SDL_JoystickSetPlayerIndex",
-           "SDL_JoystickGetDevicePlayerIndex", "SDL_JoystickRumble"
-          ]
+__all__ = [
+    # Structs & Opaque Types
+    "SDL_Joystick", "SDL_JoystickGUID", 
+    
+    # Defines
+    "SDL_JoystickID", "SDL_HAT_CENTERED", "SDL_HAT_UP", "SDL_HAT_RIGHT",
+    "SDL_HAT_DOWN", "SDL_HAT_LEFT", "SDL_HAT_RIGHTUP", "SDL_HAT_RIGHTDOWN",
+    "SDL_HAT_LEFTUP", "SDL_HAT_LEFTDOWN",
+
+    # Enums
+    "SDL_JoystickType",
+    "SDL_JOYSTICK_TYPE_UNKNOWN", "SDL_JOYSTICK_TYPE_GAMECONTROLLER",
+    "SDL_JOYSTICK_TYPE_WHEEL", "SDL_JOYSTICK_TYPE_ARCADE_STICK",
+    "SDL_JOYSTICK_TYPE_FLIGHT_STICK", "SDL_JOYSTICK_TYPE_DANCE_PAD",
+    "SDL_JOYSTICK_TYPE_GUITAR", "SDL_JOYSTICK_TYPE_DRUM_KIT",
+    "SDL_JOYSTICK_TYPE_ARCADE_PAD", "SDL_JOYSTICK_TYPE_THROTTLE",
+
+    "SDL_JoystickPowerLevel",
+    "SDL_JOYSTICK_POWER_UNKNOWN", "SDL_JOYSTICK_POWER_EMPTY",
+    "SDL_JOYSTICK_POWER_LOW", "SDL_JOYSTICK_POWER_MEDIUM",
+    "SDL_JOYSTICK_POWER_FULL", "SDL_JOYSTICK_POWER_WIRED",
+    "SDL_JOYSTICK_POWER_MAX",
+
+    # Functions
+    "SDL_NumJoysticks", "SDL_JoystickNameForIndex", "SDL_JoystickOpen",
+    "SDL_JoystickName", "SDL_JoystickGetDeviceGUID",
+    "SDL_JoystickGetGUID", "SDL_JoystickGetGUIDString",
+    "SDL_JoystickGetGUIDFromString", "SDL_JoystickGetAttached",
+    "SDL_JoystickInstanceID", "SDL_JoystickNumAxes",
+    "SDL_JoystickNumBalls", "SDL_JoystickNumHats",
+    "SDL_JoystickNumButtons", "SDL_JoystickUpdate",
+    "SDL_JoystickEventState", "SDL_JoystickGetAxis", "SDL_JoystickGetHat", "SDL_JoystickGetBall",
+    "SDL_JoystickGetButton", "SDL_JoystickClose",
+    "SDL_JoystickCurrentPowerLevel", "SDL_JoystickFromInstanceID",
+    "SDL_JoystickFromPlayerIndex",
+    "SDL_JoystickGetVendor", "SDL_JoystickGetProductVersion",
+    "SDL_JoystickGetProduct", "SDL_JoystickGetAxisInitialState",
+    "SDL_JoystickGetDeviceType", "SDL_JoystickGetType",
+    "SDL_JoystickGetDeviceInstanceID", "SDL_LockJoysticks",
+    "SDL_UnlockJoysticks", "SDL_JoystickGetPlayerIndex",
+    "SDL_JoystickSetPlayerIndex",
+    "SDL_JoystickGetDevicePlayerIndex", "SDL_JoystickRumble"
+]
 
 
 SDL_JoystickPowerLevel = c_int

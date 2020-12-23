@@ -3,10 +3,14 @@ from .dll import _bind
 from .stdinc import SDL_bool
 from .video import SDL_Window
 
-__all__ = ["SDL_Vulkan_LoadLibrary", "SDL_Vulkan_GetVkGetInstanceProcAddr",
-           "SDL_Vulkan_UnloadLibrary", "SDL_Vulkan_GetInstanceExtensions",
-           "SDL_Vulkan_CreateSurface", "SDL_Vulkan_GetDrawableSize"
-          ]
+# NOTE: I have no idea whether this module actually works
+
+__all__ = [
+    "SDL_Vulkan_LoadLibrary", "SDL_Vulkan_GetVkGetInstanceProcAddr",
+    "SDL_Vulkan_UnloadLibrary", "SDL_Vulkan_GetInstanceExtensions",
+    "SDL_Vulkan_CreateSurface", "SDL_Vulkan_GetDrawableSize"
+]
+
 
 VkInstance = c_void_p
 # TODO: 32bit/64bit

@@ -4,9 +4,15 @@ from .stdinc import Sint64
 from .touch import SDL_TouchID
 from .rwops import SDL_RWops
 
-__all__ = ["SDL_GestureID", "SDL_RecordGesture", "SDL_SaveAllDollarTemplates",
-           "SDL_SaveDollarTemplate", "SDL_LoadDollarTemplates"
-           ]
+__all__ = [
+    # Defines
+    "SDL_GestureID",
+    
+    # Functions
+    "SDL_RecordGesture", "SDL_SaveAllDollarTemplates",
+    "SDL_SaveDollarTemplate", "SDL_LoadDollarTemplates"
+]
+
 
 SDL_GestureID = Sint64
 SDL_RecordGesture = _bind("SDL_RecordGesture", [SDL_TouchID], c_int)

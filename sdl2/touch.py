@@ -2,15 +2,26 @@ from ctypes import Structure, POINTER, c_float, c_int
 from .dll import _bind
 from .stdinc import Sint64
 
-__all__ = ["SDL_TouchID", "SDL_FingerID", "SDL_TouchDeviceType",
-           "SDL_TOUCH_DEVICE_INVALID", "SDL_TOUCH_DEVICE_DIRECT",
-           "SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE",
-           "SDL_TOUCH_DEVICE_INDIRECT_RELATIVE",
-           "SDL_Finger", "SDL_TOUCH_MOUSEID", "SDL_MOUSE_TOUCHID",
-           "SDL_GetNumTouchDevices", "SDL_GetTouchDevice",
-           "SDL_GetTouchDeviceType", "SDL_GetNumTouchFingers",
-           "SDL_GetTouchFinger"
-           ]
+__all__ = [
+    # Structs
+    "SDL_Finger",
+
+    # Defines
+    "SDL_TouchID", "SDL_FingerID", 
+    "SDL_TOUCH_MOUSEID", "SDL_MOUSE_TOUCHID",
+
+    # Enums
+    "SDL_TouchDeviceType",
+    "SDL_TOUCH_DEVICE_INVALID", "SDL_TOUCH_DEVICE_DIRECT",
+    "SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE",
+    "SDL_TOUCH_DEVICE_INDIRECT_RELATIVE",
+
+    # Functions
+    "SDL_GetNumTouchDevices", "SDL_GetTouchDevice",
+    "SDL_GetTouchDeviceType", "SDL_GetNumTouchFingers",
+    "SDL_GetTouchFinger"
+]
+
 
 SDL_TouchID = Sint64
 SDL_FingerID = Sint64

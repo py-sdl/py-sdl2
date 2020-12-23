@@ -5,13 +5,21 @@ from .stdinc import SDL_bool, Uint8, Uint32
 from .version import SDL_version
 from .video import SDL_Window
 
-__all__ = ["SDL_SYSWM_TYPE", "SDL_SYSWM_UNKNOWN", "SDL_SYSWM_WINDOWS",
-           "SDL_SYSWM_X11", "SDL_SYSWM_DIRECTFB", "SDL_SYSWM_COCOA",
-           "SDL_SYSWM_UIKIT", "SDL_SYSWM_WAYLAND", "SDL_SYSWM_MIR",
-           "SDL_SYSWM_WINRT", "SDL_SYSWM_ANDROID", "SDL_SYSWM_VIVANTE",
-           "SDL_SYSWM_OS2", "SDL_SYSWM_HAIKU",
-           "SDL_SysWMmsg", "SDL_SysWMinfo", "SDL_GetWindowWMInfo"
-           ]
+__all__ = [
+    # Structs
+    "SDL_SysWMmsg", "SDL_SysWMinfo",
+
+    # Enums
+    "SDL_SYSWM_TYPE",
+    "SDL_SYSWM_UNKNOWN", "SDL_SYSWM_WINDOWS", "SDL_SYSWM_X11",
+    "SDL_SYSWM_DIRECTFB", "SDL_SYSWM_COCOA", "SDL_SYSWM_UIKIT",
+    "SDL_SYSWM_WAYLAND", "SDL_SYSWM_MIR", "SDL_SYSWM_WINRT",
+    "SDL_SYSWM_ANDROID", "SDL_SYSWM_VIVANTE", "SDL_SYSWM_OS2",
+    "SDL_SYSWM_HAIKU",
+
+    # Functions
+    "SDL_GetWindowWMInfo"
+]
 
 
 SDL_SYSWM_TYPE = c_int
@@ -51,7 +59,6 @@ class _winmsg(Structure):
                 ("wParam", WPARAM),
                 ("lParam", LPARAM),
                ]
-
 
 class _x11msg(Structure):
     _fields_ = [("event", c_void_p)]
@@ -97,7 +104,6 @@ class _wininfo(Structure):
                 ("hinstance", HINSTANCE)
                ]
 
-
 class _winrtinfo(Structure):
     _fields_ = [("window", c_void_p)]
 
@@ -133,7 +139,6 @@ class _wl(Structure):
     _fields_ = [("display", c_void_p),
                 ("surface", c_void_p),
                 ("shell_surface", c_void_p)]
-
 
 class _mir(Structure):
     """Window information for Mir."""

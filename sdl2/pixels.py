@@ -4,6 +4,7 @@ from .dll import version as sdl_version
 from .endian import SDL_BYTEORDER, SDL_BIG_ENDIAN, SDL_LIL_ENDIAN
 from .stdinc import Uint8, Uint16, Uint32, SDL_bool
 
+
 SDL_ALPHA_OPAQUE = 255
 SDL_ALPHA_TRANSPARENT = 0
 

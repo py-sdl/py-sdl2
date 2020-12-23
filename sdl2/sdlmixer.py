@@ -9,48 +9,71 @@ from .endian import SDL_LIL_ENDIAN, SDL_BYTEORDER
 from .rwops import SDL_RWops, SDL_RWFromFile
 from .error import SDL_SetError, SDL_GetError, SDL_ClearError
 
-__all__ = ["get_dll_file", "SDL_MIXER_MAJOR_VERSION", "SDL_MIXER_MINOR_VERSION",
-           "SDL_MIXER_PATCHLEVEL", "SDL_MIXER_VERSION", "MIX_MAJOR_VERSION",
-           "MIX_MINOR_VERSION", "MIX_PATCHLEVEL", "MIX_VERSION",
-           "SDL_MIXER_COMPILEDVERSION", "SDL_MIXER_VERSION_ATLEAST",
-           "Mix_Linked_Version", "MIX_InitFlags", "MIX_INIT_FLAC",
-           "MIX_INIT_MOD", "MIX_INIT_MP3", "MIX_INIT_OGG", "MIX_INIT_MID",
-           "MIX_INIT_OPUS", "Mix_Init", "Mix_Quit", "MIX_CHANNELS",
-           "MIX_DEFAULT_FREQUENCY" , "MIX_DEFAULT_FORMAT",
-           "MIX_DEFAULT_CHANNELS", "MIX_MAX_VOLUME", "Mix_Chunk", "Mix_Fading",
-           "MIX_NO_FADING", "MIX_FADING_OUT", "MIX_FADING_IN", "Mix_MusicType",
-           "MUS_NONE", "MUS_CMD", "MUS_WAV", "MUS_MOD", "MUS_MID", "MUS_OGG",
-           "MUS_MP3", "MUS_MP3_MAD_UNUSED", "MUS_FLAC", "MUS_MODPLUG_UNUSED",
-           "MUS_OPUS", "Mix_Music", "Mix_OpenAudioDevice",
-           "Mix_OpenAudio", "Mix_AllocateChannels", "Mix_QuerySpec",
-           "Mix_LoadWAV_RW", "Mix_LoadWAV", "Mix_LoadMUS", "Mix_LoadMUS_RW",
-           "Mix_LoadMUSType_RW", "Mix_QuickLoad_WAV", "Mix_QuickLoad_RAW",
-           "Mix_FreeChunk", "Mix_FreeMusic", "Mix_GetNumChunkDecoders",
-           "Mix_GetChunkDecoder", "Mix_GetNumMusicDecoders",
-           "Mix_HasChunkDecoder", #"Mix_HasMusicDecoder",
-           "Mix_GetMusicDecoder", "Mix_GetMusicType", "mix_func",
-           "Mix_SetPostMix", "Mix_HookMusic", "music_finished",
-           "Mix_HookMusicFinished", "Mix_GetMusicHookData", "channel_finished",
-           "Mix_ChannelFinished", "MIX_CHANNEL_POST", "Mix_EffectFunc_t",
-           "Mix_EffectDone_t", "Mix_RegisterEffect", "Mix_UnregisterEffect",
-           "Mix_UnregisterAllEffects", "MIX_EFFECTSMAXSPEED", "Mix_SetPanning",
-           "Mix_SetPosition", "Mix_SetDistance", "Mix_SetReverseStereo",
-           "Mix_ReserveChannels", "Mix_GroupChannel", "Mix_GroupChannels",
-           "Mix_GroupAvailable", "Mix_GroupCount", "Mix_GroupOldest",
-           "Mix_GroupNewer", "Mix_PlayChannel", "Mix_PlayChannelTimed",
-           "Mix_PlayMusic", "Mix_FadeInMusic", "Mix_FadeInMusicPos",
-           "Mix_FadeInChannel", "Mix_FadeInChannelTimed", "Mix_Volume",
-           "Mix_VolumeChunk", "Mix_VolumeMusic", "Mix_HaltChannel",
-           "Mix_HaltGroup", "Mix_HaltMusic", "Mix_ExpireChannel",
-           "Mix_FadeOutChannel", "Mix_FadeOutGroup", "Mix_FadeOutMusic",
-           "Mix_FadingMusic", "Mix_FadingChannel", "Mix_Pause", "Mix_Resume",
-           "Mix_Paused", "Mix_PauseMusic", "Mix_ResumeMusic", "Mix_RewindMusic",
-           "Mix_PausedMusic", "Mix_SetMusicPosition", "Mix_Playing",
-           "Mix_PlayingMusic", "Mix_SetMusicCMD", "Mix_SetSynchroValue",
-           "Mix_GetSynchroValue", "Mix_SetSoundFonts", "Mix_GetSoundFonts",
-           "soundfont_function", "Mix_EachSoundFont", "Mix_GetChunk",
-           "Mix_CloseAudio", "Mix_SetError", "Mix_GetError", "Mix_ClearError"
-          ]
+__all__ = [
+    # Structs
+    "Mix_Chunk", "Mix_Music",
+
+    # Defines
+    "SDL_MIXER_MAJOR_VERSION", "SDL_MIXER_MINOR_VERSION",
+    "SDL_MIXER_PATCHLEVEL", "MIX_MAJOR_VERSION", "MIX_MINOR_VERSION",
+    "MIX_PATCHLEVEL", "MIX_CHANNELS", "MIX_DEFAULT_FREQUENCY",
+    "MIX_DEFAULT_FORMAT", "MIX_DEFAULT_CHANNELS", "MIX_MAX_VOLUME",
+    "MIX_CHANNEL_POST", "MIX_EFFECTSMAXSPEED",
+
+    # Enums
+    "MIX_InitFlags",
+    "MIX_INIT_FLAC", "MIX_INIT_MOD", "MIX_INIT_MP3", "MIX_INIT_OGG",
+    "MIX_INIT_MID", "MIX_INIT_OPUS",
+
+    "Mix_Fading",
+    "MIX_NO_FADING", "MIX_FADING_OUT", "MIX_FADING_IN",
+
+    "Mix_MusicType",
+    "MUS_NONE", "MUS_CMD", "MUS_WAV", "MUS_MOD", "MUS_MID", "MUS_OGG",
+    "MUS_MP3", "MUS_MP3_MAD_UNUSED", "MUS_FLAC", "MUS_MODPLUG_UNUSED",
+    "MUS_OPUS",
+    
+    # Macro Functions
+    "SDL_MIXER_VERSION",  "MIX_VERSION", "SDL_MIXER_COMPILEDVERSION",
+    "SDL_MIXER_VERSION_ATLEAST", "Mix_LoadWAV", "Mix_PlayChannel",
+    "Mix_FadeInChannel",
+
+    "Mix_Linked_Version",  "Mix_Init", "Mix_Quit", "Mix_OpenAudioDevice",
+    "Mix_OpenAudio", "Mix_AllocateChannels", "Mix_QuerySpec",
+    "Mix_LoadWAV_RW", "Mix_LoadMUS", "Mix_LoadMUS_RW",
+    "Mix_LoadMUSType_RW", "Mix_QuickLoad_WAV", "Mix_QuickLoad_RAW",
+    "Mix_FreeChunk", "Mix_FreeMusic", "Mix_GetNumChunkDecoders",
+    "Mix_GetChunkDecoder", "Mix_GetNumMusicDecoders",
+    "Mix_HasChunkDecoder", #"Mix_HasMusicDecoder",
+    "Mix_GetMusicDecoder", "Mix_GetMusicType", 
+    "Mix_SetPostMix", "Mix_HookMusic", 
+    "Mix_HookMusicFinished", "Mix_GetMusicHookData", 
+    "Mix_ChannelFinished",  "Mix_RegisterEffect", "Mix_UnregisterEffect",
+    "Mix_UnregisterAllEffects",  "Mix_SetPanning",
+    "Mix_SetPosition", "Mix_SetDistance", "Mix_SetReverseStereo",
+    "Mix_ReserveChannels", "Mix_GroupChannel", "Mix_GroupChannels",
+    "Mix_GroupAvailable", "Mix_GroupCount", "Mix_GroupOldest",
+    "Mix_GroupNewer", "Mix_PlayChannelTimed",
+    "Mix_PlayMusic", "Mix_FadeInMusic", "Mix_FadeInMusicPos",
+    "Mix_FadeInChannelTimed", "Mix_Volume",
+    "Mix_VolumeChunk", "Mix_VolumeMusic", "Mix_HaltChannel",
+    "Mix_HaltGroup", "Mix_HaltMusic", "Mix_ExpireChannel",
+    "Mix_FadeOutChannel", "Mix_FadeOutGroup", "Mix_FadeOutMusic",
+    "Mix_FadingMusic", "Mix_FadingChannel", "Mix_Pause", "Mix_Resume",
+    "Mix_Paused", "Mix_PauseMusic", "Mix_ResumeMusic", "Mix_RewindMusic",
+    "Mix_PausedMusic", "Mix_SetMusicPosition", "Mix_Playing",
+    "Mix_PlayingMusic", "Mix_SetMusicCMD", "Mix_SetSynchroValue",
+    "Mix_GetSynchroValue", "Mix_SetSoundFonts", "Mix_GetSoundFonts",
+    "Mix_EachSoundFont", "Mix_GetChunk",
+    "Mix_CloseAudio", "Mix_SetError", "Mix_GetError", "Mix_ClearError",
+
+    # Callback Functions
+    "channel_finished", "music_finished", "mix_func", "soundfont_function",
+    "Mix_EffectFunc_t", "Mix_EffectDone_t",
+
+    # Python Functions
+    "get_dll_file"
+]
 
 try:
     dll = DLL("SDL2_mixer", ["SDL2_mixer", "SDL2_mixer-2.0"],

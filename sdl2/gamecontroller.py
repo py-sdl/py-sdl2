@@ -7,70 +7,84 @@ from .joystick import SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID, \
     SDL_JoystickGetGUIDString
 from .rwops import SDL_RWops, SDL_RWFromFile
 
+__all__ = [
+    # Structs & Opaque Types
+    "SDL_GameController", "SDL_GameControllerButtonBind",
 
-__all__ = ["SDL_GameController", "SDL_CONTROLLER_BINDTYPE_NONE",
-           "SDL_CONTROLLER_BINDTYPE_BUTTON", "SDL_CONTROLLER_BINDTYPE_AXIS",
-           "SDL_CONTROLLER_BINDTYPE_HAT", "SDL_GameControllerBindType",
-           "SDL_GameControllerType", "SDL_CONTROLLER_TYPE_UNKNOWN",
-           "SDL_CONTROLLER_TYPE_XBOX360", "SDL_CONTROLLER_TYPE_XBOXONE",
-           "SDL_CONTROLLER_TYPE_PS3", "SDL_CONTROLLER_TYPE_PS4",
-           "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO",
-           "SDL_GameControllerButtonBind", "SDL_GameControllerAddMapping",
-           "SDL_GameControllerMappingForGUID", "SDL_GameControllerMapping",
-           "SDL_IsGameController", "SDL_GameControllerNameForIndex",
-           "SDL_GameControllerTypeForIndex",
-           "SDL_GameControllerOpen", "SDL_GameControllerName",
-           "SDL_GameControllerGetType",
-           "SDL_GameControllerGetAttached", "SDL_GameControllerGetJoystick",
-           "SDL_GameControllerEventState", "SDL_GameControllerUpdate",
-           "SDL_CONTROLLER_AXIS_INVALID", "SDL_CONTROLLER_AXIS_LEFTX",
-           "SDL_CONTROLLER_AXIS_LEFTY", "SDL_CONTROLLER_AXIS_RIGHTX",
-           "SDL_CONTROLLER_AXIS_RIGHTY", "SDL_CONTROLLER_AXIS_TRIGGERLEFT",
-           "SDL_CONTROLLER_AXIS_TRIGGERRIGHT", "SDL_CONTROLLER_AXIS_MAX",
-           "SDL_GameControllerAxis", "SDL_GameControllerGetAxisFromString",
-           "SDL_GameControllerGetStringForAxis",
-           "SDL_GameControllerGetBindForAxis", "SDL_GameControllerGetAxis",
-           "SDL_CONTROLLER_BUTTON_INVALID", "SDL_CONTROLLER_BUTTON_A",
-           "SDL_CONTROLLER_BUTTON_B", "SDL_CONTROLLER_BUTTON_X",
-           "SDL_CONTROLLER_BUTTON_Y", "SDL_CONTROLLER_BUTTON_BACK",
-           "SDL_CONTROLLER_BUTTON_GUIDE", "SDL_CONTROLLER_BUTTON_START",
-           "SDL_CONTROLLER_BUTTON_LEFTSTICK", "SDL_CONTROLLER_BUTTON_RIGHTSTICK",
-           "SDL_CONTROLLER_BUTTON_LEFTSHOULDER",
-           "SDL_CONTROLLER_BUTTON_RIGHTSHOULDER",
-           "SDL_CONTROLLER_BUTTON_DPAD_UP", "SDL_CONTROLLER_BUTTON_DPAD_DOWN",
-           "SDL_CONTROLLER_BUTTON_DPAD_LEFT", "SDL_CONTROLLER_BUTTON_DPAD_RIGHT",
-           "SDL_CONTROLLER_BUTTON_MAX", "SDL_GameControllerButton",
-           "SDL_GameControllerGetButtonFromString",
-           "SDL_GameControllerGetStringForButton",
-           "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
-           "SDL_GameControllerClose", "SDL_GameControllerAddMappingsFromFile",
-           "SDL_GameControllerAddMappingsFromRW",
-           "SDL_GameControllerFromInstanceID", "SDL_GameControllerFromPlayerIndex",
-           "SDL_GameControllerGetPlayerIndex", "SDL_GameControllerSetPlayerIndex",
-           "SDL_GameControllerGetVendor", "SDL_GameControllerGetProduct",
-           "SDL_GameControllerGetProductVersion", "SDL_GameControllerNumMappings",
-           "SDL_GameControllerMappingForIndex", 
-           "SDL_GameControllerMappingForDeviceIndex", "SDL_GameControllerRumble"
+    # Enums
+    "SDL_GameControllerType",
+    "SDL_CONTROLLER_TYPE_UNKNOWN", "SDL_CONTROLLER_TYPE_XBOX360",
+    "SDL_CONTROLLER_TYPE_XBOXONE", "SDL_CONTROLLER_TYPE_PS3",
+    "SDL_CONTROLLER_TYPE_PS4", "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO",
 
-          ]
+    "SDL_GameControllerBindType",
+    "SDL_CONTROLLER_BINDTYPE_NONE", "SDL_CONTROLLER_BINDTYPE_BUTTON",
+    "SDL_CONTROLLER_BINDTYPE_AXIS", "SDL_CONTROLLER_BINDTYPE_HAT", 
+
+    "SDL_GameControllerAxis",
+    "SDL_CONTROLLER_AXIS_INVALID", "SDL_CONTROLLER_AXIS_LEFTX",
+    "SDL_CONTROLLER_AXIS_LEFTY", "SDL_CONTROLLER_AXIS_RIGHTX",
+    "SDL_CONTROLLER_AXIS_RIGHTY", "SDL_CONTROLLER_AXIS_TRIGGERLEFT",
+    "SDL_CONTROLLER_AXIS_TRIGGERRIGHT", "SDL_CONTROLLER_AXIS_MAX",  
+
+    "SDL_GameControllerButton",
+    "SDL_CONTROLLER_BUTTON_INVALID", "SDL_CONTROLLER_BUTTON_A",
+    "SDL_CONTROLLER_BUTTON_B", "SDL_CONTROLLER_BUTTON_X",
+    "SDL_CONTROLLER_BUTTON_Y", "SDL_CONTROLLER_BUTTON_BACK",
+    "SDL_CONTROLLER_BUTTON_GUIDE", "SDL_CONTROLLER_BUTTON_START",
+    "SDL_CONTROLLER_BUTTON_LEFTSTICK", "SDL_CONTROLLER_BUTTON_RIGHTSTICK",
+    "SDL_CONTROLLER_BUTTON_LEFTSHOULDER",
+    "SDL_CONTROLLER_BUTTON_RIGHTSHOULDER",
+    "SDL_CONTROLLER_BUTTON_DPAD_UP", "SDL_CONTROLLER_BUTTON_DPAD_DOWN",
+    "SDL_CONTROLLER_BUTTON_DPAD_LEFT", "SDL_CONTROLLER_BUTTON_DPAD_RIGHT",
+    "SDL_CONTROLLER_BUTTON_MAX", 
+    
+    # Functions
+    "SDL_GameControllerAddMapping", "SDL_GameControllerMappingForGUID",
+    "SDL_GameControllerMapping", "SDL_IsGameController",
+    "SDL_GameControllerNameForIndex", "SDL_GameControllerTypeForIndex",
+    "SDL_GameControllerOpen", "SDL_GameControllerName",
+    "SDL_GameControllerGetType",
+    "SDL_GameControllerGetAttached", "SDL_GameControllerGetJoystick",
+    "SDL_GameControllerEventState", "SDL_GameControllerUpdate",
+    "SDL_GameControllerGetAxisFromString",
+    "SDL_GameControllerGetStringForAxis",
+    "SDL_GameControllerGetBindForAxis", "SDL_GameControllerGetAxis",
+    "SDL_GameControllerGetButtonFromString",
+    "SDL_GameControllerGetStringForButton",
+    "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
+    "SDL_GameControllerClose", "SDL_GameControllerAddMappingsFromFile",
+    "SDL_GameControllerAddMappingsFromRW",
+    "SDL_GameControllerFromInstanceID", "SDL_GameControllerFromPlayerIndex",
+    "SDL_GameControllerGetPlayerIndex", "SDL_GameControllerSetPlayerIndex",
+    "SDL_GameControllerGetVendor", "SDL_GameControllerGetProduct",
+    "SDL_GameControllerGetProductVersion", "SDL_GameControllerNumMappings",
+    "SDL_GameControllerMappingForIndex", 
+    "SDL_GameControllerMappingForDeviceIndex", "SDL_GameControllerRumble"
+]
 
 
 class SDL_GameController(c_void_p):
     pass
 
+
 SDL_GameControllerBindType = c_int
+
 SDL_CONTROLLER_BINDTYPE_NONE = 0
 SDL_CONTROLLER_BINDTYPE_BUTTON = 1
 SDL_CONTROLLER_BINDTYPE_AXIS = 2
 SDL_CONTROLLER_BINDTYPE_HAT = 3
 
+
 SDL_GameControllerType = c_int
+
 SDL_CONTROLLER_TYPE_UNKNOWN = 0
 SDL_CONTROLLER_TYPE_XBOX360 = 1
 SDL_CONTROLLER_TYPE_XBOXONE = 2
 SDL_CONTROLLER_TYPE_PS3 = 3
 SDL_CONTROLLER_TYPE_PS4 = 4
 SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO = 5
+
 
 class _gchat(Structure):
     _fields_ = [("hat", c_int), ("hat_mask", c_int)]
@@ -95,6 +109,9 @@ SDL_GameControllerGetJoystick = _bind("SDL_GameControllerGetJoystick", [POINTER(
 SDL_GameControllerEventState = _bind("SDL_GameControllerEventState", [c_int], c_int)
 SDL_GameControllerUpdate = _bind("SDL_GameControllerUpdate")
 
+
+SDL_GameControllerAxis = c_int
+
 SDL_CONTROLLER_AXIS_INVALID = -1
 SDL_CONTROLLER_AXIS_LEFTX = 0
 SDL_CONTROLLER_AXIS_LEFTY = 1
@@ -103,12 +120,15 @@ SDL_CONTROLLER_AXIS_RIGHTY = 3
 SDL_CONTROLLER_AXIS_TRIGGERLEFT = 4
 SDL_CONTROLLER_AXIS_TRIGGERRIGHT = 5
 SDL_CONTROLLER_AXIS_MAX = 6
-SDL_GameControllerAxis = c_int
+
 
 SDL_GameControllerGetAxisFromString = _bind("SDL_GameControllerGetAxisFromString", [c_char_p], SDL_GameControllerAxis)
 SDL_GameControllerGetStringForAxis = _bind("SDL_GameControllerGetStringForAxis", [SDL_GameControllerAxis], c_char_p)
 SDL_GameControllerGetBindForAxis = _bind("SDL_GameControllerGetBindForAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_GameControllerButtonBind)
 SDL_GameControllerGetAxis = _bind("SDL_GameControllerGetAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], Sint16)
+
+
+SDL_GameControllerButton = c_int
 
 SDL_CONTROLLER_BUTTON_INVALID = -1
 SDL_CONTROLLER_BUTTON_A = 0
@@ -127,7 +147,7 @@ SDL_CONTROLLER_BUTTON_DPAD_DOWN = 12
 SDL_CONTROLLER_BUTTON_DPAD_LEFT = 13
 SDL_CONTROLLER_BUTTON_DPAD_RIGHT = 14
 SDL_CONTROLLER_BUTTON_MAX = 15
-SDL_GameControllerButton = c_int
+
 
 SDL_GameControllerGetButtonFromString = _bind("SDL_GameControllerGetButtonFromString", [c_char_p], SDL_GameControllerButton)
 SDL_GameControllerGetStringForButton = _bind("SDL_GameControllerGetStringForButton", [SDL_GameControllerButton], c_char_p)

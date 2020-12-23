@@ -2,10 +2,22 @@ from ctypes import CFUNCTYPE, c_void_p, c_int
 from .dll import _bind
 from .stdinc import Uint32, Uint64, SDL_bool
 
-__all__ = ["SDL_GetTicks", "SDL_GetPerformanceCounter",
-           "SDL_GetPerformanceFrequency", "SDL_Delay", "SDL_TimerCallback",
-           "SDL_TimerID", "SDL_AddTimer", "SDL_RemoveTimer"
-           ]
+__all__ = [
+    # Defines
+    "SDL_TimerID",
+
+    # Macro Functions
+    "SDL_TICKS_PASSED",
+
+    # Functions
+    "SDL_GetTicks", "SDL_GetPerformanceCounter",
+    "SDL_GetPerformanceFrequency", "SDL_Delay",
+    "SDL_AddTimer", "SDL_RemoveTimer",
+
+    # Callback Functions
+    "SDL_TimerCallback"
+]
+
 
 SDL_GetTicks = _bind("SDL_GetTicks", None, Uint32)
 SDL_GetPerformanceCounter = _bind("SDL_GetPerformanceCounter", None, Uint64)

@@ -8,35 +8,50 @@ from .pixels import SDL_Color
 from .surface import SDL_Surface
 from .error import SDL_GetError, SDL_SetError
 
-__all__ = ["get_dll_file", "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION",
-          "SDL_TTF_PATCHLEVEL", "SDL_TTF_VERSION", "TTF_MAJOR_VERSION",
-          "TTF_MINOR_VERSION", "TTF_PATCHLEVEL", "TTF_VERSION",
-          "SDL_TTF_COMPILEDVERSION", "SDL_TTF_VERSION_ATLEAST",
-          "TTF_Linked_Version", "UNICODE_BOM_NATIVE", "UNICODE_BOM_SWAPPED",
-          "TTF_ByteSwappedUNICODE", "TTF_Font", "TTF_Init", "TTF_OpenFont",
-          "TTF_OpenFontIndex", "TTF_OpenFontRW", "TTF_OpenFontIndexRW",
-          "TTF_STYLE_NORMAL", "TTF_STYLE_BOLD", "TTF_STYLE_ITALIC",
-          "TTF_STYLE_UNDERLINE", "TTF_STYLE_STRIKETHROUGH", "TTF_GetFontStyle",
-          "TTF_SetFontStyle", "TTF_GetFontOutline", "TTF_SetFontOutline",
-          "TTF_HINTING_NORMAL", "TTF_HINTING_LIGHT", "TTF_HINTING_MONO",
-          "TTF_HINTING_NONE", "TTF_GetFontHinting", "TTF_SetFontHinting",
-          "TTF_FontHeight", "TTF_FontAscent", "TTF_FontDescent",
-          "TTF_FontLineSkip", "TTF_GetFontKerning", "TTF_SetFontKerning",
-          "TTF_FontFaces", "TTF_FontFaceIsFixedWidth", "TTF_FontFaceFamilyName",
-          "TTF_FontFaceStyleName", "TTF_GlyphIsProvided", "TTF_GlyphMetrics",
-          "TTF_SizeText", "TTF_SizeUTF8", "TTF_SizeUNICODE",
-          "TTF_RenderText_Solid", "TTF_RenderUTF8_Solid",
-          "TTF_RenderUNICODE_Solid", "TTF_RenderGlyph_Solid",
-          "TTF_RenderText_Shaded", "TTF_RenderUTF8_Shaded",
-          "TTF_RenderUNICODE_Shaded", "TTF_RenderGlyph_Shaded",
-          "TTF_RenderText_Blended", "TTF_RenderUTF8_Blended",
-          "TTF_RenderUNICODE_Blended", "TTF_RenderText_Blended_Wrapped",
-          "TTF_RenderUTF8_Blended_Wrapped", "TTF_RenderUNICODE_Blended_Wrapped",
-          "TTF_RenderGlyph_Blended", "TTF_RenderText", "TTF_RenderUTF",
-          "TTF_RenderUNICODE", "TTF_CloseFont", "TTF_Quit", "TTF_WasInit",
-          "TTF_GetFontKerningSize", "TTF_GetFontKerningSizeGlyphs",
-          "TTF_SetError", "TTF_GetError"
-          ]
+__all__ = [
+    # Opaque Types
+    "TTF_Font",
+
+    # Defines
+    "SDL_TTF_MAJOR_VERSION", "SDL_TTF_MINOR_VERSION", "SDL_TTF_PATCHLEVEL",
+    "TTF_MAJOR_VERSION", "TTF_MINOR_VERSION", "TTF_PATCHLEVEL",
+    "UNICODE_BOM_NATIVE", "UNICODE_BOM_SWAPPED",
+    "TTF_STYLE_NORMAL", "TTF_STYLE_BOLD", "TTF_STYLE_ITALIC",
+    "TTF_STYLE_UNDERLINE", "TTF_STYLE_STRIKETHROUGH",
+    "TTF_HINTING_NORMAL", "TTF_HINTING_LIGHT", "TTF_HINTING_MONO",
+    "TTF_HINTING_NONE",
+
+    # Macro Functions
+    "SDL_TTF_VERSION",  "TTF_VERSION", "SDL_TTF_COMPILEDVERSION",
+    "SDL_TTF_VERSION_ATLEAST",
+
+    # Functions
+    "TTF_Linked_Version", "TTF_ByteSwappedUNICODE", "TTF_Init",
+    "TTF_OpenFont", "TTF_OpenFontIndex", "TTF_OpenFontRW",
+    "TTF_OpenFontIndexRW", "TTF_GetFontStyle", "TTF_SetFontStyle",
+    "TTF_GetFontOutline", "TTF_SetFontOutline",
+    "TTF_GetFontHinting", "TTF_SetFontHinting",
+    "TTF_FontHeight", "TTF_FontAscent", "TTF_FontDescent",
+    "TTF_FontLineSkip", "TTF_GetFontKerning", "TTF_SetFontKerning",
+    "TTF_FontFaces", "TTF_FontFaceIsFixedWidth", "TTF_FontFaceFamilyName",
+    "TTF_FontFaceStyleName", "TTF_GlyphIsProvided", "TTF_GlyphMetrics",
+    "TTF_SizeText", "TTF_SizeUTF8", "TTF_SizeUNICODE",
+    "TTF_RenderText_Solid", "TTF_RenderUTF8_Solid",
+    "TTF_RenderUNICODE_Solid", "TTF_RenderGlyph_Solid",
+    "TTF_RenderText_Shaded", "TTF_RenderUTF8_Shaded",
+    "TTF_RenderUNICODE_Shaded", "TTF_RenderGlyph_Shaded",
+    "TTF_RenderText_Blended", "TTF_RenderUTF8_Blended",
+    "TTF_RenderUNICODE_Blended", "TTF_RenderText_Blended_Wrapped",
+    "TTF_RenderUTF8_Blended_Wrapped", "TTF_RenderUNICODE_Blended_Wrapped",
+    "TTF_RenderGlyph_Blended", "TTF_RenderText", "TTF_RenderUTF",
+    "TTF_RenderUNICODE", "TTF_CloseFont", "TTF_Quit", "TTF_WasInit",
+    "TTF_GetFontKerningSize", "TTF_GetFontKerningSizeGlyphs",
+    "TTF_SetError", "TTF_GetError",
+
+    # Python Functions
+    "get_dll_file",
+]
+
 
 try:
     dll = DLL("SDL2_ttf", ["SDL2_ttf", "SDL2_ttf-2.0"],

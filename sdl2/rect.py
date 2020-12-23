@@ -2,12 +2,17 @@ from ctypes import Structure, c_int, c_float, POINTER
 from .dll import _bind
 from .stdinc import SDL_bool
 
-__all__ = ["SDL_Point", "SDL_FPoint", "SDL_Rect", "SDL_FRect",
-           "SDL_RectEmpty", "SDL_RectEquals",
-           "SDL_HasIntersection", "SDL_IntersectRect", "SDL_UnionRect",
-           "SDL_EnclosePoints", "SDL_IntersectRectAndLine",
-           "SDL_PointInRect"
-           ]
+__all__ = [
+    # Structs
+    "SDL_Point", "SDL_FPoint", "SDL_Rect", "SDL_FRect",
+
+    # Macro Functions
+    "SDL_PointInRect", "SDL_RectEmpty", "SDL_RectEquals",
+
+    # Functions
+    "SDL_HasIntersection", "SDL_IntersectRect", "SDL_UnionRect",
+    "SDL_EnclosePoints", "SDL_IntersectRectAndLine"
+]
 
 
 class SDL_Point(Structure):

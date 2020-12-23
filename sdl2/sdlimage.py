@@ -7,24 +7,36 @@ from .rwops import SDL_RWops
 from .render import SDL_Texture, SDL_Renderer
 from .error import SDL_SetError, SDL_GetError
 
-__all__ = ["SDL_IMAGE_MAJOR_VERSION", "SDL_IMAGE_MINOR_VERSION", \
-           "SDL_IMAGE_PATCHLEVEL", "SDL_IMAGE_VERSION", "IMG_Linked_Version",
-           "IMG_InitFlags", "IMG_INIT_JPG", "IMG_INIT_PNG", "IMG_INIT_TIF",
-           "IMG_INIT_WEBP", "IMG_Init", "IMG_Quit", "IMG_LoadTyped_RW",
-           "IMG_Load", "IMG_Load_RW", "IMG_LoadTexture", "IMG_LoadTexture_RW",
-           "IMG_LoadTextureTyped_RW", "IMG_isICO", "IMG_isCUR", "IMG_isBMP",
-           "IMG_isGIF", "IMG_isJPG", "IMG_isLBM", "IMG_isPNG", "IMG_isPNM",
-           "IMG_isPCX", "IMG_isTIF", "IMG_isXCF", "IMG_isXV", "IMG_isWEBP",
-           "IMG_LoadBMP_RW", "IMG_LoadCUR_RW", "IMG_LoadCUR_RW",
-           "IMG_LoadGIF_RW", "IMG_LoadICO_RW", "IMG_LoadJPG_RW",
-           "IMG_LoadLBM_RW", "IMG_LoadPCX_RW", "IMG_LoadPNM_RW",
-           "IMG_LoadPNG_RW", "IMG_LoadTGA_RW", "IMG_LoadTIF_RW",
-           "IMG_LoadXCF_RW", "IMG_LoadWEBP_RW", "IMG_LoadXPM_RW",
-           "IMG_LoadXV_RW", "IMG_ReadXPMFromArray",
-           "IMG_GetError", "IMG_SetError", "IMG_SaveJPG", "IMG_SaveJPG_RW",
-           "SDL_IMAGE_COMPILEDVERSION", "SDL_IMAGE_VERSION_ATLEAST",
-           "get_dll_file"
-           ]
+__all__ = [
+    # Defines
+    "SDL_IMAGE_MAJOR_VERSION", "SDL_IMAGE_MINOR_VERSION", "SDL_IMAGE_PATCHLEVEL",
+
+    # Enums
+    "IMG_InitFlags",
+    "IMG_INIT_JPG", "IMG_INIT_PNG", "IMG_INIT_TIF", "IMG_INIT_WEBP",
+    
+    # Macro Functions
+    "SDL_IMAGE_VERSION", "SDL_IMAGE_COMPILEDVERSION",
+    "SDL_IMAGE_VERSION_ATLEAST", 
+    
+    # Functions
+    "IMG_Linked_Version", "IMG_Init", "IMG_Quit", "IMG_LoadTyped_RW",
+    "IMG_Load", "IMG_Load_RW", "IMG_LoadTexture", "IMG_LoadTexture_RW",
+    "IMG_LoadTextureTyped_RW", "IMG_isICO", "IMG_isCUR", "IMG_isBMP",
+    "IMG_isGIF", "IMG_isJPG", "IMG_isLBM", "IMG_isPNG", "IMG_isPNM",
+    "IMG_isPCX", "IMG_isTIF", "IMG_isXCF", "IMG_isXV", "IMG_isWEBP",
+    "IMG_LoadBMP_RW", "IMG_LoadCUR_RW", "IMG_LoadCUR_RW",
+    "IMG_LoadGIF_RW", "IMG_LoadICO_RW", "IMG_LoadJPG_RW",
+    "IMG_LoadLBM_RW", "IMG_LoadPCX_RW", "IMG_LoadPNM_RW",
+    "IMG_LoadPNG_RW", "IMG_LoadTGA_RW", "IMG_LoadTIF_RW",
+    "IMG_LoadXCF_RW", "IMG_LoadWEBP_RW", "IMG_LoadXPM_RW",
+    "IMG_LoadXV_RW", "IMG_ReadXPMFromArray",
+    "IMG_GetError", "IMG_SetError", "IMG_SaveJPG", "IMG_SaveJPG_RW",
+    
+    # Python Functions
+    "get_dll_file"
+]
+
 
 try:
     dll = DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],

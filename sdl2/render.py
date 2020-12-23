@@ -7,50 +7,63 @@ from .rect import SDL_Point, SDL_FPoint, SDL_Rect, SDL_FRect
 from .surface import SDL_Surface
 from .video import SDL_Window
 
-__all__ = ["SDL_RendererFlags", "SDL_RENDERER_SOFTWARE",
-           "SDL_RENDERER_ACCELERATED", "SDL_RENDERER_PRESENTVSYNC",
-           "SDL_RENDERER_TARGETTEXTURE", "SDL_RendererInfo",
-           "SDL_ScaleMode", "SDL_ScaleModeNearest", "SDL_ScaleModeLinear",
-           "SDL_ScaleModeBest",
-           "SDL_TextureAccess", "SDL_TEXTUREACCESS_STATIC",
-           "SDL_TEXTUREACCESS_STREAMING", "SDL_TEXTUREACCESS_TARGET",
-           "SDL_TextureModulate", "SDL_TEXTUREMODULATE_NONE",
-           "SDL_TEXTUREMODULATE_COLOR", "SDL_TEXTUREMODULATE_ALPHA",
-           "SDL_RendererFlip", "SDL_FLIP_NONE", "SDL_FLIP_HORIZONTAL",
-           "SDL_FLIP_VERTICAL", "SDL_Renderer", "SDL_Texture",
-           "SDL_GetNumRenderDrivers", "SDL_GetRenderDriverInfo",
-           "SDL_CreateWindowAndRenderer", "SDL_CreateRenderer",
-           "SDL_CreateSoftwareRenderer", "SDL_GetRenderer",
-           "SDL_GetRendererInfo", "SDL_CreateTexture",
-           "SDL_CreateTextureFromSurface", "SDL_QueryTexture",
-           "SDL_SetTextureColorMod", "SDL_GetTextureColorMod",
-           "SDL_SetTextureAlphaMod", "SDL_GetTextureAlphaMod",
-           "SDL_SetTextureBlendMode", "SDL_GetTextureBlendMode",
-           "SDL_SetTextureScaleMode", "SDL_GetTextureScaleMode",
-           "SDL_UpdateTexture", "SDL_LockTexture", "SDL_LockTextureToSurface",
-           "SDL_UnlockTexture",
-           "SDL_RenderTargetSupported", "SDL_SetRenderTarget",
-           "SDL_GetRenderTarget", "SDL_RenderSetLogicalSize",
-           "SDL_RenderGetLogicalSize", "SDL_RenderSetViewport",
-           "SDL_RenderGetClipRect", "SDL_RenderSetClipRect",
-           "SDL_RenderGetViewport", "SDL_RenderSetScale", "SDL_RenderGetScale",
-           "SDL_SetRenderDrawColor", "SDL_GetRenderDrawColor",
-           "SDL_SetRenderDrawBlendMode", "SDL_GetRenderDrawBlendMode",
-           "SDL_RenderClear", "SDL_RenderDrawPoint", "SDL_RenderDrawPoints",
-           "SDL_RenderDrawLine", "SDL_RenderDrawLines", "SDL_RenderDrawRect",
-           "SDL_RenderDrawRects", "SDL_RenderFillRect", "SDL_RenderFillRects",
-           "SDL_RenderCopy", "SDL_RenderCopyEx", "SDL_RenderDrawPointF",
-           "SDL_RenderDrawPointsF", "SDL_RenderDrawLineF",
-           "SDL_RenderDrawLinesF", "SDL_RenderDrawRectF",
-           "SDL_RenderDrawRectsF", "SDL_RenderFillRectF",
-           "SDL_RenderFillRectsF", "SDL_RenderCopyF", "SDL_RenderCopyExF",
-           "SDL_RenderReadPixels", "SDL_RenderPresent",
-           "SDL_DestroyTexture", "SDL_DestroyRenderer", "SDL_RenderFlush",
-           "SDL_UpdateYUVTexture", "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
-           "SDL_GetRendererOutputSize", "SDL_RenderGetIntegerScale",
-           "SDL_RenderSetIntegerScale", "SDL_RenderGetMetalLayer",
-           "SDL_RenderGetMetalCommandEncoder"
-           ]
+__all__ = [
+    # Structs & Opaque Types
+    "SDL_RendererInfo", "SDL_Renderer", "SDL_Texture",
+
+    # Enums
+    "SDL_RendererFlags",
+    "SDL_RENDERER_SOFTWARE", "SDL_RENDERER_ACCELERATED",
+    "SDL_RENDERER_PRESENTVSYNC", "SDL_RENDERER_TARGETTEXTURE",
+
+    "SDL_ScaleMode",
+    "SDL_ScaleModeNearest", "SDL_ScaleModeLinear", "SDL_ScaleModeBest",
+
+    "SDL_TextureAccess",
+    "SDL_TEXTUREACCESS_STATIC", "SDL_TEXTUREACCESS_STREAMING",
+    "SDL_TEXTUREACCESS_TARGET",
+
+    "SDL_TextureModulate",
+    "SDL_TEXTUREMODULATE_NONE", "SDL_TEXTUREMODULATE_COLOR",
+    "SDL_TEXTUREMODULATE_ALPHA",
+
+    "SDL_RendererFlip",
+    "SDL_FLIP_NONE", "SDL_FLIP_HORIZONTAL", "SDL_FLIP_VERTICAL",
+
+    # Functions
+    "SDL_GetNumRenderDrivers", "SDL_GetRenderDriverInfo",
+    "SDL_CreateWindowAndRenderer", "SDL_CreateRenderer",
+    "SDL_CreateSoftwareRenderer", "SDL_GetRenderer",
+    "SDL_GetRendererInfo", "SDL_CreateTexture",
+    "SDL_CreateTextureFromSurface", "SDL_QueryTexture",
+    "SDL_SetTextureColorMod", "SDL_GetTextureColorMod",
+    "SDL_SetTextureAlphaMod", "SDL_GetTextureAlphaMod",
+    "SDL_SetTextureBlendMode", "SDL_GetTextureBlendMode",
+    "SDL_SetTextureScaleMode", "SDL_GetTextureScaleMode",
+    "SDL_UpdateTexture", "SDL_LockTexture", "SDL_LockTextureToSurface",
+    "SDL_UnlockTexture",
+    "SDL_RenderTargetSupported", "SDL_SetRenderTarget",
+    "SDL_GetRenderTarget", "SDL_RenderSetLogicalSize",
+    "SDL_RenderGetLogicalSize", "SDL_RenderSetViewport",
+    "SDL_RenderGetClipRect", "SDL_RenderSetClipRect",
+    "SDL_RenderGetViewport", "SDL_RenderSetScale", "SDL_RenderGetScale",
+    "SDL_SetRenderDrawColor", "SDL_GetRenderDrawColor",
+    "SDL_SetRenderDrawBlendMode", "SDL_GetRenderDrawBlendMode",
+    "SDL_RenderClear", "SDL_RenderDrawPoint", "SDL_RenderDrawPoints",
+    "SDL_RenderDrawLine", "SDL_RenderDrawLines", "SDL_RenderDrawRect",
+    "SDL_RenderDrawRects", "SDL_RenderFillRect", "SDL_RenderFillRects",
+    "SDL_RenderCopy", "SDL_RenderCopyEx", "SDL_RenderDrawPointF",
+    "SDL_RenderDrawPointsF", "SDL_RenderDrawLineF",
+    "SDL_RenderDrawLinesF", "SDL_RenderDrawRectF",
+    "SDL_RenderDrawRectsF", "SDL_RenderFillRectF",
+    "SDL_RenderFillRectsF", "SDL_RenderCopyF", "SDL_RenderCopyExF",
+    "SDL_RenderReadPixels", "SDL_RenderPresent",
+    "SDL_DestroyTexture", "SDL_DestroyRenderer", "SDL_RenderFlush",
+    "SDL_UpdateYUVTexture", "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
+    "SDL_GetRendererOutputSize", "SDL_RenderGetIntegerScale",
+    "SDL_RenderSetIntegerScale", "SDL_RenderGetMetalLayer",
+    "SDL_RenderGetMetalCommandEncoder"
+]
 
 
 SDL_RendererFlags = c_int

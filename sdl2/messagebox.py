@@ -3,22 +3,30 @@ from .dll import _bind
 from .stdinc import Uint8, Uint32
 from .video import SDL_Window
 
-__all__ = ["SDL_MESSAGEBOX_ERROR", "SDL_MESSAGEBOX_WARNING",
-           "SDL_MESSAGEBOX_INFORMATION", 
-           "SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT",
-           "SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT",
-           "SDL_MessageBoxFlags",
-           "SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT",
-           "SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT",
-           "SDL_MessageBoxButtonFlags", "SDL_MessageBoxButtonData",
-           "SDL_MessageBoxColor", "SDL_MESSAGEBOX_COLOR_BACKGROUND",
-           "SDL_MESSAGEBOX_COLOR_TEXT", "SDL_MESSAGEBOX_COLOR_BUTTON_BORDER",
-           "SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND",
-           "SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED", "SDL_MESSAGEBOX_COLOR_MAX",
-           "SDL_MessageBoxColorType", "SDL_MessageBoxColorScheme",
-           "SDL_MessageBoxData", "SDL_ShowMessageBox",
-           "SDL_ShowSimpleMessageBox"
-           ]
+__all__ = [
+    # Structs
+    "SDL_MessageBoxButtonData", "SDL_MessageBoxColor",
+    "SDL_MessageBoxColorScheme", "SDL_MessageBoxData",
+
+    # Enums
+    "SDL_MessageBoxFlags",
+    "SDL_MESSAGEBOX_ERROR", "SDL_MESSAGEBOX_WARNING",
+    "SDL_MESSAGEBOX_INFORMATION", "SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT",
+    "SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT",
+
+    "SDL_MessageBoxButtonFlags",
+    "SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT",
+    "SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT",
+
+    "SDL_MessageBoxColorType",
+    "SDL_MESSAGEBOX_COLOR_BACKGROUND", "SDL_MESSAGEBOX_COLOR_TEXT",
+    "SDL_MESSAGEBOX_COLOR_BUTTON_BORDER",
+    "SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND",
+    "SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED", "SDL_MESSAGEBOX_COLOR_MAX",
+
+    # Functions
+    "SDL_ShowMessageBox", "SDL_ShowSimpleMessageBox"
+]
 
 
 SDL_MessageBoxFlags = c_int

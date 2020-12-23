@@ -11,32 +11,43 @@ from .surface import SDL_Surface
 # this isn't really a pressing concern. Time permitting, these functions may
 # be wrapped at a later date for the sake of completeness.
 
-__all__ = ["get_dll_file", "FPS_UPPER_LIMIT", "FPS_LOWER_LIMIT", "FPS_DEFAULT",
-           "FPSManager", "SDL_initFramerate", "SDL_getFramerate",
-           "SDL_setFramerate", "SDL_getFramecount", "SDL_framerateDelay",
-           "SDL2_GFXPRIMITIVES_MAJOR", "SDL2_GFXPRIMITIVES_MAJOR",
-           "SDL2_GFXPRIMITIVES_MICRO", "pixelColor", "pixelRGBA", "hlineColor",
-           "hlineRGBA", "vlineColor", "vlineRGBA", "rectangleColor",
-           "rectangleRGBA", "roundedRectangleColor", "roundedRectangleRGBA",
-           "boxColor", "boxRGBA", "roundedBoxColor", "roundedBoxRGBA",
-           "lineColor", "lineRGBA", "aalineColor", "aalineRGBA",
-           "thickLineColor", "thickLineRGBA", "circleColor", "circleRGBA",
-           "arcColor", "arcRGBA", "aacircleColor", "aacircleRGBA",
-           "filledCircleColor", "filledCircleRGBA", "ellipseColor",
-           "ellipseRGBA", "aaellipseColor", "aaellipseRGBA",
-           "filledEllipseColor", "filledEllipseRGBA", "pieColor", "pieRGBA",
-           "filledPieColor", "filledPieRGBA", "trigonColor", "trigonRGBA",
-           "aatrigonColor", "aatrigonRGBA", "filledTrigonColor",
-           "filledTrigonRGBA", "polygonColor", "polygonRGBA", "aapolygonColor",
-           "aapolygonRGBA", "filledPolygonColor", "filledPolygonRGBA",
-           "texturedPolygon", "bezierColor", "bezierRGBA",
-           "gfxPrimitivesSetFont", "gfxPrimitivesSetFontRotation",
-           "characterColor", "characterRGBA", "stringColor", "stringRGBA",
-           "SMOOTHING_OFF", "SMOOTHING_ON", "rotozoomSurface",
-           "rotozoomSurfaceXY", "rotozoomSurfaceSize", "rotozoomSurfaceSizeXY",
-           "zoomSurface", "zoomSurfaceSize", "shrinkSurface",
-           "rotateSurface90Degrees"
-           ]
+__all__ = [
+    # Structs
+    "FPSManager",
+    
+    # Defines
+    "FPS_UPPER_LIMIT", "FPS_LOWER_LIMIT", "FPS_DEFAULT",
+    "SDL2_GFXPRIMITIVES_MAJOR", "SDL2_GFXPRIMITIVES_MAJOR",
+    "SDL2_GFXPRIMITIVES_MICRO", "SMOOTHING_OFF", "SMOOTHING_ON",
+
+    # Functions
+    "SDL_initFramerate", "SDL_getFramerate",
+    "SDL_setFramerate", "SDL_getFramecount", "SDL_framerateDelay",
+    "pixelColor", "pixelRGBA", "hlineColor",
+    "hlineRGBA", "vlineColor", "vlineRGBA", "rectangleColor",
+    "rectangleRGBA", "roundedRectangleColor", "roundedRectangleRGBA",
+    "boxColor", "boxRGBA", "roundedBoxColor", "roundedBoxRGBA",
+    "lineColor", "lineRGBA", "aalineColor", "aalineRGBA",
+    "thickLineColor", "thickLineRGBA", "circleColor", "circleRGBA",
+    "arcColor", "arcRGBA", "aacircleColor", "aacircleRGBA",
+    "filledCircleColor", "filledCircleRGBA", "ellipseColor",
+    "ellipseRGBA", "aaellipseColor", "aaellipseRGBA",
+    "filledEllipseColor", "filledEllipseRGBA", "pieColor", "pieRGBA",
+    "filledPieColor", "filledPieRGBA", "trigonColor", "trigonRGBA",
+    "aatrigonColor", "aatrigonRGBA", "filledTrigonColor",
+    "filledTrigonRGBA", "polygonColor", "polygonRGBA", "aapolygonColor",
+    "aapolygonRGBA", "filledPolygonColor", "filledPolygonRGBA",
+    "texturedPolygon", "bezierColor", "bezierRGBA",
+    "gfxPrimitivesSetFont", "gfxPrimitivesSetFontRotation",
+    "characterColor", "characterRGBA", "stringColor", "stringRGBA",
+    "rotozoomSurface", "rotozoomSurfaceXY", "rotozoomSurfaceSize",
+    "rotozoomSurfaceSizeXY", "zoomSurface", "zoomSurfaceSize", "shrinkSurface",
+    "rotateSurface90Degrees",
+
+    # Python Functions
+    "get_dll_file"
+]
+
 
 try:
     dll = DLL("SDL2_gfx", ["SDL2_gfx", "SDL2_gfx-1.0"],

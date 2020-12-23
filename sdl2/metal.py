@@ -2,7 +2,13 @@ from ctypes import POINTER, c_int, c_void_p
 from .dll import _bind
 from .video import SDL_Window
 
-__all__ = ["SDL_MetalView", "SDL_Metal_CreateView", "SDL_Metal_DestroyView"]
+__all__ = [
+    # Opaque Types
+    "SDL_MetalView",
+    
+    # Functions
+    "SDL_Metal_CreateView", "SDL_Metal_DestroyView"
+]
 
 # NOTE: These functions are currently untested, but proper usage likely involves
 # the use of pyobjc to create an NSView from the created SDL_MetalView.

@@ -5,14 +5,26 @@ from .pixels import SDL_Color
 from .surface import SDL_Surface
 from .video import SDL_Window
 
-__all__ = ["SDL_NONSHAPEABLE_WINDOW", "SDL_INVALID_SHAPE_ARGUMENT",
-           "SDL_WINDOW_LACKS_SHAPE", "SDL_CreateShapedWindow",
-           "SDL_IsShapedWindow", "WindowShapeMode", "ShapeModeDefault",
-           "ShapeModeBinarizeAlpha", "ShapeModeReverseBinarizeAlpha",
-           "ShapeModeColorKey", "SDL_SHAPEMODEALPHA", "SDL_WindowShapeParams",
-           "SDL_WindowShapeMode", "SDL_SetWindowShape",
-           "SDL_GetShapedWindowMode"
-           ]
+__all__ = [
+    # Structs & Unions
+    "SDL_WindowShapeParams", "SDL_WindowShapeMode",
+
+    # Defines
+    "SDL_NONSHAPEABLE_WINDOW", "SDL_INVALID_SHAPE_ARGUMENT",
+    "SDL_WINDOW_LACKS_SHAPE",
+
+    # Enums
+    "WindowShapeMode",
+    "ShapeModeDefault", "ShapeModeBinarizeAlpha",
+    "ShapeModeReverseBinarizeAlpha", "ShapeModeColorKey",
+
+    # Macro Functions
+    "SDL_SHAPEMODEALPHA",
+
+    # Functions
+    "SDL_CreateShapedWindow", "SDL_IsShapedWindow", "SDL_SetWindowShape",
+    "SDL_GetShapedWindowMode"
+]
 
 SDL_NONSHAPEABLE_WINDOW = -1
 SDL_INVALID_SHAPE_ARGUMENT = -2
