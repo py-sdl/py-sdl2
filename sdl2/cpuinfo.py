@@ -12,7 +12,7 @@ __all__ = [
     "SDL_HasSSE", "SDL_HasSSE2", "SDL_HasSSE3", "SDL_HasSSE41",
     "SDL_HasSSE42", "SDL_GetSystemRAM", "SDL_HasAVX", "SDL_HasAVX2",
     "SDL_HasAVX512F", "SDL_HasARMSIMD", "SDL_HasNEON",
-    "SDL_SIMDGetAlignment", "SDL_SIMDAlloc", "SDL_SIMDFree"
+    "SDL_SIMDGetAlignment", "SDL_SIMDAlloc", "SDL_SIMDRealloc", "SDL_SIMDFree"
 ]
 
 
@@ -36,4 +36,5 @@ SDL_HasARMSIMD = _bind("SDL_HasARMSIMD", None, SDL_bool, added='2.0.12')
 SDL_HasNEON = _bind("SDL_HasNEON", None, SDL_bool, added='2.0.6')
 SDL_SIMDGetAlignment = _bind("SDL_SIMDGetAlignment", None, c_size_t, added='2.0.10')
 SDL_SIMDAlloc = _bind("SDL_SIMDAlloc", [c_size_t], c_void_p, added='2.0.10')
+SDL_SIMDRealloc = _bind("SDL_SIMDRealloc", [c_void_p, c_size_t], c_void_p, added='2.0.14')
 SDL_SIMDFree = _bind("SDL_SIMDFree", [c_void_p], None, added='2.0.10')

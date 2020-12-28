@@ -1,6 +1,7 @@
 import sys
 import pytest
 from ctypes import c_char_p, c_void_p, cast
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from sdl2 import events
 
@@ -20,6 +21,10 @@ class TestSDLEvents(object):
     def test_SDL_AudioDeviceEvent(self):
         event = events.SDL_AudioDeviceEvent()
         assert isinstance(event, events.SDL_AudioDeviceEvent)
+
+    def test_SDL_DisplayEvent(self):
+        event = events.SDL_DisplayEvent()
+        assert isinstance(event, events.SDL_DisplayEvent)
 
     def test_SDL_WindowEvent(self):
         event = events.SDL_WindowEvent()
@@ -65,6 +70,30 @@ class TestSDLEvents(object):
         event = events.SDL_JoyButtonEvent()
         assert isinstance(event, events.SDL_JoyButtonEvent)
 
+    def test_SDL_JoyDeviceEvent(self):
+        event = events.SDL_JoyDeviceEvent()
+        assert isinstance(event, events.SDL_JoyDeviceEvent)
+
+    def test_SDL_ControllerAxisEvent(self):
+        event = events.SDL_ControllerAxisEvent()
+        assert isinstance(event, events.SDL_ControllerAxisEvent)
+
+    def test_SDL_ControllerButtonEvent(self):
+        event = events.SDL_ControllerButtonEvent()
+        assert isinstance(event, events.SDL_ControllerButtonEvent)
+
+    def test_SDL_ControllerDeviceEvent(self):
+        event = events.SDL_ControllerDeviceEvent()
+        assert isinstance(event, events.SDL_ControllerDeviceEvent)
+
+    def test_SDL_ControllerTouchpadEvent(self):
+        event = events.SDL_ControllerTouchpadEvent()
+        assert isinstance(event, events.SDL_ControllerTouchpadEvent)
+
+    def test_SDL_ControllerSensorEvent(self):
+        event = events.SDL_ControllerSensorEvent()
+        assert isinstance(event, events.SDL_ControllerSensorEvent)
+
     def test_SDL_TouchFingerEvent(self):
         event = events.SDL_TouchFingerEvent()
         assert isinstance(event, events.SDL_TouchFingerEvent)
@@ -80,6 +109,10 @@ class TestSDLEvents(object):
     def test_SDL_DropEvent(self):
         event = events.SDL_DropEvent()
         assert isinstance(event, events.SDL_DropEvent)
+
+    def test_SDL_SensorEvent(self):
+        event = events.SDL_SensorEvent()
+        assert isinstance(event, events.SDL_SensorEvent)
 
     def test_SDL_QuitEvent(self):
         event = events.SDL_QuitEvent()

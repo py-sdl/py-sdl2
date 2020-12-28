@@ -222,7 +222,7 @@ class TestSDLTTF(object):
             21  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
         ]
         w, h = c_int(0), c_int(0)
-        sdlttf.TTF_SizeText(font, b"Hi there!", w, h)
+        sdlttf.TTF_SizeText(font, b"Hi there!", byref(w), byref(h))
         assert w.value == expected_w
         assert h.value in expected_h
         sdlttf.TTF_CloseFont(font)
@@ -236,7 +236,7 @@ class TestSDLTTF(object):
             21  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
         ]
         w, h = c_int(0), c_int(0)
-        sdlttf.TTF_SizeUTF8(font, u"Hï thère!".encode('utf-8'), w, h)
+        sdlttf.TTF_SizeUTF8(font, u"Hï thère!".encode('utf-8'), byref(w), byref(h))
         assert w.value == expected_w
         assert h.value in expected_h
         sdlttf.TTF_CloseFont(font)
@@ -255,7 +255,7 @@ class TestSDLTTF(object):
         strlen = len(teststr) + 1 # +1 for byte-order mark
         intstr = unpack('H' * strlen, teststr.encode('utf-16'))
         strarr = (c_uint16 * strlen)(*intstr)
-        sdlttf.TTF_SizeUNICODE(font, strarr, w, h)
+        sdlttf.TTF_SizeUNICODE(font, strarr, byref(w), byref(h))
         print(list(strarr))
         print("w = {0}, h = {1}".format(w.value, h.value))
         assert w.value == expected_w

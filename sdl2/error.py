@@ -11,12 +11,13 @@ __all__ = [
     "SDL_OutOfMemory", "SDL_Unsupported", "SDL_InvalidParamError", "SDL_Error",
 
     # Functions
-    "SDL_SetError", "SDL_GetError", "SDL_ClearError"
+    "SDL_SetError", "SDL_GetError", "SDL_GetErrorMsg", "SDL_ClearError"
 ]
 
 
 SDL_SetError = _bind("SDL_SetError", [c_char_p], c_int)
 SDL_GetError = _bind("SDL_GetError", None, c_char_p)
+SDL_GetErrorMsg = _bind("SDL_GetErrorMsg", [c_char_p, c_int], c_char_p, added='2.0.14')
 SDL_ClearError = _bind("SDL_ClearError")
 
 

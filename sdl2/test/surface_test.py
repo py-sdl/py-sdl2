@@ -673,9 +673,36 @@ class TestSDLSurface(object):
         pixels.SDL_FreePalette(invpalette)
         pixels.SDL_FreePalette(palette)
 
-    @pytest.mark.skip("not implemented")
     def test_SDL_SetSurfaceRLE(self):
-        pass
+        masks = (0xFF000000, 0x00FF0000, 0x0000FF00, 0x00000000)
+        tst = surface.SDL_CreateRGBSurface(
+            0, 16, 16, 32, masks[0], masks[1], masks[2], masks[3]
+        )
+        assert isinstance(tst.contents, surface.SDL_Surface)
+        # Test for error when setting RLE without locking
+        surface.SDL_UnlockSurface(tst)
+        ret = surface.SDL_SetSurfaceRLE(tst, 1)
+        assert ret < 0
+        # Test for success when setting RLE after locking
+        surface.SDL_LockSurface(tst)
+        ret = surface.SDL_SetSurfaceRLE(tst, 1)
+        assert ret == 0
+        surface.SDL_FreeSurface(tst)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_HasSurfaceRLE(self):
+        masks = (0xFF000000, 0x00FF0000, 0x0000FF00, 0x00000000)
+        tst = surface.SDL_CreateRGBSurface(
+            0, 16, 16, 32, masks[0], masks[1], masks[2], masks[3]
+        )
+        assert isinstance(tst.contents, surface.SDL_Surface)
+        # Test for success before and after setting RLE
+        assert surface.SDL_HasSurfaceRLE(tst) == SDL_FALSE
+        surface.SDL_LockSurface(tst)
+        ret = surface.SDL_SetSurfaceRLE(tst, 1)
+        assert ret == 0
+        assert surface.SDL_HasSurfaceRLE(tst) == SDL_TRUE
+        surface.SDL_FreeSurface(tst)
 
     def test_SDL_LoadBMP_RW(self):
         fp = open(self.testfile, "rb")

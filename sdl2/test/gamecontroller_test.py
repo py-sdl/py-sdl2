@@ -4,6 +4,10 @@ import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_GAMECONTROLLER
 from sdl2 import gamecontroller, joystick
 
+
+# TODO: Move tests that don't need GameController instance out of class
+# TODO: Add support for actual device tests from joystick
+
 # Make sure gamecontroller subsystem works before running tests
 ret = SDL_Init(SDL_INIT_GAMECONTROLLER)
 SDL_Quit()
@@ -123,6 +127,11 @@ class TestSDLGamecontroller(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerHasAxis(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetAxis(self):
         pass
 
@@ -151,7 +160,47 @@ class TestSDLGamecontroller(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerHasButton(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     def test_SDL_GameControllerGetButton(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerGetNumTouchpads(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerGetNumTouchpadFingers(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerGetTouchpadFinger(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerHasSensor(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerSetSensorEnabled(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerIsSensorEnabled(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerGetSensorData(self):
         pass
 
     @pytest.mark.skip("not implemented")
@@ -200,6 +249,11 @@ class TestSDLGamecontroller(object):
     def test_SDL_GameControllerGetProductVersion(self):
         pass
 
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerGetSerial(self):
+        pass
+
     @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_GameControllerNumMappings(self):
         num = gamecontroller.SDL_GameControllerNumMappings()
@@ -226,4 +280,14 @@ class TestSDLGamecontroller(object):
     @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
     def test_SDL_GameControllerRumble(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerRumbleTriggers(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_GameControllerHasSetLED(self):
         pass

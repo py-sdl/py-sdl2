@@ -36,6 +36,8 @@ from .timer import *
 from .touch import *
 from .version import *
 from .video import *
+from .locale import *
+from .misc import *
 
 from .keycode import *
 from .scancode import *

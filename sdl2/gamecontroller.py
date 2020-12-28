@@ -1,11 +1,13 @@
 import sys
-from ctypes import Structure, Union, c_int, c_char_p, c_void_p, POINTER, \
-    create_string_buffer
+from ctypes import (Structure, Union, c_int, c_char_p, c_void_p, c_float,
+    POINTER, create_string_buffer)
 from .dll import _bind
+from .dll import version as sdl_version
 from .stdinc import SDL_bool, Sint16, Uint32, Uint16, Uint8
-from .joystick import SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID, \
-    SDL_JoystickGetGUIDString
+from .joystick import (SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID,
+    SDL_JoystickGetGUIDString)
 from .rwops import SDL_RWops, SDL_RWFromFile
+from .sensor import SDL_SensorType
 
 __all__ = [
     # Structs & Opaque Types
@@ -16,6 +18,7 @@ __all__ = [
     "SDL_CONTROLLER_TYPE_UNKNOWN", "SDL_CONTROLLER_TYPE_XBOX360",
     "SDL_CONTROLLER_TYPE_XBOXONE", "SDL_CONTROLLER_TYPE_PS3",
     "SDL_CONTROLLER_TYPE_PS4", "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO",
+    "SDL_CONTROLLER_TYPE_VIRTUAL", "SDL_CONTROLLER_TYPE_PS5",
 
     "SDL_GameControllerBindType",
     "SDL_CONTROLLER_BINDTYPE_NONE", "SDL_CONTROLLER_BINDTYPE_BUTTON",
@@ -37,30 +40,43 @@ __all__ = [
     "SDL_CONTROLLER_BUTTON_RIGHTSHOULDER",
     "SDL_CONTROLLER_BUTTON_DPAD_UP", "SDL_CONTROLLER_BUTTON_DPAD_DOWN",
     "SDL_CONTROLLER_BUTTON_DPAD_LEFT", "SDL_CONTROLLER_BUTTON_DPAD_RIGHT",
-    "SDL_CONTROLLER_BUTTON_MAX", 
+    "SDL_CONTROLLER_BUTTON_MISC1", "SDL_CONTROLLER_BUTTON_PADDLE1",
+    "SDL_CONTROLLER_BUTTON_PADDLE2", "SDL_CONTROLLER_BUTTON_PADDLE3",
+    "SDL_CONTROLLER_BUTTON_PADDLE4", "SDL_CONTROLLER_BUTTON_TOUCHPAD",
+    "SDL_CONTROLLER_BUTTON_MAX",
+
+    # Macro Functions
+    "SDL_GameControllerAddMappingsFromFile",
     
     # Functions
-    "SDL_GameControllerAddMapping", "SDL_GameControllerMappingForGUID",
-    "SDL_GameControllerMapping", "SDL_IsGameController",
-    "SDL_GameControllerNameForIndex", "SDL_GameControllerTypeForIndex",
-    "SDL_GameControllerOpen", "SDL_GameControllerName",
-    "SDL_GameControllerGetType",
-    "SDL_GameControllerGetAttached", "SDL_GameControllerGetJoystick",
-    "SDL_GameControllerEventState", "SDL_GameControllerUpdate",
-    "SDL_GameControllerGetAxisFromString",
-    "SDL_GameControllerGetStringForAxis",
-    "SDL_GameControllerGetBindForAxis", "SDL_GameControllerGetAxis",
-    "SDL_GameControllerGetButtonFromString",
-    "SDL_GameControllerGetStringForButton",
-    "SDL_GameControllerGetBindForButton", "SDL_GameControllerGetButton",
-    "SDL_GameControllerClose", "SDL_GameControllerAddMappingsFromFile",
-    "SDL_GameControllerAddMappingsFromRW",
-    "SDL_GameControllerFromInstanceID", "SDL_GameControllerFromPlayerIndex",
+    "SDL_GameControllerAddMappingsFromRW", "SDL_GameControllerAddMapping",
+    "SDL_GameControllerNumMappings", "SDL_GameControllerMappingForIndex",
+    "SDL_GameControllerMappingForGUID", "SDL_GameControllerMapping",
+    "SDL_IsGameController", "SDL_GameControllerNameForIndex",
+    "SDL_GameControllerTypeForIndex", "SDL_GameControllerMappingForDeviceIndex",
+    "SDL_GameControllerOpen", "SDL_GameControllerFromInstanceID",
+    "SDL_GameControllerFromPlayerIndex", "SDL_GameControllerName",
+    "SDL_GameControllerGetType", 
     "SDL_GameControllerGetPlayerIndex", "SDL_GameControllerSetPlayerIndex",
     "SDL_GameControllerGetVendor", "SDL_GameControllerGetProduct",
-    "SDL_GameControllerGetProductVersion", "SDL_GameControllerNumMappings",
-    "SDL_GameControllerMappingForIndex", 
-    "SDL_GameControllerMappingForDeviceIndex", "SDL_GameControllerRumble"
+    "SDL_GameControllerGetProductVersion", "SDL_GameControllerGetSerial",
+    "SDL_GameControllerGetAttached", "SDL_GameControllerGetJoystick",
+    "SDL_GameControllerEventState", "SDL_GameControllerUpdate",
+    "SDL_GameControllerGetAxisFromString", "SDL_GameControllerGetStringForAxis",
+    "SDL_GameControllerGetBindForAxis", "SDL_GameControllerHasAxis",
+    "SDL_GameControllerGetAxis",
+    "SDL_GameControllerGetButtonFromString",
+    "SDL_GameControllerGetStringForButton",
+    "SDL_GameControllerGetBindForButton", "SDL_GameControllerHasButton",
+    "SDL_GameControllerGetButton",
+    "SDL_GameControllerGetNumTouchpads",
+    "SDL_GameControllerGetNumTouchpadFingers",
+    "SDL_GameControllerGetTouchpadFinger",
+    "SDL_GameControllerHasSensor", "SDL_GameControllerSetSensorEnabled",
+    "SDL_GameControllerIsSensorEnabled", "SDL_GameControllerGetSensorData",
+    "SDL_GameControllerRumble", "SDL_GameControllerRumbleTriggers",
+    "SDL_GameControllerHasLED", "SDL_GameControllerSetLED",
+    "SDL_GameControllerClose"  
 ]
 
 
@@ -84,6 +100,8 @@ SDL_CONTROLLER_TYPE_XBOXONE = 2
 SDL_CONTROLLER_TYPE_PS3 = 3
 SDL_CONTROLLER_TYPE_PS4 = 4
 SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO = 5
+SDL_CONTROLLER_TYPE_VIRTUAL = 6
+SDL_CONTROLLER_TYPE_PS5 = 7
 
 
 class _gchat(Structure):
@@ -125,6 +143,7 @@ SDL_CONTROLLER_AXIS_MAX = 6
 SDL_GameControllerGetAxisFromString = _bind("SDL_GameControllerGetAxisFromString", [c_char_p], SDL_GameControllerAxis)
 SDL_GameControllerGetStringForAxis = _bind("SDL_GameControllerGetStringForAxis", [SDL_GameControllerAxis], c_char_p)
 SDL_GameControllerGetBindForAxis = _bind("SDL_GameControllerGetBindForAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_GameControllerButtonBind)
+SDL_GameControllerHasAxis = _bind("SDL_GameControllerHasAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_bool, added='2.0.14')
 SDL_GameControllerGetAxis = _bind("SDL_GameControllerGetAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], Sint16)
 
 
@@ -146,13 +165,30 @@ SDL_CONTROLLER_BUTTON_DPAD_UP = 11
 SDL_CONTROLLER_BUTTON_DPAD_DOWN = 12
 SDL_CONTROLLER_BUTTON_DPAD_LEFT = 13
 SDL_CONTROLLER_BUTTON_DPAD_RIGHT = 14
-SDL_CONTROLLER_BUTTON_MAX = 15
+SDL_CONTROLLER_BUTTON_MISC1 = 15    
+SDL_CONTROLLER_BUTTON_PADDLE1 = 16
+SDL_CONTROLLER_BUTTON_PADDLE2 = 17
+SDL_CONTROLLER_BUTTON_PADDLE3 = 18
+SDL_CONTROLLER_BUTTON_PADDLE4 = 19
+SDL_CONTROLLER_BUTTON_TOUCHPAD = 20
+SDL_CONTROLLER_BUTTON_MAX = 21
+if sdl_version < 2014:
+    SDL_CONTROLLER_BUTTON_MAX = 15  # For backwards compatibility
 
 
 SDL_GameControllerGetButtonFromString = _bind("SDL_GameControllerGetButtonFromString", [c_char_p], SDL_GameControllerButton)
 SDL_GameControllerGetStringForButton = _bind("SDL_GameControllerGetStringForButton", [SDL_GameControllerButton], c_char_p)
 SDL_GameControllerGetBindForButton = _bind("SDL_GameControllerGetBindForButton", [POINTER(SDL_GameController), SDL_GameControllerButton], SDL_GameControllerButtonBind)
+SDL_GameControllerHasButton = _bind("SDL_GameControllerHasButton", [POINTER(SDL_GameController), SDL_GameControllerButton], SDL_bool, added='2.0.14')
 SDL_GameControllerGetButton = _bind("SDL_GameControllerGetButton", [POINTER(SDL_GameController), SDL_GameControllerButton], Uint8)
+SDL_GameControllerGetNumTouchpads = _bind("SDL_GameControllerGetNumTouchpads", [POINTER(SDL_GameController)], c_int, added='2.0.14')
+SDL_GameControllerGetNumTouchpadFingers = _bind("SDL_GameControllerGetNumTouchpadFingers", [POINTER(SDL_GameController), c_int], c_int, added='2.0.14')
+SDL_GameControllerGetTouchpadFinger = _bind("SDL_GameControllerGetTouchpadFinger", [POINTER(SDL_GameController), c_int, c_int, POINTER(Uint8), POINTER(c_float), POINTER(c_float), POINTER(c_float)], c_int, added='2.0.14')
+SDL_GameControllerHasSensor = _bind("SDL_GameControllerHasSensor", [POINTER(SDL_GameController), SDL_SensorType], SDL_bool, added='2.0.14')
+SDL_GameControllerSetSensorEnabled = _bind("SDL_GameControllerSetSensorEnabled", [POINTER(SDL_GameController), SDL_SensorType, SDL_bool], c_int, added='2.0.14')
+SDL_GameControllerIsSensorEnabled = _bind("SDL_GameControllerIsSensorEnabled", [POINTER(SDL_GameController), SDL_SensorType], SDL_bool, added='2.0.14')
+# TODO: Read how GetSensorData is implemented to figure out how the # of floats is determined
+SDL_GameControllerGetSensorData = _bind("SDL_GameControllerGetSensorData", [POINTER(SDL_GameController), SDL_SensorType, POINTER(c_float), c_int], c_int, added='2.0.14')
 SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameController)])
 SDL_GameControllerAddMappingsFromRW = _bind("SDL_GameControllerAddMappingsFromRW", [POINTER(SDL_RWops), c_int], c_int)
 SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
@@ -163,10 +199,14 @@ SDL_GameControllerSetPlayerIndex = _bind("SDL_GameControllerSetPlayerIndex", [PO
 SDL_GameControllerGetVendor = _bind("SDL_GameControllerGetVendor", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerGetProduct = _bind("SDL_GameControllerGetProduct", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
 SDL_GameControllerGetProductVersion = _bind("SDL_GameControllerGetProductVersion", [POINTER(SDL_GameController)], Uint16, added='2.0.6')
+SDL_GameControllerGetSerial = _bind("SDL_GameControllerGetSerial", [POINTER(SDL_GameController)], c_char_p, added='2.0.14')
 SDL_GameControllerNumMappings = _bind("SDL_GameControllerNumMappings", None, c_int, added='2.0.6')
 SDL_GameControllerMappingForIndex = _bind("SDL_GameControllerMappingForIndex", [c_int], c_char_p, added='2.0.6')
 SDL_GameControllerMappingForDeviceIndex = _bind("SDL_GameControllerMappingForDeviceIndex", [c_int], c_char_p, added='2.0.9')
 SDL_GameControllerRumble = _bind("SDL_GameControllerRumble", [POINTER(SDL_GameController), Uint16, Uint16, Uint32], c_int, added='2.0.9')
+SDL_GameControllerRumbleTriggers = _bind("SDL_GameControllerRumbleTriggers", [POINTER(SDL_GameController), Uint16, Uint16, Uint32], c_int, added='2.0.14')
+SDL_GameControllerHasLED = _bind("SDL_GameControllerHasLED", [POINTER(SDL_GameController)], SDL_bool, added='2.0.14')
+SDL_GameControllerSetLED = _bind("SDL_GameControllerSetLED", [POINTER(SDL_GameController), Uint8, Uint8, Uint8], c_int, added='2.0.14')
 
 # Reimplemented w/ other functions due to crash-causing ctypes bug (fixed in 3.8)
 if sys.version_info >= (3, 8, 0, 'final'):

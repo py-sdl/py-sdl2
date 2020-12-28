@@ -16,6 +16,7 @@ __all__ = [
     "SDL_JoyAxisEvent", "SDL_JoyBallEvent", "SDL_JoyHatEvent",
     "SDL_JoyButtonEvent", "SDL_JoyDeviceEvent", "SDL_ControllerAxisEvent",
     "SDL_ControllerButtonEvent", "SDL_ControllerDeviceEvent",
+    "SDL_ControllerTouchpadEvent", "SDL_ControllerSensorEvent",
     "SDL_TouchFingerEvent", "SDL_MultiGestureEvent", "SDL_DollarGestureEvent",
     "SDL_DropEvent", "SDL_QuitEvent", "SDL_OSEvent", "SDL_UserEvent", 
     "SDL_SysWMmsg", "SDL_SysWMEvent", "SDL_SensorEvent", "SDL_Event",
@@ -30,7 +31,8 @@ __all__ = [
     "SDL_FIRSTEVENT", "SDL_QUIT", "SDL_APP_TERMINATING", "SDL_APP_LOWMEMORY",
     "SDL_APP_WILLENTERBACKGROUND", "SDL_APP_DIDENTERBACKGROUND",
     "SDL_APP_WILLENTERFOREGROUND", "SDL_APP_DIDENTERFOREGROUND",
-    "SDL_DISPLAYEVENT", "SDL_WINDOWEVENT", "SDL_SYSWMEVENT",
+    "SDL_LOCALECHANGED", "SDL_DISPLAYEVENT",
+    "SDL_WINDOWEVENT", "SDL_SYSWMEVENT",
     "SDL_KEYDOWN", "SDL_KEYUP", "SDL_TEXTEDITING", "SDL_TEXTINPUT",
     "SDL_KEYMAPCHANGED", "SDL_MOUSEMOTION", "SDL_MOUSEBUTTONDOWN",
     "SDL_MOUSEBUTTONUP", "SDL_MOUSEWHEEL",
@@ -40,6 +42,8 @@ __all__ = [
     "SDL_CONTROLLERAXISMOTION", "SDL_CONTROLLERBUTTONDOWN",
     "SDL_CONTROLLERBUTTONUP", "SDL_CONTROLLERDEVICEADDED",
     "SDL_CONTROLLERDEVICEREMOVED", "SDL_CONTROLLERDEVICEREMAPPED",
+    "SDL_CONTROLLERTOUCHPADDOWN", "SDL_CONTROLLERTOUCHPADMOTION",
+    "SDL_CONTROLLERTOUCHPADUP", "SDL_CONTROLLERSENSORUPDATE",
     "SDL_FINGERDOWN", "SDL_FINGERUP", "SDL_FINGERMOTION",
     "SDL_DOLLARGESTURE", "SDL_DOLLARRECORD", "SDL_MULTIGESTURE",
     "SDL_CLIPBOARDUPDATE", "SDL_DROPFILE", "SDL_DROPTEXT",
@@ -73,6 +77,7 @@ SDL_APP_WILLENTERBACKGROUND = 0x103
 SDL_APP_DIDENTERBACKGROUND = 0x104
 SDL_APP_WILLENTERFOREGROUND = 0x105
 SDL_APP_DIDENTERFOREGROUND = 0x106
+SDL_LOCALECHANGED = 0x107
 SDL_DISPLAYEVENT = 0x150
 SDL_WINDOWEVENT = 0x200
 SDL_SYSWMEVENT = 0x201
@@ -98,6 +103,10 @@ SDL_CONTROLLERBUTTONUP = 0x652
 SDL_CONTROLLERDEVICEADDED = 0x653
 SDL_CONTROLLERDEVICEREMOVED = 0x654
 SDL_CONTROLLERDEVICEREMAPPED = 0x655
+SDL_CONTROLLERTOUCHPADDOWN = 0x656
+SDL_CONTROLLERTOUCHPADMOTION = 0x657
+SDL_CONTROLLERTOUCHPADUP = 0x658
+SDL_CONTROLLERSENSORUPDATE = 0x659
 SDL_FINGERDOWN = 0x700
 SDL_FINGERUP = 0x701
 SDL_FINGERMOTION = 0x702
@@ -291,6 +300,25 @@ class SDL_ControllerDeviceEvent(Structure):
                 ("which", Sint32)
                 ]
 
+class SDL_ControllerTouchpadEvent(Structure):
+    _fields_ = [("type", Uint32),
+                ("timestamp", Uint32),
+                ("which", SDL_JoystickID),
+                ("touchpad", Sint32),
+                ("finger", Sint32),
+                ("x", c_float),
+                ("y", c_float),
+                ("pressure", c_float)
+                ]
+
+class SDL_ControllerSensorEvent(Structure):
+    _fields_ = [("type", Uint32),
+                ("timestamp", Uint32),
+                ("which", SDL_JoystickID),
+                ("sensor", Sint32),
+                ("data", c_float * 3)
+                ]
+
 class SDL_AudioDeviceEvent(Structure):
     _fields_ = [("type", Uint32),
                 ("timestamp", Uint32),
@@ -395,6 +423,8 @@ class SDL_Event(Union):
                 ("caxis", SDL_ControllerAxisEvent),
                 ("cbutton", SDL_ControllerButtonEvent),
                 ("cdevice", SDL_ControllerDeviceEvent),
+                ("ctouchpad", SDL_ControllerTouchpadEvent),
+                ("csensor", SDL_ControllerSensorEvent),
                 ("adevice", SDL_AudioDeviceEvent),
                 ("sensor", SDL_SensorEvent),
                 ("quit", SDL_QuitEvent),

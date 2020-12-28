@@ -4,19 +4,19 @@ environment:
   SDL_RENDER_DRIVER: software
   matrix:
     - PYTHON: "C:\\Python38"
-      PYSDL2_DLL_VERSION: 2.0.12
+      PYSDL2_DLL_VERSION: 2.0.14
     - PYTHON: "C:\\Python38-x64"
-      PYSDL2_DLL_VERSION: 2.0.12
+      PYSDL2_DLL_VERSION: 2.0.14
     - PYTHON: "C:\\Python27"
-      PYSDL2_DLL_VERSION: 2.0.12
+      PYSDL2_DLL_VERSION: 2.0.14
     - PYTHON: "C:\\Python27-x64"
-      PYSDL2_DLL_VERSION: 2.0.12
+      PYSDL2_DLL_VERSION: 2.0.14
     - PYTHON: "C:\\Python38"
-      PYSDL2_DLL_VERSION: 2.0.10
+      PYSDL2_DLL_VERSION: 2.0.12
+    - PYTHON: "C:\\Python38-x64"
+      PYSDL2_DLL_VERSION: 2.0.12
     - PYTHON: "C:\\Python38-x64"
       PYSDL2_DLL_VERSION: 2.0.10
-    - PYTHON: "C:\\Python38"
-      PYSDL2_DLL_VERSION: 2.0.9
     - PYTHON: "C:\\Python38-x64"
       PYSDL2_DLL_VERSION: 2.0.9
     - PYTHON: "C:\\Python38"
