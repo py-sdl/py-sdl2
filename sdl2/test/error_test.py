@@ -1,6 +1,7 @@
 import sys
 import pytest
 import sdl2
+from ctypes import create_string_buffer, byref
 from sdl2 import SDL_Init, SDL_Quit, error
 
 
@@ -32,6 +33,10 @@ class TestSDLError(object):
     def test_SDL_GetErrorMsg(self):
         error.SDL_SetError(b"123456789")
         assert error.SDL_GetError() == b"123456789"
-        assert error.SDL_GetErrorMsg(b' ' * 10, 10) == b"123456789"
-        assert error.SDL_GetErrorMsg(b' ' * 5, 5) == b"1234"
+        buf = create_string_buffer(10)
+        assert error.SDL_GetErrorMsg(buf, 10) == b"123456789"
+        assert buf.value == b"123456789"
+        buf2 = create_string_buffer(5)
+        assert error.SDL_GetErrorMsg(buf2, 5) == b"1234"
+        assert buf2.value == b"1234"
         error.SDL_ClearError()
