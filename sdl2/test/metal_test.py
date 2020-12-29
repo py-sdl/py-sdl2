@@ -35,7 +35,6 @@ class TestSDLMetal(object):
             print("Metal Error: '{0}'".format(err.decode('utf-8')))
         assert view  # Verify pointer is not null
         metal.SDL_Metal_DestroyView(view)
-        assert not view  # Verify view has been destroyed
         video.SDL_DestroyWindow(window)
 
     @pytest.mark.xfail(reason="Metal not supported on all macs")
@@ -60,7 +59,7 @@ class TestSDLMetal(object):
         view = metal.SDL_Metal_CreateView(window)
         assert view  # Verify pointer is not null
         w, h = c_int(0), c_int(0)
-        metal.SDL_Metal_GetDrawableSize(view, byref(w), byref(h))
+        metal.SDL_Metal_GetDrawableSize(window, byref(w), byref(h))
         assert w.value == 10 and h.value == 10
         metal.SDL_Metal_DestroyView(view)
         video.SDL_DestroyWindow(window)

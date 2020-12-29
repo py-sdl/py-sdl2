@@ -32,8 +32,8 @@ class TestSDLHints(object):
         assert hints.SDL_GetHint(b"TEST") == b"32"
         assert hints.SDL_SetHint(b"TEST", b"abcdef") == 1
         assert hints.SDL_GetHint(b"TEST") == b"abcdef"
-        assert hints.SDL_SetHint(b"", b"") == 1
-        assert hints.SDL_GetHint(b"") == b""
+        assert hints.SDL_SetHint(b"", b"hi") == 1
+        assert hints.SDL_GetHint(b"") == b"hi"
 
     def test_SDL_SetHintWithPriority(self):
         assert hints.SDL_SetHintWithPriority(
@@ -43,8 +43,10 @@ class TestSDLHints(object):
                         b"TEST", b"abcdef", hints.SDL_HINT_NORMAL) == 1
         assert hints.SDL_GetHint(b"TEST") == b"abcdef"
         assert hints.SDL_SetHintWithPriority(
-                        b"", b"", hints.SDL_HINT_OVERRIDE) == 1
-        assert hints.SDL_GetHint(b"") == b""
+                        b"", b"hi", hints.SDL_HINT_OVERRIDE) == 1
+        assert hints.SDL_GetHint(b"") == b"hi"
+        assert hints.SDL_SetHintWithPriority(
+                        b"", b"bye", hints.SDL_HINT_NORMAL) == 0
 
     def test_SDL_GetHintBoolean(self):
         assert hints.SDL_SetHint(b"TEST", b"32") == 1

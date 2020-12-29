@@ -9,12 +9,13 @@ class TestSDLFileSystem(object):
     __tags__ = ["sdl"]
 
     def test_SDL_GetBasePath(self):
-        execprefix = sys.exec_prefix
         path = filesystem.SDL_GetBasePath()
         path = path.decode("utf-8")
         if sys.version_info[0] < 3:
-            execprefix = unicode(execprefix)
-        assert execprefix.lower() in path.lower()
+            assert u"python" in path.lower()
+        else:
+            execprefix = sys.base_exec_prefix
+            assert execprefix.lower() in path.lower()
 
     def test_SDL_GetPrefPath(self):
         path = filesystem.SDL_GetPrefPath(b"OrgName", b"AppName")

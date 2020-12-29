@@ -15,7 +15,9 @@ __all__ = [
 # the use of pyobjc to create an NSView from the created SDL_MetalView.
 
 
-SDL_MetalView = c_void_p
+#SDL_MetalView = c_void_p
+class SDL_MetalView(c_void_p):
+    pass
 
 SDL_Metal_CreateView = _bind("SDL_Metal_CreateView", [POINTER(SDL_Window)], SDL_MetalView, added='2.0.12')
 SDL_Metal_DestroyView = _bind("SDL_Metal_DestroyView", [SDL_MetalView], None, added='2.0.12')

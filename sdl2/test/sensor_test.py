@@ -111,10 +111,10 @@ class TestSDLSensor(object):
         if len(sensors):
             print("Available sensors:")
         for s in sensors:
-            print("\t'{0}' (ID: {1}):".format(s['name'], s['id']))
-            print("\t - Sensor Type: {0}".format(s['type']))
-            print("\t - Non-Portable Type: {0}".format(s['nptype']))
-            print("\t - Current X Value: {0}".format(s['data']))
+            print("  '{0}' (ID: {1}):".format(s['name'], s['id']))
+            print("   - Sensor Type: {0}".format(s['type']))
+            print("   - Non-Portable Type: {0}".format(s['nptype']))
+            print("   - Current X Value: {0}".format(s['data']))
             
     @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
     def test_SDL_LockUnlockSensors(self):
