@@ -34,3 +34,4 @@ class TestSDLError(object):
         assert error.SDL_GetError() == b"123456789"
         assert error.SDL_GetErrorMsg(b'', 10) == b"123456789"
         assert error.SDL_GetErrorMsg(b'', 5) == b"1234"
+        error.SDL_ClearError()

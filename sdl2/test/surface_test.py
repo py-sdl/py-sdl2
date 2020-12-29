@@ -679,10 +679,6 @@ class TestSDLSurface(object):
             0, 16, 16, 32, masks[0], masks[1], masks[2], masks[3]
         )
         assert isinstance(tst.contents, surface.SDL_Surface)
-        # Test for error when setting RLE without locking
-        surface.SDL_UnlockSurface(tst)
-        ret = surface.SDL_SetSurfaceRLE(tst, 1)
-        assert ret < 0
         # Test for success when setting RLE after locking
         surface.SDL_LockSurface(tst)
         ret = surface.SDL_SetSurfaceRLE(tst, 1)

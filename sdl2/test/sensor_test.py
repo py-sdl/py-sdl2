@@ -8,17 +8,17 @@ from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2.error import SDL_GetError, SDL_ClearError
 from sdl2 import sensor
 
-pytestmark = pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+# Make sure sensor subsystem is available and works before running tests
+available = sdl2.dll.version >= 2009
+ret = SDL_Init(SDL_INIT_SENSOR)
+SDL_Quit()
+skipmsg = 'Sensor subsystem not supported'
+pytestmark = pytest.mark.skipif(ret != 0 or not available, reason=skipmsg)
 
-
-def test_SDL_InitSensor():
-    ret = SDL_Init(SDL_INIT_SENSOR)
-    SDL_Quit()
-    assert ret == 0
 
 def test_SDL_NumSensors():
-    if SDL_Init(SDL_INIT_SENSOR) != 0:
-        pytest.skip("sensor subsystem not supported")
+    ret = SDL_Init(SDL_INIT_SENSOR)
+    assert ret == 0
     retval = sensor.SDL_NumSensors()
     SDL_Quit()
     assert retval >= 0
