@@ -37,6 +37,9 @@ def SDL_GetPreferredLocales():
     p = _SDL_GetPreferredLocales()  # Get void pointer to first locale in array
     while True:
         loc = cast(p, POINTER(SDL_Locale))
+        if not loc:
+            # Break if loc is a null pointer
+            break
         if loc.contents.language == None:
             # Array of locales is terminated by locale with null language
             break
