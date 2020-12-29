@@ -37,6 +37,7 @@ jobs:
       SDL_VIDEODRIVER: dummy
       SDL_AUDIODRIVER: dummy
       SDL_RENDER_DRIVER: software
+      PYTHONFAULTHANDLER=1
     
     steps:
       - uses: actions/checkout@v2
