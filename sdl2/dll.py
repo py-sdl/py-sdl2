@@ -234,7 +234,7 @@ def nullfunc(*args):
     return
 
 try:
-    dll = DLL("SDL2", ["SDL2", "SDL2-2.0"], os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL("SDL2", ["SDL2", "SDL2-2.0", "SDL2-2.0.0"], os.getenv("PYSDL2_DLL_PATH"))
 except RuntimeError as exc:
     raise ImportError(exc)
 
