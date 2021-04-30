@@ -50,7 +50,9 @@ def _findlib(libnames, path=None):
     else:
         patterns = ["lib{0}.so"]
 
-    searchfor = libnames
+    # Adding the potential 'd' suffix that is present on the library
+    # when built in debug configuration
+    searchfor = libnames + [libname + 'd' for libname in libnames]
     results = []
     if path and path.lower() != "system":
         # First, find any libraries matching pattern exactly within given path
