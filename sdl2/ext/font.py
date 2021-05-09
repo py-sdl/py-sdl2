@@ -99,7 +99,7 @@ class BitmapFont(object):
         sf = surface.SDL_CreateRGBSurface(0, tw, th, bpp, 0, 0, 0, 0)
         if not sf:
             raise SDLError()
-        imgsurface = SoftwareSprite(sf, False)
+        imgsurface = SoftwareSprite(sf.contents, False)
         target = imgsurface.surface
         blit_surface = surface.SDL_BlitSurface
         fontsf = self.surface
