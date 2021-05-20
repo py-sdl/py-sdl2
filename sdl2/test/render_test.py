@@ -66,6 +66,8 @@ class TestSDLRender(object):
                 errs.append("Renderer {0} error: {1}".format(x, err))
             else:
                 renderers.append(info.name.decode("utf-8"))
+        print("Render drivers supported by current SDL2 binary:")
+        print(renderers)
         assert len(renderers)
         assert "software" in renderers
 

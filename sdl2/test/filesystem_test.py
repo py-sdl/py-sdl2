@@ -12,7 +12,12 @@ class TestSDLFileSystem(object):
         path = filesystem.SDL_GetBasePath()
         path = path.decode("utf-8")
         if sys.version_info[0] < 3:
-            assert u"python" in path.lower()
+            is_python_path = False
+            for s in [u"python", u"pypy", u"pyenv", u"virtualenv"]:
+                if s in path.lower():
+                    is_python_path = True
+                    break
+            assert is_python_path
         else:
             execprefix = sys.base_exec_prefix
             assert execprefix.lower() in path.lower()
