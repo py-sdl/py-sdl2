@@ -17,10 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.8]
-        sdl2: [2.0.12, 2.0.10, 2.0.8]
+        sdl2: ['2.0.12', '2.0.10', '2.0.8']
         include:
           - python-version: [2.7]
-            sdl2: [2.0.12]
+            sdl2: '2.0.12'
 
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
@@ -41,9 +41,9 @@ jobs:
       - name: Download SDL2 binaries
         run: |
           python .ci/getsdl2.py
-          export PYSDL2_DLL_PATH=$(pwd)/dlls
       
       - name: Install and test PySDL2
         run: |
+          export PYSDL2_DLL_PATH=$(pwd)/dlls
           python -m pip install .
           python -B -m pytest -vvl -rxXP

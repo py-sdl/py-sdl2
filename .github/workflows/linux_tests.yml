@@ -21,6 +21,7 @@ jobs:
     env:
       SDL_VIDEODRIVER: dummy
       SDL_AUDIODRIVER: dummy
+      SDL_RENDER_DRIVER: software
     
     steps:
       - uses: actions/checkout@v2
