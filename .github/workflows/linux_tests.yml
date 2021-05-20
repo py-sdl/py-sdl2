@@ -6,17 +6,24 @@ on:
   pull_request:
     branches: [ master ]
   create:
-    branches: [master]
+    branches: [ master ]
     tags: ['**']
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
 
     strategy:
       fail-fast: false
       matrix:
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
+        experimental: [false]
+        include:
+          - python-version: 'pypy-2.7'
+            experimental: true
+          - python-version: 'pypy-3.7'
+            experimental: true
 
     env:
       SDL_VIDEODRIVER: dummy
