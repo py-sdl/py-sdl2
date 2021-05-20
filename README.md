@@ -1,7 +1,7 @@
 # PySDL2
 
-[![Build Status](https://travis-ci.org/marcusva/py-sdl2.svg?branch=master)](https://travis-ci.org/marcusva/py-sdl2)
-[![Build Status](https://ci.appveyor.com/api/projects/status/i0k6eou3fj2646ov?svg=true)](https://ci.appveyor.com/project/a-hurst/py-sdl2)
+[![Tests](https://github.com/marcusva/py-sdl2/actions/workflows/run_tests.yml/badge.svg)](https://github.com/marcusva/py-sdl2/actions/workflows/run_tests.yml)
+[![Build Status](https://ci.appveyor.com/api/projects/status/i0k6eou3fj2646ov?svg=true)](https://ci.appveyor.com/project/marcusva/py-sdl2)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pysdl2)
 [![PyPI Version](https://img.shields.io/pypi/v/PySDL2.svg)](https://pypi.python.org/pypi/PySDL2)
 
