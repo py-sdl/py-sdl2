@@ -131,7 +131,7 @@ def getDLLs(platform_name, version):
         gfxsrc = 'http://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-{0}.tar.gz'
         cfgurl = 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f={0};hb=HEAD'
         basedir = os.getcwd()
-        arch = os.uname().machine
+        arch = os.uname()[-1]
 
         libdir = os.path.join(basedir, 'sdlprefix')
         if os.path.isdir(libdir):
