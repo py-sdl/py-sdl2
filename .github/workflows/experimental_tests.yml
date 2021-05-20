@@ -53,11 +53,13 @@ jobs:
   # Test on previous Python release with macOS using latest Homebrew SDL2
   test-macos:
 
-    name: macOS (Python ${{ python-version }}, Homebrew SDL2)
+    name: macOS (Python ${{ matrix.python-version }}, Homebrew SDL2)
     runs-on: macos-latest
     continue-on-error: true
 
-    python-version: '3.8'
+    strategy:
+      matrix:
+        python-version: [3.8]
 
     env:
       SDL_VIDEODRIVER: dummy
@@ -70,10 +72,10 @@ jobs:
         run: |
           brew install sdl2 sdl2_mixer sdl2_ttf sdl2_image sdl2_gfx
 
-      - name: Set up Python ${{ python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ python-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
