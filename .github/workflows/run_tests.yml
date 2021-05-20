@@ -13,16 +13,29 @@ on:
 jobs:
 
   # Test on all supported Python versions with Linux and latest SDL2
+  # Experimental: Also test on latest PyPy 2.7 and 3.x versions with Linux and latest SDL2
   test-linux:
 
-    name: Linux (Python ${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
+    name: ${{ matrix.name-prefix }} ${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
 
     strategy:
       fail-fast: false
       matrix:
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
         sdl2: ['2.0.14']
+        name-prefix: ['Linux (Python']
+        experimental: [false]
+        include:
+          - python-version: 'pypy-2.7'
+            sdl2: '2.0.14'
+            name-prefix: 'Experimental / Linux ('
+            experimental: true
+          - python-version: 'pypy-3.7'
+            sdl2: '2.0.14'
+            name-prefix: 'Experimental / Linux ('
+            experimental: true
 
     env:
       SDL_VIDEODRIVER: dummy
@@ -51,19 +64,29 @@ jobs:
 
   # Test on previous Python release with last 3 SDL2 releases on macOS
   # Also test on Python 2.7 with latest SDL2 on macOS
+  # Experimental: Test on previous Python release with latest Homebrew SDL2
   test-macos:
 
-    name: macOS (Python ${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
+    name: ${{ matrix.name-prefix }} ${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
     runs-on: macos-latest
+    continue-on-error: ${{ matrix.experimental }}
 
     strategy:
       fail-fast: false
       matrix:
         python-version: [3.8]
         sdl2: ['2.0.12', '2.0.10', '2.0.8']
+        name-prefix: ['macOS (Python']
+        experimental: [false]
         include:
           - python-version: '2.7'
             sdl2: '2.0.12'
+            name-prefix: ['macOS (Python']
+            experimental: [false]
+          - python-version: '3.8'
+            sdl2: 'from Homebrew'
+            name-prefix: ['Experimental / macOS (Python']
+            experimental: [true]
 
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
@@ -83,7 +106,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install numpy pytest pillow
 
+      - name: Install latest SDL2 via Homebrew
+        if: ${{ matrix.sdl2 == 'via Homebrew' }}
+        run: |
+          brew install sdl2 sdl2_mixer sdl2_ttf sdl2_image sdl2_gfx
+
       - name: Download SDL2 binaries
+        if: ${{ matrix.sdl2 != 'via Homebrew' }}
         run: |
           python .ci/getsdl2.py
       
