@@ -76,16 +76,16 @@ jobs:
       matrix:
         python-version: [3.8]
         sdl2: ['2.0.12', '2.0.10', '2.0.8']
-        name-prefix: ['macOS (Python']
+        name-prefix: ['macOS (Python ']
         experimental: [false]
         include:
           - python-version: '2.7'
             sdl2: '2.0.12'
-            name-prefix: 'macOS (Python'
+            name-prefix: 'macOS (Python '
             experimental: false
           - python-version: '3.8'
             sdl2: 'from Homebrew'
-            name-prefix: 'Experimental / macOS (Python'
+            name-prefix: 'Experimental / macOS (Python '
             experimental: true
 
     env:
@@ -107,12 +107,12 @@ jobs:
           python -m pip install numpy pytest pillow
 
       - name: Install latest SDL2 via Homebrew
-        if: ${{ matrix.sdl2 == 'via Homebrew' }}
+        if: ${{ matrix.sdl2 == 'from Homebrew' }}
         run: |
           brew install sdl2 sdl2_mixer sdl2_ttf sdl2_image sdl2_gfx
 
       - name: Download SDL2 binaries
-        if: ${{ matrix.sdl2 != 'via Homebrew' }}
+        if: ${{ matrix.sdl2 != 'from Homebrew' }}
         run: |
           python .ci/getsdl2.py
       
