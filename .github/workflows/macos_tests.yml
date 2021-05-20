@@ -21,8 +21,9 @@ jobs:
         include:
           - python-version: [2.7]
             sdl2: ['2.0.12']
-      env:
-        PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
+
+    env:
+      PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
     
     steps:
       - uses: actions/checkout@v2
