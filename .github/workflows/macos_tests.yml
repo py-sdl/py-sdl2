@@ -19,11 +19,13 @@ jobs:
         python-version: [3.8]
         sdl2: ['2.0.12', '2.0.10', '2.0.8']
         include:
-          - python-version: [2.7]
+          - python-version: '2.7'
             sdl2: '2.0.12'
 
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
+      SDL_VIDEODRIVER: dummy
+      SDL_RENDER_DRIVER: software
     
     steps:
       - uses: actions/checkout@v2
