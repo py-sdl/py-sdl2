@@ -27,6 +27,7 @@ from .power import *
 from .rect import *
 from .render import *
 from .rwops import *
+from .sensor import *
 from .shape import *
 from .stdinc import *
 from .surface import *
