@@ -16,7 +16,7 @@ jobs:
   # Experimental: Also test on latest PyPy 2.7 and 3.x versions with Linux and latest SDL2
   test-linux:
 
-    name: ${{ matrix.name-prefix }} ${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
+    name: ${{ matrix.name-prefix }}${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
 
@@ -25,7 +25,7 @@ jobs:
       matrix:
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
         sdl2: ['2.0.14']
-        name-prefix: ['Linux (Python']
+        name-prefix: ['Linux (Python ']
         experimental: [false]
         include:
           - python-version: 'pypy-2.7'
@@ -67,7 +67,7 @@ jobs:
   # Experimental: Test on previous Python release with latest Homebrew SDL2
   test-macos:
 
-    name: ${{ matrix.name-prefix }} ${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
+    name: ${{ matrix.name-prefix }}${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
     runs-on: macos-latest
     continue-on-error: ${{ matrix.experimental }}
 
@@ -81,12 +81,12 @@ jobs:
         include:
           - python-version: '2.7'
             sdl2: '2.0.12'
-            name-prefix: ['macOS (Python']
-            experimental: [false]
+            name-prefix: 'macOS (Python'
+            experimental: false
           - python-version: '3.8'
             sdl2: 'from Homebrew'
-            name-prefix: ['Experimental / macOS (Python']
-            experimental: [true]
+            name-prefix: 'Experimental / macOS (Python'
+            experimental: true
 
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
