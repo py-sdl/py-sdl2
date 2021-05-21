@@ -222,6 +222,7 @@ class TestSDLAudio(object):
         assert innum >= 0
 
     def test_SDL_GetAudioDeviceName(self):
+        backends = []
         devices = {}
         # Reset audio subsystem
         SDL_Quit()
@@ -229,6 +230,7 @@ class TestSDLAudio(object):
         for index in range(audio.SDL_GetNumAudioDrivers()):
             # Get input/output device names for each audio driver
             drivername = audio.SDL_GetAudioDriver(index)
+            backends.append(drivername.decode("utf-8"))
             os.environ["SDL_AUDIODRIVER"] = drivername.decode("utf-8")
             # Need to reinitialize subsystem for each driver
             SDL_InitSubSystem(SDL_INIT_AUDIO)
@@ -247,7 +249,9 @@ class TestSDLAudio(object):
                     assert name is not None
                     devices[driver]['input'].append(name.decode('utf-8'))
             SDL_QuitSubSystem(SDL_INIT_AUDIO)
-        print("Available audio drivers and devices:")
+        print("Audio backends supported by current SDL2 binary:")
+        print(backends)
+        print("\nAvailable audio drivers and devices:")
         for driver in devices.keys():
             print(driver)
             print(" - input: {0}".format(str(devices[driver]['input'])))

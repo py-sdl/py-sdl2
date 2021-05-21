@@ -248,6 +248,26 @@ class TestSDLVideo(object):
             orientation = video.SDL_GetDisplayOrientation(index)
             assert isinstance(orientation, int)
 
+    def test_GetDisplayInfo(self):
+        current = video.SDL_GetCurrentVideoDriver().decode('utf-8')
+        print("Available Video Drivers:")
+        for i in range(video.SDL_GetNumVideoDrivers()):
+            name = video.SDL_GetVideoDriver(i).decode('utf-8')
+            if name == current:
+                name += " (*)"
+            print(" - " + name)
+        print("")
+        print("Detected Displays:")
+        for i in range(video.SDL_GetNumVideoDisplays()):
+            name = video.SDL_GetDisplayName(i).decode('utf-8')
+            info = " - " + name
+            dm = video.SDL_DisplayMode()
+            ret = video.SDL_GetDesktopDisplayMode(i, byref(dm))
+            if ret == 0:
+                res = " ({0}x{1} @ {2}Hz)".format(dm.w, dm.h, dm.refresh_rate)
+                info += res
+            print(info)
+
     def test_screensaver(self):
         initial = video.SDL_IsScreenSaverEnabled()
         assert initial in (SDL_FALSE, SDL_TRUE)

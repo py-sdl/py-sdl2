@@ -54,24 +54,22 @@ class TestSDLRender(object):
         assert val >= 1
 
     def test_SDL_GetRenderDriverInfo(self):
-        success = False
+        renderers = []
+        errs = []
         drivers = render.SDL_GetNumRenderDrivers()
         for x in range(drivers):
+            sdl2.SDL_ClearError()
             info = render.SDL_RendererInfo()
-            ret = render.SDL_GetRenderDriverInfo(x, byref(info))
-            assert ret == 0
-            # We must find at least one software renderer
-            if info.name == b"software":
-                success = True
-        assert success, "failed on retrieving the driver information"
-
-#        self.assertRaises((AttributeError, TypeError),
-#                          render.SDL_GetRenderDriverInfo, None)
-#        self.assertRaises((AttributeError, TypeError),
-#                          render.SDL_GetRenderDriverInfo, "Test")
-#        self.assertRaises((AttributeError, TypeError),
-#                          render.SDL_GetRenderDriverInfo, self)
-#        #self.assertRaises(sdl.SDLError, render.SDL_GetRenderDriverInfo, -1)
+            ret = render.SDL_GetRenderDriverInfo(x, info)
+            if ret != 0:
+                err = sdl2.SDL_GetError().decode("utf-8")
+                errs.append("Renderer {0} error: {1}".format(x, err))
+            else:
+                renderers.append(info.name.decode("utf-8"))
+        print("Render drivers supported by current SDL2 binary:")
+        print(renderers)
+        assert len(renderers)
+        assert "software" in renderers
 
     def test_SDL_CreateWindowAndRenderer(self):
         window = POINTER(video.SDL_Window)()

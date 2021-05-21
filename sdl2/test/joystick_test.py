@@ -9,6 +9,8 @@ from sdl2.error import SDL_GetError, SDL_ClearError
 from sdl2 import joystick
 
 
+# TODO: merge all info functions into one, print results
+
 def test_SDL_JoystickGetGUIDFromString():
     guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
     expected = [3, 0, 0, 0, 126, 5, 0, 0, 6, 3, 0, 0, 28, 58, 0, 0]
@@ -236,6 +238,14 @@ class TestSDLJoystick(object):
     def test_SDL_JoystickGetProductVersion(self):
         pass
 
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_JoystickGetSerial(self):
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            serial = joystick.SDL_JoystickGetSerial(stick)
+            assert type(serial) in (str, bytes)
+            joystick.SDL_JoystickClose(stick)
+
     @pytest.mark.skip("not implemented")
     def test_SDL_JoystickGetAxisInitialState(self):
         pass
@@ -305,3 +315,48 @@ class TestSDLJoystick(object):
             ret = joystick.SDL_JoystickRumble(stick, 32767, 16384, 500)
             assert ret in [-1, 0]
             joystick.SDL_JoystickClose(stick)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_JoystickRumbleTriggers(self):
+        # If we ever add an interactive test suite, this should be moved there
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            # 50% strength left trigger, 25% right trigger rumble for 500ms
+            ret = joystick.SDL_JoystickRumbleTriggers(stick, 32767, 16384, 500)
+            assert ret in [-1, 0]
+            joystick.SDL_JoystickClose(stick)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_JoystickHasSetLED(self):
+        # If we ever add an interactive test suite, this should be moved there
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            has_led = joystick.SDL_JoystickHasLED(stick)
+            assert has_led in [SDL_FALSE, SDL_TRUE]
+            expected = -1 if has_led == SDL_FALSE else 0
+            cols = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+            for r, g, b in cols:
+                ret = joystick.SDL_JoystickSetLED(stick, r, g, b)
+                assert ret == expected
+            joystick.SDL_JoystickClose(stick)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_JoystickVirtual(self):
+        jtype = joystick.SDL_JOYSTICK_TYPE_GAMECONTROLLER
+        index = joystick.SDL_JoystickAttachVirtual(jtype, 1, 2, 1)
+        assert index > 0
+        assert joystick.SDL_JoystickIsVirtual(index) == SDL_TRUE
+        stick = joystick.SDL_JoystickOpen(index)
+        assert joystick.SDL_JoystickSetVirtualAxis(stick, 0, -30) == 0
+        assert joystick.SDL_JoystickSetVirtualButton(stick, 0, 255) == 0
+        assert joystick.SDL_JoystickSetVirtualButton(stick, 1, 128) == 0
+        assert joystick.SDL_JoystickSetVirtualHat(stick, 0, 36) == 0
+        joystick.SDL_JoystickUpdate()
+        assert joystick.SDL_JoystickGetAxis(stick, 0) == -30
+        assert joystick.SDL_JoystickGetButton(stick, 0) == 255
+        assert joystick.SDL_JoystickGetButton(stick, 1) == 128
+        assert joystick.SDL_JoystickGetHat(stick, 0) == 36
+        joystick.SDL_JoystickClose(stick)
+        jcount = joystick.SDL_NumJoysticks()
+        assert joystick.SDL_JoystickDetachVirtual(index) == 0
+        assert joystick.SDL_NumJoysticks() == (jcount - 1)

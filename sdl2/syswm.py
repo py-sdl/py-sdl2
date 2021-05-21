@@ -80,6 +80,18 @@ class _vivantemsg(Structure):
     _fields_ = [("dummy", c_int)]
 
 
+BOOL = c_int
+ULONG = Uint32
+MPARAM = Uint32
+class _os2msg(Structure):
+    _fields_ = [("fFrame", BOOL),
+                ("hwnd", Uint32),
+                ("msg", ULONG),
+                ("mp1", MPARAM),
+                ("mp2", MPARAM),
+               ]
+
+
 class _msg(Union):
     _fields_ = [("win", _winmsg),
                 ("x11", _x11msg),
@@ -87,6 +99,7 @@ class _msg(Union):
                 ("cocoa", _cocoamsg),
                 ("uikit", _uikitmsg),
                 ("vivante", _vivantemsg),
+                ("os2", _os2msg),
                 ("dummy", c_int)
                ]
 
@@ -151,6 +164,10 @@ class _android(Structure):
     _fields_ = [("window", c_void_p),
                 ("surface", c_void_p)]
 
+class _os2(Structure):
+    """Window information for OS/2."""
+    _fields_ = [("hwnd", HWND),
+                ("hwndFrame", HWND)]
 
 class _vivante(Structure):
     """Window information for Vivante."""
@@ -168,6 +185,7 @@ class _info(Union):
                 ("wl", _wl),
                 ("mir", _mir),
                 ("android", _android),
+                ("os2", _os2),
                 ("vivante", _vivante),
                 ("dummy", (Uint8 * 64))
                ]

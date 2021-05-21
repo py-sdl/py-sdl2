@@ -67,6 +67,10 @@ class TestSDLCPUInfo(object):
         ret = cpuinfo.SDL_HasAVX2()
         assert ret in (0, 1)
 
+    def test_SDL_GetSystemRAM(self):
+        ret = cpuinfo.SDL_GetSystemRAM()
+        assert ret > 0
+
     @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
     def test_SDL_HasAVX512F(self):
         ret = cpuinfo.SDL_HasAVX512F()
@@ -91,4 +95,9 @@ class TestSDLCPUInfo(object):
     @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
     def test_SDL_SIMDAllocFree(self):
         # Should test both SDL_SIMDAlloc and SDL_SIMDFree
+        pass
+
+    @pytest.mark.skip("not implemented (no clue how)")
+    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+    def test_SDL_SIMDRealloc(self):
         pass

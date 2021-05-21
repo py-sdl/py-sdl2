@@ -83,7 +83,7 @@ class PixelView(MemoryView):
         target[start // self.itemsize] = value
 
     def __del__(self):
-        if self._surface is not None:
+        if self._surface:
             if SDL_MUSTLOCK(self._surface):
                 SDL_UnlockSurface(self._surface)
 

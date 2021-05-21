@@ -37,6 +37,7 @@ jobs:
       SDL_VIDEODRIVER: dummy
       SDL_AUDIODRIVER: dummy
       SDL_RENDER_DRIVER: software
+      PYTHONFAULTHANDLER: 1
     
     steps:
       - uses: actions/checkout@v2
@@ -70,11 +71,11 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.8]
-        sdl2: ['2.0.12', '2.0.10', '2.0.8']
+        sdl2: ['2.0.14', '2.0.12', '2.0.10']
         name-prefix: ['macOS (Python ']
         include:
           - python-version: '2.7'
-            sdl2: '2.0.12'
+            sdl2: '2.0.14'
             name-prefix: 'macOS (Python '
           - python-version: '3.8'
             sdl2: 'from Homebrew'
