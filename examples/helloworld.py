@@ -1,5 +1,6 @@
 """The almighty Hello World! example"""
 # We'll use sys to properly exit with an error code.
+import os
 import sys
 import sdl2.ext
 
@@ -7,7 +8,8 @@ import sdl2.ext
 # resource, we bundle with our application. We are using the current
 # file's location and define the "resources" subdirectory as the
 # location, in which we keep all data.
-RESOURCES = sdl2.ext.Resources(__file__, "resources")
+filepath = os.path.abspath(os.path.dirname(__file__))
+RESOURCES = sdl2.ext.Resources(filepath, "resources")
 
 
 def run():
