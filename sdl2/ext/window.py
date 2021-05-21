@@ -126,6 +126,7 @@ class Window(object):
     def show(self):
         """Show the window on the display."""
         video.SDL_ShowWindow(self.window)
+        video.SDL_GetWindowSurface(self.window)
 
     def hide(self):
         """Hides the window."""
