@@ -7,12 +7,13 @@ from ctypes.util import find_library
 
 # Prints warning without stack or line info
 def prettywarn(msg, warntype):
-    original = warnings.showwarning
-    def _warning(message, category, filename, lineno, file=None, line=None):
-        print(message)
-    warnings.showwarning = _warning
+    """Prints a suppressable warning without stack or line info."""
+    original = warnings.formatwarning
+    def _pretty_fmt(message, category, filename, lineno, line=None):
+        return "{0}: {1}\n".format(category.__name__, message)
+    warnings.formatwarning = _pretty_fmt
     warnings.warn(msg, warntype)
-    warnings.showwarning = original
+    warnings.formatwarning = original
 
 # Use DLLs from pysdl2-dll, if installed and DLL path not explicitly set
 try:
@@ -34,6 +35,48 @@ class SDL_version(Structure):
                 ("minor", c_uint8),
                 ("patch", c_uint8),
                 ]
+
+
+def _using_ms_store_python():
+    """Checks if the Python interpreter was installed from the Microsoft Store."""
+    return 'WindowsApps\\PythonSoftwareFoundation.' in sys.executable
+
+
+def _preload_deps(libname, dllpath):
+    """Preloads all DLLs that SDL2 and its extensions link to (e.g. libFLAC).
+    
+    This is required for Python installed from the Microsoft Store, which has
+    strict DLL loading rules but will allow loading of DLLs that have already
+    been loaded by the current process.
+    """
+    deps = {
+        "SDL2": [],
+        "SDL2_ttf": ["freetype"],
+        "SDL2_image": ["zlib", "jpeg", "png16", "tiff", "webp"],
+        "SDL2_mixer": ["modplug", "mpg123", "ogg", "vorbis", "vorbisfile",
+                       "opus", "opusfile", "FLAC"],
+        "SDL2_gfx": []
+    }
+    preloaded = {}
+    dlldir = os.path.abspath(os.path.join(dllpath, os.pardir))
+    all_dlls = [f for f in os.listdir(dlldir) if f.split(".")[-1] == "dll"]
+    for name in deps[libname]:
+        dllname = name if name == "zlib" else "lib{0}-".format(name)
+        for dll in all_dlls:
+            if dll.startswith(dllname):
+                try:
+                    filepath = os.path.join(dllpath, dll)
+                    preloaded[name] = CDLL(filepath)
+                except OSError:
+                    pass
+                break
+
+    if len(preloaded) < len(deps[libname]):
+        e = ("Unable to preload all dependencies for {0}. This module may not "
+            "work correctly.")
+        prettywarn(e.format(libname), RuntimeWarning)
+
+    return preloaded
 
 
 def _findlib(libnames, path=None):
@@ -98,6 +141,7 @@ class DLL(object):
     """
     def __init__(self, libinfo, libnames, path=None):
         self._dll = None
+        self._deps = None
         self._libname = libinfo
         self._version = None
         minversions = {
@@ -133,6 +177,8 @@ class DLL(object):
         if self._dll is None:
             raise RuntimeError("found %s, but it's not usable for the library %s" %
                                (foundlibs, libinfo))
+        if _using_ms_store_python():
+            self._deps = _preload_deps(libinfo, self._libfile)
         if path is not None and sys.platform in ("win32",) and \
             path in self._libfile:
             os.environ["PATH"] = "%s;%s" % (path, os.environ["PATH"])
