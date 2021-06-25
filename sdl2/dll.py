@@ -21,7 +21,7 @@ try:
     import sdl2dll
     postpath = os.getenv('PYSDL2_DLL_PATH')
     if prepath != postpath:
-        msg = "UserWarning: Using SDL2 binaries from pysdl2-dll {0}"
+        msg = "Using SDL2 binaries from pysdl2-dll {0}"
         prettywarn(msg.format(sdl2dll.__version__), UserWarning)
 except ImportError:
     pass
@@ -65,7 +65,7 @@ def _preload_deps(libname, dllpath):
         for dll in all_dlls:
             if dll.startswith(dllname):
                 try:
-                    filepath = os.path.join(dllpath, dll)
+                    filepath = os.path.join(dlldir, dll)
                     preloaded[name] = CDLL(filepath)
                 except OSError:
                     pass
