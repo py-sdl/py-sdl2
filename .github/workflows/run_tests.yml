@@ -160,6 +160,6 @@ jobs:
 
       - name: Install and test PySDL2
         run: |
-          set PYSDL2_DLL_PATH=%CD%\\dlls
+          $env:PYSDL2_DLL_PATH = "$pwd\dlls"
           python -m pip install .
           python -B -m pytest -vvl -rxXP
