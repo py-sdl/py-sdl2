@@ -2,6 +2,8 @@ import os
 import sys
 import ctypes
 import pytest
+
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, version, surface, rwops, render
 
 sdlimage = pytest.importorskip("sdl2.sdlimage")
@@ -40,6 +42,11 @@ if sdlimage.dll.version < 2002:
 if is32bit or ismacos:
     formats.remove("xcf")
 
+# WEBP support seems to be broken in the 32-bit Windows SDL2_image 2.0.2 binary
+bad_webp = is32bit and sdlimage.dll.version == 2002
+if bad_webp:
+    formats.remove("webp")
+
 
 def test_IMG_Linked_Version():
     v = sdlimage.IMG_Linked_Version()
@@ -50,6 +57,7 @@ def test_IMG_Linked_Version():
 
 def test_IMG_Init():
     SDL_Init(0)
+    supported = []
     libs = {
         'JPEG': sdlimage.IMG_INIT_JPG,
         'PNG': sdlimage.IMG_INIT_PNG,
@@ -60,9 +68,16 @@ def test_IMG_Init():
         flags = libs[lib]
         ret = sdlimage.IMG_Init(flags)
         err = sdlimage.IMG_GetError()
-        assert ret & flags == flags
+        if err:
+            err = err.decode('utf-8')
+            print("Error loading {0} library: {1}".format(lib, err))
+            sdl2.SDL_ClearError()
+        if ret & flags == flags:
+            supported.append(lib)
         sdlimage.IMG_Quit()
-    SDL_Quit()
+    print("Supported image libraries:")
+    print(supported)
+    assert len(supported) == len(libs.keys())
 
 
 class TestSDLImage(object):
@@ -286,6 +301,7 @@ class TestSDLImage(object):
         assert isinstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
+    @pytest.mark.xfail(bad_webp, reason="WEBP broken in 2.0.2 binaries for 32-bit Windows")
     def test_IMG_LoadWEBP_RW(self):
         testdir = os.path.dirname(os.path.abspath(__file__))
         fp = open(os.path.join(testdir, "resources", "surfacetest.webp"), "rb")
