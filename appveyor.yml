@@ -10,17 +10,11 @@ environment:
     - PYTHON: "C:\\Python38"
       PYSDL2_DLL_VERSION: 2.0.12
     - PYTHON: "C:\\Python38-x64"
-      PYSDL2_DLL_VERSION: 2.0.9
+      PYSDL2_DLL_VERSION: 2.0.10
     - PYTHON: "C:\\Python38"
       PYSDL2_DLL_VERSION: 2.0.8
     - PYTHON: "C:\\Python38-x64"
-      PYSDL2_DLL_VERSION: 2.0.8
-    - PYTHON: "C:\\Python38-x64"
-      PYSDL2_DLL_VERSION: 2.0.7
-    - PYTHON: "C:\\Python38-x64"
       PYSDL2_DLL_VERSION: 2.0.6
-    - PYTHON: "C:\\Python38-x64"
-      PYSDL2_DLL_VERSION: 2.0.5
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
