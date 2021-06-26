@@ -14,6 +14,12 @@ SDL_Quit()
 skipmsg = 'Game controller subsystem not supported'
 pytestmark = pytest.mark.skipif(ret != 0, reason=skipmsg)
 
+# Test if SDL_GameControllerMappingForGUID is able to be tested
+if sys.version_info >= (3, 8, 0) or sdl2.dll.version >= 2006:
+    has_mapping_for_guid = True
+else:
+    has_mapping_for_guid = False
+
 
 class TestSDLGamecontroller(object):
     __tags__ = ["sdl"]
@@ -41,6 +47,7 @@ class TestSDLGamecontroller(object):
             ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
             assert ret != -1
 
+    @pytest.mark.skipif(not has_mapping_for_guid, reason="not available")
     def test_SDL_GameControllerMappingForGUID(self):
         newmap = (
             b"030000005e0400002700000006010000,Microsoft SideWinder,"
