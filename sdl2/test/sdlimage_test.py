@@ -77,7 +77,7 @@ def test_IMG_Init():
         sdlimage.IMG_Quit()
     print("Supported image libraries:")
     print(supported)
-    assert len(supported) >= 2
+    assert len(supported) == len(libs.keys())
 
 
 class TestSDLImage(object):

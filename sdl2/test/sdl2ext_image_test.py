@@ -44,6 +44,11 @@ if _HASSDLIMAGE and sdlimage.dll.version < 2002:
 if is32bit or ismacos:
     formats.remove("xcf")
 
+# WEBP support seems to be broken in the 32-bit Windows SDL2_image 2.0.2 binary
+bad_webp = is32bit and sdlimage.dll.version == 2002
+if bad_webp:
+    formats.remove("webp")
+
 
 class TestSDL2ExtImage(object):
     __tags__ = ["sdl", "sdl2ext"]
