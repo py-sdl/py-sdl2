@@ -138,6 +138,7 @@ jobs:
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
       SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
       SDL_RENDER_DRIVER: software
 
     steps:
