@@ -114,3 +114,52 @@ jobs:
           export PYSDL2_DLL_PATH=$(pwd)/dlls
           python -m pip install .
           python -B -m pytest -vvl -rxXP
+
+
+  # Test against multiple versions of SDL2 on Windows
+  test-windows:
+
+    name: ${{ matrix.name-prefix }}${{ matrix.python-version }}, SDL ${{ matrix.sdl2 }})
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+        architecture: ['x64']
+        sdl2: ['2.0.14', '2.0.12', '2.0.10']
+        name-prefix: ['Windows (Python ']
+        include:
+          - python-version: '2.7'
+            architecture: 'x64'
+            sdl2: '2.0.14'
+            name-prefix: 'Windows (Python '
+
+    env:
+      PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
+      SDL_VIDEODRIVER: dummy
+      SDL_RENDER_DRIVER: software
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pytest pillow
+
+      - name: Download SDL2 binaries
+        run: |
+          python .ci/getsdl2.py
+
+      - name: Install and test PySDL2
+        run: |
+          set PYSDL2_DLL_PATH=%CD%\\dlls
+          python -m pip install .
+          python -B -m pytest -vvl -rxXP
