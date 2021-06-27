@@ -7,12 +7,6 @@ from sdl2 import version, __version__, version_info
 class TestSDLVersion(object):
     __tags__ = ["sdl"]
 
-    def test___version__(self):
-        assert __version__ == "0.9.8"
-
-    def test_version_info(self):
-        assert version_info == (0, 9, 8, "")
-
     def test_SDL_version(self):
         v = version.SDL_version(0, 0, 0)
         assert v.major == 0
