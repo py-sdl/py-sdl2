@@ -1,6 +1,6 @@
 import sys
 import pytest
-from ctypes import ArgumentError, POINTER, byref
+from ctypes import ArgumentError, POINTER, byref, addressof
 from sdl2.ext.resources import Resources
 from sdl2 import ext as sdl2ext
 from sdl2.surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
@@ -424,23 +424,20 @@ class TestSDL2ExtSprite(object):
                 assert sprite.area == (w, h, 2 * w, 2 * h)
 
     def test_SoftwareSprite(self):
-        with pytest.raises(TypeError):
-            sdl2ext.SoftwareSprite(None, None)
-        with pytest.raises(TypeError):
-            sdl2ext.SoftwareSprite(None, True)
-        with pytest.raises(TypeError):
-            sdl2ext.SoftwareSprite(None, False)
-
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+
+        # Test with SDL_Surface
         sprite = sdl2ext.SoftwareSprite(sf.contents, False)
-        # TODO: the following assert fails...
-        # self.assertEqual(sprite.surface, sf.contents)
+        assert addressof(sprite.surface) == addressof(sf.contents)
         assert not sprite.free
 
-        sprite = sdl2ext.SoftwareSprite(sf.contents, True)
-        # TODO: the following assert fails...
-        # self.assertEqual(sprite.surface, sf.contents)
-        assert sprite.free
+        # Test with SDL_Surface pointer
+        sprite = sdl2ext.SoftwareSprite(sf, False)
+        assert addressof(sprite.surface) == addressof(sf.contents)
+        assert not sprite.free
+
+        with pytest.raises(TypeError):
+            sdl2ext.SoftwareSprite(None, True)
 
     def test_SoftwareSprite_repr(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
@@ -560,27 +557,29 @@ class TestSDL2ExtSprite(object):
         dogc()
 
     def test_Renderer(self):
-        sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0).contents
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
 
+        # Create renderer with SDL_Surface
+        renderer = sdl2ext.Renderer(sf.contents)
+        assert addressof(renderer.rendertarget) == addressof(sf.contents)
+        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
+        del renderer
+
+        # Create renderer with SDL_Surface pointer
         renderer = sdl2ext.Renderer(sf)
         assert renderer.rendertarget == sf
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         del renderer
 
-        # Deprecated
-        renderer = sdl2ext.Renderer(sf)
-        assert renderer.rendertarget == sf
-        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
-
-
-        sprite = sdl2ext.SoftwareSprite(sf, True)
+        # Create renderer with SoftwareSprite
+        sprite = sdl2ext.SoftwareSprite(sf.contents, True)
         renderer = sdl2ext.Renderer(sprite)
         assert renderer.rendertarget == sprite
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         del renderer
         dogc()
 
+        # Create renderer with Window
         window = sdl2ext.Window("Test", size=(1, 1))
         renderer = sdl2ext.Renderer(window)
         assert renderer.rendertarget == window
@@ -588,6 +587,7 @@ class TestSDL2ExtSprite(object):
         del renderer
         dogc()
 
+        # Create renderer with SDL_Window
         sdlwindow = window.window
         renderer = sdl2ext.Renderer(sdlwindow)
         assert renderer.rendertarget == sdlwindow

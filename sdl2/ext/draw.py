@@ -10,7 +10,7 @@ from .sprite import SoftwareSprite
 __all__ = ["prepare_color", "fill", "line"]
 
 
-def _get_target_surface(target):
+def _get_target_surface(target, argname="target"):
     """Gets the SDL_surface from the passed target."""
     if isinstance(target, surface.SDL_Surface):
         rtarget = target
@@ -19,7 +19,7 @@ def _get_target_surface(target):
     elif "SDL_Surface" in str(type(target)):
         rtarget = target.contents
     else:
-        raise TypeError("unsupported target type")
+        raise TypeError("{0} must be a Sprite or SDL_Surface".format(argname))
     return rtarget
 
 
@@ -30,12 +30,9 @@ def prepare_color(color, target):
     # Software surfaces
     if isinstance(target, pixels.SDL_PixelFormat):
         pformat = target
-    elif isinstance(target, surface.SDL_Surface):
-        pformat = target.format.contents
-    elif isinstance(target, SoftwareSprite):
-        pformat = target.surface.format.contents
-    if pformat is None:
-        raise TypeError("unsupported target type")
+    else:
+        surf = _get_target_surface(target)
+        pformat = surf.format.contents
     if pformat.Amask != 0:
         # Target has an alpha mask
         return pixels.SDL_MapRGBA(pformat, color.r, color.g, color.b, color.a)

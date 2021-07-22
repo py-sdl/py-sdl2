@@ -66,7 +66,7 @@ class TestSDL2ExtPixelAccess(object):
         # Try modifying surface, test if changes persist 
         nparray[31][0] = 0xFF808080 # medium grey in ARGB
         with pytest.warns(sdl2ext.compat.ExperimentalWarning):
-            nparray2 = sdl2ext.pixels2d(imgsurf.contents, transpose=False)
+            nparray2 = sdl2ext.pixels2d(imgsurf, transpose=False)
         assert nparray2[31][0] == 0xFF808080
 
 
@@ -94,5 +94,5 @@ class TestSDL2ExtPixelAccess(object):
         grey = [128, 128, 128, 255]
         nparray[31][0][:] = grey
         with pytest.warns(sdl2ext.compat.ExperimentalWarning):
-            nparray2 = sdl2ext.pixels3d(imgsurf.contents, transpose=False)
+            nparray2 = sdl2ext.pixels3d(imgsurf, transpose=False)
         assert color.Color(*nparray2[31][0]) == color.Color(*grey)

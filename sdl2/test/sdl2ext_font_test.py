@@ -32,16 +32,26 @@ class TestSDL2ExtFont(object):
         sdl2ext.quit()
 
     def test_BitmapFont(self):
-        sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
-                                         "utf-8"))
-        assert isinstance(sf.contents, surface.SDL_Surface)
-        font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
-        assert isinstance(font, sdl2ext.BitmapFont)
-
+        # Initialize surface and sprite for tests
+        fontpath = byteify(RESOURCES.get_path("font.bmp"), "utf-8")
+        sf = surface.SDL_LoadBMP(fontpath)
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
-        assert isinstance(sprite, sdl2ext.SoftwareSprite)
+
+        # Try SoftwareSprite surface
         font = sdl2ext.BitmapFont(sprite, (32, 32), FONTMAP)
-        assert isinstance(font, sdl2ext.BitmapFont)
+        assert font.size == (32, 32)
+
+        # Try SDL_Surface surface
+        font = sdl2ext.BitmapFont(sf.contents, (32, 32), FONTMAP)
+        assert font.size == (32, 32)
+        
+        # Try SDL_Surface pointer surface
+        font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
+        assert font.size == (32, 32)
+
+        # Try invalid surface type
+        with pytest.raises(TypeError):
+            font = sdl2ext.BitmapFont("hello", (32, 32), FONTMAP)
 
     @pytest.mark.skip("not implemented")
     def test_BitmapFont_render(self):

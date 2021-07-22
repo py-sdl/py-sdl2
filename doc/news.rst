@@ -16,6 +16,9 @@ New Features:
   system are too old to be used by PySDL2 (issue #165)
 * Added support for passing ``SDL_Rect`` objects to :func:`sdl2.ext.draw.fill`
   (issue #169)
+* Added support for passing ``SDL_Surface`` pointers directly to many
+  ``sdl2.ext`` functions, removing the need to explicitly use the ``.contents``
+  attribute.
 
 Fixed bugs:
 

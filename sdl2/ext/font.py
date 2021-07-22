@@ -5,7 +5,7 @@ from .common import SDLError
 from .compat import *
 from .sprite import SoftwareSprite
 from .color import Color, convert_to_color
-from .draw import prepare_color
+from .draw import _get_target_surface, prepare_color
 
 _HASSDLTTF = True
 try:
@@ -68,6 +68,10 @@ class BitmapFont(object):
             self._sprite = imgsurface # prevent GC on the Sprite
         elif isinstance(imgsurface, surface.SDL_Surface):
             self.surface = imgsurface
+        elif "SDL_Surface" in str(type(imgsurface)):
+            self.surface = imgsurface.contents
+        else:
+            raise TypeError("imgsurface must be a Sprite or SDL_Surface")
         self.size = size[0], size[1]
         self._calculate_offsets()
 
@@ -129,14 +133,7 @@ class BitmapFont(object):
         4-value tuple with the changed area will be returned.
         """
         w, h = self.size
-
-        target = None
-        if isinstance(imgsurface, SoftwareSprite):
-            target = imgsurface.surface
-        elif isinstance(imgsurface, surface.SDL_Surface):
-            target = imgsurface
-        else:
-            raise TypeError("unsupported surface type")
+        target = _get_target_surface(imgsurface)
 
         lines = text.split(os.linesep)
         blit_surface = surface.SDL_BlitSurface

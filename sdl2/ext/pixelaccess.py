@@ -6,7 +6,7 @@ from ..surface import SDL_MUSTLOCK, SDL_LockSurface, SDL_UnlockSurface, \
     SDL_Surface
 from ..stdinc import Uint8
 from .sprite import SoftwareSprite
-from .draw import prepare_color
+from .draw import _get_target_surface, prepare_color
 
 
 __all__ = ["PixelView", "pixels2d", "pixels3d"]
@@ -37,6 +37,8 @@ class PixelView(MemoryView):
             self._sprite = source
         elif isinstance(source, SDL_Surface):
             self._surface = source
+        elif "SDL_Surface" in str(type(source)):
+            self._surface = source.contents
         else:
             raise TypeError("source must be a Sprite or SDL_Surface")
 
@@ -125,13 +127,8 @@ def pixels2d(source, transpose=True):
     """Creates a 2D pixel array from the passed source."""
     if not _HASNUMPY:
         raise UnsupportedError(pixels2d, "numpy module could not be loaded")
-    if isinstance(source, SoftwareSprite):
-        psurface = source.surface
-    elif isinstance(source, SDL_Surface):
-        psurface = source
-    else:
-        raise TypeError("source must be a Sprite or SDL_Surface")
-
+    
+    psurface = _get_target_surface(source, argname="source")
     bpp = psurface.format.contents.BytesPerPixel
     if bpp < 1 or bpp > 4:
         raise ValueError("unsupported bpp")
@@ -160,13 +157,8 @@ def pixels3d(source, transpose=True):
     """
     if not _HASNUMPY:
         raise UnsupportedError(pixels3d, "numpy module could not be loaded")
-    if isinstance(source, SoftwareSprite):
-        psurface = source.surface
-    elif isinstance(source, SDL_Surface):
-        psurface = source
-    else:
-        raise TypeError("source must be a Sprite or SDL_Surface")
 
+    psurface = _get_target_surface(source, argname="source")
     bpp = psurface.format.contents.BytesPerPixel
     if bpp < 1 or bpp > 4:
         raise ValueError("unsupported bpp")

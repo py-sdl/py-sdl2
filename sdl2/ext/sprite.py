@@ -36,19 +36,18 @@ class Renderer(object):
         if isinstance(target, Window):
             self.sdlrenderer = render.SDL_CreateRenderer(target.window, index,
                                                          flags)
-            self.rendertarget = target
         elif isinstance(target, video.SDL_Window):
             self.sdlrenderer = render.SDL_CreateRenderer(target, index, flags)
-            self.rendertarget = target
         elif isinstance(target, SoftwareSprite):
             self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target.surface)
-            self.rendertarget = target
         elif isinstance(target, surface.SDL_Surface):
             self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target)
-            self.rendertarget = target
+        elif "SDL_Surface" in str(type(target)):
+            self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target.contents)
         else:
             raise TypeError("unsupported target type")
 
+        self.rendertarget = target
         if logical_size is not None:
             self.logical_size = logical_size
 
@@ -342,18 +341,12 @@ class SoftwareSprite(Sprite):
         """Creates a new SoftwareSprite."""
         super(SoftwareSprite, self).__init__()
         self.free = free
-        if not isinstance(imgsurface, surface.SDL_Surface):
-            raise TypeError("surface must be a SDL_Surface")
-        self.surface = imgsurface
-
-    def __del__(self):
-        """Releases the bound SDL_Surface, if it was created by the
-        SoftwareSprite.
-        """
-        imgsurface = getattr(self, "surface", None)
-        if self.free and imgsurface is not None:
-            surface.SDL_FreeSurface(imgsurface)
-        self.surface = None
+        if isinstance(imgsurface, surface.SDL_Surface):
+            self.surface = imgsurface
+        elif "SDL_Surface" in str(type(imgsurface)):
+            self.surface = imgsurface.contents
+        else:
+            raise TypeError("imgsurface must be an SDL_Surface")
 
     @property
     def size(self):
