@@ -88,41 +88,44 @@ class BitmapFont(object):
                 x += w
             y += h
 
+    def _validate_chars(self, text):
+        e = "The character '{0}' does not exist within the current font mapping"
+        for ch in text:
+            if ch not in self.offsets.keys():
+                raise ValueError(e.format(ch))
+
+    def _render_text(self, target, fontsf, lines, offset=(0, 0)):
+        w, h = self.size
+        dstr = rect.SDL_Rect(0, 0, 0, 0)
+        y = offset[1]
+        for line in lines:
+            dstr.y = y
+            x = offset[0]
+            for c in line:
+                dstr.x = x
+                surface.SDL_BlitSurface(fontsf, self.offsets[c], target, dstr)
+                x += w
+            y += h
+        return (x, y)
+
     def render(self, text, bpp=None):
         """Renders the passed text on a new Sprite and returns it."""
-        tw, th = 0, 0
         w, h = self.size
-        # TODO
+        self._validate_chars(text)
         lines = text.split(os.linesep)
+
+        tw, th = 0, 0
         for line in lines:
             tw = max(tw, sum([w for c in line]))
             th += h
-
         if bpp is None:
             bpp = self.surface.format.contents.BitsPerPixel
         sf = surface.SDL_CreateRGBSurface(0, tw, th, bpp, 0, 0, 0, 0)
         if not sf:
             raise SDLError()
         imgsurface = SoftwareSprite(sf.contents, False)
-        target = imgsurface.surface
-        blit_surface = surface.SDL_BlitSurface
-        fontsf = self.surface
-        offsets = self.offsets
 
-        dstr = rect.SDL_Rect(0, 0, 0, 0)
-        y = 0
-        for line in lines:
-            dstr.y = y
-            x = 0
-            for c in line:
-                dstr.x = x
-                if c in offsets:
-                    blit_surface(fontsf, offsets[c], target, dstr)
-                # elif c != ' ':
-
-                #    TODO: raise an exception for unknown char?
-                x += w
-            y += h
+        self._render_text(imgsurface.surface, self.surface, lines)
         return imgsurface
 
     def render_on(self, imgsurface, text, offset=(0, 0)):
@@ -134,26 +137,10 @@ class BitmapFont(object):
         """
         w, h = self.size
         target = _get_target_surface(imgsurface)
-
+        self._validate_chars(text)
         lines = text.split(os.linesep)
-        blit_surface = surface.SDL_BlitSurface
-        fontsf = self.surface
-        offsets = self.offsets
 
-        dstr = rect.SDL_Rect(0, 0, 0, 0)
-        y = offset[1]
-        for line in lines:
-            dstr.y = y
-            x = offset[0]
-            for c in line:
-                dstr.x = x
-                if c in offsets:
-                    blit_surface(fontsf, offsets[c], target, dstr)
-                # elif c != ' ':
-
-                #    TODO: raise an exception for unknown char?
-                x += w
-            y += h
+        x, y = self._render_text(target, self.surface, lines, offset)
         return (offset[0], offset[1], x + w, y + h)
 
     def contains(self, c):

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-import sys
 import pytest
+import numpy as np
 from sdl2 import ext as sdl2ext
-from sdl2.ext.compat import byteify
+from sdl2.ext.compat import byteify, ExperimentalWarning
+from sdl2.ext.pixelaccess import pixels2d
 from sdl2 import surface, sdlttf
+
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")
 FONTMAP = ["0123456789",
@@ -53,13 +55,47 @@ class TestSDL2ExtFont(object):
         with pytest.raises(TypeError):
             font = sdl2ext.BitmapFont("hello", (32, 32), FONTMAP)
 
-    @pytest.mark.skip("not implemented")
     def test_BitmapFont_render(self):
-        pass
+        # Initialize font and BitmapFont for tests
+        fontpath = byteify(RESOURCES.get_path("font.bmp"), "utf-8")
+        sf = surface.SDL_LoadBMP(fontpath)
+        font = sdl2ext.BitmapFont(sf.contents, (32, 32), FONTMAP)
 
-    @pytest.mark.skip("not implemented")
+        # Try rendering some text
+        msg = "hello there!"
+        text = font.render(msg)
+        assert isinstance(text, sdl2ext.SoftwareSprite)
+        assert text.size[0] == 32 * len(msg)
+
+        # Test exception for missing glyph
+        with pytest.raises(ValueError):
+            font.render("this_should_fail")
+
     def test_BitmapFont_render_on(self):
-        pass
+        # Initialize font, surface, and BitmapFont for tests
+        fontpath = byteify(RESOURCES.get_path("font.bmp"), "utf-8")
+        sf = surface.SDL_LoadBMP(fontpath)
+        font = sdl2ext.BitmapFont(sf.contents, (32, 32), FONTMAP)
+
+        # Try rendering some text
+        target = surface.SDL_CreateRGBSurface(0, 32*5, 32, 32, 0, 0, 0, 0)
+        with pytest.warns(ExperimentalWarning):
+            view = pixels2d(target, transpose=False)
+        mid_row = view[16, :].copy()
+        font.render_on(target, "TEST!")
+        assert not np.all(mid_row == view[16, :]) # ensure surface changed
+
+        # Try rendering some text with an offset
+        target2 = surface.SDL_CreateRGBSurface(0, 32*5, 32, 32, 0, 0, 0, 0)
+        with pytest.warns(ExperimentalWarning):
+            view2 = pixels2d(target2, transpose=False)
+        font.render_on(target2, "TEST!", offset=(5, 0))
+        assert not np.all(mid_row == view2[16, :]) # ensure surface changed
+        assert not np.all(view[16, :] == view2[16, :]) # ensure offset worked
+
+        # Test exception for missing glyph
+        with pytest.raises(ValueError):
+            font.render_on(target, "%nope")
 
     def test_BitmapFont_contains(self):
         sf = surface.SDL_LoadBMP(byteify(RESOURCES.get_path("font.bmp"),
