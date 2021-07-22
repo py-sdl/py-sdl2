@@ -348,6 +348,15 @@ class SoftwareSprite(Sprite):
         else:
             raise TypeError("imgsurface must be an SDL_Surface")
 
+    def __del__(self):
+        """Releases the bound SDL_Surface, if it was created by the
+        SoftwareSprite.
+        """
+        imgsurface = getattr(self, "surface", None)
+        if self.free and imgsurface is not None:
+            surface.SDL_FreeSurface(imgsurface)
+        self.surface = None
+
     @property
     def size(self):
         """The size of the SoftwareSprite as tuple."""
