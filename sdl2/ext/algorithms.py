@@ -7,14 +7,25 @@ __all__ = ["liangbarsky", "cohensutherland", "clipline", "point_on_line"]
 def cohensutherland(left, top, right, bottom, x1, y1, x2, y2):
     """Clips a line to a rectangular area.
 
-    This implements the Cohen-Sutherland line clipping algorithm.  left,
-    top, right and bottom denote the clipping area, into which the line
-    defined by x1, y1 (start point) and x2, y2 (end point) will be
-    clipped.
+    This implements the Cohen-Sutherland line clipping algorithm. ``left``,
+    ``top``, ``right`` and ``bottom`` define the bounds of the clipping area,
+    by which the line from ``(x1, y1)`` to ``(x2, y2)`` will be clipped.
 
-    If the line does not intersect with the rectangular clipping area,
-    four None values will be returned as tuple. Otherwise a tuple of the
-    clipped line points will be returned in the form (cx1, cy1, cx2, cy2).
+    Args:
+        left (int): The left boundary of the clipping area.
+        top (int): The top boundary of the clipping area.
+        right (int): The right boundary of the clipping area.
+        bottom (int): The bottom boundary of the clipping area.
+        x1 (int): The x-coordinate of the starting point of the line.
+        y1 (int): The y-coordinate of the starting point of the line.
+        x2 (int): The x-coordinate of the end point of the line.
+        y2 (int): The y-coordinate of the end point of the line.
+
+    Returns:
+        tuple: The start and end coordinates of the clipped line in the form
+            ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
+            rectangular clipping area, all 4 values will be ``None``.
+
     """
     LEFT, RIGHT, LOWER, UPPER = 1, 2, 4, 8
 
@@ -66,14 +77,25 @@ def cohensutherland(left, top, right, bottom, x1, y1, x2, y2):
 def liangbarsky(left, top, right, bottom, x1, y1, x2, y2):
     """Clips a line to a rectangular area.
 
-    This implements the Liang-Barsky line clipping algorithm.  left,
-    top, right and bottom denote the clipping area, into which the line
-    defined by x1, y1 (start point) and x2, y2 (end point) will be
-    clipped.
+    This implements the Liang-Barsky line clipping algorithm. ``left``,
+    ``top``, ``right`` and ``bottom`` define the bounds of the clipping area,
+    by which the line from ``(x1, y1)`` to ``(x2, y2)`` will be clipped.
 
-    If the line does not intersect with the rectangular clipping area,
-    four None values will be returned as tuple. Otherwise a tuple of the
-    clipped line points will be returned in the form (cx1, cy1, cx2, cy2).
+    Args:
+        left (int): The left boundary of the clipping area.
+        top (int): The top boundary of the clipping area.
+        right (int): The right boundary of the clipping area.
+        bottom (int): The bottom boundary of the clipping area.
+        x1 (int): The x-coordinate of the starting point of the line.
+        y1 (int): The y-coordinate of the starting point of the line.
+        x2 (int): The x-coordinate of the end point of the line.
+        y2 (int): The y-coordinate of the end point of the line.
+
+    Returns:
+        tuple: The start and end coordinates of the clipped line in the form
+            ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
+            rectangular clipping area, all 4 values will be ``None``.
+
     """
     dx = x2 - x1 * 1.0
     dy = y2 - y1 * 1.0
@@ -108,12 +130,48 @@ def liangbarsky(left, top, right, bottom, x1, y1, x2, y2):
     return x1, y1, x2, y2
 
 
-clipline = lambda l, t, r, b, x1, y1, x2, y2, method = liangbarsky: \
-    method(l, t, r, b, x1, y1, x2, y2)
+def clipline(l, t, r, b, x1, y1, x2, y2, method='liangbarsky'):
+    """Clips a line to a rectangular area using a given method.
+
+    Args:
+        l (int): The left boundary of the clipping area.
+        t (int): The top boundary of the clipping area.
+        r (int): The right boundary of the clipping area.
+        b (int): The bottom boundary of the clipping area.
+        x1 (int): The x-coordinate of the starting point of the line.
+        y1 (int): The y-coordinate of the starting point of the line.
+        x2 (int): The x-coordinate of the end point of the line.
+        y2 (int): The y-coordinate of the end point of the line.
+        method (str, optional): The method to use for clipping lines, can be
+            either 'cohensutherland' or 'liangbarsky'. Defaults to liangbarsky.
+
+    Returns:
+        tuple: The start and end coordinates of the clipped line in the form
+            ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
+            rectangular clipping area, all 4 values will be ``None``.
+
+    """
+    if method == 'cohensutherland':
+        return cohensutherland(l, t, r, b, x1, y1, x2, y2)
+    elif method == 'liangbarsky':
+        return liangbarsky(l, t, r, b, x1, y1, x2, y2)
+    else:
+        raise ValueError("Unknown clipping method '{0}'".format(method))
 
 
 def point_on_line(p1, p2, point):
-    """Checks, if point is on the line segment [p1, p2]."""
+    """Checks if a point falls along a given line segment.
+
+    Args:
+        p1 (tuple): The (x, y) coordinates of the starting point of the line.
+        p2 (tuple): The (x, y) coordinates of the end point of the line.
+        point (tuple): The (x, y) coordinates to test against the line.
+    
+    Returns:
+        bool: ``True`` if the point falls along the line segment, otherwise
+            ``False``.
+
+    """
     x1, y1 = p1
     x2, y2 = p2
     px, py = point

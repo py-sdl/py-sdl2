@@ -12,22 +12,34 @@ _ARRAY = __import__("array")
 
 
 def to_tuple(dataseq):
-    """Converts a ctypes array to a tuple."""
+    """Converts a ``ctypes`` array to a tuple."""
     return tuple(dataseq)
 
 
 def to_list(dataseq):
-    """Converts a ctypes array to a list."""
+    """Converts a ``ctypes`` array to a list."""
     return list(dataseq)
 
 
 def to_ctypes(dataseq, dtype, mcount=0):
-    """Converts an arbitrary sequence to a ctypes array of the specified
-    type and returns the ctypes array and amount of items as two-value
-    tuple.
+    """Converts an arbitrary sequence to a ``ctypes`` array of a given type.
 
-    Raises a TypeError, if one or more elements in the passed sequence
-    do not match the passed type.
+    Args:
+        dataseq: A sequence to convert to a ``ctypes`` array.
+        dtype (class): The ``ctypes`` data type to use for the array (e.g.
+            ``ctypes.c_uint8``).
+        mcount (int, optional): The number of elements in ``dataseq``. If
+            not specified, this will be inferred automatically.
+
+    Returns:
+        tuple: A tuple in the form ``(valset, count)``, where ``valset`` is
+            the converted ``ctypes`` array and ``count`` is the number of
+            elements in the array.
+
+    Raises:
+        TypeError: if any elements in the passed sequence do not
+            match the specified type.
+
     """
     if mcount > 0:
         count = mcount
@@ -50,9 +62,15 @@ def to_ctypes(dataseq, dtype, mcount=0):
 
 
 def create_array(obj, itemsize):
-    """Creates an array.array based copy of the passed object.
+    """Creates an :obj:`array.array` copy of a given object.
 
-    itemsize denotes the size in bytes for a single element within obj.
+    Args:
+        obj: The object from which the array will be created.
+        itemsize: The size (in bytes) of each item in the given object.
+
+    Returns:
+        :obj:`array.array`: The array created from the object.
+
     """
     if itemsize == 1:
         return _ARRAY.array("B", obj)
@@ -67,20 +85,35 @@ def create_array(obj, itemsize):
 
 
 class CTypesView(object):
-    """A proxy for byte-wise accessible data types to be used in ctypes
-    bindings.
+    """A proxy for accessing byte-wise ``ctypes`` data types.
+
+    This class provides read-write access for arbitrary ``ctypes`` objects
+    that are iterable. In case the object does not provide a :func:`buffer`
+    interface for direct access, a ``CTypesView`` can copy the object's contents
+    into an internal buffer from which data can be retrieved.
+
+    Depending on the item type stored in the iterable object, you might
+    need to manually specify the object's item size (in bytes). Additionally,
+    you may need to manually specify the number of items in the iterable if
+    it does not properly return its length using the ``len`` function.
+
+    For certain types, such as the bytearray, the original object must not be
+    reassigned after being encapsuled and used in ctypes bindings if the
+    contents are not copied.
+
+    Args:
+        obj: An arbitrary iterable ``ctypes`` object to access.
+        itemsize (int, optional): The size (in bytes) of each item of the
+            iterable object. Defaults to ``1``.
+        docopy (bool, optional): If True, the view will be created for a copy
+            of the object and will not modify the original ``ctypes`` instance.
+            Defalts to False (original object will be modified).
+        objsize (int, optional): The number of items in the iterable object.
+            If not specified, the number of items will try to be inferred
+            automatically. Defaults to ``None`` (automatic inferrence).
+
     """
     def __init__(self, obj, itemsize=1, docopy=False, objsize=None):
-        """Creates a new CTypesView for the passed object.
-
-        Unless docopy is True, the CTypesView tries to let ctypes
-        bindings and other callers access the object's contents
-        directly.
-
-        For certain types, such as the bytearray, the object must not be
-        reassigned after being encapsuled and used in ctypes bindings,
-        if the contents are not copied.
-        """
         self._obj = obj
         self._isshared = True
         self._view = None
@@ -126,39 +159,83 @@ class CTypesView(object):
         return self.bytesize
 
     def to_bytes(self):
-        """Returns a byte representation of the underlying object."""
-        castval = ctypes.POINTER(ctypes.c_ubyte * self.bytesize)
+        """Casts the object to an array of bytes.
+        
+        If the view was created with ``docopy = False`` (the default), the
+        returned object provides direct read-write access to the object data.
+        Otherwise, the returned object will only modify a copy of the data.
+
+        Returns:
+            :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint8`
+                array.
+
+        """
+        castval = ctypes.POINTER(ctypes.c_uint8 * self.bytesize)
         return ctypes.cast(self.view, castval).contents
 
     def to_uint16(self):
-        """Returns a 16-bit unsigned integer array of the object data."""
-        castval = ctypes.POINTER(ctypes.c_ushort * (self.bytesize // 2))
+        """Casts the object to an array of 16-bit unsigned ints.
+        
+        If the view was created with ``docopy = False`` (the default), the
+        returned object provides direct read-write access to the object data.
+        Otherwise, the returned object will only modify a copy of the data.
+
+        Returns:
+            :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint16`
+                array.
+
+        """
+        castval = ctypes.POINTER(ctypes.c_uint16 * (self.bytesize // 2))
         return ctypes.cast(self.view, castval).contents
 
     def to_uint32(self):
-        """Returns a 32-bit unsigned integer array of the object data."""
-        castval = ctypes.POINTER(ctypes.c_uint * (self.bytesize // 4))
+        """Casts the object to an array of 32-bit unsigned ints.
+        
+        If the view was created with ``docopy = False`` (the default), the
+        returned object provides direct read-write access to the object data.
+        Otherwise, the returned object will only modify a copy of the data.
+
+        Returns:
+            :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint32`
+                array.
+
+        """
+        castval = ctypes.POINTER(ctypes.c_uint32 * (self.bytesize // 4))
         return ctypes.cast(self.view, castval).contents
 
     def to_uint64(self):
-        """Returns a 64-bit unsigned integer array of the object data."""
-        castval = ctypes.POINTER(ctypes.c_ulonglong * (self.bytesize // 8))
+        """Casts the object to an array of 64-bit unsigned ints.
+        
+        If the view was created with ``docopy = False`` (the default), the
+        returned object provides direct read-write access to the object data.
+        Otherwise, the returned object will only modify a copy of the data.
+
+        Returns:
+            :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint64`
+                array.
+
+        """
+        castval = ctypes.POINTER(ctypes.c_uint64 * (self.bytesize // 8))
         return ctypes.cast(self.view, castval).contents
 
     @property
     def bytesize(self):
-        """The size in bytes of the underlying object."""
+        """int: The size (in bytes) of the underlying object."""
         return ctypes.sizeof(self.view)
 
     @property
     def view(self):
-        """The ctypes view of the object."""
+        """Provides a read/write-aware ``ctypes`` view of the encapsuled
+        object.
+        
+        """
         return self._view
 
     @property
     def is_shared(self):
-        """Indicates, if changes on the CTypesView data effect the
-        underlying object directly.
+        """bool: Whether any modifications to the view will also modify the
+        underlying object.
+
         """
         return self._isshared
 
@@ -169,32 +246,29 @@ class CTypesView(object):
 
 
 class MemoryView(object):
-    """Simple n-dimensional access to buffers.
+    """A class that provides read-write access to indexable ``ctypes`` objects.
 
-    The MemoryView provides a read-write access to arbitrary data
-    objects, which can be indexed.
+    .. note: ``MemoryView`` makes heavy use of recursion for multi-dimensional
+       access, making it slow for many use-cases. For better performance, the
+       ``numpy`` library can be used for fast access to many array-like data
+       types, but it may support fewer types of arbitrary objects than the
+       ``MemoryView`` class.
 
-    NOTE: The MemoryView is a pure Python-based implementation and makes
-    heavy use of recursion for multi-dimensional access. If you aim for
-    speed on accessing a n-dimensional object, you want to consider
-    using a specialised library such as numpy. If you need n-dimensional
-    access support, where such a library is not supported, or if you
-    need to provide access to objects, which do not fulfill the
-    requirements of that particular libray, MemoryView can act as solid
-    fallback solution.
+    Args:
+        source: An arbitrary indexable ``ctypes`` object to access.
+        itemsize (int): The size (in bytes) of each item of the indexable
+            object.
+        strides (tuple): The length of each dimension in the object (e.g.
+            ``(4, 3)`` for a 4 x 3 2D array).
+        getfunc (function, optional): Deprecated, do not use.
+        setfunc (function, optional): Deprecated, do not use.
+        srcsize (int, optional): The size (in bytes) of the input object.
+            If ``len(source)`` returns the size of the object in bytes this will
+            be inferred automatically, otherwise it must be manually specified.
+
     """
     def __init__(self, source, itemsize, strides, getfunc=None, setfunc=None,
                  srcsize=None):
-        """Creates a new MemoryView from a source.
-
-        itemsize denotes the size of a single item. strides defines the
-        dimensions and the length (n items * itemsize) for each
-        dimension. getfunc and setfunc are optional parameters to provide
-        specialised read and write access to the underlying
-        source. srcsize can be used to provide the correct source size,
-        if len(source) does not return the absolute size of the source
-        object in all dimensions.
-        """
         self._source = source
         self._itemsize = itemsize
         self._strides = strides
@@ -286,24 +360,22 @@ class MemoryView(object):
 
     @property
     def size(self):
-        """The size in bytes of the underlying source object."""
+        """int: The size (in bytes) of the underlying source object."""
         return self._srcsize
 
     @property
     def strides(self):
-        """A tuple defining the length in bytes for accessing all
-        elements in each dimension of the MemoryView.
-        """
+        """tuple: The length of each dimension the MemoryView."""
         return self._strides
 
     @property
     def itemsize(self):
-        """The size of a single item in bytes."""
+        """int: The size (in bytes) of a single item in the object."""
         return self._itemsize
 
     @property
     def ndim(self):
-        """The number of dimensions of the MemoryView."""
+        """int: The number of dimensions of the MemoryView."""
         return len(self.strides)
 
     @property
