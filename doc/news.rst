@@ -9,16 +9,18 @@ Released on XXXX-XX-XX.
 New Features:
 
 * Updated to wrap new functions and constants in introduced in SDL2 2.0.12
-  and 2.0.14 (PR #163 & #181)
+  and 2.0.14 (PR #163 & PR #181)
 * Fixed DLL loading issues with Python installed from the Microsoft Store
   on Windows (PR #185)
 * Added informative errors for when the newest SDL2 binaries found on the
   system are too old to be used by PySDL2 (issue #165)
+* Added support for passing ``SDL_Rect`` objects to :func:`sdl2.ext.draw.fill`
+  (issue #169)
 
 Fixed bugs:
 
 * Fixed ``NameError`` when calling ``SDL_SetColorKey``, by @mgorny (PR #166)
-* Improved detection of SDL2 binaries on macOS, by @pvallet (PR #177 & #178)
+* Improved detection of SDL2 binaries on macOS, by @pvallet (PR #177 & PR #178)
 * Fixed a bug preventing ``sdl2.ext.font.BitmapFont`` from being able to
   render, by @namelivia (PR #181)
 * Fixed ``sdl2.ext.Window.show`` behaviour under Wayland (issue #139)

@@ -16,6 +16,8 @@ def _get_target_surface(target):
         rtarget = target
     elif isinstance(target, SoftwareSprite):
         rtarget = target.surface
+    elif "SDL_Surface" in str(type(target)):
+        rtarget = target.contents
     else:
         raise TypeError("unsupported target type")
     return rtarget
@@ -43,37 +45,55 @@ def prepare_color(color, target):
 def fill(target, color, area=None):
     """Fills a certain rectangular area on the passed target with a color.
 
-    If no area is provided, the entire target will be filled with
-    the passed color. If an iterable item is provided as area (such as a list
-    or tuple), it will be first checked, if the item denotes a single
-    rectangular area (4 integer values) before assuming it to be a sequence
-    of rectangular areas.
+    Targets can be :obj:`~sdl2.surface.SDL_Surface` or 
+    :obj:`~sdl2.ext.sprite.SoftwareSprite` objects. Fill areas can be specified
+    as 4-item (x, y, w, h) tuples, :obj:`~sdl2.rect.SDL_Rect` objects, or a list
+    containing multiple areas to fill in either format. If no area is provided,
+    the entire target will be filled with the passed color.
+
+    The fill color can be provided in any format supported by
+    :func:`~sdl2.ext.color.convert_to_color`.
+
+    Args:
+        target: The target surface or sprite to modify.
+        color: The color to add to the specified region of the target.
+        area (optional): The rectangular region (or regions) of the target to
+            fill with the given colour. If no region is specified, the whole
+            surface of the target will be filled.
+
     """
     color = prepare_color(color, target)
     rtarget = _get_target_surface(target)
 
-    varea = None
-    if area is not None and isiterable(area):
-        # can be either a single rect or a list of rects)
-        if len(area) == 4:
-            # is it a rect?
-            try:
-                varea = rect.SDL_Rect(int(area[0]), int(area[1]),
-                                      int(area[2]), int(area[3]))
-            except:
-                # No, not a rect, assume a seq of rects.
-                pass
-        if not varea:  # len(area) == 4 AND varea set.
-            varea = []
-            for r in area:
-                varea.append(rect.SDL_Rect(r[0], r[1], r[2], r[3]))
+    err_msg = (
+        "Fill areas must be specified as either (x, y, w, h) tuples or "
+        "SDL_Rect objects (Got unsupported format '{0}')"
+    )
 
-    if varea is None or isinstance(varea, rect.SDL_Rect):
-        surface.SDL_FillRect(rtarget, varea, color)
+    rects = []
+    if area:
+        if not isiterable(area) or not isiterable(area[0]):
+            area = [area]
+        for r in area:
+            if isinstance(r, rect.SDL_Rect):
+                rects.append(r)
+            else:
+                try:
+                    new_rect = rect.SDL_Rect(
+                        int(r[0]), int(r[1]), int(r[2]), int(r[3])
+                    )
+                    rects.append(new_rect)
+                except (TypeError, ValueError, IndexError):
+                    raise ValueError(err_msg.format(str(r)))
+
+    if len(rects) > 2:
+        rects, count = to_ctypes(rects, rect.SDL_Rect)
+        rects = ctypes.cast(rects, ctypes.POINTER(rect.SDL_Rect))
+        surface.SDL_FillRects(rtarget, rects, count, color)
+    elif len(rects) == 1:
+        surface.SDL_FillRect(rtarget, rects[0], color)
     else:
-        varea, count = to_ctypes(varea, rect.SDL_Rect)
-        varea = ctypes.cast(varea, ctypes.POINTER(rect.SDL_Rect))
-        surface.SDL_FillRects(rtarget, varea, count, color)
+        surface.SDL_FillRect(rtarget, None, color)
 
 
 def line(target, color, dline, width=1):
