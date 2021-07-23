@@ -317,8 +317,6 @@ class TestSDL2ExtSprite(object):
         assert sdl2ext.SoftwareSprite in renderer.componenttypes
         dogc()
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_SoftwareSpriteRenderSystem_render(self):
         sf1 = SDL_CreateRGBSurface(0, 12, 7, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
@@ -360,8 +358,6 @@ class TestSDL2ExtSprite(object):
         self.check_pixels(view, 20, 20, sp2, 0x00FF00, (0x0, 0xFF0000), 1, 2)
         del view
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_SoftwareSpriteRenderSystem_process(self):
         sf1 = SDL_CreateRGBSurface(0, 5, 10, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
@@ -603,8 +599,6 @@ class TestSDL2ExtSprite(object):
             sdl2ext.Renderer("test")
         dogc()
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_color(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
                                   0xFF000000,
@@ -634,8 +628,6 @@ class TestSDL2ExtSprite(object):
     def test_Renderer_blendmode(self):
         pass
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_clear(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
                                   0xFF000000,
@@ -660,8 +652,6 @@ class TestSDL2ExtSprite(object):
         SDL_FreeSurface(sf)
         dogc()
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_copy(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
@@ -675,8 +665,6 @@ class TestSDL2ExtSprite(object):
         self.check_pixels(view, 128, 128, sp, 0xFF0000, (0x0,))
         del view
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_draw_line(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
@@ -691,8 +679,6 @@ class TestSDL2ExtSprite(object):
     def test_Renderer_draw_point(self):
         pass
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_draw_rect(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
@@ -719,8 +705,6 @@ class TestSDL2ExtSprite(object):
             ((27, 15), (27, 24))], 0x0000FF, (0x0,))
         del view
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_Renderer_fill(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)

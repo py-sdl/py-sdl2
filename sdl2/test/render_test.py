@@ -667,8 +667,6 @@ class TestSDLRender(object):
 #                          render.SDL_RenderClear, 123456)
         dogc()
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_SDL_RenderDrawPoint(self):
         points = ((-4, -3), (-4, 3), (4, -3),
                   (0, 0), (1, 1), (10, 10), (99, 99),
@@ -808,8 +806,6 @@ class TestSDLRender(object):
     def test_SDL_RenderGetSetScale(self):
         pass
 
-    @pytest.mark.skipif(_ISPYPY, 
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_SDL_RenderGetSetLogicalSize(self):
         w, h = 100, 100
         sf = surface.SDL_CreateRGBSurface(0, w, h, 32,

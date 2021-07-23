@@ -21,8 +21,6 @@ class TestSDL2ExtDraw(object):
     def teardown_class(cls):
         sdl2ext.quit()
 
-    @pytest.mark.skipif(hasattr(sys, "pypy_version_info"),
-        reason="PyPy's ctypes can't do byref(value, offset)")
     def test_fill(self):
         # Initialize colour and surface/view
         WHITE = (255, 255, 255)
