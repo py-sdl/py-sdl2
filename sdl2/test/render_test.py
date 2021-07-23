@@ -909,6 +909,7 @@ class TestSDLRender(object):
                        'All other pixels should be green'
 
         render.SDL_DestroyRenderer(renderer)
+        del view
         surface.SDL_FreeSurface(sf)
 
     @pytest.mark.skip("not implemented")
