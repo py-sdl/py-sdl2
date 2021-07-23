@@ -65,6 +65,55 @@ class TestSDL2ExtDraw(object):
         with pytest.raises(ValueError):
             sdl2ext.fill(sf.contents, WHITE, (1, 2, 3))
 
+    def test_line(self):
+        # Initialize colour and surface/view
+        WHITE = (255, 255, 255)
+        BLACK = (0, 0, 0)
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+        with pytest.warns(ExperimentalWarning):
+            view = sdl2ext.pixels3d(sf.contents, False)
+
+        # Test with a single straight line
+        sdl2ext.line(sf.contents, WHITE, (0, 0, 11, 0))
+        assert all(x == 255 for x in view[0][0][:3])
+        assert all(x == 255 for x in view[0][-1][:3])
+        assert all(x == 0 for x in view[1][0][:3])
+
+        # Test specifying line width
+        sdl2ext.line(sf.contents, WHITE, (0, 5, 11, 5), width=4)
+        assert all(x == 255 for x in view[3][0][:3])
+        assert all(x == 255 for x in view[6][-1][:3])
+        assert all(x == 0 for x in view[2][0][:3])
+
+        # Test with a single diagonal line
+        sdl2ext.fill(sf.contents, BLACK, None)  # reset surface
+        sdl2ext.line(sf.contents, WHITE, (1, 1, 9, 9))
+        assert all(x == 255 for x in view[2][2][:3])
+        assert all(x == 255 for x in view[3][3][:3])
+        assert all(x == 0 for x in view[4][6][:3])
+
+        # Test with multiple lines
+        lines = [(0, 0, 0, 10), (0, 0, 10, 0), (0, 0, 10, 10)]
+        sdl2ext.fill(sf.contents, BLACK, None)  # reset surface
+        sdl2ext.line(sf.contents, WHITE, lines)
+        assert all(x == 255 for x in view[0][-1][:3])
+        assert all(x == 255 for x in view[-1][0][:3])
+        assert all(x == 255 for x in view[-1][-1][:3])
+        assert all(x == 0 for x in view[1][5][:3])
+
+        # Test with multiple lines (old weird method)
+        lines = (0, 0, 0, 10, 0, 0, 10, 0, 0, 0, 10, 10)
+        sdl2ext.fill(sf.contents, BLACK, None)  # reset surface
+        sdl2ext.line(sf.contents, WHITE, lines)
+        assert all(x == 255 for x in view[0][-1][:3])
+        assert all(x == 255 for x in view[-1][0][:3])
+        assert all(x == 255 for x in view[-1][-1][:3])
+        assert all(x == 0 for x in view[1][5][:3])
+
+        # Test exception on bad input
+        with pytest.raises(ValueError):
+            sdl2ext.line(sf.contents, WHITE, (1, 2, 3))
+
     def test_prepare_color(self):
         rcolors = (Color(0, 0, 0, 0),
                    Color(255, 255, 255, 255),
