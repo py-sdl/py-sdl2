@@ -18,17 +18,20 @@ __all__ = ["SDLError", "init", "quit", "get_events", "TestEventProcessor"]
 
 
 class SDLError(Exception):
-    """A SDL2 specific exception class."""
+    """An SDL2-specific exception class."""
+
     def __init__(self, msg=None):
         """Creates a new SDLError instance with the specified message.
 
         If no msg is passed, it will try to get the current SDL2 error via
-        sdl2.error.SDL_GetError().
+        :func:`sdl2.SDL_GetError`.
+
         """
         super(SDLError, self).__init__()
         self.msg = msg
         if not msg:
             self.msg = error.SDL_GetError()
+            error.SDL_ClearError()
 
     def __str__(self):
         return repr(self.msg)
@@ -37,9 +40,11 @@ class SDLError(Exception):
 def init():
     """Initializes the SDL2 video subsystem.
 
-    Raises a SDLError, if the SDL2 video subsystem could not be
-    initialised.
+    Raises an :exc:`SDLError` if the SDL2 video subsystem cannot be
+    initialized.
+
     """
+    # TODO: More subsystems?
     if SDL_Init(SDL_INIT_VIDEO) != 0:
         raise SDLError()
 
@@ -48,8 +53,11 @@ def quit():
     """Quits the SDL2 video subysystem.
 
     If no other subsystems are active, this will also call
-    sdl2.SDL_Quit(), sdlttf.TTF_Quit() and sdlimage.IMG_Quit().
+    :func:`sdl2.SDL_Quit`, :func:`sdlttf.TTF_Quit` and
+    :func:`sdlimage.IMG_Quit`.
+
     """
+    # TODO: More subsystems? Also, is TTF_WasInit always 1?
     SDL_QuitSubSystem(SDL_INIT_VIDEO)
     if SDL_WasInit(0) != 0:
         if _HASSDLTTF and sdlttf.TTF_WasInit() == 1:
@@ -60,7 +68,13 @@ def quit():
 
 
 def get_events():
-    """Gets all SDL events that are currently on the event queue."""
+    """Gets all SDL events that are currently on the event queue.
+
+    Returns:
+        :obj:`List`: A list of all :obj:`~sdl2.SDL_Event` objects currently in
+            the event queue.
+    
+    """
     events.SDL_PumpEvents()
 
     evlist = []
@@ -79,13 +93,23 @@ def get_events():
         evlist += list(evarray)[:ret]
         if ret < 10:
             break
+
     return evlist
 
 
 class TestEventProcessor(object):
     """A simple event processor for testing purposes."""
+
     def run(self, window):
-        """Starts an event loop without actually processing any event."""
+        """Starts an event loop without actually processing any event.
+        
+        This method will run endlessly until an ``SDL_QUIT`` event occurs.
+
+        Args:
+            window (:obj:`sdl2.ext.Window`): The window within which to run
+                the test event loop.
+        
+        """
         event = events.SDL_Event()
         running = True
         while running:

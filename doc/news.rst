@@ -28,6 +28,9 @@ Fixed bugs:
   render, by @namelivia (PR #181)
 * Fixed ``sdl2.ext.Window.show`` behaviour under Wayland (issue #139)
 * Fixed a minor bug with the ``helloworld.py`` example (issue #174)
+* Fixed a bug that prevented the line clipping functions in 
+  :mod:`sdl2.ext.algorithms` from working if `top` and `bottom` arguments were
+  specified backwards (issue #101)
 
 
 0.9.7

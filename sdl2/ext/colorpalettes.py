@@ -1,7 +1,8 @@
 """
-Various, indexed color palettes.
+Various indexed color palettes.
 
-Indexed color palettes. The following palettes are currently available:
+Each palette is a tuple of :obj:~`sdl2.ext.Color` objects. The following
+palettes are currently available:
 
 +--------------------+---------------------------------------------------+
 | MONOPALETTE        | 1-bit monochrome palette (black and white).       |
