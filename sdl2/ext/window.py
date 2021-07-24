@@ -8,36 +8,86 @@ __all__ = ["Window"]
 
 
 class Window(object):
-    """The Window class represents a visible on-screen object with an
-    optional border and title text.
+    """Creates a visible window with an optional border and title text.
 
-    It represents an area on the screen that can be accessed by the
-    application for displaying graphics and receive and process user
-    input.
+    In SDL2, a window is the object through which visuals are displayed and
+    all input events are captured. This class is a Pythonic alternative to
+    working directly with SDL2's :obj:`~sdl2.SDL_Window` type, wrapping a
+    number of useful functions for working with windows.
+
+    The created Window is hidden by default, but can be shown using the
+    :meth:`~Window.show` method. Additionally, the type and properties of the
+    created window can be configured using various flags:
+
+    ================================== =========================================
+    Flag                               Description
+    ================================== =========================================
+    sdl2.SDL_WINDOW_SHOWN              Will be shown when created
+    sdl2.SDL_WINDOW_HIDDEN             Will be hidden when created
+    sdl2.SDL_WINDOW_BORDERLESS         Will not be decorated by the OS
+    sdl2.SDL_WINDOW_RESIZABLE          Will be resizable
+    sdl2.SDL_WINDOW_MINIMIZED          Will be created in a minimized state
+    sdl2.SDL_WINDOW_MAXIMIZED          Will be created in a maximized state
+    sdl2.SDL_WINDOW_FULLSCREEN         Will be fullscreen
+    sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP Will be fullscreen at the current desktop
+                                       resolution
+    sdl2.SDL_WINDOW_OPENGL             Will be usable with an OpenGL context
+    sdl2.SDL_WINDOW_VULKAN             Will be usable with a Vulkan instance
+    sdl2.SDL_WINDOW_METAL              Will be usable with a Metal context
+    sdl2.SDL_WINDOW_ALLOW_HIGHDPI      Will be created in high-DPI mode
+                                       (if supported)
+    sdl2.SDL_WINDOW_INPUT_FOCUS        Will have input focus when created
+    sdl2.SDL_WINDOW_MOUSE_FOCUS        Will have mouse focus when created
+    sdl2.SDL_WINDOW_INPUT_GRABBED      Will prevent the mouse from leaving the
+                                       bounds of the window
+    sdl2.SDL_WINDOW_MOUSE_CAPTURE      Will capture mouse to track input outside
+                                       of the window when created
+    ================================== =========================================
+
+    There are also a few additional window creation flags that only affect the
+    X11 window manager (i.e. most distributions of Linux and BSD):
+
+    ================================== =====================================
+    Flag                               Description
+    ================================== =====================================
+    sdl2.SDL_WINDOW_ALWAYS_ON_TOP      Should stay on top of other windows
+    sdl2.SDL_WINDOW_SKIP_TASKBAR       Should not be added to the taskbar
+    sdl2.SDL_WINDOW_UTILITY            Should be treated as a utility window
+    sdl2.SDL_WINDOW_TOOLTIP            Should be treated as a tooltip
+    sdl2.SDL_WINDOW_POPUP_MENU         Should be treated as a popup menu
+    ================================== =====================================
+
+    To combine multiple flags, you can use a bitwise OR to combine two or more
+    together before passing them to the `flags` argument. For example, to create
+    a fullscreen window that supports an OpenGL context and is shown on
+    creation, you would use::
+
+      win_flags = (
+          sdl2.SDL_WINDOW_FULLSCREEN | sdl2.SDL_WINDOW_OPENGL |
+          sdl2.SDL_WINDOW_SHOWN
+      )
+      sdl2.ext.Window("PySDL2", (800, 600), flags=win_flags)
+
+    Args:
+        title (str): The title to use for the window.
+        size (tuple): The initial size (in pixels) of the window, in the format
+            `(width, height)`.
+        position (tuple, optional): The initial `(x, y)` coordinates of the
+            top-left corner of the window. If not specified, defaults to letting
+            the system's window manager choose a location for the window.
+        flags (int, optional): The window attribute flags with which the window
+            will be created. Defaults to `SDL_WINDOW_HIDDEN`.
+
+    Attributes:
+        window (:obj:`~sdl2.SDL_Window`, None): The underlying SDL2 Window
+            object. If the window has been closed, this value will be `None`.
+
     """
     DEFAULTFLAGS = video.SDL_WINDOW_HIDDEN
     DEFAULTPOS = (video.SDL_WINDOWPOS_UNDEFINED,
                   video.SDL_WINDOWPOS_UNDEFINED)
 
     def __init__(self, title, size, position=None, flags=None):
-        """Creates a Window with a specific size and title.
-
-        The position to show the Window at is undefined by default,
-        letting the operating system or window manager pick the best
-        location. The behaviour can be adjusted through the DEFAULTPOS
-        class variable:
-
-            Window.DEFAULTPOS = (10, 10)
-
-        The created Window is hidden by default, which can be overriden
-        at the time of creation by providing other SDL window flags
-        through the flags parameter.
-
-        The default flags for creating Window instances can be adjusted
-        through the DEFAULTFLAGS class variable:
-
-            Window.DEFAULTFLAGS = sdl2.video.SDL_WINDOW_SHOWN
-        """
         if position is None:
             position = self.DEFAULTPOS
         if flags is None:
@@ -58,14 +108,16 @@ class Window(object):
 
     @property
     def position(self):
-        """The current window position as two-value tuple."""
+        """tuple: The (x, y) pixel coordinates of the top-left corner of the
+        window.
+
+        """
         x, y = c_int(), c_int()
         video.SDL_GetWindowPosition(self.window, byref(x), byref(y))
         return x.value, y.value
 
     @position.setter
     def position(self, value):
-        """The current window position as two-value tuple."""
         if not self.window:
             raise SDLError("The window is not available")
         video.SDL_SetWindowPosition(self.window, value[0], value[1])
@@ -73,33 +125,31 @@ class Window(object):
 
     @property
     def title(self):
-        """The title of the window."""
+        """str: The title of the window."""
         return stringify(video.SDL_GetWindowTitle(self.window), "utf-8")
 
     @title.setter
     def title(self, value):
-        """The title of the window."""
         video.SDL_SetWindowTitle(self.window, byteify(value, "utf-8"))
         self._title = value
 
     @property
     def size(self):
-        """The size of the window."""
+        """tuple: The dimensions of the window (in pixels) in the form
+        (width, height).
+        
+        """
         w, h = c_int(), c_int()
         video.SDL_GetWindowSize(self.window, byref(w), byref(h))
         return w.value, h.value
 
     @size.setter
     def size(self, value):
-        """The size of the window."""
         video.SDL_SetWindowSize(self.window, value[0], value[1])
         self._size = value[0], value[1]
 
     def create(self):
-        """Creates the window.
-
-        If the window already exists, this method will not do anything.
-        """
+        """Creates the window if it does not already exist."""
         if self.window != None:
             return
         window = video.SDL_CreateWindow(byteify(self._title, "utf-8"),
@@ -117,43 +167,78 @@ class Window(object):
         self.show()
 
     def close(self):
-        """Closes the window, implicitly destroying the underlying SDL2
-        window."""
+        """Closes and destroys the window.
+        
+        Once this method has been called, the window cannot be re-opened.
+        However, you can create a new window with the same settings using the
+        :meth:`create` method.
+
+        """
         if hasattr(self, "window") and self.window != None:
             video.SDL_DestroyWindow(self.window)
             self.window = None
 
     def show(self):
-        """Show the window on the display."""
+        """Shows the window on the display.
+        
+        If the window is already visible, this method does nothing.
+
+        """
         video.SDL_ShowWindow(self.window)
         video.SDL_GetWindowSurface(self.window)
 
     def hide(self):
-        """Hides the window."""
+        """Hides the window.
+
+        If the window is already hidden, this method does nothing.
+        
+        """
         video.SDL_HideWindow(self.window)
 
     def maximize(self):
-        """Maximizes the window to the display's dimensions."""
+        """Maximizes the window."""
         video.SDL_MaximizeWindow(self.window)
 
     def minimize(self):
-        """Minimizes the window to an iconified state in the system tray."""
+        """Minimizes the window into the system's dock or task bar."""
         video.SDL_MinimizeWindow(self.window)
 
-    def refresh(self):
-        """Refreshes the entire window surface.
+    def restore(self):
+        """Restores a minimized or maximized window to its original state.
+        
+        If the window has not been minimized or maximized, this method does
+        nothing.
 
-        This only needs to be called, if a SDL_Surface was acquired via
-        get_surface() and is used to display contents.
+        """
+        video.SDL_RestoreWindow(self.window)
+
+    def refresh(self):
+        """Updates the window to reflect any changes made to its surface.
+
+        .. note: This only needs to be called if the window surface was
+                 acquired and modified using :meth:`get_surface`.
         """
         video.SDL_UpdateWindowSurface(self.window)
 
     def get_surface(self):
-        """Gets the SDL_Surface used by the Window to display 2D pixel
-        data.
+        """Gets the :obj:`~sdl2.SDL_Surface` used by the window.
 
-        Using this method will make the usage of GL operations, such
-        as texture handling, or using SDL renderers impossible.
+        This method obtains the SDL surface used by the window, which can be
+        then be modified to change the contents of the window (e.g draw shapes
+        or images) using functions such as :func:`sdl2.SDL_BlitSurface` or
+        :func:`sdl2.ext.fill`.
+
+        The obtained surface will be invalidated if the window is resized. As
+        such, you will need to call this method again whenever this happens
+        in order to continue to access the window's contents.
+
+        .. note: If using OpenGL/Vulkan/Metal rendering or the SDL rendering
+                 API (e.g. :func:`sdl2.SDL_CreateRenderer`) for drawing to the
+                 window, this method should not be used.
+
+        Returns:
+            :obj:`~sdl2.SDL_Surface`: The surface associated with the window.
+
         """
         sf = video.SDL_GetWindowSurface(self.window)
         if not sf:
