@@ -10,6 +10,10 @@ __all__ = ["Color", "is_rgb_color", "is_rgba_color", "argb_to_color", "ARGB",
            "COLOR"]
 
 
+def _clip(val, _min, _max):
+    return max(min(val, _max), _min)
+
+
 class Color(object):
     """A class for working with and converting RGBA colors.
     
@@ -47,10 +51,10 @@ class Color(object):
     def __init__(self, r=255, g=255, b=255, a=255):
         for val in (r, g, b, a):
             self._verify_rgba_value(val)
-        self._r = int(r)
-        self._g = int(g)
-        self._b = int(b)
-        self._a = int(a)
+        self._r = float(int(r))
+        self._g = float(int(g))
+        self._b = float(int(b))
+        self._a = float(int(a))
 
     def _verify_rgba_value(self, val):
         """Verifies that the input is a valid uint8 RGBA value."""
@@ -59,7 +63,7 @@ class Color(object):
             float(val)
         except (ValueError, TypeError):
             raise TypeError(e.format(val))
-        if int(val) != val or val < 0 or val > 255:
+        if val < 0 or val > 255:
             raise ValueError(e.format(val))
 
     def __repr__(self):
@@ -108,31 +112,35 @@ class Color(object):
 
     def __div__(self, color):
         vals = [0, 0, 0, 0]
-        if color.r != 0:
-            vals[0] = self.r / color.r
-        if color.g != 0:
-            vals[1] = self.g / color.g
-        if color.b != 0:
-            vals[2] = self.b / color.b
-        if color.a != 0:
-            vals[3] = self.a / color.a
+        if color._r != 0:
+            vals[0] = (self._r / color._r)
+        if color._g != 0:
+            vals[1] = (self._g / color._g)
+        if color._b != 0:
+            vals[2] = (self._b / color._b)
+        if color._a != 0:
+            vals[3] = (self._a / color._a)
         return Color(vals[0], vals[1], vals[2], vals[3])
 
     def __truediv__(self, color):
         vals = [0, 0, 0, 0]
-        if color.r != 0:
-            vals[0] = self.r / color.r
-        if color.g != 0:
-            vals[1] = self.g / color.g
-        if color.b != 0:
-            vals[2] = self.b / color.b
-        if color.a != 0:
-            vals[3] = self.a / color.a
+        if color._r != 0:
+            vals[0] = (self._r / color._r)
+        if color._g != 0:
+            vals[1] = (self._g / color._g)
+        if color._b != 0:
+            vals[2] = (self._b / color._b)
+        if color._a != 0:
+            vals[3] = (self._a / color._a)
         return Color(vals[0], vals[1], vals[2], vals[3])
 
     def __mul__(self, color):
-        vals = (min(self.r * color.r, 255), min(self.g * color.g, 255),
-                min(self.b * color.b, 255), min(self.a * color.a, 255))
+        vals = (
+            min(self._r * color._r, 255),
+            min(self._g * color._g, 255),
+            min(self._b * color._b, 255),
+            min(self._a * color._a, 255)
+        )
         return Color(vals[0], vals[1], vals[2], vals[3])
 
     def __sub__(self, color):
@@ -162,42 +170,42 @@ class Color(object):
     @property
     def r(self):
         """"int: The 8-bit RGBA red level for the color."""
-        return self._r
+        return int(round(self._r))
 
     @r.setter
     def r(self, val):
         self._verify_rgba_value(val)
-        self._r = int(val)
+        self._r = float(val)
 
     @property
     def g(self):
         """"int: The 8-bit RGBA green level for the color."""
-        return self._g
+        return int(round(self._g))
 
     @g.setter
     def g(self, val):
         self._verify_rgba_value(val)
-        self._g = int(val)
+        self._g = float(val)
 
     @property
     def b(self):
         """"int: The 8-bit RGBA blue level for the color."""
-        return self._b
+        return int(round(self._b))
 
     @b.setter
     def b(self, val):
         self._verify_rgba_value(val)
-        self._b = int(val)
+        self._b = float(val)
 
     @property
     def a(self):
         """"int: The 8-bit RGBA alpha transparency level for the color."""
-        return self._a
+        return int(round(self._a))
 
     @a.setter
     def a(self, val):
         self._verify_rgba_value(val)
-        self._a = int(val)
+        self._a = float(val)
 
     @property
     def hsva(self):
@@ -212,10 +220,10 @@ class Color(object):
         values for the given color.
         
         """
-        rn = self.r / 255.0
-        gn = self.g / 255.0
-        bn = self.b / 255.0
-        an = self.a / 255.0
+        rn = self._r / 255.0
+        gn = self._g / 255.0
+        bn = self._b / 255.0
+        an = self._a / 255.0
 
         maxv = max(rn, gn, bn)
         minv = min(rn, gn, bn)
@@ -238,6 +246,7 @@ class Color(object):
             h = (60 * (rn - gn) / diff) + 240.0
         if h < 0:
             h += 360.0
+
         return (h, s, v, a)
 
     @hsva.setter
@@ -269,7 +278,7 @@ class Color(object):
             (t, p, v), # if hi == 4
             (v, p, q)  # if hi == 5
         ]
-        vals = [int(n * 255) for n in rgb_map[hi]]
+        vals = [_clip(n * 255.0, 0.0, 255.0) for n in rgb_map[hi]]
         self.r, self.g, self.b = vals
 
     @property
@@ -285,10 +294,10 @@ class Color(object):
         values for the given color.
         
         """
-        rn = self.r / 255.0
-        gn = self.g / 255.0
-        bn = self.b / 255.0
-        an = self.a / 255.0
+        rn = self._r / 255.0
+        gn = self._g / 255.0
+        bn = self._b / 255.0
+        an = self._a / 255.0
 
         maxv = max(rn, gn, bn)
         minv = min(rn, gn, bn)
@@ -315,6 +324,7 @@ class Color(object):
             h = (60 * (rn - gn) / diff) + 240.0
         if h < 0:
             h += 360.0
+
         return (h, s, l, a)
 
     @hsla.setter
@@ -328,14 +338,12 @@ class Color(object):
             raise ValueError("invalid HSLA value")
 
         self.a = int((a / 100.0) * 255)
-
         s /= 100.0
         l /= 100.0
-
         if s == 0:
-            self.r = int(l * 255)
-            self.g = int(l * 255)
-            self.b = int(l * 255)
+            self.r = l * 255.0
+            self.g = l * 255.0
+            self.b = l * 255.0
             return
 
         q = 0
@@ -346,54 +354,23 @@ class Color(object):
         p = 2 * l - q
 
         ht = h / 360.0
+        vals = []
+        for h in [ht + (1.0 / 3.0), ht, ht - (1.0 / 3.0)]:
+            if h < 0:
+                h += 1
+            elif h > 1:
+                h -= 1
+            if h < (1.0 / 6.0):
+                val = (p + ((q - p) * 6 * h))
+            elif h < 0.5:
+                val = q
+            elif h < (2.0 / 3.0):
+                val = (p + ((q - p) * 6 * (2.0 / 3.0 - h)))
+            else:
+                val = p
+            vals.append(_clip(val * 255.0, 0.0, 255.0))
 
-        # r
-        h = ht + (1.0 / 3.0)
-        if h < 0:
-            h += 1
-        elif h > 1:
-            h -= 1
-
-        if h < (1.0 / 6.0):
-            self.r = int((p + ((q - p) * 6 * h)) * 255)
-        elif h < 0.5:
-            self.r = int(q * 255)
-        elif h < (2.0 / 3.0):
-            self.r = int((p + ((q - p) * 6 * (2.0 / 3.0 - h))) * 255)
-        else:
-            self.r = int(p * 255)
-
-        # g
-        h = ht
-        if h < 0:
-            h += 1
-        elif h > 1:
-            h -= 1
-
-        if h < (1.0 / 6.0):
-            self.g = int((p + ((q - p) * 6 * h)) * 255)
-        elif h < 0.5:
-            self.g = int(q * 255)
-        elif h < (2.0 / 3.0):
-            self.g = int((p + ((q - p) * 6 * (2.0 / 3.0 - h))) * 255)
-        else:
-            self.g = int(p * 255)
-
-        # b
-        h = ht - (1.0 / 3.0)
-        if h < 0:
-            h += 1
-        elif h > 1:
-            h -= 1
-
-        if h < (1.0 / 6.0):
-            self.b = int((p + ((q - p) * 6 * h)) * 255)
-        elif h < 0.5:
-            self.b = int(q * 255)
-        elif h < (2.0 / 3.0):
-            self.b = int((p + ((q - p) * 6 * (2.0 / 3.0 - h))) * 255)
-        else:
-            self.b = int(p * 255)
+        self.r, self.g, self.b = vals
 
     @property
     def i1i2i3(self):
@@ -410,15 +387,15 @@ class Color(object):
         values for the given color.
         
         """
-        rn = self.r / 255.0
-        gn = self.g / 255.0
-        bn = self.b / 255.0
+        rn = self._r / 255.0
+        gn = self._g / 255.0
+        bn = self._b / 255.0
 
-        i1 = (rn + gn + bn) / 3.0
-        i2 = (rn - bn) / 2.0
-        i3 = (2 * gn - rn - bn) / 4.0
+        i1 = _clip((rn + gn + bn) / 3.0, 0.0, 1.0)
+        i2 = _clip((rn - bn) / 2.0, -0.5, 0.5)
+        i3 = _clip((2 * gn - rn - bn) / 4.0, -0.5, 0.5)
 
-        return(i1, i2, i3)
+        return (i1, i2, i3)
 
     @i1i2i3.setter
     def i1i2i3(self, value):
@@ -434,9 +411,9 @@ class Color(object):
         ar = 2 * i2 + ab
         ag = 3 * i1 - ar - ab
 
-        self.r = int(ar * 255)
-        self.g = int(ag * 255)
-        self.b = int(ab * 255)
+        self.r = _clip(ar * 255, 0.0, 255.0)
+        self.g = _clip(ag * 255, 0.0, 255.0)
+        self.b = _clip(ab * 255, 0.0, 255.0)
 
     @property
     def cmy(self):
@@ -447,18 +424,18 @@ class Color(object):
         All three values are represented as floats between 0.0 and 1.0.
 
         """
-        return (1.0 - self.r / 255.0,
-                1.0 - self.g / 255.0,
-                1.0 - self.b / 255.0)
+        return (1.0 - self._r / 255.0,
+                1.0 - self._g / 255.0,
+                1.0 - self._b / 255.0)
 
     @cmy.setter
     def cmy(self, value):
         c, m, y = value
         if (c < 0 or c > 1) or (m < 0 or m > 1) or (y < 0 or y > 1):
             raise ValueError("invalid CMY value")
-        self.r = int((1.0 - c) * 255)
-        self.g = int((1.0 - m) * 255)
-        self.b = int((1.0 - y) * 255)
+        self._r = (1.0 - c) * 255
+        self._g = (1.0 - m) * 255
+        self._b = (1.0 - y) * 255
 
     def normalize(self):
         """Returns the RGBA values as floats between 0 and 1.
