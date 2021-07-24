@@ -55,7 +55,11 @@ class Color(object):
     def _verify_rgba_value(self, val):
         """Verifies that the input is a valid uint8 RGBA value."""
         e = "All RGBA color values must be integers between 0 and 255 (got {0})"
-        if val < 0 or val > 255 or int(val) != val:
+        try:
+            float(val)
+        except (ValueError, TypeError):
+            raise TypeError(e.format(val))
+        if int(val) != val or val < 0 or val > 255:
             raise ValueError(e.format(val))
 
     def __repr__(self):
