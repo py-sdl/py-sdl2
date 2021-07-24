@@ -11,25 +11,56 @@ __all__ = ["Color", "is_rgb_color", "is_rgba_color", "argb_to_color", "ARGB",
 
 
 class Color(object):
-    """A simple RGBA-based color implementation."""
+    """A class for working with and converting RGBA colors.
+    
+    This class represents the 4 RGBA color channels (red, green, blue, and
+    alpha transparency) as integers from 0 to 255. It also provides methods
+    for converting colors to alternative color spaces (e.g. HSV or CMY).
+
+    ``Color`` objects support basic arithmetic operations (``+, -, *, /, %``),
+    which operate on a per-channel basis. For example, the operation ::
+
+       color = color1 + color2
+
+    is the same as ::
+
+       color = Color()
+       color.r = min(color1.r + color2.r, 255)
+       color.g = min(color1.g + color2.g, 255)
+
+    All arithmetic operations guarantee that the channel values stay within
+    the allowed range of [0, 255].
+
+    Args:
+        r (int, optional): An integer between 0 and 255 indicating the red
+            level of the color. Defaults to 255.
+        g (int, optional): An integer between 0 and 255 indicating the green
+            level of the color. Defaults to 255.
+        b (int, optional): An integer between 0 and 255 indicating the blue
+            level of the color. Defaults to 255.
+        a (int, optional): An integer between 0 and 255 indicating the alpha
+            trasparency level of the color, with 0 being fully transparent and
+            255 being fully opaque. Defaults to 255.
+
+    """
+    # NOTE: should this use floats internally for better precision?
     def __init__(self, r=255, g=255, b=255, a=255):
-        """Creates a Color with the specified RGBA values."""
-        if r < 0 or r > 255:
-            raise ValueError("r must be in the range [0; 255]")
-        if g < 0 or g > 255:
-            raise ValueError("r must be in the range [0; 255]")
-        if b < 0 or b > 255:
-            raise ValueError("r must be in the range [0; 255]")
-        if a < 0 or a > 255:
-            raise ValueError("r must be in the range [0; 255]")
+        for val in (r, g, b, a):
+            self._verify_rgba_value(val)
         self._r = int(r)
         self._g = int(g)
         self._b = int(b)
         self._a = int(a)
 
+    def _verify_rgba_value(self, val):
+        """Verifies that the input is a valid uint8 RGBA value."""
+        e = "All RGBA color values must be integers between 0 and 255 (got {0})"
+        if val < 0 or val > 255 or int(val) != val:
+            raise ValueError(e.format(val))
+
     def __repr__(self):
-        return "Color(r=%d, g=%d, b=%d, a=%d)" % \
-            (self.r, self.g, self.b, self.a)
+        cols = [self.r, self.g, self.b, self.a]
+        return "Color(r={0}, g={1}, b={2}, a={3})".format(*cols)
 
     def __copy__(self):
         return Color(self.r, self.g, self.b, self.a)
@@ -126,63 +157,57 @@ class Color(object):
 
     @property
     def r(self):
-        """Gets or sets the red value of the Color."""
+        """"int: The 8-bit RGBA red level for the color."""
         return self._r
 
     @r.setter
     def r(self, val):
-        """Gets or sets the red value of the Color."""
-        if type(val) not in(int, long):
-            raise TypeError("value must be an int")
-        if val < 0 or val > 255:
-            raise ValueError("The value must be in the range [0; 255]")
-        self._r = val
+        self._verify_rgba_value(val)
+        self._r = int(val)
 
     @property
     def g(self):
-        """Gets or sets the green value of the Color."""
+        """"int: The 8-bit RGBA green level for the color."""
         return self._g
 
     @g.setter
     def g(self, val):
-        """Gets or sets the green value of the Color."""
-        if type(val) not in(int, long):
-            raise TypeError("value must be an int")
-        if val < 0 or val > 255:
-            raise ValueError("The value must be in the range [0; 255]")
-        self._g = val
+        self._verify_rgba_value(val)
+        self._g = int(val)
 
     @property
     def b(self):
-        """Gets or sets the blue value of the Color."""
+        """"int: The 8-bit RGBA blue level for the color."""
         return self._b
 
     @b.setter
     def b(self, val):
-        """Gets or sets the blue value of the Color."""
-        if type(val) not in(int, long):
-            raise TypeError("value must be an int")
-        if val < 0 or val > 255:
-            raise ValueError("The value must be in the range [0; 255]")
-        self._b = val
+        self._verify_rgba_value(val)
+        self._b = int(val)
 
     @property
     def a(self):
-        """Gets or sets the alpha value of the Color."""
+        """"int: The 8-bit RGBA alpha transparency level for the color."""
         return self._a
 
     @a.setter
     def a(self, val):
-        """Gets or sets the alpha value of the Color."""
-        if type(val) not in(int, long):
-            raise TypeError("value must be an int")
-        if val < 0 or val > 255:
-            raise ValueError("The value must be in the range [0; 255]")
-        self._a = val
+        self._verify_rgba_value(val)
+        self._a = int(val)
 
     @property
     def hsva(self):
-        """The Color as HSVA value."""
+        """tuple: A representation of the color in HSV(A) color space.
+        
+        The HSVA color space represents colors in terms of hue, saturation,
+        value (brightness), and alpha (transparency). Hue is represented as a
+        value on color wheel between 0 and 360, whereas saturation, brightness,
+        and alpha are all represented as values from 0 to 100.
+
+        Note that due to rounding errors, this may not return the exact HSVA
+        values for the given color.
+        
+        """
         rn = self.r / 255.0
         gn = self.g / 255.0
         bn = self.b / 255.0
@@ -213,7 +238,6 @@ class Color(object):
 
     @hsva.setter
     def hsva(self, value):
-        """The Color as HSVA value."""
         h, s, v, a = value
         for x in (h, s, v, a):
             if type(x) not in(int, long, float):
@@ -222,45 +246,41 @@ class Color(object):
                 not (0 <= a <= 100) or not (0 <= h <= 360):
             raise ValueError("invalid HSVA value")
 
+        hi = int(floor(h / 60.0))
+        if hi > 5:
+            raise OverflowError("invalid HSVA value")
+
         self.a = int((a / 100.0) * 255)
         s /= 100.0
         v /= 100.0
-
-        hi = int(floor(h / 60.0))
         f = (h / 60.0) - hi
         p = v * (1 - s)
         q = v * (1 - s * f)
         t = v * (1 - s * (1 - f))
-        if hi == 0:
-            self.r = int(v * 255)
-            self.g = int(t * 255)
-            self.b = int(p * 255)
-        elif hi == 1:
-            self.r = int(q * 255)
-            self.g = int(v * 255)
-            self.b = int(p * 255)
-        elif hi == 2:
-            self.r = int(p * 255)
-            self.g = int(v * 255)
-            self.b = int(t * 255)
-        elif hi == 3:
-            self.r = int(p * 255)
-            self.g = int(q * 255)
-            self.b = int(v * 255)
-        elif hi == 4:
-            self.r = int(t * 255)
-            self.g = int(p * 255)
-            self.b = int(v * 255)
-        elif hi == 5:
-            self.r = int(v * 255)
-            self.g = int(p * 255)
-            self.b = int(q * 255)
-        else:
-            raise OverflowError("invalid HSVA value")
+        rgb_map = [
+            (v, t, p), # if hi == 0
+            (q, v, p), # if hi == 1
+            (p, v, t), # if hi == 2
+            (p, q, v), # if hi == 3
+            (t, p, v), # if hi == 4
+            (v, p, q)  # if hi == 5
+        ]
+        vals = [int(n * 255) for n in rgb_map[hi]]
+        self.r, self.g, self.b = vals
 
     @property
     def hsla(self):
-        """The Color a HSLA value."""
+        """tuple: A representation of the color in HSL(A) color space.
+        
+        The HSLA color space represents colors in terms of hue, saturation,
+        lightness, and alpha (transparency). Hue is represented as a
+        value on color wheel between 0 and 360, whereas saturation, lightness,
+        and alpha are all represented as values from 0 to 100.
+
+        Note that due to rounding errors, this may not return the exact HSLA
+        values for the given color.
+        
+        """
         rn = self.r / 255.0
         gn = self.g / 255.0
         bn = self.b / 255.0
@@ -276,7 +296,7 @@ class Color(object):
         a = an * 100.0
 
         if maxv == minv:
-            return(h, s, l, a)
+            return (h, s, l, a)
 
         if l <= 50.0:
             s = diff / (maxv + minv) * 100.0
@@ -295,7 +315,6 @@ class Color(object):
 
     @hsla.setter
     def hsla(self, value):
-        """The Color a HSLA value."""
         h, s, l, a = value
         for x in (h, s, l, a):
             if type(x) not in (int, long, float):
@@ -374,7 +393,19 @@ class Color(object):
 
     @property
     def i1i2i3(self):
-        """The Color as I1I2I3 value."""
+        """tuple: A representation of the color in I1I2I3 color space.
+        
+        The I1I2I3 color space represents colors in terms of a color-independent
+        intensity level (I1) and two chromatic channels (I2 and I3), with the
+        aim of minimizing correlations between its channels for natural images.
+        Intensity (I1) is represented as a float between 0.0 and 1.0, whereas
+        the color channels (I2 and I3) are represented as floats between
+        -0.5 and 0.5, inclusive.
+
+        Note that due to rounding errors, this may not return the exact I1I2I3
+        values for the given color.
+        
+        """
         rn = self.r / 255.0
         gn = self.g / 255.0
         bn = self.b / 255.0
@@ -387,7 +418,6 @@ class Color(object):
 
     @i1i2i3.setter
     def i1i2i3(self, value):
-        """The Color as I1I2I3 value."""
         i1, i2, i3 = value
         for x in (i1, i2, i3):
             if type(x) not in (int, long, float):
@@ -406,14 +436,19 @@ class Color(object):
 
     @property
     def cmy(self):
-        """The Color as CMY value."""
+        """tuple: A representation of the color in CMY color space.
+
+        The CMY color space is the inverse of the RGB color space, and
+        represents colors in subtractive amounts of Cyan, Magenta, and Yellow.
+        All three values are represented as floats between 0.0 and 1.0.
+
+        """
         return (1.0 - self.r / 255.0,
                 1.0 - self.g / 255.0,
                 1.0 - self.b / 255.0)
 
     @cmy.setter
     def cmy(self, value):
-        """The Color as CMY value."""
         c, m, y = value
         if (c < 0 or c > 1) or (m < 0 or m > 1) or (y < 0 or y > 1):
             raise ValueError("invalid CMY value")
@@ -422,15 +457,25 @@ class Color(object):
         self.b = int((1.0 - y) * 255)
 
     def normalize(self):
-        """Returns the RGBA values in a normalized form with the range
-        [0;1] as tuple.
+        """Returns the RGBA values as floats between 0 and 1.
+
+        Returns:
+            tuple: The (r, g, b, a) values of the color as normalized floats.
+
         """
         return (self.r / 255.0, self.g / 255.0, self.b / 255.0, self.a / 255.0)
 
 
 def is_rgb_color(v):
-    """Checks, if the passed value is an item that could be converted to
-    a RGB color.
+    """Checks whether a value be converted to an RGB color.
+
+    Args:
+        v: The value to try and interpret as an RGB color.
+    
+    Returns:
+        bool: True if the value can be interpreted as an RGB color, otherwise
+            False.
+
     """
     try:
         if hasattr(v, "r") and hasattr(v, "g") and hasattr(v, "b"):
@@ -447,9 +492,17 @@ def is_rgb_color(v):
         return False
 
 
+# NOTE: Add support for trying to parse strs and ints using below functions?
 def is_rgba_color(v):
-    """Checks, if the passed value is an item that could be converted to
-    a RGBA color.
+    """Checks whether a value be converted to an RGBA color.
+
+    Args:
+        v: The value to try and interpret as an RGBA color.
+    
+    Returns:
+        bool: True if the value can be interpreted as an RGBA color, otherwise
+            False.
+
     """
     rgb = is_rgb_color(v)
     if not rgb:
@@ -465,9 +518,16 @@ def is_rgba_color(v):
         return False
 
 
+# TODO: Add type-checking/exceptions?
 def argb_to_color(v):
-    """Converts an integer value to a Color, assuming the integer
-    represents a 32-bit ARGB value.
+    """Converts a 32-bit ARGB integer value to a :obj:`sdl2.ext.Color`.
+
+    Args:
+        v (int): An integer representing a color in ARGB format.
+
+    Returns:
+        :obj:`sdl2.ext.Color`: An object representing the given color.
+
     """
     v = long(v)
 
@@ -482,8 +542,14 @@ ARGB = argb_to_color
 
 
 def rgba_to_color(v):
-    """Converts an integer value to a Color, assuming the integer
-    represents a 32-bit RGBBA value.
+    """Converts a 32-bit RGBA integer value to a :obj:`sdl2.ext.Color`.
+
+    Args:
+        v (int): An integer representing a color in RGBA format.
+
+    Returns:
+        :obj:`sdl2.ext.Color`: An object representing the given color.
+
     """
     v = long(v)
 
@@ -498,19 +564,25 @@ RGBA = rgba_to_color
 
 
 def string_to_color(s):
-    """Converts a hex color string or color name to a Color value.
+    """Converts a hex color string to a Color value.
 
-    Supported hex values are:
+    Hex colors can be specified in any of the following formats:
 
-    #RGB
-    #RGBA
-    #RRGGBB
-    #RRGGBBAA
+    * #RGB
+    * #RGBA
+    * #RRGGBB
+    * #RRGGBBAA
+    * 0xRGB
+    * 0xRGBA
+    * 0xRRGGBB
+    * 0xRRGGBBAA
 
-    0xRGB
-    0xRGBA
-    0xRRGGBB
-    0xRRGGBBAA
+    Args:
+        s (str): A valid hex color in string format.
+
+    Returns:
+        :obj:`sdl2.ext.Color`: An object representing the given color.
+
     """
     if type(s) is not str:
         raise TypeError("s must be a string")
@@ -543,9 +615,19 @@ def string_to_color(s):
 
 
 def convert_to_color(v):
-    """Tries to convert the passed value to a Color object.
+    """Tries to convert an arbitrary object to a :obj:`sdl2.ext.Color`.
 
-    If the color is an integer value, it is assumed to be in ARGB layout.
+    If an integer is provided, it is assumed to be in ARGB layout.
+
+    Args:
+        v: An arbitrary object type representing a color.
+
+    Returns:
+        :obj:`sdl2.ext.Color`: An object representing the given color.
+
+    Raises:
+        ValueError: If the value could not be converted successfully.
+
     """
     if isinstance(v, Color):
         return v
