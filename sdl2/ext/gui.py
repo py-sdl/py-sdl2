@@ -177,7 +177,7 @@ class MessageBox(object):
             message = self._text,
             numbuttons = len(self._buttons),
             buttons = self._sdlbuttons,
-            colorScheme = self._theme,
+            colorScheme = dll.get_pointer(self._theme) if self._theme else None,
         )
         
 

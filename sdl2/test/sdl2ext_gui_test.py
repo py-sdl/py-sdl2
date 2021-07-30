@@ -56,6 +56,15 @@ class TestSDL2ExtGUI(object):
         assert isinstance(sdl_box.window.contents, SDL_Window)
         win.close()
 
+        # Test initialization with theme
+        mbtheme = sdl2ext.MessageBoxTheme(text=(255, 0, 0))
+        box2 = sdl2ext.MessageBox(
+            "Test", "Did it work?", ["Yes", "No"], theme=mbtheme
+        )
+        sdl_box2 = box2._get_msgbox()
+        text_col = sdl_box2.colorScheme.contents.colors[1]
+        assert text_col.r == 255 and text_col.g == 0
+
         # Test exceptions on bad input
         with pytest.raises(TypeError):
             sdl2ext.MessageBox("Title", "Some text", "A button")
