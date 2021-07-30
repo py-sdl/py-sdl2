@@ -1,4 +1,3 @@
-"""Drawing routines for software surfaces."""
 import ctypes
 from .compat import isiterable, UnsupportedError
 from .array import to_ctypes
@@ -26,21 +25,24 @@ def _get_target_surface(target, argname="target"):
 def prepare_color(color, target):
     """Prepares a given color for a specific target.
 
+    Targets can be :obj:`~sdl2.SDL_PixelFormat`, :obj:`~sdl2.SDL_Surface`,
+    or :obj:`~sdl2.ext.SoftwareSprite` objects. 
+    
     Colors can be provided in any form supported by
     :func:`sdl2.ext.convert_to_color`.
     
     Args:
         color (:obj:`sdl2.ext.Color`): The color to prepare for the pixel format
             of the given target.
-        target (:obj:`~sdl2.SDL_PixelFormat`, :obj:`~sdl2.SDL_Surface`,
-            :obj:`~sdl2.ext.SoftwareSprite`): The target pixel format, surface,
-            or sprite for which the color should be prepared.
+        target (:obj:`SDL_PixelFormat`, :obj:`SDL_Surface`, :obj:`SoftwareSprite`): The
+            target pixel format, surface, or sprite for which the color should be
+            prepared.
     
     Returns:
         int: An integer approximating the given color in the target's pixel
-            format.
+        format.
 
-"""
+    """
     color = convert_to_color(color)
     pformat = None
     # Software surfaces
@@ -58,7 +60,7 @@ def prepare_color(color, target):
 def fill(target, color, area=None):
     """Fills one or more rectangular areas on a surface with a given color.
 
-    Fill areas can be specified as 4-item (x, y, w, h) tuples,
+    Fill areas can be specified as 4-item ``(x, y, w, h)`` tuples,
     :obj:`~sdl2.rect.SDL_Rect` objects, or a list containing multiple areas to
     fill in either format. If no area is provided, the entire target will be
     filled with the provided color.
@@ -121,9 +123,9 @@ def line(target, color, dline, width=1):
         target (:obj:`~sdl2.SDL_Surface`, :obj:`~sdl2.ext.SoftwareSprite`): The
             target surface or sprite to modify.
         color (:obj:`sdl2.ext.Color`): The color with which to draw lines.
-        dline (tuple, list): The (x1, y1, x2, y2) integer coordinates of a line
-            to draw, or a list of multiple sets of (x1, y1, x2, y2) coordinates
-            for multiple lines.
+        dline (tuple, list): The ``(x1, y1, x2, y2)`` integer coordinates of a
+            line to draw, or a list of multiple sets of ``(x1, y1, x2, y2)``
+            coordinates for multiple lines.
         width (int, optional): The width of the line(s) in pixels. Defaults to
             1 if not specified.
 

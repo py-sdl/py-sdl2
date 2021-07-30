@@ -22,25 +22,25 @@ class Window(object):
     ================================== =========================================
     Flag                               Description
     ================================== =========================================
-    sdl2.SDL_WINDOW_SHOWN              Will be shown when created
-    sdl2.SDL_WINDOW_HIDDEN             Will be hidden when created
-    sdl2.SDL_WINDOW_BORDERLESS         Will not be decorated by the OS
-    sdl2.SDL_WINDOW_RESIZABLE          Will be resizable
-    sdl2.SDL_WINDOW_MINIMIZED          Will be created in a minimized state
-    sdl2.SDL_WINDOW_MAXIMIZED          Will be created in a maximized state
-    sdl2.SDL_WINDOW_FULLSCREEN         Will be fullscreen
-    sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP Will be fullscreen at the current desktop
+    ``SDL_WINDOW_SHOWN``               Will be shown when created
+    ``SDL_WINDOW_HIDDEN``              Will be hidden when created
+    ``SDL_WINDOW_BORDERLESS``          Will not be decorated by the OS
+    ``SDL_WINDOW_RESIZABLE``           Will be resizable
+    ``SDL_WINDOW_MINIMIZED``           Will be created in a minimized state
+    ``SDL_WINDOW_MAXIMIZED``           Will be created in a maximized state
+    ``SDL_WINDOW_FULLSCREEN``          Will be fullscreen
+    ``SDL_WINDOW_FULLSCREEN_DESKTOP``  Will be fullscreen at the current desktop
                                        resolution
-    sdl2.SDL_WINDOW_OPENGL             Will be usable with an OpenGL context
-    sdl2.SDL_WINDOW_VULKAN             Will be usable with a Vulkan instance
-    sdl2.SDL_WINDOW_METAL              Will be usable with a Metal context
-    sdl2.SDL_WINDOW_ALLOW_HIGHDPI      Will be created in high-DPI mode
+    ``SDL_WINDOW_OPENGL``              Will be usable with an OpenGL context
+    ``SDL_WINDOW_VULKAN``              Will be usable with a Vulkan instance
+    ``SDL_WINDOW_METAL``               Will be usable with a Metal context
+    ``SDL_WINDOW_ALLOW_HIGHDPI``       Will be created in high-DPI mode
                                        (if supported)
-    sdl2.SDL_WINDOW_INPUT_FOCUS        Will have input focus when created
-    sdl2.SDL_WINDOW_MOUSE_FOCUS        Will have mouse focus when created
-    sdl2.SDL_WINDOW_INPUT_GRABBED      Will prevent the mouse from leaving the
+    ``SDL_WINDOW_INPUT_FOCUS``         Will have input focus when created
+    ``SDL_WINDOW_MOUSE_FOCUS``         Will have mouse focus when created
+    ``SDL_WINDOW_INPUT_GRABBED``       Will prevent the mouse from leaving the
                                        bounds of the window
-    sdl2.SDL_WINDOW_MOUSE_CAPTURE      Will capture mouse to track input outside
+    ``SDL_WINDOW_MOUSE_CAPTURE``       Will capture mouse to track input outside
                                        of the window when created
     ================================== =========================================
 
@@ -50,11 +50,11 @@ class Window(object):
     ================================== =====================================
     Flag                               Description
     ================================== =====================================
-    sdl2.SDL_WINDOW_ALWAYS_ON_TOP      Should stay on top of other windows
-    sdl2.SDL_WINDOW_SKIP_TASKBAR       Should not be added to the taskbar
-    sdl2.SDL_WINDOW_UTILITY            Should be treated as a utility window
-    sdl2.SDL_WINDOW_TOOLTIP            Should be treated as a tooltip
-    sdl2.SDL_WINDOW_POPUP_MENU         Should be treated as a popup menu
+    ``SDL_WINDOW_ALWAYS_ON_TOP``       Should stay on top of other windows
+    ``SDL_WINDOW_SKIP_TASKBAR``        Should not be added to the taskbar
+    ``SDL_WINDOW_UTILITY``             Should be treated as a utility window
+    ``SDL_WINDOW_TOOLTIP``             Should be treated as a tooltip
+    ``SDL_WINDOW_POPUP_MENU``          Should be treated as a popup menu
     ================================== =====================================
 
     To combine multiple flags, you can use a bitwise OR to combine two or more
@@ -76,7 +76,7 @@ class Window(object):
             top-left corner of the window. If not specified, defaults to letting
             the system's window manager choose a location for the window.
         flags (int, optional): The window attribute flags with which the window
-            will be created. Defaults to `SDL_WINDOW_HIDDEN`.
+            will be created. Defaults to ``SDL_WINDOW_HIDDEN``.
 
     Attributes:
         window (:obj:`~sdl2.SDL_Window`, None): The underlying SDL2 Window
@@ -215,8 +215,10 @@ class Window(object):
     def refresh(self):
         """Updates the window to reflect any changes made to its surface.
 
-        .. note: This only needs to be called if the window surface was
-                 acquired and modified using :meth:`get_surface`.
+        .. note::
+           This only needs to be called if the window surface was acquired and
+           modified using :meth:`get_surface`.
+
         """
         video.SDL_UpdateWindowSurface(self.window)
 
@@ -232,9 +234,10 @@ class Window(object):
         such, you will need to call this method again whenever this happens
         in order to continue to access the window's contents.
 
-        .. note: If using OpenGL/Vulkan/Metal rendering or the SDL rendering
-                 API (e.g. :func:`sdl2.SDL_CreateRenderer`) for drawing to the
-                 window, this method should not be used.
+        .. note::
+           If using OpenGL/Vulkan/Metal rendering or the SDL rendering API (e.g.
+           :func:`sdl2.SDL_CreateRenderer`) for drawing to the window, this
+           method should not be used.
 
         Returns:
             :obj:`~sdl2.SDL_Surface`: The surface associated with the window.

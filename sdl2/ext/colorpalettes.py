@@ -1,32 +1,33 @@
-"""
-Various indexed color palettes.
+"""This module defines a number of common color palettes.
 
-Each palette is a tuple of :obj:~`sdl2.ext.Color` objects. The following
+Each palette is a tuple of :obj:`~sdl2.ext.Color` objects. The following
 palettes are currently available:
 
 +--------------------+---------------------------------------------------+
-| MONOPALETTE        | 1-bit monochrome palette (black and white).       |
+| Palette            | Description                                       |
++====================+===================================================+
+| ``MONOPALETTE``    | 1-bit monochrome palette (black and white).       |
 +--------------------+---------------------------------------------------+
-| GRAY2PALETTE       | 2-bit grayscale palette with black, white and two |
+| ``GRAY2PALETTE``   | 2-bit grayscale palette with black, white and two |
 |                    | shades of gray.                                   |
 +--------------------+---------------------------------------------------+
-| GRAY4PALETTE       | 4-bit grayscale palette with black, white and     |
+| ``GRAY4PALETTE``   | 4-bit grayscale palette with black, white and     |
 |                    | 14 shades shades of gray.                         |
 +--------------------+---------------------------------------------------+
-| GRAY8PALETTE       | 8-bit grayscale palette with black, white and     |
+| ``GRAY8PALETTE``   | 8-bit grayscale palette with black, white and     |
 |                    | 254 shades shades of gray.                        |
 +--------------------+---------------------------------------------------+
-| RGB3PALETTE        | 3-bit RGB color palette with pure red, green and  |
+| ``RGB3PALETTE``    | 3-bit RGB color palette with pure red, green and  |
 |                    | blue and their complementary colors as well as    |
 |                    | black and white.                                  |
 +--------------------+---------------------------------------------------+
-| CGAPALETTE         | CGA color palette.                                |
+| ``CGAPALETTE``     | CGA color palette.                                |
 +--------------------+---------------------------------------------------+
-| EGAPALETTE         | EGA color palette.                                |
+| ``EGAPALETTE``     | EGA color palette.                                |
 +--------------------+---------------------------------------------------+
-| VGAPALETTE         | 8-bit VGA color palette.                          |
+| ``VGAPALETTE``     | 8-bit VGA color palette.                          |
 +--------------------+---------------------------------------------------+
-| WEBPALETTE         | "Safe" web color palette with 225 colors.         |
+| ``WEBPALETTE``     | "Safe" web color palette with 225 colors.         |
 +--------------------+---------------------------------------------------+
 """
 

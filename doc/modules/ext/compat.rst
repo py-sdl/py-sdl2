@@ -1,8 +1,8 @@
 .. module:: sdl2.ext.compat
    :synopsis: Python compatibility helpers.
 
-sdl2.ext.compat - Python compatibility helpers
-==============================================
+Python compatibility helpers
+============================
 The :mod:`sdl2.ext.compat` module is for internal purposes of the :mod:`sdl2`
 package and should not be used outside of the package. Classes, methods and
 interfaces might change between versions and there is no guarantee of API

@@ -1,9 +1,5 @@
-"""
-color module for color creation and conversion operations.
-"""
 from math import floor
 from .compat import *
-
 
 __all__ = ["Color", "is_rgb_color", "is_rgba_color", "argb_to_color", "ARGB",
            "rgba_to_color", "RGBA", "string_to_color", "convert_to_color",
@@ -455,7 +451,7 @@ def is_rgb_color(v):
     
     Returns:
         bool: True if the value can be interpreted as an RGB color, otherwise
-            False.
+        False.
 
     """
     try:
@@ -482,7 +478,7 @@ def is_rgba_color(v):
     
     Returns:
         bool: True if the value can be interpreted as an RGBA color, otherwise
-            False.
+        False.
 
     """
     rgb = is_rgb_color(v)

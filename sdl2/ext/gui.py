@@ -35,7 +35,8 @@ class MessageBoxTheme(object):
     to use when presenting dialog boxes to users. All colors must be defined
     as either :obj:`sdl2.ext.Color` objects or 8-bit ``(r, g, b)`` tuples.
 
-    .. note: SDL2 only supports MessageBox themes on a few platforms, including
+    .. note::
+       SDL2 only supports MessageBox themes on a few platforms, including
        Linux/BSD (if using X11) and Haiku. MessageBox themes will have no effect
        on Windows, macOS, or Linux if using Wayland.
 

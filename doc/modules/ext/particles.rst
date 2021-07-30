@@ -1,8 +1,8 @@
 .. module:: sdl2.ext.particles
    :synopsis: A simple particle system.
 
-sdl2.ext.particles - A simple particle system
-=============================================
+A simple particle system
+========================
 
 .. class:: ParticleEngine()
 

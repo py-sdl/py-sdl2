@@ -1,4 +1,3 @@
-"""SDL2 helper functions."""
 import ctypes
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_WasInit, \
     SDL_INIT_VIDEO, error, events, timer
@@ -40,8 +39,11 @@ class SDLError(Exception):
 def init():
     """Initializes the SDL2 video subsystem.
 
-    Raises an :exc:`SDLError` if the SDL2 video subsystem cannot be
-    initialized.
+    See :ref:`pygamers_pygame` for a comparison between this function and
+    ``pygame.init()``.
+
+    Raises:
+        :exc:`SDLError`: If the SDL2 video subsystem cannot be initialized.
 
     """
     # TODO: More subsystems?
@@ -72,7 +74,7 @@ def get_events():
 
     Returns:
         :obj:`List`: A list of all :obj:`~sdl2.SDL_Event` objects currently in
-            the event queue.
+        the event queue.
     
     """
     events.SDL_PumpEvents()
