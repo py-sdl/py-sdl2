@@ -32,7 +32,26 @@ else:
     ISPYTHON3 = True
     unicode = str
 
-isiterable = lambda x: isinstance(x, Iterable)
+
+def isiterable(x):
+    """Determines if an object is iterable and not a string."""
+    return hasattr(x, "__iter__") and not hasattr(x, "upper")
+
+
+def utf8(x):
+    """Converts input to a unicode string in a Python 2/3 agnostic manner.
+
+    """
+    if ISPYTHON2:
+        if type(x) in (str, bytes):
+            return x.decode('utf-8')
+        else:
+            return unicode(x)
+    else:
+        if type(x) == bytes:
+            return x.decode('utf-8')
+        else:
+            return str(x)
 
 
 def platform_is_64bit():
