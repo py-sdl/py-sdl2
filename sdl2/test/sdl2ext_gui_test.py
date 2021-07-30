@@ -64,6 +64,15 @@ class TestSDL2ExtGUI(object):
         with pytest.raises(ValueError):
             box._get_window_pointer("not a window")
 
+    @pytest.mark.skip("not implemented, requires GUI interaction")
+    def test_show_messagebox(self):
+        # Could implement a test using mock, but not sure how useful that'd be
+        pass
+
+    @pytest.mark.skip("not implemented, requires GUI interaction")
+    def test_show_alert(self):
+        pass
+
     @pytest.mark.skip("not implemented")
     def test_UIFactory(self):
         pass
