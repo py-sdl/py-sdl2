@@ -2,7 +2,7 @@
 import os
 import sys
 import warnings
-from ctypes import CDLL, POINTER, Structure, c_uint8
+from ctypes import CDLL, POINTER, Structure, c_uint8, cast, addressof
 from ctypes.util import find_library
 
 # Prints warning without stack or line info
@@ -27,6 +27,12 @@ except ImportError:
     pass
 
 __all__ = ["DLL", "nullfunc"]
+
+
+# Gets a usable pointer from an SDL2 ctypes object
+def get_pointer(ctypes_obj):
+    pointer_type = POINTER(type(ctypes_obj))
+    return cast(addressof(ctypes_obj), pointer_type)
 
 
 # For determining DLL version on load

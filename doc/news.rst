@@ -19,6 +19,9 @@ New Features:
 * Added support for passing ``SDL_Surface`` pointers directly to many
   ``sdl2.ext`` functions, removing the need to explicitly use the ``.contents``
   attribute.
+* Added :obj:`sdl2.ext.MessageBox`, :func:`sdl2.ext.show_messagebox`, and
+  :func:`sdl2.ext.show_alert` as Pythonic wrappers around the SDL2 MessageBox
+  API (PR #188)
 
 Fixed bugs:
 
