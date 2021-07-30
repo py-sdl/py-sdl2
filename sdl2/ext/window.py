@@ -1,6 +1,6 @@
 """Window routines to manage on-screen windows."""
 from ctypes import c_int, byref
-from .compat import byteify, stringify
+from .compat import stringify, utf8
 from .common import SDLError
 from .. import video
 
@@ -130,7 +130,8 @@ class Window(object):
 
     @title.setter
     def title(self, value):
-        video.SDL_SetWindowTitle(self.window, byteify(value, "utf-8"))
+        title_bytes = utf8(value).encode('utf-8')
+        video.SDL_SetWindowTitle(self.window, title_bytes)
         self._title = value
 
     @property
@@ -152,7 +153,7 @@ class Window(object):
         """Creates the window if it does not already exist."""
         if self.window != None:
             return
-        window = video.SDL_CreateWindow(byteify(self._title, "utf-8"),
+        window = video.SDL_CreateWindow(utf8(self._title).encode('utf-8'),
                                         self._position[0], self._position[1],
                                         self._size[0], self._size[1],
                                         self._flags)
