@@ -4,7 +4,7 @@ This describes the latest changes between the PySDL2 releases.
 
 0.9.8
 -----
-Released on XXXX-XX-XX.
+Released on 2021-08-06.
 
 New Features:
 
