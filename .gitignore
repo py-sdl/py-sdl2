@@ -8,6 +8,7 @@
 *~
 *.class
 *.core
+*.egg-info
 MANIFEST
 dlls
 dist
