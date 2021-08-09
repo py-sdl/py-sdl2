@@ -1,0 +1,246 @@
+import sys
+import pytest
+from ctypes import addressof
+
+from sdl2 import ext as sdl2ext
+from sdl2.render import SDL_Renderer
+from sdl2.surface import SDL_CreateRGBSurface, SDL_FreeSurface
+
+_ISPYPY = hasattr(sys, "pypy_version_info")
+
+if _ISPYPY:
+    import gc
+    dogc = gc.collect
+else:
+    dogc = lambda: None
+
+
+class TestSDL2ExtRenderer(object):
+    __tags__ = ["sdl", "sdl2ext"]
+
+    @classmethod
+    def setup_class(cls):
+        try:
+            sdl2ext.init()
+        except sdl2ext.SDLError:
+            raise pytest.skip('Video subsystem not supported')
+
+    @classmethod
+    def teardown_class(cls):
+        sdl2ext.quit()
+
+    def check_pixels(self, view, w, h, sprite, c1, c2, cx=0, cy=0):
+        msg = "color mismatch at %d,%d: %d not in %s"
+        cx = cx + sprite.x
+        cy = cy + sprite.y
+        cw, ch = sprite.size
+        cmy = cy + ch
+        cmx = cx + cw
+        for y in range(w):
+            for x in range(h):
+                if cy <= y < cmy and cx <= x < cmx:
+                    assert view[y][x] == c1, msg % (x, y, view[y][x], c1)
+                else:
+                    assert view[y][x] in c2, msg % (x, y, view[y][x], c2)
+
+    def check_areas(self, view, w, h, rects, c1, c2):
+        def _inarea(x, y, rs):
+            for r in rs:
+                if (x >= r[0] and x < (r[0] + r[2]) and
+                        y >= r[1] and y < (r[1] + r[3])):
+                    return True
+            return False
+        msg = "color mismatch at %d,%d: %d not in %s"
+        for y in range(w):
+            for x in range(h):
+                if _inarea(x, y, rects):
+                    assert view[y][x] == c1, msg % (x, y, view[y][x], c1)
+                else:
+                    assert view[y][x] in c2, msg % (x, y, view[y][x], c2)
+
+    def check_lines(self, view, w, h, points, c1, c2):
+        def _online(x, y, pts):
+            for p1, p2 in pts:
+                if sdl2ext.point_on_line(p1, p2, (x, y)):
+                    return True
+            return False
+        msg = "color mismatch at %d,%d: %d not in %s"
+        for y in range(w):
+            for x in range(h):
+                if _online(x, y, points):
+                    assert view[y][x] == c1, msg % (x, y, view[y][x], c1)
+                else:
+                    assert view[y][x] in c2, msg % (x, y, view[y][x], c2)
+
+
+    def test_Renderer(self):
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+
+        # Create renderer with SDL_Surface
+        renderer = sdl2ext.Renderer(sf.contents)
+        assert addressof(renderer.rendertarget) == addressof(sf.contents)
+        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
+        del renderer
+
+        # Create renderer with SDL_Surface pointer
+        renderer = sdl2ext.Renderer(sf)
+        assert renderer.rendertarget == sf
+        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
+        del renderer
+
+        # Create renderer with SoftwareSprite
+        sprite = sdl2ext.SoftwareSprite(sf.contents, True)
+        renderer = sdl2ext.Renderer(sprite)
+        assert renderer.rendertarget == sprite
+        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
+        del renderer
+        dogc()
+
+        # Create renderer with Window
+        window = sdl2ext.Window("Test", size=(1, 1))
+        renderer = sdl2ext.Renderer(window)
+        assert renderer.rendertarget == window
+        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
+        del renderer
+        dogc()
+
+        # Create renderer with SDL_Window
+        sdlwindow = window.window
+        renderer = sdl2ext.Renderer(sdlwindow)
+        assert renderer.rendertarget == sdlwindow
+        assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
+        del renderer
+        del window
+
+        with pytest.raises(TypeError):
+            sdl2ext.Renderer(None)
+        with pytest.raises(TypeError):
+            sdl2ext.Renderer(1234)
+        with pytest.raises(TypeError):
+            sdl2ext.Renderer("test")
+        dogc()
+
+    def test_Renderer_color(self):
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32,
+                                  0xFF000000,
+                                  0x00FF0000,
+                                  0x0000FF00,
+                                  0x000000FF)
+        renderer = sdl2ext.Renderer(sf.contents)
+        assert isinstance(renderer.color, sdl2ext.Color)
+        assert renderer.color == sdl2ext.Color(0, 0, 0, 0)
+        renderer.color = 0x00FF0000
+        assert renderer.color == sdl2ext.Color(0xFF, 0, 0, 0)
+        renderer.clear()
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xFF000000, (0x0,))
+        del view
+        renderer.color = 0xAABBCCDD
+        assert renderer.color == sdl2ext.Color(0xBB, 0xCC, 0xDD, 0xAA)
+        renderer.clear()
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
+        del view
+        del renderer
+        SDL_FreeSurface(sf)
+        dogc()
+
+    @pytest.mark.skip("not implemented")
+    def test_Renderer_blendmode(self):
+        pass
+
+    def test_Renderer_clear(self):
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32,
+                                  0xFF000000,
+                                  0x00FF0000,
+                                  0x0000FF00,
+                                  0x000000FF)
+        renderer = sdl2ext.Renderer(sf.contents)
+        assert isinstance(renderer.color, sdl2ext.Color)
+        assert renderer.color == sdl2ext.Color(0, 0, 0, 0)
+        renderer.color = 0x00FF0000
+        assert renderer.color == sdl2ext.Color(0xFF, 0, 0, 0)
+        renderer.clear()
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xFF000000, (0x0,))
+        del view
+        renderer.clear(0xAABBCCDD)
+        assert renderer.color == sdl2ext.Color(0xFF, 0, 0, 0)
+        view = sdl2ext.PixelView(sf.contents)
+        self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
+        del view
+        del renderer
+        SDL_FreeSurface(sf)
+        dogc()
+
+    def test_Renderer_copy(self):
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.Renderer(surface)
+        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        w, h = 32, 32
+        sp = factory.from_color(0xFF0000, (w, h))
+        sp.x, sp.y = 40, 50
+        renderer.copy(sp, (0, 0, w, h), (sp.x, sp.y, w, h))
+        view = sdl2ext.PixelView(surface)
+        self.check_pixels(view, 128, 128, sp, 0xFF0000, (0x0,))
+        del view
+
+    def test_Renderer_draw_line(self):
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.Renderer(surface)
+        renderer.draw_line((20, 10, 20, 86), 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_lines(view, 128, 128,
+                         [((20, 10), (20, 86))], 0x0000FF, (0x0,))
+        del view
+
+    @pytest.mark.skip("not implemented")
+    def test_Renderer_draw_point(self):
+        pass
+
+    def test_Renderer_draw_rect(self):
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.Renderer(surface)
+        renderer.draw_rect((40, 50, 32, 32), 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_lines(view, 128, 128, [
+            ((40, 50), (71, 50)),
+            ((40, 50), (40, 81)),
+            ((40, 81), (71, 81)),
+            ((71, 50), (71, 81))], 0x0000FF, (0x0,))
+        del view
+        sdl2ext.fill(surface, 0x0)
+        renderer.draw_rect([(5, 5, 10, 10), (20, 15, 8, 10)], 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_lines(view, 128, 128, [
+            ((5, 5), (14, 5)),
+            ((5, 5), (5, 14)),
+            ((5, 14), (14, 14)),
+            ((14, 5), (14, 14)),
+            ((20, 15), (27, 15)),
+            ((20, 15), (20, 24)),
+            ((20, 24), (27, 24)),
+            ((27, 15), (27, 24))], 0x0000FF, (0x0,))
+        del view
+
+    def test_Renderer_fill(self):
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.Renderer(surface)
+        factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
+        w, h = 32, 32
+        sp = factory.from_color(0xFF0000, (w, h))
+        sp.x, sp.y = 40, 50
+        renderer.fill((sp.x, sp.y, w, h), 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_pixels(view, 128, 128, sp, 0x0000FF, (0x0,))
+        del view
+        sdl2ext.fill(surface, 0x0)
+        renderer.fill([(5, 5, 10, 10), (20, 15, 8, 10)], 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        self.check_areas(view, 128, 128, [(5, 5, 10, 10), (20, 15, 8, 10)],
+                         0x0000FF, (0x0,))
+        del view
