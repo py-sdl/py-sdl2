@@ -201,7 +201,7 @@ SDL_GameControllerGetSensorDataRate = _bind("SDL_GameControllerGetSensorDataRate
 SDL_GameControllerGetSensorData = _bind("SDL_GameControllerGetSensorData", [POINTER(SDL_GameController), SDL_SensorType, POINTER(c_float), c_int], c_int, added='2.0.14')
 SDL_GameControllerAddMappingsFromRW = _bind("SDL_GameControllerAddMappingsFromRW", [POINTER(SDL_RWops), c_int], c_int)
 SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
-SDL_GameControllerFromInstanceID = _bind("SDL_GameControllerFromInstanceID", [SDL_JoystickID], POINTER(SDL_GameController))
+SDL_GameControllerFromInstanceID = _bind("SDL_GameControllerFromInstanceID", [SDL_JoystickID], POINTER(SDL_GameController), added='2.0.4')
 SDL_GameControllerFromPlayerIndex = _bind("SDL_GameControllerFromPlayerIndex", [c_int], POINTER(SDL_GameController), added='2.0.12')
 SDL_GameControllerGetPlayerIndex = _bind("SDL_GameControllerGetPlayerIndex", [POINTER(SDL_GameController)], c_int, added='2.0.9')
 SDL_GameControllerSetPlayerIndex = _bind("SDL_GameControllerSetPlayerIndex", [POINTER(SDL_GameController), c_int], added='2.0.12')
