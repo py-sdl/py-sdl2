@@ -14,13 +14,15 @@ __all__ = [
     "SDL_WINDOW_FULLSCREEN", "SDL_WINDOW_OPENGL", "SDL_WINDOW_SHOWN",
     "SDL_WINDOW_HIDDEN", "SDL_WINDOW_BORDERLESS",
     "SDL_WINDOW_RESIZABLE", "SDL_WINDOW_MINIMIZED",
-    "SDL_WINDOW_MAXIMIZED", "SDL_WINDOW_INPUT_GRABBED",
+    "SDL_WINDOW_MAXIMIZED", "SDL_WINDOW_MOUSE_GRABBED",
     "SDL_WINDOW_INPUT_FOCUS", "SDL_WINDOW_MOUSE_FOCUS",
     "SDL_WINDOW_FULLSCREEN_DESKTOP", "SDL_WINDOW_FOREIGN",
     "SDL_WINDOW_ALLOW_HIGHDPI", "SDL_WINDOW_MOUSE_CAPTURE",
     "SDL_WINDOW_ALWAYS_ON_TOP", "SDL_WINDOW_SKIP_TASKBAR",
-    "SDL_WINDOW_UTILITY", "SDL_WINDOW_TOOLTIP", "SDL_WINDOW_POPUP_MENU",
+    "SDL_WINDOW_UTILITY", "SDL_WINDOW_TOOLTIP",
+    "SDL_WINDOW_POPUP_MENU", "SDL_WINDOW_KEYBOARD_GRABBED",
     "SDL_WINDOW_VULKAN", "SDL_WINDOW_METAL",
+    "SDL_WINDOW_INPUT_FOCUS",
 
     "SDL_WindowEventID",
     "SDL_WINDOWEVENT_NONE",
@@ -41,6 +43,9 @@ __all__ = [
     "SDL_ORIENTATION_UNKNOWN", "SDL_ORIENTATION_LANDSCAPE",
     "SDL_ORIENTATION_LANDSCAPE_FLIPPED", "SDL_ORIENTATION_PORTRAIT",
     "SDL_ORIENTATION_PORTRAIT_FLIPPED",
+
+    "SDL_FlashOperation",
+    "SDL_FLASH_CANCEL", "SDL_FLASH_BRIEFLY", "SDL_FLASH_UNTIL_FOCUSED",
 
     "SDL_GLattr",
     "SDL_GL_RED_SIZE",
@@ -112,10 +117,12 @@ __all__ = [
     "SDL_RestoreWindow", "SDL_SetWindowFullscreen",
     "SDL_GetWindowSurface", "SDL_UpdateWindowSurface",
     "SDL_UpdateWindowSurfaceRects", "SDL_SetWindowGrab",
-    "SDL_GetWindowGrab", "SDL_GetGrabbedWindow",
-    "SDL_SetWindowBrightness",
-    "SDL_GetWindowBrightness", "SDL_SetWindowGammaRamp",
-    "SDL_GetWindowGammaRamp", "SDL_DestroyWindow",
+    "SDL_SetWindowKeyboardGrab", "SDL_SetWindowMouseGrab",
+    "SDL_GetWindowGrab", "SDL_GetWindowKeyboardGrab",
+    "SDL_GetWindowMouseGrab", "SDL_GetGrabbedWindow",
+    "SDL_SetWindowBrightness", "SDL_GetWindowBrightness",
+    "SDL_SetWindowGammaRamp", "SDL_GetWindowGammaRamp", 
+    "SDL_FlashWindow", "SDL_DestroyWindow",
     "SDL_DisableScreenSaver", "SDL_IsScreenSaverEnabled",
     "SDL_EnableScreenSaver",
     "SDL_SetWindowHitTest", "SDL_GL_LoadLibrary",
@@ -131,6 +138,7 @@ __all__ = [
     "SDL_GetWindowBordersSize", "SDL_GetWindowOpacity",
     "SDL_SetWindowOpacity", "SDL_SetWindowInputFocus",
     "SDL_SetWindowModalFor", "SDL_SetWindowResizable",
+    "SDL_SetWindowAlwaysOnTop",
 
     # Callback Functions
     "SDL_HitTest"
@@ -179,7 +187,8 @@ SDL_WINDOW_BORDERLESS = 0x00000010
 SDL_WINDOW_RESIZABLE = 0x00000020
 SDL_WINDOW_MINIMIZED = 0x00000040
 SDL_WINDOW_MAXIMIZED = 0x00000080
-SDL_WINDOW_INPUT_GRABBED = 0x00000100
+SDL_WINDOW_MOUSE_GRABBED = 0x00000100
+SDL_WINDOW_INPUT_GRABBED = SDL_WINDOW_MOUSE_GRABBED  # for < 2.0.16
 SDL_WINDOW_INPUT_FOCUS = 0x00000200
 SDL_WINDOW_MOUSE_FOCUS = 0x00000400
 SDL_WINDOW_FULLSCREEN_DESKTOP = (SDL_WINDOW_FULLSCREEN | 0x00001000)
@@ -187,11 +196,11 @@ SDL_WINDOW_FOREIGN = 0x00000800
 SDL_WINDOW_ALLOW_HIGHDPI = 0x00002000
 SDL_WINDOW_MOUSE_CAPTURE = 0x00004000
 SDL_WINDOW_ALWAYS_ON_TOP = 0x00008000
-
 SDL_WINDOW_SKIP_TASKBAR  = 0x00010000
 SDL_WINDOW_UTILITY = 0x00020000
 SDL_WINDOW_TOOLTIP = 0x00040000
 SDL_WINDOW_POPUP_MENU = 0x00080000
+SDL_WINDOW_KEYBOARD_GRABBED = 0x00100000
 SDL_WINDOW_VULKAN = 0x10000000
 SDL_WINDOW_METAL = 0x20000000
 
@@ -242,6 +251,13 @@ SDL_ORIENTATION_LANDSCAPE = 1
 SDL_ORIENTATION_LANDSCAPE_FLIPPED = 2
 SDL_ORIENTATION_PORTRAIT = 3
 SDL_ORIENTATION_PORTRAIT_FLIPPED = 4
+
+
+SDL_FlashOperation = c_int
+
+SDL_FLASH_CANCEL = 0
+SDL_FLASH_BRIEFLY = 1
+SDL_FLASH_UNTIL_FOCUSED = 2
 
 
 SDL_GLContext = c_void_p
@@ -369,12 +385,17 @@ SDL_GetWindowSurface = _bind("SDL_GetWindowSurface", [POINTER(SDL_Window)], POIN
 SDL_UpdateWindowSurface = _bind("SDL_UpdateWindowSurface", [POINTER(SDL_Window)], c_int)
 SDL_UpdateWindowSurfaceRects = _bind("SDL_UpdateWindowSurfaceRects", [POINTER(SDL_Window), POINTER(SDL_Rect), c_int], c_int)
 SDL_SetWindowGrab = _bind("SDL_SetWindowGrab", [POINTER(SDL_Window), SDL_bool])
+SDL_SetWindowKeyboardGrab = _bind("SDL_SetWindowKeyboardGrab", [POINTER(SDL_Window), SDL_bool], added='2.0.16')
+SDL_SetWindowMouseGrab = _bind("SDL_SetWindowMouseGrab", [POINTER(SDL_Window), SDL_bool], added='2.0.16')
 SDL_GetWindowGrab = _bind("SDL_GetWindowGrab", [POINTER(SDL_Window)], SDL_bool)
+SDL_GetWindowKeyboardGrab = _bind("SDL_GetWindowKeyboardGrab", [POINTER(SDL_Window)], SDL_bool, added='2.0.16')
+SDL_GetWindowMouseGrab = _bind("SDL_GetWindowMouseGrab", [POINTER(SDL_Window)], SDL_bool, added='2.0.16')
 SDL_GetGrabbedWindow = _bind("SDL_GetGrabbedWindow", None, POINTER(SDL_Window))
 SDL_SetWindowBrightness = _bind("SDL_SetWindowBrightness", [POINTER(SDL_Window), c_float], c_int)
 SDL_GetWindowBrightness = _bind("SDL_GetWindowBrightness", [POINTER(SDL_Window)], c_float)
 SDL_SetWindowGammaRamp = _bind("SDL_SetWindowGammaRamp", [POINTER(SDL_Window), POINTER(Uint16), POINTER(Uint16), POINTER(Uint16)], c_int)
 SDL_GetWindowGammaRamp = _bind("SDL_GetWindowGammaRamp", [POINTER(SDL_Window), POINTER(Uint16), POINTER(Uint16), POINTER(Uint16)], c_int)
+SDL_FlashWindow = _bind("SDL_FlashWindow", [POINTER(SDL_Window), SDL_FlashOperation], c_int, added='2.0.16')
 SDL_DestroyWindow = _bind("SDL_DestroyWindow", [POINTER(SDL_Window)])
 SDL_IsScreenSaverEnabled = _bind("SDL_IsScreenSaverEnabled", None, SDL_bool)
 SDL_EnableScreenSaver = _bind("SDL_EnableScreenSaver")
@@ -388,6 +409,7 @@ SDL_SetWindowOpacity = _bind("SDL_SetWindowOpacity", [POINTER(SDL_Window), c_flo
 SDL_SetWindowInputFocus = _bind("SDL_SetWindowInputFocus", [POINTER(SDL_Window)], c_int)
 SDL_SetWindowModalFor = _bind("SDL_SetWindowModalFor", [POINTER(SDL_Window), POINTER(SDL_Window)], c_int)
 SDL_SetWindowResizable = _bind("SDL_SetWindowResizable", [POINTER(SDL_Window), SDL_bool])
+SDL_SetWindowAlwaysOnTop = _bind("SDL_SetWindowAlwaysOnTop", [POINTER(SDL_Window), SDL_bool], added='2.0.16')
 
 SDL_GL_LoadLibrary = _bind("SDL_GL_LoadLibrary", [c_char_p], c_int)
 SDL_GL_GetProcAddress = _bind("SDL_GL_GetProcAddress", [c_char_p], c_void_p)

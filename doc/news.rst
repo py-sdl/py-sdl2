@@ -2,6 +2,16 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.9
+-----
+
+Released on XXXX-XX-XX.
+
+New Features:
+
+* Updated to wrap new functions and constants in in SDL2 2.0.16 (PR #190)
+
+
 0.9.8
 -----
 Released on 2021-08-06.

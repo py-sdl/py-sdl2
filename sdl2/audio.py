@@ -33,7 +33,8 @@ __all__ = [
     # Functions
     "SDL_GetNumAudioDrivers", "SDL_GetAudioDriver", "SDL_AudioInit",
     "SDL_AudioQuit", "SDL_GetCurrentAudioDriver", "SDL_OpenAudio",
-    "SDL_AudioDeviceID", "SDL_GetNumAudioDevices", "SDL_GetAudioDeviceName",
+    "SDL_AudioDeviceID", "SDL_GetNumAudioDevices",
+    "SDL_GetAudioDeviceName", "SDL_GetAudioDeviceSpec",
     "SDL_OpenAudioDevice", "SDL_GetAudioStatus", "SDL_GetAudioDeviceStatus",
     "SDL_PauseAudio", "SDL_PauseAudioDevice", "SDL_LoadWAV_RW", "SDL_FreeWAV",
     "SDL_BuildAudioCVT", "SDL_ConvertAudio",  "SDL_MixAudio",
@@ -85,6 +86,18 @@ AUDIO_F32 = AUDIO_F32LSB
 # All of the audio formats should be in this set which is provided as a
 # convenience to the end user for purposes of iteration and validation.
 # (is the provided audio format in the supported set?)
+FORMAT_NAME_MAP = {
+    AUDIO_U8: "AUDIO_U8",
+    AUDIO_S8: "AUDIO_S8",
+    AUDIO_U16LSB: "AUDIO_U16LSB",
+    AUDIO_S16LSB: "AUDIO_S16LSB",
+    AUDIO_U16MSB: "AUDIO_U16MSB",
+    AUDIO_S16MSB: "AUDIO_S16MSB",
+    AUDIO_S32LSB: "AUDIO_S32LSB",
+    AUDIO_S32MSB: "AUDIO_S32MSB",
+    AUDIO_F32LSB: "AUDIO_F32LSB",
+    AUDIO_F32MSB: "AUDIO_F32MSB",
+}
 AUDIO_FORMATS = set([AUDIO_U8, AUDIO_S8, AUDIO_U16LSB, AUDIO_S16LSB,
                      AUDIO_U16MSB, AUDIO_S16MSB, AUDIO_U16, AUDIO_S16,
                      AUDIO_S32LSB, AUDIO_S32MSB, AUDIO_S32, AUDIO_F32LSB,
@@ -164,6 +177,7 @@ SDL_OpenAudio = _bind("SDL_OpenAudio", [POINTER(SDL_AudioSpec), POINTER(SDL_Audi
 SDL_AudioDeviceID = Uint32
 SDL_GetNumAudioDevices = _bind("SDL_GetNumAudioDevices", [c_int], c_int)
 SDL_GetAudioDeviceName = _bind("SDL_GetAudioDeviceName", [c_int, c_int], c_char_p)
+SDL_GetAudioDeviceSpec = _bind("SDL_GetAudioDeviceSpec", [c_int, c_int, POINTER(SDL_AudioSpec)], c_int, added='2.0.16')
 SDL_OpenAudioDevice = _bind("SDL_OpenAudioDevice", [c_char_p, c_int, POINTER(SDL_AudioSpec), POINTER(SDL_AudioSpec), c_int], SDL_AudioDeviceID)
 SDL_AUDIO_STOPPED = 0
 SDL_AUDIO_PLAYING = 1

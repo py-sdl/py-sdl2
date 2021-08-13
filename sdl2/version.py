@@ -26,7 +26,7 @@ class SDL_version(Structure):
 
 SDL_MAJOR_VERSION = 2
 SDL_MINOR_VERSION = 0
-SDL_PATCHLEVEL = 14
+SDL_PATCHLEVEL = 16
 
 def SDL_VERSION(x):
     x.major = SDL_MAJOR_VERSION
@@ -38,4 +38,4 @@ SDL_COMPILEDVERSION = SDL_VERSIONNUM(SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_P
 SDL_VERSION_ATLEAST = lambda x, y, z: (SDL_COMPILEDVERSION >= SDL_VERSIONNUM(x, y, z))
 SDL_GetVersion = _bind("SDL_GetVersion", [POINTER(SDL_version)])
 SDL_GetRevision = _bind("SDL_GetRevision", None, c_char_p)
-SDL_GetRevisionNumber = _bind("SDL_GetRevisionNumber", None, c_int)
+SDL_GetRevisionNumber = _bind("SDL_GetRevisionNumber", None, c_int) # Deprecated as of 2.0.16, add warning?

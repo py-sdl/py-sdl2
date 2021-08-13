@@ -15,7 +15,7 @@ __all__ = [
     "SDL_SYSWM_DIRECTFB", "SDL_SYSWM_COCOA", "SDL_SYSWM_UIKIT",
     "SDL_SYSWM_WAYLAND", "SDL_SYSWM_MIR", "SDL_SYSWM_WINRT",
     "SDL_SYSWM_ANDROID", "SDL_SYSWM_VIVANTE", "SDL_SYSWM_OS2",
-    "SDL_SYSWM_HAIKU",
+    "SDL_SYSWM_HAIKU", "SDL_SYSWM_KMSDRM",
 
     # Functions
     "SDL_GetWindowWMInfo"
@@ -37,6 +37,7 @@ SDL_SYSWM_ANDROID = 9
 SDL_SYSWM_VIVANTE = 10
 SDL_SYSWM_OS2 = 11
 SDL_SYSWM_HAIKU = 12
+SDL_SYSWM_KMSDRM = 13
 
 
 # FIXME: Hack around the ctypes "_type_ 'v' not supported" bug - remove
@@ -151,7 +152,9 @@ class _wl(Structure):
     """Window information for Wayland."""
     _fields_ = [("display", c_void_p),
                 ("surface", c_void_p),
-                ("shell_surface", c_void_p)]
+                ("shell_surface", c_void_p),
+                ("egl_window", c_void_p),
+                ("xdg_surface", c_void_p)]
 
 class _mir(Structure):
     """Window information for Mir."""
@@ -174,6 +177,12 @@ class _vivante(Structure):
     _fields_ = [("display", c_void_p),
                 ("window", c_void_p)]
 
+class _kmsdrm(Structure):
+    """Window information for KMS/DRM."""
+    _fields_ = [("dev_index", c_int),
+                ("drm_fd", c_int),
+                ("gbm_dev", c_void_p)]
+
 class _info(Union):
     """The platform-specific information of a window."""
     _fields_ = [("win", _wininfo),
@@ -187,6 +196,7 @@ class _info(Union):
                 ("android", _android),
                 ("os2", _os2),
                 ("vivante", _vivante),
+                ("kmsdrm", _kmsdrm),
                 ("dummy", (Uint8 * 64))
                ]
 

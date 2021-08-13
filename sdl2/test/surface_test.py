@@ -657,6 +657,11 @@ class TestSDLSurface(object):
     def test_SDL_SoftStretch(self):
         pass
 
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_SoftStretchLinear(self):
+        pass
+
     def test_SDL_SetSurfacePalette(self):
         invpalette = pixels.SDL_AllocPalette(10)
         palette = pixels.SDL_AllocPalette(1 << 16)

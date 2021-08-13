@@ -19,6 +19,7 @@ __all__ = [
     "SDL_CONTROLLER_TYPE_XBOXONE", "SDL_CONTROLLER_TYPE_PS3",
     "SDL_CONTROLLER_TYPE_PS4", "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO",
     "SDL_CONTROLLER_TYPE_VIRTUAL", "SDL_CONTROLLER_TYPE_PS5",
+    "SDL_CONTROLLER_TYPE_AMAZON_LUNA", "SDL_CONTROLLER_TYPE_GOOGLE_STADIA",
 
     "SDL_GameControllerBindType",
     "SDL_CONTROLLER_BINDTYPE_NONE", "SDL_CONTROLLER_BINDTYPE_BUTTON",
@@ -73,9 +74,11 @@ __all__ = [
     "SDL_GameControllerGetNumTouchpadFingers",
     "SDL_GameControllerGetTouchpadFinger",
     "SDL_GameControllerHasSensor", "SDL_GameControllerSetSensorEnabled",
-    "SDL_GameControllerIsSensorEnabled", "SDL_GameControllerGetSensorData",
+    "SDL_GameControllerIsSensorEnabled", 
+    "SDL_GameControllerGetSensorDataRate", "SDL_GameControllerGetSensorData",
     "SDL_GameControllerRumble", "SDL_GameControllerRumbleTriggers",
     "SDL_GameControllerHasLED", "SDL_GameControllerSetLED",
+    "SDL_GameControllerSendEffect",
     "SDL_GameControllerClose"  
 ]
 
@@ -102,6 +105,8 @@ SDL_CONTROLLER_TYPE_PS4 = 4
 SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO = 5
 SDL_CONTROLLER_TYPE_VIRTUAL = 6
 SDL_CONTROLLER_TYPE_PS5 = 7
+SDL_CONTROLLER_TYPE_AMAZON_LUNA = 8
+SDL_CONTROLLER_TYPE_GOOGLE_STADIA = 9
 
 
 class _gchat(Structure):
@@ -187,6 +192,7 @@ SDL_GameControllerGetTouchpadFinger = _bind("SDL_GameControllerGetTouchpadFinger
 SDL_GameControllerHasSensor = _bind("SDL_GameControllerHasSensor", [POINTER(SDL_GameController), SDL_SensorType], SDL_bool, added='2.0.14')
 SDL_GameControllerSetSensorEnabled = _bind("SDL_GameControllerSetSensorEnabled", [POINTER(SDL_GameController), SDL_SensorType, SDL_bool], c_int, added='2.0.14')
 SDL_GameControllerIsSensorEnabled = _bind("SDL_GameControllerIsSensorEnabled", [POINTER(SDL_GameController), SDL_SensorType], SDL_bool, added='2.0.14')
+SDL_GameControllerGetSensorDataRate = _bind("SDL_GameControllerGetSensorDataRate", [POINTER(SDL_GameController), SDL_SensorType], c_float, added='2.0.16')
 # TODO: Read how GetSensorData is implemented to figure out how the # of floats is determined
 SDL_GameControllerGetSensorData = _bind("SDL_GameControllerGetSensorData", [POINTER(SDL_GameController), SDL_SensorType, POINTER(c_float), c_int], c_int, added='2.0.14')
 SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameController)])
@@ -207,6 +213,7 @@ SDL_GameControllerRumble = _bind("SDL_GameControllerRumble", [POINTER(SDL_GameCo
 SDL_GameControllerRumbleTriggers = _bind("SDL_GameControllerRumbleTriggers", [POINTER(SDL_GameController), Uint16, Uint16, Uint32], c_int, added='2.0.14')
 SDL_GameControllerHasLED = _bind("SDL_GameControllerHasLED", [POINTER(SDL_GameController)], SDL_bool, added='2.0.14')
 SDL_GameControllerSetLED = _bind("SDL_GameControllerSetLED", [POINTER(SDL_GameController), Uint8, Uint8, Uint8], c_int, added='2.0.14')
+SDL_GameControllerSendEffect = _bind("SDL_GameControllerSendEffect", [POINTER(SDL_GameController), c_void_p, c_int], c_int, added='2.0.16')
 
 # Reimplemented w/ other functions due to crash-causing ctypes bug (fixed in 3.8)
 if sys.version_info >= (3, 8, 0, 'final'):

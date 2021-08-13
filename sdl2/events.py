@@ -1,5 +1,5 @@
 from ctypes import c_char, c_char_p, c_float, c_void_p, c_int, Structure, \
-    Union, CFUNCTYPE, POINTER
+    Union, CFUNCTYPE, POINTER, sizeof
 from .dll import _bind
 from .stdinc import Sint16, Sint32, Uint8, Uint16, Uint32, SDL_bool
 from .keyboard import SDL_Keysym
@@ -404,6 +404,10 @@ class SDL_SysWMEvent(Structure):
                 ("msg", POINTER(SDL_SysWMmsg))
                 ]
 
+_event_pad_size = 56 if sizeof(c_void_p) <= 8 else 64
+if sizeof(c_void_p) > 16:
+    _event_pad_size = 3 * sizeof(c_void_p)
+
 class SDL_Event(Union):
     _fields_ = [("type", Uint32),
                 ("common", SDL_CommonEvent),
@@ -434,7 +438,7 @@ class SDL_Event(Union):
                 ("mgesture", SDL_MultiGestureEvent),
                 ("dgesture", SDL_DollarGestureEvent),
                 ("drop", SDL_DropEvent),
-                ("padding", (Uint8 * 56)),
+                ("padding", (Uint8 * _event_pad_size)),
                 ]
 
 
