@@ -271,7 +271,7 @@ class TestSDLAudio(object):
             os.environ["SDL_AUDIODRIVER"] = b'dummy'
             SDL_InitSubSystem(SDL_INIT_AUDIO)
             driver = audio.SDL_GetCurrentAudioDriver()
-        driver = driver.decode('utf-8')
+        drivername = driver.decode('utf-8')
         # Get name and spec of first output device
         outspec = audio.SDL_AudioSpec(0, 0, 0, 0)
         outname = audio.SDL_GetAudioDeviceName(0, False).decode('utf-8')
@@ -289,7 +289,7 @@ class TestSDLAudio(object):
             # Print out device spec info
             msg = "Audio device spec for {0} with '{1}' driver:"
             msg2 = "{0} Hz, {1} channels, {2} format, {3} sample buffer size"
-            print(msg.format(outname, driver))
+            print(msg.format(outname, drivername))
             print(msg2.format(hz, chans, fmt, bufsize))
 
     def test_SDL_OpenCloseAudioDevice(self):
