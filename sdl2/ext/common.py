@@ -36,6 +36,18 @@ class SDLError(Exception):
         return repr(self.msg)
 
 
+def raise_sdl_err(desc=None):
+    # Raises and clears the latest SDL error. For internal use.
+    errmsg = error.SDL_GetError().decode('utf-8')
+    error.SDL_ClearError()
+    e = "Error encountered"
+    if desc:
+        e += " " + desc
+    if len(errmsg):
+        e += ": {0}".format(errmsg)
+    raise SDLError(e)
+
+
 def init():
     """Initializes the SDL2 video subsystem.
 
