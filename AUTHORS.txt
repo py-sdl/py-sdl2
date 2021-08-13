@@ -11,10 +11,39 @@ with contributions from
 
 Thanks to everyone else for their assistance, support, fixes and improvements:
 
-Sven Eckelmann, Marcel Rodrigues, Michael McCandless, Andreas Schiefer,
-Franz Schrober, Roger Flores, otus, Mihail Latyshov, Todd Rovito, Bil Bas,
-Dan McCombs, William Manire, Radomir Dopieralski, Joe Polak, Jordan F, DR0ID,
-Filip M. Nowak, David Farler, Max Bareiss, Kenneth Long, Robert Winkler,
-Jones Romao, smea lum, Linus Heckemann, DBLobster, Michael Noronha, mgorny,
-Szymon Zmilczak, Bao "Mantle" Rong, Zack Marvel, stillinbeta, Fabian Jarrett,
-Rob Rolls
+* Andreas Schiefer
+* Bao "Mantle" Rong
+* Bil Bas
+* Dan McCombs
+* David Farler
+* DBLobster
+* DR0ID
+* Fabian Jarrett
+* Filip M. Nowak
+* Franz Schrober
+* Jamie Bliss
+* Joe Polak
+* Jones Romao
+* Jordan F
+* José Ignacio Amelivia Santiago
+* Kenneth Long
+* Linus Heckemann
+* Marcel Rodrigues
+* Max Bareiss
+* mgorny
+* Michael McCandless
+* Mihail Latyshov
+* otus
+* Paul Vallet
+* Piper Thunstrom
+* Radomir Dopieralski
+* Rob Rolls
+* Robert Winkler
+* Roger Flores
+* smea lum
+* stillinbeta
+* Sven Eckelmann
+* Szymon Zmilczak
+* Todd Rovito
+* William Manire
+* Zack Marvel
