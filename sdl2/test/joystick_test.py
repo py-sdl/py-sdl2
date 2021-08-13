@@ -340,6 +340,13 @@ class TestSDLJoystick(object):
                 assert ret == expected
             joystick.SDL_JoystickClose(stick)
 
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_JoystickSendEffect(self):
+        # Probably impossible to test since effect data would be specific
+        # to each controller type?
+        pass
+
     @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
     def test_SDL_JoystickVirtual(self):
         jtype = joystick.SDL_JOYSTICK_TYPE_GAMECONTROLLER

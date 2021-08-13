@@ -29,7 +29,8 @@ __all__ = [
     "SDL_SetClipRect", "SDL_GetClipRect", "SDL_ConvertSurface",
     "SDL_ConvertSurfaceFormat", "SDL_ConvertPixels", "SDL_FillRect",
     "SDL_FillRects", "SDL_UpperBlit", "SDL_BlitSurface", "SDL_LowerBlit",
-    "SDL_SoftStretch", "SDL_UpperBlitScaled", "SDL_BlitScaled",
+    "SDL_SoftStretch", "SDL_SoftStretchLinear",
+    "SDL_UpperBlitScaled", "SDL_BlitScaled",
     "SDL_LowerBlitScaled", "SDL_CreateRGBSurfaceWithFormat",
     "SDL_CreateRGBSurfaceWithFormatFrom", "SDL_DuplicateSurface",
     "SDL_SetYUVConversionMode", "SDL_GetYUVConversionMode",
@@ -111,6 +112,7 @@ SDL_UpperBlit = _bind("SDL_UpperBlit", [POINTER(SDL_Surface), POINTER(SDL_Rect),
 SDL_BlitSurface = SDL_UpperBlit
 SDL_LowerBlit = _bind("SDL_LowerBlit", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
 SDL_SoftStretch = _bind("SDL_SoftStretch", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
+SDL_SoftStretchLinear = _bind("SDL_SoftStretchLinear", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int, added='2.0.16')
 SDL_UpperBlitScaled = _bind("SDL_UpperBlitScaled", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
 SDL_BlitScaled = SDL_UpperBlitScaled
 SDL_LowerBlitScaled = _bind("SDL_LowerBlitScaled", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)

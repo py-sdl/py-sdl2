@@ -48,7 +48,7 @@ __all__ = [
     "SDL_JoystickEventState", "SDL_JoystickGetAxis", "SDL_JoystickGetAxisInitialState",
     "SDL_JoystickGetHat", "SDL_JoystickGetBall", "SDL_JoystickGetButton",
     "SDL_JoystickRumble", "SDL_JoystickRumbleTriggers",
-    "SDL_JoystickHasLED", "SDL_JoystickSetLED",
+    "SDL_JoystickHasLED", "SDL_JoystickSetLED", "SDL_JoystickSendEffect",
     "SDL_JoystickClose", "SDL_JoystickCurrentPowerLevel"
 ]
 
@@ -149,6 +149,7 @@ SDL_JoystickRumble = _bind("SDL_JoystickRumble", [POINTER(SDL_Joystick), Uint16,
 SDL_JoystickRumbleTriggers = _bind("SDL_JoystickRumbleTriggers", [POINTER(SDL_Joystick), Uint16, Uint16, Uint32], c_int, added='2.0.14')
 SDL_JoystickHasLED = _bind("SDL_JoystickHasLED", [POINTER(SDL_Joystick)], SDL_bool, added='2.0.14')
 SDL_JoystickSetLED = _bind("SDL_JoystickSetLED", [POINTER(SDL_Joystick), Uint8, Uint8, Uint8], c_int, added='2.0.14')
+SDL_JoystickSendEffect = _bind("SDL_JoystickSendEffect", [POINTER(SDL_Joystick), c_void_p, c_int], c_int, added='2.0.16')
 
 # Reimplemented in Python due to crash-causing ctypes bug (fixed in 3.8)
 if sys.version_info >= (3, 8, 0, 'final'):

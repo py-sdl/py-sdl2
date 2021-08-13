@@ -710,7 +710,13 @@ class TestSDLVideo(object):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_SDL_SetWindowHitTest(self):
+    def test_SDL_GetWindowGammaRamp(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_FlashWindow(self):
+        # Would need to be an interactive test
         pass
 
     def test_SDL_GL_LoadUnloadLibrary(self):

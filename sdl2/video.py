@@ -44,6 +44,9 @@ __all__ = [
     "SDL_ORIENTATION_LANDSCAPE_FLIPPED", "SDL_ORIENTATION_PORTRAIT",
     "SDL_ORIENTATION_PORTRAIT_FLIPPED",
 
+    "SDL_FlashOperation",
+    "SDL_FLASH_CANCEL", "SDL_FLASH_BRIEFLY", "SDL_FLASH_UNTIL_FOCUSED",
+
     "SDL_GLattr",
     "SDL_GL_RED_SIZE",
     "SDL_GL_GREEN_SIZE", "SDL_GL_BLUE_SIZE", "SDL_GL_ALPHA_SIZE",
@@ -117,9 +120,9 @@ __all__ = [
     "SDL_SetWindowKeyboardGrab", "SDL_SetWindowMouseGrab",
     "SDL_GetWindowGrab", "SDL_GetWindowKeyboardGrab",
     "SDL_GetWindowMouseGrab", "SDL_GetGrabbedWindow",
-    "SDL_SetWindowBrightness",
-    "SDL_GetWindowBrightness", "SDL_SetWindowGammaRamp",
-    "SDL_GetWindowGammaRamp", "SDL_DestroyWindow",
+    "SDL_SetWindowBrightness", "SDL_GetWindowBrightness",
+    "SDL_SetWindowGammaRamp", "SDL_GetWindowGammaRamp", 
+    "SDL_FlashWindow", "SDL_DestroyWindow",
     "SDL_DisableScreenSaver", "SDL_IsScreenSaverEnabled",
     "SDL_EnableScreenSaver",
     "SDL_SetWindowHitTest", "SDL_GL_LoadLibrary",
@@ -248,6 +251,13 @@ SDL_ORIENTATION_LANDSCAPE = 1
 SDL_ORIENTATION_LANDSCAPE_FLIPPED = 2
 SDL_ORIENTATION_PORTRAIT = 3
 SDL_ORIENTATION_PORTRAIT_FLIPPED = 4
+
+
+SDL_FlashOperation = c_int
+
+SDL_FLASH_CANCEL = 0
+SDL_FLASH_BRIEFLY = 1
+SDL_FLASH_UNTIL_FOCUSED = 2
 
 
 SDL_GLContext = c_void_p
@@ -385,6 +395,7 @@ SDL_SetWindowBrightness = _bind("SDL_SetWindowBrightness", [POINTER(SDL_Window),
 SDL_GetWindowBrightness = _bind("SDL_GetWindowBrightness", [POINTER(SDL_Window)], c_float)
 SDL_SetWindowGammaRamp = _bind("SDL_SetWindowGammaRamp", [POINTER(SDL_Window), POINTER(Uint16), POINTER(Uint16), POINTER(Uint16)], c_int)
 SDL_GetWindowGammaRamp = _bind("SDL_GetWindowGammaRamp", [POINTER(SDL_Window), POINTER(Uint16), POINTER(Uint16), POINTER(Uint16)], c_int)
+SDL_FlashWindow = _bind("SDL_FlashWindow", [POINTER(SDL_Window), SDL_FlashOperation], c_int, added='2.0.16')
 SDL_DestroyWindow = _bind("SDL_DestroyWindow", [POINTER(SDL_Window)])
 SDL_IsScreenSaverEnabled = _bind("SDL_IsScreenSaverEnabled", None, SDL_bool)
 SDL_EnableScreenSaver = _bind("SDL_EnableScreenSaver")

@@ -153,7 +153,8 @@ class _wl(Structure):
     _fields_ = [("display", c_void_p),
                 ("surface", c_void_p),
                 ("shell_surface", c_void_p),
-                ("egl_window", c_void_p)]
+                ("egl_window", c_void_p),
+                ("xdg_surface", c_void_p)]
 
 class _mir(Structure):
     """Window information for Mir."""

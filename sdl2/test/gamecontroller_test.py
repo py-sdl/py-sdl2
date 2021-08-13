@@ -206,6 +206,11 @@ class TestSDLGamecontroller(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_GameControllerGetSensorDataRate(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
     def test_SDL_GameControllerGetSensorData(self):
         pass
@@ -297,4 +302,11 @@ class TestSDLGamecontroller(object):
     @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
     def test_SDL_GameControllerHasSetLED(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_GameControllerSendEffect(self):
+        # Probably impossible to test since effect data would be specific
+        # to each controller type?
         pass
