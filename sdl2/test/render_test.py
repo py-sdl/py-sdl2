@@ -439,6 +439,11 @@ class TestSDLRender(object):
         pass
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_UpdateNVTexture(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
     def test_SDL_LockTextureToSurface(self):
         pass

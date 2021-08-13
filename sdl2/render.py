@@ -59,7 +59,8 @@ __all__ = [
     "SDL_RenderFillRectsF", "SDL_RenderCopyF", "SDL_RenderCopyExF",
     "SDL_RenderReadPixels", "SDL_RenderPresent",
     "SDL_DestroyTexture", "SDL_DestroyRenderer", "SDL_RenderFlush",
-    "SDL_UpdateYUVTexture", "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
+    "SDL_UpdateYUVTexture", "SDL_UpdateNVTexture",
+    "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
     "SDL_GetRendererOutputSize", "SDL_RenderGetIntegerScale",
     "SDL_RenderSetIntegerScale", "SDL_RenderGetMetalLayer",
     "SDL_RenderGetMetalCommandEncoder"
@@ -180,5 +181,6 @@ SDL_RenderFlush = _bind("SDL_RenderFlush", [POINTER(SDL_Renderer)], c_int, added
 SDL_GL_BindTexture = _bind("SDL_GL_BindTexture", [POINTER(SDL_Texture), POINTER(c_float), POINTER(c_float)], c_int)
 SDL_GL_UnbindTexture = _bind("SDL_GL_UnbindTexture", [POINTER(SDL_Texture)], c_int)
 SDL_UpdateYUVTexture = _bind("SDL_UpdateYUVTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(Uint8), c_int, POINTER(Uint8), c_int, POINTER(Uint8), c_int], c_int)
+SDL_UpdateNVTexture = _bind("SDL_UpdateNVTexture", [POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(Uint8), c_int, POINTER(Uint8), c_int], c_int, added='2.0.16')
 SDL_RenderGetMetalLayer = _bind("SDL_RenderGetMetalLayer", [POINTER(SDL_Renderer)], c_void_p, added='2.0.8')
 SDL_RenderGetMetalCommandEncoder = _bind("SDL_RenderGetMetalCommandEncoder", [POINTER(SDL_Renderer)], c_void_p, added='2.0.8')

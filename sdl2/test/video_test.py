@@ -629,7 +629,7 @@ class TestSDLVideo(object):
             assert ret == 0
             video.SDL_DestroyWindow(window)
 
-    @pytest.mark.skip("SDL_GetWindowGrab fails right now")
+    @pytest.mark.skip("Test doesn't work, may need to be interactive")
     def test_SDL_GetSetWindowGrab(self):
         flags = (video.SDL_WINDOW_BORDERLESS,
                  video.SDL_WINDOW_BORDERLESS | video.SDL_WINDOW_HIDDEN,
@@ -641,6 +641,37 @@ class TestSDLVideo(object):
             assert video.SDL_GetWindowGrab(window) == SDL_TRUE
             video.SDL_SetWindowGrab(window, SDL_FALSE)
             assert video.SDL_GetWindowGrab(window) == SDL_FALSE
+            video.SDL_DestroyWindow(window)
+
+    @pytest.mark.skip("Test doesn't work, may need to be interactive")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_GetSetWindowKeyboardGrab(self):
+        flags = (video.SDL_WINDOW_BORDERLESS,
+                 video.SDL_WINDOW_BORDERLESS | video.SDL_WINDOW_HIDDEN,
+                 video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
+        for flag in flags:
+            window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flag)
+            assert video.SDL_GetWindowKeyboardGrab(window) == SDL_FALSE
+            video.SDL_SetWindowKeyboardGrab(window, SDL_TRUE)
+            assert video.SDL_GetWindowKeyboardGrab(window) == SDL_TRUE
+            video.SDL_SetWindowKeyboardGrab(window, SDL_FALSE)
+            assert video.SDL_GetWindowKeyboardGrab(window) == SDL_FALSE
+            video.SDL_DestroyWindow(window)
+
+    @pytest.mark.skip("Test doesn't work, may need to be interactive")
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_GetSetWindowMouseGrab(self):
+        flags = (video.SDL_WINDOW_BORDERLESS,
+                 video.SDL_WINDOW_BORDERLESS | video.SDL_WINDOW_HIDDEN,
+                 video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
+        for flag in flags:
+            window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flag)
+            assert video.SDL_GetWindowMouseGrab(window) == SDL_FALSE
+            video.SDL_SetWindowMouseGrab(window, SDL_TRUE)
+            assert video.SDL_GetWindowMouseGrab(window) == SDL_TRUE
+            video.SDL_SetWindowMouseGrab(window, SDL_FALSE)
+            assert video.SDL_GetWindowMouseGrab(window) == SDL_FALSE
+            video.SDL_DestroyWindow(window)
 
     @pytest.mark.skip("not implemented")
     def test_SDL_GetGrabbedWindow(self):
@@ -927,6 +958,22 @@ class TestSDLVideo(object):
         assert flags & video.SDL_WINDOW_RESIZABLE == video.SDL_WINDOW_RESIZABLE
         video.SDL_DestroyWindow(window)
 
+    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+    def test_SDL_SetWindowAlwaysOnTop(self):
+        ON_TOP_FLAG = video.SDL_WINDOW_ALWAYS_ON_TOP
+        window = video.SDL_CreateWindow(b"Always On Top", 10, 10, 10, 10,
+                                        video.SDL_WINDOW_ALWAYS_ON_TOP)
+        video.SDL_ShowWindow(window)
+        flags = video.SDL_GetWindowFlags(window)
+        assert flags & ON_TOP_FLAG == ON_TOP_FLAG
+        video.SDL_SetWindowAlwaysOnTop(window, SDL_FALSE)
+        flags = video.SDL_GetWindowFlags(window)
+        assert flags & ON_TOP_FLAG != ON_TOP_FLAG
+        video.SDL_SetWindowAlwaysOnTop(window, SDL_TRUE)
+        flags = video.SDL_GetWindowFlags(window)
+        assert flags & ON_TOP_FLAG == ON_TOP_FLAG
+        video.SDL_DestroyWindow(window)
+
     def test_SDL_GetSetWindowOpacity(self):
         window = video.SDL_CreateWindow(b"Opacity", 10, 10, 10, 10, 0)
         opacity = c_float()
@@ -958,6 +1005,7 @@ class TestSDLVideo(object):
         if video.SDL_GetCurrentVideoDriver() == b"dummy":
             pytest.skip("dummy video driver does not support the window border size")
         window = video.SDL_CreateWindow(b"Borders", 10, 10, 10, 10, 0)
+        video.SDL_ShowWindow(window)
         l, r, t, b = c_int(), c_int(), c_int(), c_int()
         ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
                                              byref(b), byref(r))
@@ -976,6 +1024,7 @@ class TestSDLVideo(object):
         video.SDL_DestroyWindow(window)
         window = video.SDL_CreateWindow(b"No Borders", 10, 10, 10, 10,
                                         video.SDL_WINDOW_BORDERLESS)
+        video.SDL_ShowWindow(window)
         ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
                                              byref(b), byref(r))
         if sys.platform not in ("cygwin", "darwin"):
