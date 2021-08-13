@@ -964,6 +964,7 @@ class TestSDLVideo(object):
         assert flags & video.SDL_WINDOW_RESIZABLE == video.SDL_WINDOW_RESIZABLE
         video.SDL_DestroyWindow(window)
 
+    @pytest.mark.skip("Test doesn't work, may need to be interactive")
     @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
     def test_SDL_SetWindowAlwaysOnTop(self):
         ON_TOP_FLAG = video.SDL_WINDOW_ALWAYS_ON_TOP

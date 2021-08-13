@@ -1,7 +1,7 @@
 import sys
 import ctypes
 import pytest
-from sdl2 import version, __version__, version_info
+from sdl2 import version, dll, __version__, version_info
 
 
 class TestSDLVersion(object):
@@ -34,10 +34,13 @@ class TestSDLVersion(object):
         assert not version.SDL_VERSION_ATLEAST(2, 0, 100)
 
     def test_SDL_GetRevision(self):
-        assert version.SDL_GetRevision()[0:3] == b"hg-"
+        if dll.version >= 2016:
+            assert version.SDL_GetRevision()[0:4] == b"http"
+        else:
+            assert version.SDL_GetRevision()[0:3] == b"hg-"
 
     def test_SDL_GetRevisionNumber(self):
-        if sys.platform in ("win32",):
+        if sys.platform in ("win32",) or dll.version >= 2016:
             # HG tip on Win32 does not set any revision number
             assert version.SDL_GetRevisionNumber() >= 0
         else:

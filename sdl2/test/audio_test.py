@@ -283,13 +283,14 @@ class TestSDLAudio(object):
         fmt = audio.FORMAT_NAME_MAP[outspec.format] if outspec.format > 0 else 'unknown'
         chans = outspec.channels
         bufsize = outspec.samples if outspec.samples > 0 else 'unknown'
-        assert hz > 0
-        assert chans > 0
-        # Print out device spec info
-        msg = "Audio device spec for {0} with '{1}' driver:"
-        msg2 = "{0} Hz, {1} channels, {2} format, {3} sample buffer size"
-        print(msg.format(outname, driver))
-        print(msg2.format(hz, chans, fmt, bufsize))
+        if driver != b"dummy":
+            assert hz > 0
+            assert chans > 0
+            # Print out device spec info
+            msg = "Audio device spec for {0} with '{1}' driver:"
+            msg2 = "{0} Hz, {1} channels, {2} format, {3} sample buffer size"
+            print(msg.format(outname, driver))
+            print(msg2.format(hz, chans, fmt, bufsize))
 
     def test_SDL_OpenCloseAudioDevice(self):
         #TODO: Add tests for callback
