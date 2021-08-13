@@ -350,8 +350,8 @@ def run():
                 # function with the arguments.
                 func, args = functions[curindex]
                 func(*args)
+                context.present()
                 break
-        context.present()
     sdl2.ext.quit()
     return 0
 
