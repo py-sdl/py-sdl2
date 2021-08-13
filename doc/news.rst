@@ -11,6 +11,11 @@ New Features:
 
 * Updated to wrap new functions and constants in in SDL2 2.0.16 (PR #190)
 
+Fixed bugs:
+
+* Reverted the fix for (issue #139), which inadvertantly broke creating
+  :obj:~sdl2.ext.Renderer` objects from :obj:`~sdl2.ext.Window` objects.
+
 
 0.9.8
 -----
