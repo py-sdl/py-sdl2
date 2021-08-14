@@ -145,7 +145,9 @@ class TestSDL2ExtRenderer(object):
             sdl2ext.Texture(sf, sf)
         with pytest.raises(TypeError):
             sdl2ext.Texture(renderer, renderer)
+        del tx
         del renderer
+        SDL_FreeSurface(sf)
 
     def test_Renderer_color(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
@@ -243,14 +245,15 @@ class TestSDL2ExtRenderer(object):
         assert view[49][39] == 0
         assert view[50][40] == 0xAABBCC
 
-        # Test copying a Texture with rotation
-        renderer.clear(0xAABBCC) # reset surface
-        renderer.copy(tx, dstrect=(32, 32), angle=180, center=(0, 0))
-        renderer.present()
-        assert view[0][0] == 0xAABBCC
-        assert view[16][16] == 0xFF000000  # Rotation suddenly adds alpha?
-        assert view[31][31] == 0xFF000000  # Rotation suddenly adds alpha?
-        assert view[32][32] == 0xAABBCC
+        if dll.version > 2005:
+            # Test copying a Texture with rotation
+            renderer.clear(0xAABBCC) # reset surface
+            renderer.copy(tx, dstrect=(32, 32), angle=180, center=(0, 0))
+            renderer.present()
+            assert view[0][0] == 0xAABBCC
+            assert view[16][16] == 0xFF000000  # Rotation suddenly adds alpha?
+            assert view[31][31] == 0xFF000000  # Rotation suddenly adds alpha?
+            assert view[32][32] == 0xAABBCC
 
         # (legacy): Test copying texture from a SpriteFactory
         renderer.clear(0)  # reset surface
