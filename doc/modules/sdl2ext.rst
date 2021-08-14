@@ -64,12 +64,12 @@ importing images, and more:
 .. toctree::
 	:maxdepth: 1
 
+	ext/surface.rst
+	ext/draw.rst
 	ext/image.rst
 	ext/spritesystem.rst
 	ext/gui.rst
 	ext/font.rst
-	ext/draw.rst
-	ext/surface.rst
 
 
 Useful helpers for building apps
@@ -85,9 +85,9 @@ programming, managing program resource files, working with colors, and more:
 	:maxdepth: 1
 
 	ext/resources.rst
-	ext/ebs.rst
-	ext/events.rst
 	ext/color.rst
 	ext/colorpalettes.rst
 	ext/algorithms.rst
+	ext/ebs.rst
+	ext/events.rst
 	ext/particles.rst

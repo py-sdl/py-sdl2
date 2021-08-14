@@ -1,5 +1,6 @@
 from ctypes import Structure, POINTER, c_int, c_char_p, c_float
 from .dll import _bind
+from .dll import version as sdl_version
 from .endian import SDL_BYTEORDER, SDL_BIG_ENDIAN, SDL_LIL_ENDIAN
 from .stdinc import Uint8, Uint16, Uint32, SDL_bool
 
@@ -251,7 +252,6 @@ NAME_MAP = {
     'INDEX8': SDL_PIXELFORMAT_INDEX8,
     'RGB332': SDL_PIXELFORMAT_RGB332,
     'RGB444': SDL_PIXELFORMAT_RGB444,
-    'BGR444': SDL_PIXELFORMAT_BGR444,
     'RGB555': SDL_PIXELFORMAT_RGB555,
     'BGR555': SDL_PIXELFORMAT_BGR555,
     'ARGB4444': SDL_PIXELFORMAT_ARGB4444,
@@ -288,6 +288,8 @@ NAME_MAP = {
     'NV21': SDL_PIXELFORMAT_NV21,
     'EXTERNAL_OES': SDL_PIXELFORMAT_EXTERNAL_OES,
 }
+if sdl_version >= 2012:
+    NAME_MAP['BGR444'] = SDL_PIXELFORMAT_BGR444
 ALL_PIXELFORMATS = tuple(NAME_MAP.values())
 
 class SDL_Color(Structure):

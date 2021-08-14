@@ -68,7 +68,7 @@ def _sanitize_points(points):
             p = (p.x, p.y)
         elif len(p) != 2:
             raise ValueError(type_err.format(str(p)))
-        if dll.version < 2010 and any([float(v) != v for v in p]):
+        if dll.version < 2010 and any([int(v) != v for v in p]):
             e = "Floating point rendering requires SDL 2.0.10 or newer"
             raise RuntimeError(e + " (got '{0}')".format(str(p)))
         pts.append((p[0], p[1]))
@@ -88,7 +88,7 @@ def _sanitize_rects(rects):
             r = (r.x, r.y, r.w, r.h)
         elif len(r) != 4:
             raise ValueError(type_err.format(str(r)))
-        if dll.version < 2010 and any([float(v) != v for v in r]):
+        if dll.version < 2010 and any([int(v) != v for v in r]):
             e = "Floating point rendering requires SDL 2.0.10 or newer"
             raise RuntimeError(e + " (got '{0}')".format(str(r)))
         out.append((r[0], r[1], r[2], r[3]))
