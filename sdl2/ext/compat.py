@@ -137,22 +137,9 @@ def deprecation(message):
     warnings.warn(message, category=DeprecationWarning, stacklevel=2)
 
 
-class UnsupportedError(Exception):
+class UnsupportedError(RuntimeError):
     # Indicates that a certain class, function or behaviour is not supported
-    def __init__(self, obj, msg=None):
-        """Creates an UnsupportedError for the specified obj.
-
-        If a message is passed in msg, it will be printed instead of the
-        default message.
-        """
-        super(UnsupportedError, self).__init__()
-        self.obj = obj
-        self.msg = msg
-
-    def __str__(self):
-        if self.msg is None:
-            return "'%s' is not supported" % repr(self.obj)
-        return repr(self.msg)
+    pass
 
 
 class ExperimentalWarning(Warning):

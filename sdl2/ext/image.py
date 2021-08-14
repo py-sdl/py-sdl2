@@ -53,16 +53,14 @@ def load_image(fname, enforce=None):
     if not _HASPIL and not _HASSDLIMAGE:
         imgsurface = surface.SDL_LoadBMP(name)
         if not imgsurface:
-            raise UnsupportedError(load_image,
-                                   "cannot use PIL or SDL for image loading")
+            raise UnsupportedError("cannot use PIL or SDL for image loading")
         return imgsurface.contents
     if enforce == "PIL" and not _HASPIL:
-        raise UnsupportedError(load_image, "cannot use PIL (not found)")
+        raise UnsupportedError("cannot use PIL (not found)")
     if enforce == "SDL" and not _HASSDLIMAGE:
         imgsurface = surface.SDL_LoadBMP(name)
         if not imgsurface:
-            raise UnsupportedError(load_image,
-                                   "cannot use SDL_image (not found)")
+            raise UnsupportedError("cannot use SDL_image (not found)")
         return imgsurface.contents
 
     imgsurface = None

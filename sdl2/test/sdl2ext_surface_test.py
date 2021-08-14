@@ -2,7 +2,6 @@ import pytest
 from sdl2.surface import SDL_CreateRGBSurface, SDL_FillRect
 from sdl2.rect import SDL_Rect
 from sdl2.ext.draw import prepare_color, fill
-from sdl2.ext.compat import ExperimentalWarning
 from sdl2 import ext as sdl2ext
 
 
@@ -31,8 +30,7 @@ class TestSDL2ExtSurface(object):
 
         # Test shared pixels between surface
         fill(ssf, (255, 255, 255))
-        with pytest.warns(ExperimentalWarning):
-            view = sdl2ext.pixels3d(sf.contents, False)
+        view = sdl2ext.pixels3d(sf.contents, False)
         assert all(x == 255 for x in view[0][0][:3])
         assert all(x == 255 for x in view[4][4][:3])
         assert all(x == 0 for x in view[5][5][:3])

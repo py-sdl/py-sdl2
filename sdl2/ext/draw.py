@@ -157,7 +157,7 @@ def line(target, color, dline, width=1):
     top, bottom = clip_rect.y, clip_rect.y + clip_rect.h - 1
 
     if bpp == 3:
-        raise UnsupportedError(line, "24bpp are currently not supported")
+        raise UnsupportedError("24bpp surfaces are not currently supported.")
     if bpp == 2:
         pxbuf = ctypes.cast(rtarget.pixels, ctypes.POINTER(ctypes.c_uint16))
     elif bpp == 4:
@@ -184,7 +184,7 @@ def line(target, color, dline, width=1):
             fillrect(rtarget, varea, color)
             continue
         if width != 1:
-            raise UnsupportedError(line, "width > 1 is not supported")
+            raise ValueError("Diagonal lines must have a width of 1.")
         if width == 1:
             # Bresenham
             x1, y1, x2, y2 = clipline(left, top, right, bottom, x1, y1, x2, y2)

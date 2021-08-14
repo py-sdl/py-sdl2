@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 from sdl2 import ext as sdl2ext
-from sdl2.ext.compat import byteify, ExperimentalWarning
+from sdl2.ext.compat import byteify
 from sdl2.ext.pixelaccess import pixels2d
 from sdl2 import surface
 
@@ -81,16 +81,14 @@ class TestSDL2ExtFont(object):
 
         # Try rendering some text
         target = surface.SDL_CreateRGBSurface(0, 32*5, 32, 32, 0, 0, 0, 0)
-        with pytest.warns(ExperimentalWarning):
-            view = pixels2d(target, transpose=False)
+        view = pixels2d(target, transpose=False)
         mid_row = view[16, :].copy()
         font.render_on(target, "TEST!")
         assert not np.all(mid_row == view[16, :]) # ensure surface changed
 
         # Try rendering some text with an offset
         target2 = surface.SDL_CreateRGBSurface(0, 32*5, 32, 32, 0, 0, 0, 0)
-        with pytest.warns(ExperimentalWarning):
-            view2 = pixels2d(target2, transpose=False)
+        view2 = pixels2d(target2, transpose=False)
         font.render_on(target2, "TEST!", offset=(5, 0))
         assert not np.all(mid_row == view2[16, :]) # ensure surface changed
         assert not np.all(view[16, :] == view2[16, :]) # ensure offset worked
