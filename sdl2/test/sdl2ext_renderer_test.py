@@ -81,20 +81,20 @@ class TestSDL2ExtRenderer(object):
         renderer = sdl2ext.Renderer(sf.contents)
         assert addressof(renderer.rendertarget) == addressof(sf.contents)
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
 
         # Create renderer with SDL_Surface pointer
         renderer = sdl2ext.Renderer(sf)
         assert renderer.rendertarget == sf
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
 
         # Create renderer with SoftwareSprite
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
         renderer = sdl2ext.Renderer(sprite)
         assert renderer.rendertarget == sprite
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
         dogc()
 
         # Create renderer with Window
@@ -102,7 +102,7 @@ class TestSDL2ExtRenderer(object):
         renderer = sdl2ext.Renderer(window)
         assert renderer.rendertarget == window
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
         dogc()
 
         # Create renderer with SDL_Window
@@ -110,9 +110,12 @@ class TestSDL2ExtRenderer(object):
         renderer = sdl2ext.Renderer(sdlwindow)
         assert renderer.rendertarget == sdlwindow
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
         del window
 
+        # Test exception on using a destroyed renderer (and random type errors)
+        with pytest.raises(RuntimeError):
+            tst = renderer.sdlrenderer
         with pytest.raises(TypeError):
             sdl2ext.Renderer(None)
         with pytest.raises(TypeError):
@@ -133,6 +136,11 @@ class TestSDL2ExtRenderer(object):
         tx = sdl2ext.Texture(renderer, sf)
         assert isinstance(tx.tx.contents, SDL_Texture)
 
+        # Test destruction and associated behaviour
+        tx.destroy()
+        with pytest.raises(RuntimeError):
+            sdl_tx = tx.tx
+
         # Test creation with surface contents
         tx = sdl2ext.Texture(renderer, sf.contents)
         assert isinstance(tx.tx.contents, SDL_Texture)
@@ -145,10 +153,14 @@ class TestSDL2ExtRenderer(object):
             sdl2ext.Texture(sf, sf)
         with pytest.raises(TypeError):
             sdl2ext.Texture(renderer, renderer)
-        del tx
-        del renderer
-        SDL_FreeSurface(sf)
 
+        # Test exception when accessing Texture with destroyed Renderer
+        renderer.destroy()
+        with pytest.raises(RuntimeError):
+            sdl_tx = tx.tx
+        tx.destroy()  # Ensure texture destruction method doesn't error
+        SDL_FreeSurface(sf)
+        
     def test_Renderer_color(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
                                   0xFF000000,
@@ -170,7 +182,7 @@ class TestSDL2ExtRenderer(object):
         view = sdl2ext.PixelView(sf.contents)
         self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
         del view
-        del renderer
+        renderer.destroy()
         SDL_FreeSurface(sf)
         dogc()
 
@@ -198,7 +210,7 @@ class TestSDL2ExtRenderer(object):
         view = sdl2ext.PixelView(sf.contents)
         self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
         del view
-        del renderer
+        renderer.destroy()
         SDL_FreeSurface(sf)
         dogc()
 

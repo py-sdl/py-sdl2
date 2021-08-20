@@ -136,7 +136,7 @@ class Texture(object):
     texture with a :obj:`~sdl2.ext.Renderer` using the OpenGL backend, the pixel
     data for the surface will internally be converted into an OpenGL texture.
 
-    Once a surface has been converted into a :obj:`Texture`, the surfcace can be
+    Once a surface has been converted into a :obj:`Texture`, the surface can be
     safely deleted if no longer needed.
 
     Args:
@@ -147,31 +147,72 @@ class Texture(object):
     
     """
     def __init__(self, renderer, surface):
-        
-        self._renderer = None
+        # Validate and get reference to the parent renderer
+        self._renderer_ref = None
         if isinstance(renderer, Renderer):
-            self._renderer = renderer.sdlrenderer
+            self._renderer_ref = renderer._renderer_ref
         elif hasattr(renderer, "contents"):
             if isinstance(renderer.contents, render.SDL_Renderer):
-                self._renderer = renderer
-        if not self._renderer:
+                self._renderer_ref = [renderer]
+        if self._renderer_ref is None:
             raise TypeError(
                 "'renderer' must be a valid Renderer object or a pointer to "
                 "an SDL_Renderer."
             )
+        # Convert the passed surface into a texture
         surface = _get_target_surface(surface)
-        self.tx = render.SDL_CreateTextureFromSurface(self._renderer, surface)
-        if not self.tx:
+        self._tx = render.SDL_CreateTextureFromSurface(self._renderer, surface)
+        if not self._tx:
             raise_sdl_err("creating the texture")
 
     def __del__(self):
-        if hasattr(self, "tx") and self.tx != None:
-            render.SDL_DestroyTexture(self.tx)
+        if hasattr(self, "_tx"):
+            self.destroy()
+
+    @property
+    def _renderer(self):
+        # NOTE: This is sort of a hack to get around a ctypes problem. Basically,
+        # if the parent renderer of a texture is destroyed before the texture
+        # itself, destroying or doing anything with that texture will result in a
+        # segfault. By wrapping the renderer in a List, we can overwrite it with
+        # None when destroyed (within the Renderer class) and detect that in any
+        # child textures to avoid any memory-unsafe behaviour.
+        return self._renderer_ref[0]
+
+    @property
+    def tx(self):
+        """:obj:`~sdl2.SDL_Texture`: The underlying base SDL texture object.
+        Can be used to perform operations with the texture using the base
+        PySDL2 bindings.
+
+        """
+        if self._tx is None:
+            raise RuntimeError(
+                "Cannot use a texture after it has been destroyed."
+            )
+        elif self._renderer_ref[0] is None:
+            raise RuntimeError(
+                "Cannot use a texture after its parent renderer has been "
+                "destroyed."
+            )
+        return self._tx
 
     @property
     def size(self):
         """tuple: The width and height (in pixels) of the texture."""
         return _get_texture_size(self.tx)
+
+    def destroy(self):
+        """Deletes the texture and frees its associated memory.
+        
+        When a texture is no longer needed, it should be destroyed using this
+        method to free up memory for new textures. After being destroyed, a
+        texture can no longer be used.
+
+        """
+        if self._tx and self._renderer_ref[0]:
+            render.SDL_DestroyTexture(self._tx)
+            self._tx = None
 
     @property
     def scale_mode(self):
@@ -270,7 +311,7 @@ class Renderer(object):
 
     def __init__(self, target, backend=-1, logical_size=None,
                  flags=render.SDL_RENDERER_ACCELERATED):
-        self.sdlrenderer = None
+        self._renderer_ref = None
         self.rendertarget = None
 
         available = self._get_render_drivers()
@@ -285,20 +326,20 @@ class Renderer(object):
             index = backend
 
         if isinstance(target, Window):
-            self.sdlrenderer = render.SDL_CreateRenderer(target.window, index,
-                                                         flags)
+            _renderer = render.SDL_CreateRenderer(target.window, index, flags)
         elif isinstance(target, video.SDL_Window):
-            self.sdlrenderer = render.SDL_CreateRenderer(target, index, flags)
+            _renderer = render.SDL_CreateRenderer(target, index, flags)
         elif isinstance(target, SoftwareSprite):
-            self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target.surface)
+            _renderer = render.SDL_CreateSoftwareRenderer(target.surface)
         elif isinstance(target, surface.SDL_Surface):
-            self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target)
+            _renderer = render.SDL_CreateSoftwareRenderer(target)
         elif "SDL_Surface" in str(type(target)):
-            self.sdlrenderer = render.SDL_CreateSoftwareRenderer(target.contents)
+            _renderer = render.SDL_CreateSoftwareRenderer(target.contents)
         else:
             raise TypeError("unsupported target type")
-        if not self.sdlrenderer:
+        if not _renderer:
             raise_sdl_err("creating the SDL renderer")
+        self._renderer_ref = [_renderer]
 
         self.rendertarget = target
         self.color = (0, 0, 0, 0)  # Set black as the default draw color
@@ -307,10 +348,8 @@ class Renderer(object):
             self.logical_size = logical_size
 
     def __del__(self):
-        if self.sdlrenderer:
-            render.SDL_DestroyRenderer(self.sdlrenderer)
-        self.sdlrenderer = None
-        self.rendertarget = None
+        if self._renderer_ref is not None:
+            self.destroy()
 
     def _get_render_drivers(self):
         renderers = []
@@ -322,6 +361,19 @@ class Renderer(object):
                 renderers.append(stringify(info.name))
             error.SDL_ClearError()
         return renderers
+
+    @property
+    def sdlrenderer(self):
+        """:obj:`~sdl2.SDL_Renderer`: The underlying base SDL renderer object.
+        Can be used to perform operations with the renderer using the base
+        PySDL2 bindings.
+
+        """
+        if self._renderer_ref[0] is None:
+            raise RuntimeError(
+                "Cannot use a renderer after it has been destroyed."
+            )
+        return self._renderer_ref[0]
 
     @property
     @deprecated
@@ -410,6 +462,19 @@ class Renderer(object):
         ret = render.SDL_RenderSetScale(self.sdlrenderer, sx, sy)
         if ret != 0:
             raise_sdl_err("setting the scaling factors for the renderer")
+
+    def destroy(self):
+        """Destroys the renderer and any associated textures.
+
+        When a renderer is no longer needed, it should be destroyed using this
+        method to free up its associated memory. After being destroyed, a
+        renderer can no longer be used.
+        
+        """
+        if self._renderer_ref[0]:
+            render.SDL_DestroyRenderer(self._renderer_ref[0])
+            self._renderer_ref[0] = None
+            self.rendertarget = None
 
     def reset_logical_size(self):
         """Resets the logical size of the renderer to its original value."""
