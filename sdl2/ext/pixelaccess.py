@@ -4,8 +4,9 @@ from .array import MemoryView
 from ..surface import SDL_MUSTLOCK, SDL_LockSurface, SDL_UnlockSurface, \
     SDL_Surface
 from ..stdinc import Uint8
+from .draw import prepare_color
 from .sprite import SoftwareSprite
-from .draw import _get_target_surface, prepare_color
+from .surface import _get_target_surface
 
 try:
     import numpy
@@ -23,8 +24,8 @@ class PixelView(MemoryView):
     """A 2D memory view for reading and writing SDL surface pixels.
 
     This class uses a ``view[y][x]`` layout, with the y-axis as the first
-    dimension and the x-axis as the second. ``PixelView`` objects do not support
-    array slicing.
+    dimension and the x-axis as the second. ``PixelView`` objects currently do
+    not support array slicing or negative indexing.
 
     If necessary, the source surface will be locked when accessing its
     pixel data. The lock will be removed once the :class:`PixelView` is
@@ -41,6 +42,7 @@ class PixelView(MemoryView):
             SDL surface to access with the view.
 
     """
+    # TODO: Add support for negative indexing and/or out-of-bounds errors?
     def __init__(self, source):
         if isinstance(source, SoftwareSprite):
             self._surface = source.surface

@@ -3,9 +3,10 @@ import os
 from .. import surface, rect, pixels
 from .common import SDLError
 from .compat import *
-from .sprite import SoftwareSprite
 from .color import Color, convert_to_color
-from .draw import _get_target_surface, prepare_color
+from .draw import prepare_color
+from .sprite import SoftwareSprite
+from .surface import _get_target_surface
 
 _HASSDLTTF = True
 try:

@@ -7,6 +7,7 @@ from .color import convert_to_color
 from .common import raise_sdl_err
 from .compat import deprecated, stringify, byteify, isiterable
 from .sprite import SoftwareSprite, TextureSprite
+from .surface import _get_target_surface
 from .window import Window
 
 __all__ = ["set_texture_scale_quality", "Renderer", "Texture"]
@@ -28,19 +29,6 @@ def _get_texture_size(texture):
     if ret < 0:
         raise_sdl_err("getting texture attributes")
     return (w.value, h.value)
-
-
-def _get_target_surface(target, argname="surface"):
-    """Gets the SDL_surface from the passed target."""
-    if hasattr(target, "surface"):
-        target = target.surface
-    if isinstance(target, surface.SDL_Surface):
-        rtarget = target
-    elif "SDL_Surface" in str(type(target)):
-        rtarget = target.contents
-    else:
-        raise TypeError("{0} must be a valid SDL_Surface".format(argname))
-    return rtarget
 
 
 def _sanitize_points(points):
@@ -160,7 +148,7 @@ class Texture(object):
                 "an SDL_Renderer."
             )
         # Convert the passed surface into a texture
-        surface = _get_target_surface(surface)
+        surface = _get_target_surface(surface, "surface")
         self._tx = render.SDL_CreateTextureFromSurface(self._renderer, surface)
         if not self._tx:
             raise_sdl_err("creating the texture")

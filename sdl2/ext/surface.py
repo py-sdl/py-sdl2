@@ -16,6 +16,21 @@ def _get_rect_tuple(r, argname):
         raise TypeError(e.format(argname))
 
 
+def _get_target_surface(target, argname="target"):
+    """Gets the SDL_surface from the passed target."""
+    if hasattr(target, "surface"):  # i.e. if SoftwareSprite
+        rtarget = target.surface  
+    elif isinstance(target, SDL_Surface):
+        rtarget = target
+    elif "SDL_Surface" in str(type(target)):
+        rtarget = target.contents
+    else:
+        raise TypeError(
+            "{0} must be a valid Sprite or SDL Surface".format(argname)
+        )
+    return rtarget
+
+
 def subsurface(surface, area):
     """Creates a new :obj:`~sdl2.SDL_Surface` from a part of another surface.
 

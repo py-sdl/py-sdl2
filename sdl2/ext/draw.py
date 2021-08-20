@@ -4,22 +4,9 @@ from .array import to_ctypes
 from .color import convert_to_color
 from .. import surface, pixels, rect
 from .algorithms import clipline
-from .sprite import SoftwareSprite
+from .surface import _get_target_surface
 
 __all__ = ["prepare_color", "fill", "line"]
-
-
-def _get_target_surface(target, argname="target"):
-    """Gets the SDL_surface from the passed target."""
-    if isinstance(target, surface.SDL_Surface):
-        rtarget = target
-    elif isinstance(target, SoftwareSprite):
-        rtarget = target.surface
-    elif "SDL_Surface" in str(type(target)):
-        rtarget = target.contents
-    else:
-        raise TypeError("{0} must be a Sprite or SDL_Surface".format(argname))
-    return rtarget
 
 
 def prepare_color(color, target):
