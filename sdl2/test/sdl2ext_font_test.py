@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import pytest
-import numpy as np
 from sdl2 import ext as sdl2ext
 from sdl2.ext.compat import byteify, ExperimentalWarning
 from sdl2.ext.pixelaccess import pixels2d
@@ -46,7 +45,7 @@ class TestSDL2ExtFont(object):
         # Try SDL_Surface surface
         font = sdl2ext.BitmapFont(sf.contents, (32, 32), FONTMAP)
         assert font.size == (32, 32)
-        
+
         # Try SDL_Surface pointer surface
         font = sdl2ext.BitmapFont(sf, (32, 32), FONTMAP)
         assert font.size == (32, 32)
@@ -72,6 +71,7 @@ class TestSDL2ExtFont(object):
             font.render("this_should_fail")
 
     def test_BitmapFont_render_on(self):
+        np = pytest.importorskip("numpy", reason="numpy module is not available")
         # Initialize font, surface, and BitmapFont for tests
         fontpath = byteify(RESOURCES.get_path("font.bmp"), "utf-8")
         sf = surface.SDL_LoadBMP(fontpath)
