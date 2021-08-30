@@ -6,6 +6,11 @@ from sdl2.ext.color import Color, COLOR
 from sdl2.ext.compat import ExperimentalWarning
 from sdl2 import ext as sdl2ext
 
+try:
+    import numpy
+    _HASNUMPY = True
+except:
+    _HASNUMPY = False
 
 class TestSDL2ExtDraw(object):
     __tags__ = ["sdl", "sdl2ext"]
@@ -21,6 +26,7 @@ class TestSDL2ExtDraw(object):
     def teardown_class(cls):
         sdl2ext.quit()
 
+    @pytest.mark.skipif(not _HASNUMPY, reason="pixels3d requires numpy module")
     def test_fill(self):
         # Initialize colour and surface/view
         WHITE = (255, 255, 255)
@@ -63,6 +69,7 @@ class TestSDL2ExtDraw(object):
         with pytest.raises(ValueError):
             sdl2ext.fill(sf.contents, WHITE, (1, 2, 3))
 
+    @pytest.mark.skipif(not _HASNUMPY, reason="pixels3d requires numpy module")
     def test_line(self):
         # Initialize colour and surface/view
         WHITE = (255, 255, 255)
