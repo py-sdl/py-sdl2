@@ -5,7 +5,7 @@ This describes the latest changes between the PySDL2 releases.
 0.9.9
 -----
 
-Released on XXXX-XX-XX.
+Released on 2021-09-02.
 
 New Features:
 
@@ -13,8 +13,9 @@ New Features:
 
 Fixed bugs:
 
-* Reverted the fix for (issue #139), which inadvertantly broke creating
-  :obj:~sdl2.ext.Renderer` objects from :obj:`~sdl2.ext.Window` objects.
+* Reverted the fix for (issue #139), which inadvertantly caused a serious bug
+  that prevented usage of any non-software renderer with windows created using
+  :obj:`~sdl2.ext.Window` objects.
 
 
 0.9.8
