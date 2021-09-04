@@ -31,6 +31,11 @@ class PixelView(MemoryView):
     pixel data. The lock will be removed once the :class:`PixelView` is
     garbage-collected or deleted.
 
+    .. warning::
+       The source surface should not be freed or deleted until the view is no
+       longer needed. Accessing the view for a freed surface will likely cause
+       Python to hard-crash.
+
     .. note:: 
        This class is implemented on top of the :class:`~sdl2.ext.MemoryView`
        class. As such, it makes heavy use of recursion to access rows and
@@ -148,7 +153,7 @@ def pixels2d(source, transpose=True):
     as the first dimension, contrary to PIL and PyOpenGL convention. To obtain 
     an ``arr[y][x]`` array, set the ``transpose`` argument to ``False``.
 
-    .. note::
+    .. warning::
        The source surface should not be freed or deleted until the array is no
        longer needed. Accessing the array for a freed surface will likely cause
        Python to hard-crash.
@@ -193,9 +198,16 @@ def pixels3d(source, transpose=True):
 
     By default, the array is returned in ``arr[x][y]`` format with the x-axis
     as the first dimension, contrary to PIL and PyOpenGL convention. To obtain 
-    an ``arr[y][x]`` array, set the ``transpose`` argument to ``False``
+    an ``arr[y][x]`` array, set the ``transpose`` argument to ``False``.
 
-    .. note::
+    When creating a 3D array view, the order of the RGBA values for each pixel
+    may be reversed for some common surface pixel formats (e.g. 'BGRA' for a
+    ``SDL_PIXELFORMAT_ARGB8888`` surface). To correct this, you can call
+    ``numpy.flip(arr, axis=2)`` to return a view of the array with the expected
+    channel order.
+
+
+    .. warning::
        The source surface should not be freed or deleted until the array is no
        longer needed. Accessing the array for a freed surface will likely cause
        Python to hard-crash.
@@ -238,6 +250,12 @@ def surface_to_ndarray(source, ndim=3):
     of a view, meaning that modifying the returned array will not affect the
     original surface (or vice-versa). This function is also slightly safer,
     as it does not assume that the source surface has been kept in memory.
+
+    When creating a 3D array copy, the order of the RGBA values for each pixel
+    may be reversed for some common surface pixel formats (e.g. 'BGRA' for a
+    ``SDL_PIXELFORMAT_ARGB8888`` surface). To correct this, you can call
+    ``numpy.flip(arr, axis=2)`` to return a view of the array with the expected
+    channel order.
 
     .. note::
        Unlike :func:`~sdl2.ext.pixels2d` or :func:`~sdl2.ext.pixels3d`, this
