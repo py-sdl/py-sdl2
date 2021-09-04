@@ -26,19 +26,20 @@ is32bit = sys.maxsize <= 2**32
 ismacos = sys.platform == "darwin"
 skip_formats = []
 
-# SVG unsupported on SDL2_image < 2.0.2
-if _HASSDLIMAGE and sdlimage.dll.version < 2002:
-    skip_formats.append("svg")
+if _HASSDLIMAGE:
+    # SVG unsupported on SDL2_image < 2.0.2
+    if sdlimage.dll.version < 2002:
+        skip_formats.append("svg")
 
-# As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
-# XCF support is also broken in official SDL2_image macOS .frameworks
-if is32bit or ismacos:
-    skip_formats.append("xcf")
+    # As of SDL2_image 2.0.5, XCF support seems to be broken (fails to load
+    # on 32-bit, transparent surface on 64-bit)
+    # XCF support is also broken in official SDL2_image macOS .frameworks
+    if sdlimage.dll.version == 2005 or ismacos:
+        skip_formats.append("xcf")
 
-# WEBP support seems to be broken in the 32-bit Windows SDL2_image 2.0.2 binary
-bad_webp = is32bit and sdlimage.dll.version == 2002
-if bad_webp:
-    skip_formats.remove("webp")
+    # WEBP support is broken in the 32-bit Windows SDL2_image 2.0.2 binary
+    if is32bit and sdlimage.dll.version == 2002:
+        skip_formats.append("webp")
 
 
 # List of lossy/non-color formats that shouldn't be compared against reference
@@ -71,22 +72,22 @@ class TestSDL2ExtImage(object):
     def check_image_contents(self, img):
         # Test different coordinates on surface
         pxview = sdl2ext.PixelView(img)
-        match = (
-            color.ARGB(pxview[0][0]) == colors['red'] and
-            color.ARGB(pxview[0][16]) == colors['blue'] and
-            color.ARGB(pxview[0][31]) == colors['white'] and
-            color.ARGB(pxview[31][31]) == colors['black']
-        )
+        img_red = color.ARGB(pxview[0][0])
+        img_blue = color.ARGB(pxview[0][16])
+        img_white = color.ARGB(pxview[0][31])
+        img_black = color.ARGB(pxview[31][31])
         del pxview
-        return match
-
+        assert img_red == colors['red']
+        assert img_blue == colors['blue']
+        assert img_white == colors['white']
+        assert img_black == colors['black']
 
     def test_load_bmp(self):
         # Test loading a basic BMP image
         img_path = os.path.join(resource_path, "surfacetest.bmp")
         sf = sdl2ext.load_bmp(img_path)
         assert isinstance(sf, surface.SDL_Surface)
-        assert self.check_image_contents(sf)
+        self.check_image_contents(sf)
         surface.SDL_FreeSurface(sf)
 
         # Test exception on missing file
@@ -112,14 +113,19 @@ class TestSDL2ExtImage(object):
         assert os.path.exists(outpath)
         sf_saved = sdl2ext.load_bmp(outpath)
         assert isinstance(sf_saved, surface.SDL_Surface)
-        assert self.check_image_contents(sf_saved)
+        self.check_image_contents(sf_saved)
 
         # Try modifying/overwriting the existing BMP
         sdl2ext.fill(sf, (0, 255, 0, 255))
         sdl2ext.save_bmp(sf, outpath, overwrite=True)
         sf_saved2 = sdl2ext.load_bmp(outpath)
         assert isinstance(sf_saved2, surface.SDL_Surface)
-        assert not self.check_image_contents(sf_saved2)
+        with pytest.raises(AssertionError):
+            self.check_image_contents(sf_saved2)
+
+        surface.SDL_FreeSurface(sf)
+        surface.SDL_FreeSurface(sf_saved)
+        surface.SDL_FreeSurface(sf_saved2)
 
         # Test existing file exception with overwrite=False
         with pytest.raises(RuntimeError):
@@ -145,7 +151,7 @@ class TestSDL2ExtImage(object):
             assert isinstance(sf, surface.SDL_Surface)
             assert sf.format.contents.format == pixels.SDL_PIXELFORMAT_ARGB8888
             if fmt not in skip_color_check:
-                assert self.check_image_contents(sf)
+                self.check_image_contents(sf)
             surface.SDL_FreeSurface(sf)
 
             sf2 = sdl2ext.load_img(img_path, as_argb=False)
@@ -173,7 +179,7 @@ class TestSDL2ExtImage(object):
         # Convert the image to an SDL surface and verify it worked
         sf = sdl2ext.pillow_to_surface(pil_img)
         assert isinstance(sf, surface.SDL_Surface)
-        assert self.check_image_contents(sf)
+        self.check_image_contents(sf)
         surface.SDL_FreeSurface(sf)
 
         # Try converting a palette image
@@ -181,7 +187,7 @@ class TestSDL2ExtImage(object):
         sfp = sdl2ext.pillow_to_surface(palette_img)
         pxformat = sfp.format.contents
         assert isinstance(sfp, surface.SDL_Surface)
-        assert self.check_image_contents(sfp)
+        self.check_image_contents(sfp)
         assert pxformat.BytesPerPixel == 4
         surface.SDL_FreeSurface(sfp)
 
@@ -209,7 +215,7 @@ class TestSDL2ExtImage(object):
             assert isinstance(sf, surface.SDL_Surface)
             assert sf.format.contents.format == pixels.SDL_PIXELFORMAT_ARGB8888
             if fmt not in skip_color_check:
-                assert self.check_image_contents(sf)
+                self.check_image_contents(sf)
             surface.SDL_FreeSurface(sf)
 
 
