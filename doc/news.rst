@@ -73,6 +73,10 @@ Fixed Bugs:
   ``TTF_RenderUTF`` instead of ``TTF_RenderUTF8``.
 * Fixed a bug introduced in 0.9.9 where the ``SDL_WINDOW_INPUT_GRABBED``
   constant was no longer exported.
+* Changed the functions in the :mod:`sdl2.ext.pixelaccess` module to no longer
+  try to unlock RLE surfaces once their corresponding view objects are deleted.
+  This prevents segmentation faults when a view is garbage-collected but the
+  surface has already been freed.
 
 
 0.9.9

@@ -5,7 +5,11 @@ from sdl2.ext.compat import byteify
 from sdl2.ext.pixelaccess import pixels2d
 from sdl2 import surface
 
-sdlttf = pytest.importorskip("sdl2.sdlttf")
+_HASSDLTTF = True
+try:
+    from .. import sdlttf
+except ImportError:
+    _HASSDLTTF = False
 
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")
@@ -120,6 +124,7 @@ class TestSDL2ExtFont(object):
         assert font.can_render("473285435hfsjadfhriuewtrhefd")
         assert not font.can_render("testä")
 
+    @pytest.mark.skipif(not _HASSDLTTF, reason="SDL_TTF library not available")
     def test_FontManager(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"),
                                  bg_color=(100, 0, 0))
@@ -128,6 +133,7 @@ class TestSDL2ExtFont(object):
         assert fm.size == 16
         assert fm.bg_color == sdl2ext.Color(100, 0, 0, 0)
 
+    @pytest.mark.skipif(not _HASSDLTTF, reason="SDL_TTF library not available")
     def test_FontManager_default_font(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
         assert fm.default_font == "tuffy"
@@ -144,6 +150,7 @@ class TestSDL2ExtFont(object):
         assert fm.default_font == "tuffy.copy"
         assert fm.size == 16
 
+    @pytest.mark.skipif(not _HASSDLTTF, reason="SDL_TTF library not available")
     def test_FontManager_add(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
         assert "tuffy" in fm.aliases
@@ -171,6 +178,7 @@ class TestSDL2ExtFont(object):
         fm.add(RESOURCES.get_path("tuffy.ttf"), size=12)
         assert isinstance(fm.fonts["tuffy"][12].contents, sdlttf.TTF_Font)
 
+    @pytest.mark.skipif(not _HASSDLTTF, reason="SDL_TTF library not available")
     def test_FontManager_close(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
         fm.add(RESOURCES.get_path("tuffy.ttf"), size=20)
@@ -179,6 +187,7 @@ class TestSDL2ExtFont(object):
         assert fm.fonts == {}
         # How to make sure TTF_CloseFont was called on each loaded font?
 
+    @pytest.mark.skipif(not _HASSDLTTF, reason="SDL_TTF library not available")
     def test_FontManager_render(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
         text_surf = fm.render("text")

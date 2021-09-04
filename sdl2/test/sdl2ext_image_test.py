@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+import sdl2
 from sdl2 import ext as sdl2ext
 from sdl2.ext import color
 from sdl2 import surface
@@ -46,6 +47,10 @@ if _HASSDLIMAGE:
 # during tests
 skip_color_check = ['gif', 'jpg', 'lbm', 'pbm', 'pgm', 'svg', 'webp']
 
+# SDL 2.0.10 has a bug that messes up converting surfaces with transparency
+if sdl2.dll.version == 2010:
+    skip_color_check.append('xpm')
+
 colors = {
     'red': color.Color(255, 0, 0, 255),
     'blue': color.Color(0, 0, 255, 255),
@@ -76,7 +81,6 @@ class TestSDL2ExtImage(object):
         img_blue = color.ARGB(pxview[0][16])
         img_white = color.ARGB(pxview[0][31])
         img_black = color.ARGB(pxview[31][31])
-        del pxview
         assert img_red == colors['red']
         assert img_blue == colors['blue']
         assert img_white == colors['white']

@@ -18,7 +18,7 @@ except ImportError:
 __all__ = [
     "PixelView", "SurfaceArray", "pixels2d", "pixels3d", "surface_to_ndarray"
 ]
-
+# TODO: immediate informative errors for 2D views of 3 byte-per-px surfaces
 
 class PixelView(MemoryView):
     """A 2D memory view for reading and writing SDL surface pixels.
@@ -27,9 +27,9 @@ class PixelView(MemoryView):
     dimension and the x-axis as the second. ``PixelView`` objects currently do
     not support array slicing or negative indexing.
 
-    If necessary, the source surface will be locked when accessing its
-    pixel data. The lock will be removed once the :class:`PixelView` is
-    garbage-collected or deleted.
+    If the source surface is RLE-accelerated, it will be locked automatically
+    when the view is created and you will need to re-lock the surface using
+    :func:`SDL_UnlockSurface` once you are done with the view.
 
     .. warning::
        The source surface should not be freed or deleted until the view is no
@@ -102,11 +102,6 @@ class PixelView(MemoryView):
         value = prepare_color(value, self._surface)
         target[start // self.itemsize] = value
 
-    def __del__(self):
-        if self._surface:
-            if SDL_MUSTLOCK(self._surface):
-                SDL_UnlockSurface(self._surface)
-
 
 def _ndarray_prep(source, funcname, ndim):
     # Internal function for preparing SDL_Surfaces for casting to ndarrays
@@ -145,9 +140,10 @@ def pixels2d(source, transpose=True):
     """Creates a 2D Numpy array view for a given SDL surface.
 
     This function casts the surface pixels to a 2D Numpy array view, providing
-    read and write access to the underlying surface. If necessary, the source
-    surface will be locked when the array view is created and unlocked when it
-    is deleted.
+    read and write access to the underlying surface. If the source surface is
+    RLE-accelerated, it will be locked automatically when the view is created
+    and you will need to re-lock the surface using :func:`SDL_UnlockSurface`
+    once you are done with the array.
 
     By default, the array is returned in ``arr[x][y]`` format with the x-axis
     as the first dimension, contrary to PIL and PyOpenGL convention. To obtain 
@@ -192,9 +188,10 @@ def pixels3d(source, transpose=True):
     """Creates a 3D Numpy array view for a given SDL surface.
 
     This function casts the surface pixels to a 3D Numpy array view, providing
-    read and write access to the underlying surface. If necessary, the source
-    surface will be locked when the array view is created and unlocked when it
-    is deleted.
+    read and write access to the underlying surface. If the source surface is
+    RLE-accelerated, it will be locked automatically when the view is created
+    and you will need to re-lock the surface using :func:`SDL_UnlockSurface`
+    once you are done with the array.
 
     By default, the array is returned in ``arr[x][y]`` format with the x-axis
     as the first dimension, contrary to PIL and PyOpenGL convention. To obtain 
@@ -205,7 +202,6 @@ def pixels3d(source, transpose=True):
     ``SDL_PIXELFORMAT_ARGB8888`` surface). To correct this, you can call
     ``numpy.flip(arr, axis=2)`` to return a view of the array with the expected
     channel order.
-
 
     .. warning::
        The source surface should not be freed or deleted until the array is no
@@ -324,8 +320,3 @@ class SurfaceArray(numpy.ndarray if _HASNUMPY else object):
             return
         self._source = getattr(sfarray, '_source', None)
         self._surface = getattr(sfarray, '_surface', None)
-
-    def __del__(self):
-        if self._surface:
-            if SDL_MUSTLOCK(self._surface):
-                SDL_UnlockSurface(self._surface)

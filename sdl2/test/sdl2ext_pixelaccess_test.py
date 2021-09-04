@@ -55,8 +55,6 @@ class TestSDL2ExtPixelAccess(object):
         pxview2 = sdl2ext.PixelView(imgsurf)
         assert pxview2[31][0] == 0xFF808080
 
-        del pxview
-        del pxview2
         surface.SDL_FreeSurface(imgsurf)
 
 
@@ -78,8 +76,6 @@ class TestSDL2ExtPixelAccess(object):
         nparray2 = sdl2ext.pixels2d(imgsurf, transpose=False)
         assert nparray2[31][0] == 0xFF808080
 
-        del nparray
-        del nparray2
         surface.SDL_FreeSurface(imgsurf)
 
 
@@ -112,8 +108,6 @@ class TestSDL2ExtPixelAccess(object):
         nparray2 = sdl2ext.pixels3d(imgsurf, transpose=False)
         assert color.Color(*nparray2[31][0]) == color.Color(*grey)
 
-        del nparray
-        del nparray2
         surface.SDL_FreeSurface(imgsurf)
 
 
@@ -145,6 +139,5 @@ class TestSDL2ExtPixelAccess(object):
         arr_view = sdl2ext.pixels3d(rgbasurf, transpose=False)
         assert color.Color(*arr_view[31][0]) != color.Color(*grey)
 
-        del arr_view
         surface.SDL_FreeSurface(imgsurf)
         surface.SDL_FreeSurface(rgbasurf)
