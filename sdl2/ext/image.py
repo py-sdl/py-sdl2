@@ -305,7 +305,7 @@ def load_image(fname, enforce=None):
         raise ValueError("enforce must be either 'PIL' or 'SDL', if set")
     elif enforce == "PIL" and not _HASPIL:
         raise UnsupportedError("cannot use PIL (not found)")
-    if fname is None:
+    if fname is None or not hasattr(fname, "upper"):
         raise ValueError("fname must be a string")
 
     name = byteify(fname)

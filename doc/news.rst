@@ -15,6 +15,56 @@ New Features:
   inline documentation, and more flexible handling of argument types and
   SDL errors (PR #199)
 * Updated to wrap new functions and constants in in SDL2 2.0.18 (PR #197)
+* Documented and improved the internal :func:`sdl2.ext.byteify` and
+  :func:`sdl2.ext.stringify` functions.
+* Re-documented and improved input handling and type checking for the
+  :func:`sdl2.ext.subsurface` function.
+* Added automatic inference of compression format from the filenames of 
+  .tar archives for the :mod:`sdl2.ext.resources` submodule.
+* Added up-to-date documentation for the :mod:`sdl2.sdlttf` and
+  :mod:`sdl.sdlimage` modules.
+* Added a new class :class:`sdl2.ext.Texture` for creating renderer textures
+  from SDL surfaces, as a basic wrapper for the :obj:`sdl2.SDL_Texture`
+  structure.
+* Added a new function :func:`sdl2.ext.set_texture_scale_quality` that globally
+  sets the scaling method (nearest-neighbour, linear filtering, or anisotropic
+  filtering) to use for new SDL textures.
+* Added a new method :meth:`sdl2.ext.Renderer.reset_logical_size` to reset a
+  Renderer's logical size to its original value.
+* Added a new method :meth:`sdl2.ext.Renderer.destroy` to safely destroy and
+  free memory associated with a Renderer after it is no longer needed.
+* Added support for subpixel precision (i.e. using float coordinates)
+  with the drawing and copying methods of the :class:`~sdl2.ext.Renderer` class
+  when using SDL2 2.0.10 or newer.
+* Added a new function :func:`sdl2.ext.surface_to_ndarray` that returns a
+  non-transposed copy of a given SDL surface as a 2D or 3D Numpy array.
+* Added new functions :func:`sdl2.ext.load_bmp` and :func:`sdl2.ext.load_img`
+  for importing image files using SDL2 and SDL_image, respectively. Both new
+  functions automatically convert the obtained surfaces to the ARGB8888 pixel
+  format by default.
+* Added a new function :func:`sdl2.ext.save_bmp` for saving SDL surfaces to
+  BMP files.
+* Added a new function :func:`sdl2.ext.pillow_to_surface` for converting
+  :obj:`PIL.Image.Image` objects from the Pillow library to SDL surfaces.
+
+API Changes:
+
+* Updated the :meth:`~sdl2.ext.Renderer.draw_line` and
+  :meth:`~sdl2.ext.Renderer.draw_point` methods of the
+  :class:`~sdl2.ext.Renderer` class to accept coordinates as lists of ``(x, y)``
+  tuples or :obj:`~sdl2.SDL_Point`s in addition to flat ``[x, y, x, y, x, y]``
+  lists.
+* Updated the :meth:`~sdl2.ext.Renderer.draw_rect` and
+  :meth:`~sdl2.ext.Renderer.fill` methods of the
+  :class:`~sdl2.ext.Renderer` class to accept coordinates as lists of
+  :obj:`~sdl2.SDL_Rects`s in addition to lists of ``(x, y, w, h)`` tuples.
+* Updated the :meth:`~sdl2.ext.Renderer.copy` method of the
+  :class:`~sdl2.ext.Renderer` class to accept an ``(x, y)`` tuple as a
+  destination, inferring the destination width and height from the dimensions
+  of the copied texture.
+* Changed the ``index`` argument for the :class:`~sdl2.ext.Renderer` class to
+  take the name of the reqested rendering back end as a string instead of an
+  index for better clarity and cross-platform consistency.
 
 Fixed Bugs:
 
@@ -34,7 +84,7 @@ New Features:
 
 * Updated to wrap new functions and constants in in SDL2 2.0.16 (PR #190)
 
-Fixed bugs:
+Fixed Bugs:
 
 * Reverted the fix for (issue #139), which inadvertantly caused a serious bug
   that prevented usage of any non-software renderer with windows created using

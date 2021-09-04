@@ -285,7 +285,7 @@ class TestSDLRender(object):
         print("Render drivers loadable on the current system:")
         for rname in renderers:
             w, h = max_sizes[rname]
-            print(" - " + rname + " (max texture size: {0}x{1})".formast(w, h))
+            print(" - " + rname + " (max texture size: {0}x{1})".format(w, h))
 
     def test_SDL_CreateDestroyTexture(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
