@@ -47,7 +47,7 @@ Initialization and library information functions
               print(err)
 
       # Initialize JPEG and PNG support at the same times
-      flags = IMG_INIT_JPG || IMG_INIT_PNG
+      flags = IMG_INIT_JPG | IMG_INIT_PNG
       IMG_Init(flags)
       if IMG_Init(0) != flags: # verify both libraries loaded properly
           print(IMG_GetError())
