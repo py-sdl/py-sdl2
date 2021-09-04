@@ -10,6 +10,7 @@ from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
 from sdl2.rect import SDL_FPoint
 from sdl2.pixels import SDL_Color
 from sdl2 import render, video, surface, pixels, blendmode, rect
+from sdl2.ext.compat import byteify, stringify
 from sdl2.ext.pixelaccess import PixelView
 
 # TODO: Ensure all functions in module have corresponding tests
@@ -142,20 +143,30 @@ class TestSDLRender(object):
     def test_SDL_GetRenderDriverInfo(self):
         renderers = []
         errs = []
+        pxformats = {}
         drivers = render.SDL_GetNumRenderDrivers()
         for x in range(drivers):
             sdl2.SDL_ClearError()
             info = render.SDL_RendererInfo()
             ret = render.SDL_GetRenderDriverInfo(x, info)
             if ret != 0:
-                err = sdl2.SDL_GetError().decode("utf-8")
+                err = stringify(sdl2.SDL_GetError())
                 errs.append("Renderer {0} error: {1}".format(x, err))
-            else:
-                renderers.append(info.name.decode("utf-8"))
-        print("Render drivers supported by current SDL2 binary:")
-        print(renderers)
+                continue
+            rname = stringify(info.name)
+            renderers.append(rname)
+            pxformats[rname] = []
+            for i in range(info.num_texture_formats):
+                fmt_name = pixels.SDL_GetPixelFormatName(info.texture_formats[i])
+                pxformats[rname].append(stringify(fmt_name).split("_")[-1])
         assert len(renderers)
         assert "software" in renderers
+        print("Render drivers supported by current SDL2 binary:")
+        print(renderers)
+        print("\nTexture formats supported by each renderer:")
+        for rname in renderers:
+            print(rname)
+            print(" - " + " ".join(pxformats[rname]))
 
     def test_SDL_CreateWindowAndRenderer(self):
         window = POINTER(video.SDL_Window)()
@@ -238,33 +249,43 @@ class TestSDLRender(object):
         dogc()
 
     def test_SDL_GetRendererInfo(self):
-        failed = 0
+        renderers = []
+        max_sizes = {}
+        errs = []
         rcount = render.SDL_GetNumRenderDrivers()
         for i in range(rcount):
-            window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
-                                            video.SDL_WINDOW_HIDDEN)
+            sdl2.SDL_ClearError()
+            window = video.SDL_CreateWindow(
+                b"Test", 10, 10, 10, 10, video.SDL_WINDOW_HIDDEN
+            )
             assert isinstance(window.contents, video.SDL_Window)
             renderer = render.SDL_CreateRenderer(window, i, self._RENDERFLAGS)
             if not (renderer and renderer.contents):
-                failed += 1
+                err = stringify(sdl2.SDL_GetError())
+                errs.append("Unable to create renderer {0}: {1}".format(i, err))
                 video.SDL_DestroyWindow(window)
                 continue
             assert isinstance(renderer.contents, render.SDL_Renderer)
             info = render.SDL_RendererInfo()
             ret = render.SDL_GetRendererInfo(renderer, byref(info))
-            assert ret == 0
+            if ret == 0:
+                rname = stringify(info.name)
+                max_size = (info.max_texture_width, info.max_texture_height)
+                renderers.append(rname)
+                max_sizes[rname] = max_size
+            else:
+                err = stringify(sdl2.SDL_GetError())
+                errs.append("Renderer {0} error: {1}".format(i, err))
             render.SDL_DestroyRenderer(renderer)
-
-            #self.assertRaises(sdl.SDLError, render.SDL_GetRendererInfo,
-            #                  renderer)
-
             video.SDL_DestroyWindow(window)
-        assert not (failed == rcount), "could not create a renderer"
-        with pytest.raises((AttributeError, TypeError)):
-            render.SDL_GetRendererInfo(None)
-        with pytest.raises((AttributeError, TypeError)):
-            render.SDL_GetRendererInfo("Test")
         dogc()
+
+        assert len(renderers)
+        assert "software" in renderers
+        print("Render drivers loadable on the current system:")
+        for rname in renderers:
+            w, h = max_sizes[rname]
+            print(" - " + rname + " (max texture size: {0}x{1})".formast(w, h))
 
     def test_SDL_CreateDestroyTexture(self):
         window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10,
