@@ -1,4 +1,4 @@
-`sdl2.ext.surface` - Creating and manipulating software surfaces
+`sdl2.ext.surface` - Creating and Manipulating Software Surfaces
 ================================================================
 
 This module provides methods for working with :obj:`~sdl2.SDL_Surface` objects.

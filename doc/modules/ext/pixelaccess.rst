@@ -1,6 +1,6 @@
 .. currentmodule:: sdl2.ext
 
-`sdl2.ext.pixelaccess` - Array-Like Access to SDL Surface Contents
+`sdl2.ext.pixelaccess` - Array-like Access to SDL Surface Contents
 ==================================================================
 
 The :mod:`sdl2.ext.pixelaccess` module offers a number of methods for reading,

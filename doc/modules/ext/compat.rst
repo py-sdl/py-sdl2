@@ -1,4 +1,4 @@
-`sdl2.ext.compat` - Python version compatibility helpers
+`sdl2.ext.compat` - Python Version Compatibility Helpers
 ========================================================
 
 The :mod:`sdl2.ext.compat` module provides various helper functions for writing

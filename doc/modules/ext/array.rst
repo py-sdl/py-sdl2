@@ -1,4 +1,4 @@
-`sdl2.ext.array` - Tools For Working With `ctypes` Arrays
+`sdl2.ext.array` - Tools for Working with `ctypes` Arrays
 =========================================================
 
 This module provides a number of utilites for accessing data in ``ctypes``

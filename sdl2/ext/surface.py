@@ -1,4 +1,3 @@
-"""Surface manipulation."""
 from .compat import isiterable
 from ..rect import SDL_Rect
 from ..surface import SDL_CreateRGBSurfaceFrom, SDL_Surface
@@ -38,7 +37,7 @@ def subsurface(surface, area):
     surface, meaning that any modifications to one surface will result in
     modifications to the other.
 
-    .. note::
+    .. warning::
        Because subsurfaces share pixel data with their parent surface, they
        *cannot* be used after the parent surface is freed. Doing so will
        almost certainly result in a segfault.
