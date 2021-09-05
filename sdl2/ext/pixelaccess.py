@@ -18,14 +18,14 @@ except ImportError:
 __all__ = [
     "PixelView", "SurfaceArray", "pixels2d", "pixels3d", "surface_to_ndarray"
 ]
-# TODO: immediate informative errors for 2D views of 3 byte-per-px surfaces
 
 class PixelView(MemoryView):
     """A 2D memory view for reading and writing SDL surface pixels.
 
     This class uses a ``view[y][x]`` layout, with the y-axis as the first
     dimension and the x-axis as the second. ``PixelView`` objects currently do
-    not support array slicing or negative indexing.
+    not support array slicing, but support negative indexing as of
+    PySDL2 0.9.10.
 
     If the source surface is RLE-accelerated, it will be locked automatically
     when the view is created and you will need to re-lock the surface using
@@ -60,11 +60,15 @@ class PixelView(MemoryView):
         else:
             raise TypeError("source must be a Sprite or SDL_Surface")
 
+        itemsize = self._surface.format.contents.BytesPerPixel
+        if itemsize == 3:
+            e = "Cannot open a 3 bytes-per-pixel surface using a PixelView."
+            raise RuntimeError(e)
+
         if SDL_MUSTLOCK(self._surface):
             SDL_LockSurface(self._surface)
 
         pxbuf = ctypes.cast(self._surface.pixels, ctypes.POINTER(Uint8))
-        itemsize = self._surface.format.contents.BytesPerPixel
         strides = (self._surface.h, self._surface.w)
         srcsize = self._surface.h * self._surface.pitch
         super(PixelView, self).__init__(pxbuf, itemsize, strides,
@@ -81,9 +85,6 @@ class PixelView(MemoryView):
         casttype = ctypes.c_ubyte
         if self.itemsize == 2:
             casttype = ctypes.c_ushort
-        elif self.itemsize == 3:
-            # TODO
-            raise NotImplementedError("unsupported bpp")
         elif self.itemsize == 4:
             casttype = ctypes.c_uint
         return ctypes.cast(src, ctypes.POINTER(casttype)).contents.value
@@ -94,9 +95,6 @@ class PixelView(MemoryView):
             target = ctypes.cast(self.source, ctypes.POINTER(ctypes.c_ubyte))
         elif self.itemsize == 2:
             target = ctypes.cast(self.source, ctypes.POINTER(ctypes.c_ushort))
-        elif self.itemsize == 3:
-            # TODO
-            raise NotImplementedError("unsupported bpp")
         elif self.itemsize == 4:
             target = ctypes.cast(self.source, ctypes.POINTER(ctypes.c_uint))
         value = prepare_color(value, self._surface)
@@ -116,13 +114,15 @@ def _ndarray_prep(source, funcname, ndim):
     if bpp < 1 or bpp > 4:
         err = "The bpp of the source surface must be between 1 and 4, inclusive"
         raise ValueError(err + " (got {0}).".format(bpp))
+    elif bpp == 3 and ndim == 2:
+        err = "Surfaces with 3 bytes-per-pixel cannot be cast as 2D arrays."
+        raise RuntimeError(err)
 
     # Handle 2D and 3D arrays differently where needed
     if ndim == 2:
         dtypes = {
             1: numpy.uint8,
             2: numpy.uint16,
-            3: numpy.uint32,
             4: numpy.uint32
         }
         strides = (psurface.pitch, bpp)

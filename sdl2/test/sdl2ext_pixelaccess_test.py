@@ -3,6 +3,7 @@ import sys
 import pytest
 from sdl2 import ext as sdl2ext
 from sdl2.ext import color
+from sdl2.ext.surface import _create_surface
 from sdl2 import surface, pixels
 
 try:
@@ -55,6 +56,20 @@ class TestSDL2ExtPixelAccess(object):
         pxview2 = sdl2ext.PixelView(imgsurf)
         assert pxview2[31][0] == 0xFF808080
 
+        # Test that negative indexing works as expected
+        assert color.ARGB(pxview[0][-1]) == colors['white']
+        assert color.ARGB(pxview[-1][-1]) == colors['black']
+
+        # Test out-of-bounds exceptions for indices
+        with pytest.raises(IndexError):
+            pxview[32][32]
+
+        # Test exception on use with a 3 byte per pixel surface
+        sf_rgb24 = _create_surface((16, 16), fmt="RGB24")
+        with pytest.raises(RuntimeError):
+            sdl2ext.PixelView(sf_rgb24)
+
+        surface.SDL_FreeSurface(sf_rgb24)
         surface.SDL_FreeSurface(imgsurf)
 
 
@@ -76,6 +91,12 @@ class TestSDL2ExtPixelAccess(object):
         nparray2 = sdl2ext.pixels2d(imgsurf, transpose=False)
         assert nparray2[31][0] == 0xFF808080
 
+        # Test exception on use with a 3 byte per pixel surface
+        sf_rgb24 = _create_surface((16, 16), fmt="RGB24")
+        with pytest.raises(RuntimeError):
+            sdl2ext.pixels2d(sf_rgb24)
+
+        surface.SDL_FreeSurface(sf_rgb24)
         surface.SDL_FreeSurface(imgsurf)
 
 
@@ -108,6 +129,12 @@ class TestSDL2ExtPixelAccess(object):
         nparray2 = sdl2ext.pixels3d(imgsurf, transpose=False)
         assert color.Color(*nparray2[31][0]) == color.Color(*grey)
 
+        # Test usage with a 3 bytes-per-pixel surface 
+        sf_rgb24 = _create_surface((16, 16), grey, fmt="RGB24")
+        nparray_rgb24 = sdl2ext.pixels3d(sf_rgb24)
+        assert color.Color(*nparray_rgb24[0][0]) == color.Color(*grey)
+
+        surface.SDL_FreeSurface(sf_rgb24)
         surface.SDL_FreeSurface(imgsurf)
 
 

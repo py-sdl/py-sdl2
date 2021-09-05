@@ -1,7 +1,8 @@
 from .compat import isiterable
 from .common import raise_sdl_err
 from .color import convert_to_color
-from .. import surface, pixels
+from .. import pixels
+from .. import surface as surf
 from ..rect import SDL_Rect
 
 __all__ = ["subsurface"]
@@ -21,7 +22,7 @@ def _get_target_surface(target, argname="target"):
     """Gets the SDL_surface from the passed target."""
     if hasattr(target, "surface"):  # i.e. if SoftwareSprite
         rtarget = target.surface  
-    elif isinstance(target, surface.SDL_Surface):
+    elif isinstance(target, surf.SDL_Surface):
         rtarget = target
     elif "SDL_Surface" in str(type(target)):
         rtarget = target.contents
@@ -50,7 +51,7 @@ def _create_surface(size, fill=None, fmt="ARGB8888"):
     w, h = size
     bpp = 32  # NOTE: according to the SDL_surface.c code, this has no effect
     fmt_enum = pixels.NAME_MAP[fmt]
-    sf = surface.SDL_CreateRGBSurfaceWithFormat(0, w, h, bpp, fmt_enum)
+    sf = surf.SDL_CreateRGBSurfaceWithFormat(0, w, h, bpp, fmt_enum)
     if not sf:
         raise_sdl_err("creating the SDL surface")
 
@@ -61,7 +62,7 @@ def _create_surface(size, fill=None, fmt="ARGB8888"):
             fill_col = pixels.SDL_MapRGB(pixfmt, fill.r, fill.g, fill.b)
         else:
             fill_col = pixels.SDL_MapRGBA(pixfmt, fill.r, fill.g, fill.b, fill.a)
-        surface.SDL_FillRect(sf, None, fill_col)
+        surf.SDL_FillRect(sf, None, fill_col)
 
     return sf
     
@@ -91,7 +92,7 @@ def subsurface(surface, area):
         :obj:`~sdl2.SDL_Surface`: The newly-created subsurface.
 
     """
-    if not isinstance(surface, surface.SDL_Surface):
+    if not isinstance(surface, surf.SDL_Surface):
         if "SDL_Surface" in str(type(surface)):
             surface = surface.contents
         else:
@@ -107,7 +108,7 @@ def subsurface(surface, area):
     fmt = surface.format[0]
     bpp = fmt.BitsPerPixel
     subpixels = (surface.pixels + surface.pitch * y + fmt.BytesPerPixel * x)
-    new = surface.SDL_CreateRGBSurfaceFrom(
+    new = surf.SDL_CreateRGBSurfaceFrom(
         subpixels, w, h, bpp, surface.pitch, fmt.Rmask, fmt.Gmask, fmt.Bmask, fmt.Amask
     )
     return new.contents
