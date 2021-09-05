@@ -21,7 +21,7 @@ def run():
     sdl2.ext.set_texture_scale_quality(method="best")
 
     # Import an image file and convert it to a Texture for the renderer
-    tst_img = sdl2.ext.load_image(RESOURCES.get_path("hello.bmp"))
+    tst_img = sdl2.ext.load_bmp(RESOURCES.get_path("hello.bmp"))
     tx = sdl2.ext.Texture(renderer, tst_img)
     
     angle = 0
