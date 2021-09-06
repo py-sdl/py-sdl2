@@ -32,8 +32,9 @@ and/or unpleasant parts of the SDL2 API. At present, these modules include:
 
 	ext/common.rst
 	ext/window.rst
-	ext/msgbox.rst
 	ext/renderer.rst
+	ext/msgbox.rst
+	ext/ttf.rst
 
 
 Utilities for working with SDL2 in Python
@@ -67,9 +68,9 @@ importing images, and more:
 	ext/surface.rst
 	ext/draw.rst
 	ext/image.rst
+	ext/bitmapfont.rst
 	ext/spritesystem.rst
 	ext/gui.rst
-	ext/font.rst
 
 
 Useful helpers for building apps
