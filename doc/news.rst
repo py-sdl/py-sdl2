@@ -48,6 +48,11 @@ New Features:
   BMP files.
 * Added a new function :func:`sdl2.ext.pillow_to_surface` for converting
   :obj:`PIL.Image.Image` objects from the Pillow library to SDL surfaces.
+* Added a new method :meth:`~sdl2.ext.BitmapFont.remap` to the
+  :obj:`~sdl2.ext.BitmapFont` class to allow specifying custom character
+  widths and heights for each mapped character in a bitmap font.
+* Added a new argument ``line_h`` to :meth:`sdl2.ext.BitmapFont.render_on` to
+  allow specifying custom line heights.
 
 API Changes:
 
@@ -83,6 +88,11 @@ Fixed Bugs:
   try to unlock RLE surfaces once their corresponding view objects are deleted.
   This prevents segmentation faults when a view is garbage-collected but the
   surface has already been freed.
+* Fixed a bug where the rectangle returned by
+  :meth:`sdl2.ext.BitmapFont.render_on` would overestimate the size of the
+  rendered text by one character in both width and height.
+* :meth:`sdl2.ext.BitmapFont.contains` no longer assumes that the font map
+  contains a space.
 
 Deprecation Notices:
 
@@ -96,6 +106,11 @@ Deprecation Notices:
   have been deprecated due to their complexity and maintenance burden. New
   functions and classes for creating GUIs with PySDL2 may be introduced in a
   future release.
+* The :meth:`sdl2.ext.BitmapFont.can_render` method has been deprecated.
+* The :meth:`sdl2.ext.BitmapFont.render` method has been deprecated in favor of
+  :meth:`sdl2.ext.BitmapFont.render_text`, which returns an SDL surface instead
+  of a SoftwareSprite and ensures the output surface is in ARGB8888 format by
+  default.
 
 
 0.9.9
