@@ -579,6 +579,15 @@ class Renderer(object):
         if ret < 0:
             raise_sdl_err("copying the texture to the rendering context")
 
+    def blit(self, src, srcrect=None, dstrect=None, angle=0, center=None,
+             flip=render.SDL_FLIP_NONE):
+        """Copies a texture to the rendering context.
+        
+        An alias for the :meth:`copy` method.
+
+        """
+        self.copy(src, srcrect, dstrect, angle, center, flip)
+
     def present(self):
         """Presents the current rendering surface to the screen.
 

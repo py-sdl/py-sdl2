@@ -36,6 +36,8 @@ New Features:
 * Added support for subpixel precision (i.e. using float coordinates)
   with the drawing and copying methods of the :class:`~sdl2.ext.Renderer` class
   when using SDL2 2.0.10 or newer.
+* Added :meth:`sdl2.ext.Renderer.blit` as an alias for the 
+  :meth:`sdl2.ext.Renderer.copy` method.
 * Added a new function :func:`sdl2.ext.surface_to_ndarray` that returns a
   non-transposed copy of a given SDL surface as a 2D or 3D Numpy array.
 * Added new functions :func:`sdl2.ext.load_bmp` and :func:`sdl2.ext.load_img`
