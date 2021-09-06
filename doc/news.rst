@@ -65,6 +65,10 @@ API Changes:
 * Changed the ``index`` argument for the :class:`~sdl2.ext.Renderer` class to
   take the name of the reqested rendering back end as a string instead of an
   index for better clarity and cross-platform consistency.
+* Updated the :class:`~sdl2.ext.PixelView` class to support negative indexing
+  (e.g. ``arr[-1][-1]`` for the last element in a 2D array). In previous
+  versions, negative indices would retrieve values from undefined sections of
+  memory outside of the surface.
 
 Fixed Bugs:
 
@@ -77,6 +81,19 @@ Fixed Bugs:
   try to unlock RLE surfaces once their corresponding view objects are deleted.
   This prevents segmentation faults when a view is garbage-collected but the
   surface has already been freed.
+
+Deprecation Notices:
+
+* The :func:`sdl2.ext.open_url` function has been deprecated.
+* The :func:`sdl2.ext.load_image` function has been deprecated, as it
+  accidentally produces different surface formats depending on the backend used.
+  New projects should use the new :func:`sdl2.ext.load_img`,
+  :func:`sdl2.ext.load_bmp`, and/or :func:`sdl2.ext.pillow_to_surface` functions
+  instead.
+* The :class:`~sdl2.ext.UIFactory` and :class:`~sdl2.ext.UIProcessor` classes
+  have been deprecated due to their complexity and maintenance burden. New
+  functions and classes for creating GUIs with PySDL2 may be introduced in a
+  future release.
 
 
 0.9.9
