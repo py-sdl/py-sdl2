@@ -1,9 +1,10 @@
 import os
 from .. import surface, pixels
-from .common import SDLError
+from .common import SDLError, raise_sdl_err
 from .compat import *
 from .color import Color, convert_to_color
 from .draw import prepare_color
+from .resources import _validate_path
 
 _HASSDLTTF = True
 try:
@@ -12,6 +13,40 @@ except ImportError:
     _HASSDLTTF = False
 
 __all__ = ["FontManager"]
+
+
+def _ttf_init():
+    if not _HASSDLTTF:
+        raise RuntimeError("SDL_ttf is required, but is not installed.")
+
+    # Check if TTF already initialized, return immediately if it was
+    if sdlttf.TTF_WasInit > 0:
+        return
+
+    # Handle a weirdness in how TTF_Init and TTF_Quit work: TTF_Init
+    # blindly increments TTF_WasInit every time it's called and TTF_Quit
+    # blindly decrements it, but TTF_Quit only *actually* quits when 
+    # TTF_WasInit - 1 == 0. Here, we try to ensure we're starting at 0.
+    while sdlttf.TTF_WasInit() < 1:
+        ret = sdlttf.TTF_Init()
+        if ret != 0:
+            raise_sdl_err("initializing the SDL_ttf library")
+
+
+def _ttf_quit():
+    if not _HASSDLTTF:
+        raise RuntimeError("SDL_ttf is required, but is not installed.")
+
+    # Make sure WasInit is non-negative before trying to quit
+    while sdlttf.TTF_WasInit() < 1:
+        ret = sdlttf.TTF_Init()
+        if ret != 0:
+            raise_sdl_err("initializing the SDL_ttf library")
+
+    # Actually quit the library (won't really quit until TTF_WasInit == 0)
+    while sdlttf.TTF_WasInit > 0:
+        sdlttf.TTF_Quit()
+
 
 
 class FontManager(object):
@@ -34,10 +69,7 @@ class FontManager(object):
     """
     def __init__(self, font_path, alias=None, size=16,
                  color=Color(255, 255, 255), bg_color=Color(0, 0, 0), index=0):
-        if not _HASSDLTTF:
-            raise UnsupportedError("FontManager requires sdlttf support")
-        if sdlttf.TTF_WasInit() == 0 and sdlttf.TTF_Init() != 0:
-            raise SDLError()
+        _ttf_init()
         self.fonts = {}  # fonts = {alias: {size:font_ptr}}
         self.aliases = {}  # aliases = {alias:font_path}
         self._textcolor = pixels.SDL_Color(0, 0, 0)
@@ -96,13 +128,11 @@ class FontManager(object):
 
         Raises an exception if something went wrong.
         """
-        if index == 0:
-            font = sdlttf.TTF_OpenFont(byteify(font_path, "utf-8"), size)
-        else:
-            font = sdlttf.TTF_OpenFontIndex(byteify(font_path, "utf-8"), size,
-                                            index)
+        fullpath, fname = _validate_path(font_path, "a font")
+        fullpath = byteify(fullpath)
+        font = sdlttf.TTF_OpenFontIndex(fullpath, size, index)
         if not font:
-            raise SDLError(sdlttf.TTF_GetError())
+            raise_sdl_err("opening the font '{0}'".format(fname))
         return font
 
     def _change_font_size(self, alias, size):
@@ -115,8 +145,8 @@ class FontManager(object):
     @property
     def color(self):
         """:obj:`~sdl2.ext.Color`: The color to use for rendering text."""
-        return Color(self._textcolor.r, self._textcolor.g, self._textcolor.b,
-                     self._textcolor.a)
+        c = self._textcolor
+        return Color(c.r, c.g, c.b, c.a)
 
     @color.setter
     def color(self, value):
@@ -126,8 +156,8 @@ class FontManager(object):
     @property
     def bg_color(self):
         """:obj:`~sdl2.ext.Color`: The background color to use for rendering."""
-        return Color(self._bgcolor.r, self._bgcolor.g, self._bgcolor.b,
-                     self._bgcolor.a)
+        c = self._bgcolor
+        return Color(c.r, c.g, c.b, c.a)
 
     @bg_color.setter
     def bg_color(self, value):
@@ -147,11 +177,6 @@ class FontManager(object):
 
     @default_font.setter
     def default_font(self, value):
-        """value must be a font alias
-
-        Set the default_font to the given font name alias,
-        provided it's loaded in the font manager.
-        """
         alias = value
         size = self.size
         if alias not in self.fonts:
