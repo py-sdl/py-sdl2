@@ -2,6 +2,7 @@ import os
 from .. import endian, surface, pixels, error
 from .common import SDLError, raise_sdl_err
 from .compat import UnsupportedError, byteify, stringify
+from .resources import _validate_path
 from .surface import _get_target_surface
 
 _HASPIL = True
@@ -69,21 +70,6 @@ def _get_mode_properties(mode):
     else:
         raise TypeError("Cannot convert {0} data to surface.".format(mode))
     return (rmask, gmask, bmask, amask, depth)
-
-
-def _validate_path(path, what, write=False):
-    fullpath = os.path.abspath(path)
-    fname = os.path.basename(path)
-    if write:
-        parent = os.path.abspath(os.path.join(fullpath, os.pardir))
-        if not os.path.isdir(parent):
-            e = "The given parent directory '{0}' does not exist"
-            raise IOError(e.format(parent))
-    else:
-        if not os.path.exists(fullpath):
-            e = "Could not find {0} at the given path: {1}"
-            raise IOError(e.format(what, fullpath))
-    return (fullpath, fname)
 
 
 def load_bmp(path):
