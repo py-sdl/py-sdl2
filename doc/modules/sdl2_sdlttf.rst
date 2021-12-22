@@ -122,7 +122,8 @@ Initialization functions
    :param src: An ``SDL_RWops`` file object containing a valid font.
    :type src: POINTER(SDL_RWops)
    :param freesrc: If non-zero, the provided file object will be closed and
-     freed automatically after the font object has been created.
+     freed automatically when the resulting :obj:`TTF_Font` is closed (or if
+     an error is encountered opening the font).
    :type freesrc: int
    :param ptsize: The size in points (pt) at which to open the font.
    :type ptsize: int
@@ -147,7 +148,8 @@ Initialization functions
    :param src: An ``SDL_RWops`` file object containing a valid font.
    :type src: POINTER(SDL_RWops)
    :param freesrc: If non-zero, the provided file object will be closed and
-     freed automatically after the font object has been created.
+     freed automatically when the resulting :obj:`TTF_Font` is closed (or if
+     an error is encountered opening the font).
    :type freesrc: int
    :param ptsize: The size in points (pt) at which to open the font.
    :type ptsize: int
@@ -348,7 +350,7 @@ Font attribute functions
    :param font: The loaded font to get the suggested line skip height for.
    :type font: POINTER(:obj:`TTF_Font`)
    
-   :returns: The maximum pixel height for all glyphs in the font.
+   :returns: The recommended height (in pixels) for each line of text.
    :rtype: int
 
 

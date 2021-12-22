@@ -4,6 +4,11 @@
 This module provides a number of utilites for accessing data in ``ctypes``
 arrays and converting ``ctypes`` arrays into common Python formats.
 
+.. warning::
+   These functions are primarily meant for internal use in PySDL2, and should
+   be treated as experimental.
+
+
 Providing read-write access for sequential data
 -----------------------------------------------
 Two classes allow you to access sequential data in different ways. The

@@ -1,6 +1,6 @@
 .. currentmodule:: sdl2.ext
 
-Designing Component-Oriented User Interfaces
+Designing component-oriented user interfaces
 ============================================
 
 .. warning::

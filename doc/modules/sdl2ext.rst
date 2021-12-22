@@ -69,8 +69,6 @@ importing images, and more:
 	ext/draw.rst
 	ext/image.rst
 	ext/bitmapfont.rst
-	ext/spritesystem.rst
-	ext/gui.rst
 
 
 Useful helpers for building apps
@@ -79,8 +77,8 @@ Useful helpers for building apps
 Beyond wrappers and utilities for working with SDL2's API, the
 :mod:`sdl2.ext` module also includes a number of submodules with various
 functions and classes to help facilitate general game and app development with
-PySDL2. These include classes for writing games using component-oriented
-programming, managing program resource files, working with colors, and more:
+PySDL2. These include classes for managing program resource files, working
+with colors, and more:
 
 .. toctree::
 	:maxdepth: 1
@@ -89,6 +87,25 @@ programming, managing program resource files, working with colors, and more:
 	ext/color.rst
 	ext/colorpalettes.rst
 	ext/algorithms.rst
+
+
+Component-Oriented Systems
+--------------------------
+
+PySDL2 contains several modules designed around the concept of
+component-oriented game programming. These modules define various types of
+"systems" for processing events and "factories" for creating different types
+of objects, among other things.
+
+.. note::
+   These modules are not regularly maintained, and their documentation
+   may be inaccurate or out-of-date.
+
+.. toctree::
+	:maxdepth: 1
+
 	ext/ebs.rst
 	ext/events.rst
+	ext/spritesystem.rst
+	ext/uisystem.rst
 	ext/particles.rst
