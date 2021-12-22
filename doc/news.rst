@@ -93,6 +93,9 @@ Fixed Bugs:
   rendered text by one character in both width and height.
 * :meth:`sdl2.ext.BitmapFont.contains` no longer assumes that the font map
   contains a space.
+* Rendering multiline text with the :class:`sdl2.ext.BitmapFont` class now
+  always splits lines using the newline (`\n`) character. Previously on
+  Windows, it would only split on Windows-style line endings (`\r\n`).
 
 Deprecation Notices:
 

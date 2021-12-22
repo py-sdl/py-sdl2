@@ -112,7 +112,7 @@ class BitmapFont(object):
     def _get_rendered_size(self, text, line_h):
         line_h = self._max_height if not line_h else line_h
         text_w, text_h = (0, 0)
-        lines = text.split(os.linesep)
+        lines = text.split("\n")
         for line in lines:
             line_w = 0
             for c in line:
@@ -173,7 +173,7 @@ class BitmapFont(object):
     def render(self, text, bpp=None):
         # Deprecated: replaced by render_text, which returns a surface
         self._validate_chars(text)
-        lines = text.split(os.linesep)
+        lines = text.split("\n")
 
         tw, th = self._get_rendered_size(text, None)
         if bpp is None:
@@ -198,7 +198,7 @@ class BitmapFont(object):
         set the ``as_argb`` parameter to ``False``.
 
         Args:
-            text (str): The string of text to render to the target surface.
+            text (str): The string of text to render.
             line_h (int, optional): The line height (in pixels) to use for each
                 line of the rendered text. If not specified, the maximum
                 character height for the font will be used. Defaults to ``None``.
@@ -211,7 +211,7 @@ class BitmapFont(object):
 
         """
         self._validate_chars(text)
-        lines = text.split(os.linesep)
+        lines = text.split("\n")
 
         # Create a new surface with the same format as the font image
         tw, th = self._get_rendered_size(text, line_h)
@@ -281,7 +281,7 @@ class BitmapFont(object):
 
     def can_render(self, text):
         # Deprecated: already throws informative exception on missing character
-        lines = text.split(os.linesep)
+        lines = text.split("\n")
         for line in lines:
             for c in line:
                 if c != ' ' and c not in self.offsets:
