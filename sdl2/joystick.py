@@ -48,7 +48,8 @@ __all__ = [
     "SDL_JoystickEventState", "SDL_JoystickGetAxis", "SDL_JoystickGetAxisInitialState",
     "SDL_JoystickGetHat", "SDL_JoystickGetBall", "SDL_JoystickGetButton",
     "SDL_JoystickRumble", "SDL_JoystickRumbleTriggers",
-    "SDL_JoystickHasLED", "SDL_JoystickSetLED", "SDL_JoystickSendEffect",
+    "SDL_JoystickHasLED", "SDL_JoystickHasRumble", "SDL_JoystickHasRumbleTriggers",
+    "SDL_JoystickSetLED", "SDL_JoystickSendEffect",
     "SDL_JoystickClose", "SDL_JoystickCurrentPowerLevel"
 ]
 
@@ -148,6 +149,8 @@ SDL_JoystickGetDevicePlayerIndex = _bind("SDL_JoystickGetDevicePlayerIndex", [c_
 SDL_JoystickRumble = _bind("SDL_JoystickRumble", [POINTER(SDL_Joystick), Uint16, Uint16, Uint32], c_int, added='2.0.9')
 SDL_JoystickRumbleTriggers = _bind("SDL_JoystickRumbleTriggers", [POINTER(SDL_Joystick), Uint16, Uint16, Uint32], c_int, added='2.0.14')
 SDL_JoystickHasLED = _bind("SDL_JoystickHasLED", [POINTER(SDL_Joystick)], SDL_bool, added='2.0.14')
+SDL_JoystickHasRumble = _bind("SDL_JoystickHasRumble", [POINTER(SDL_Joystick)], SDL_bool, added='2.0.18')
+SDL_JoystickHasRumbleTriggers = _bind("SDL_JoystickHasRumbleTriggers", [POINTER(SDL_Joystick)], SDL_bool, added='2.0.18')
 SDL_JoystickSetLED = _bind("SDL_JoystickSetLED", [POINTER(SDL_Joystick), Uint8, Uint8, Uint8], c_int, added='2.0.14')
 SDL_JoystickSendEffect = _bind("SDL_JoystickSendEffect", [POINTER(SDL_Joystick), c_void_p, c_int], c_int, added='2.0.16')
 

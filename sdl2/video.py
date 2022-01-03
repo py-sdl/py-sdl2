@@ -1,5 +1,5 @@
-from ctypes import Structure, POINTER, c_int, c_void_p, c_char_p, c_float, \
-    py_object, CFUNCTYPE
+from ctypes import c_int, c_void_p, c_char_p, c_float, c_size_t, \
+    py_object, Structure, POINTER, CFUNCTYPE
 from .dll import _bind
 from .stdinc import Uint16, Uint32, SDL_bool
 from .rect import SDL_Point, SDL_Rect
@@ -34,6 +34,7 @@ __all__ = [
     "SDL_WINDOWEVENT_LEAVE", "SDL_WINDOWEVENT_FOCUS_GAINED",
     "SDL_WINDOWEVENT_FOCUS_LOST", "SDL_WINDOWEVENT_CLOSE",
     "SDL_WINDOWEVENT_TAKE_FOCUS", "SDL_WINDOWEVENT_HIT_TEST",
+    "SDL_WINDOWEVENT_ICCPROF_CHANGED", "SDL_WINDOWEVENT_DISPLAY_CHANGED",
 
     "SDL_DisplayEventID",
     "SDL_DISPLAYEVENT_NONE", "SDL_DISPLAYEVENT_ORIENTATION",
@@ -104,6 +105,7 @@ __all__ = [
     "SDL_GetDesktopDisplayMode", "SDL_GetCurrentDisplayMode",
     "SDL_GetClosestDisplayMode", "SDL_GetWindowDisplayIndex",
     "SDL_SetWindowDisplayMode", "SDL_GetWindowDisplayMode",
+    "SDL_GetWindowICCProfile",
     "SDL_GetWindowPixelFormat", "SDL_CreateWindow",
     "SDL_CreateWindowFrom", "SDL_GetWindowID", "SDL_GetWindowFromID",
     "SDL_GetWindowFlags", "SDL_SetWindowTitle", "SDL_GetWindowTitle",
@@ -120,6 +122,7 @@ __all__ = [
     "SDL_SetWindowKeyboardGrab", "SDL_SetWindowMouseGrab",
     "SDL_GetWindowGrab", "SDL_GetWindowKeyboardGrab",
     "SDL_GetWindowMouseGrab", "SDL_GetGrabbedWindow",
+    "SDL_SetWindowMouseRect", "SDL_GetWindowMouseRect",
     "SDL_SetWindowBrightness", "SDL_GetWindowBrightness",
     "SDL_SetWindowGammaRamp", "SDL_GetWindowGammaRamp", 
     "SDL_FlashWindow", "SDL_DestroyWindow",
@@ -234,6 +237,8 @@ SDL_WINDOWEVENT_FOCUS_LOST = 13
 SDL_WINDOWEVENT_CLOSE = 14
 SDL_WINDOWEVENT_TAKE_FOCUS = 15
 SDL_WINDOWEVENT_HIT_TEST = 16
+SDL_WINDOWEVENT_ICCPROF_CHANGED = 17
+SDL_WINDOWEVENT_DISPLAY_CHANGED = 18
 
 
 SDL_DisplayEventID = c_int
@@ -354,6 +359,7 @@ SDL_GetClosestDisplayMode = _bind("SDL_GetClosestDisplayMode", [c_int, POINTER(S
 SDL_GetWindowDisplayIndex = _bind("SDL_GetWindowDisplayIndex", [POINTER(SDL_Window)], c_int)
 SDL_SetWindowDisplayMode = _bind("SDL_SetWindowDisplayMode", [POINTER(SDL_Window), POINTER(SDL_DisplayMode)], c_int)
 SDL_GetWindowDisplayMode = _bind("SDL_GetWindowDisplayMode", [POINTER(SDL_Window), POINTER(SDL_DisplayMode)], c_int)
+SDL_GetWindowICCProfile = _bind("SDL_GetWindowICCProfile", [POINTER(SDL_Window), POINTER(c_size_t)], c_void_p, added='2.0.18')
 SDL_GetWindowPixelFormat = _bind("SDL_GetWindowPixelFormat", [POINTER(SDL_Window)], Uint32)
 SDL_CreateWindow = _bind("SDL_CreateWindow", [c_char_p, c_int, c_int, c_int, c_int, Uint32], POINTER(SDL_Window))
 SDL_CreateWindowFrom = _bind("SDL_CreateWindowFrom", [c_void_p], POINTER(SDL_Window))
@@ -391,6 +397,8 @@ SDL_GetWindowGrab = _bind("SDL_GetWindowGrab", [POINTER(SDL_Window)], SDL_bool)
 SDL_GetWindowKeyboardGrab = _bind("SDL_GetWindowKeyboardGrab", [POINTER(SDL_Window)], SDL_bool, added='2.0.16')
 SDL_GetWindowMouseGrab = _bind("SDL_GetWindowMouseGrab", [POINTER(SDL_Window)], SDL_bool, added='2.0.16')
 SDL_GetGrabbedWindow = _bind("SDL_GetGrabbedWindow", None, POINTER(SDL_Window))
+SDL_SetWindowMouseRect = _bind("SDL_SetWindowMouseRect", [POINTER(SDL_Window), POINTER(SDL_Rect)], c_int, added='2.0.18')
+SDL_GetWindowMouseRect = _bind("SDL_GetWindowMouseRect", [POINTER(SDL_Window)], POINTER(SDL_Rect), added='2.0.18')
 SDL_SetWindowBrightness = _bind("SDL_SetWindowBrightness", [POINTER(SDL_Window), c_float], c_int)
 SDL_GetWindowBrightness = _bind("SDL_GetWindowBrightness", [POINTER(SDL_Window)], c_float)
 SDL_SetWindowGammaRamp = _bind("SDL_SetWindowGammaRamp", [POINTER(SDL_Window), POINTER(Uint16), POINTER(Uint16), POINTER(Uint16)], c_int)

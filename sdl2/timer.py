@@ -10,7 +10,7 @@ __all__ = [
     "SDL_TICKS_PASSED",
 
     # Functions
-    "SDL_GetTicks", "SDL_GetPerformanceCounter",
+    "SDL_GetTicks", "SDL_GetTicks64", "SDL_GetPerformanceCounter",
     "SDL_GetPerformanceFrequency", "SDL_Delay",
     "SDL_AddTimer", "SDL_RemoveTimer",
 
@@ -20,6 +20,7 @@ __all__ = [
 
 
 SDL_GetTicks = _bind("SDL_GetTicks", None, Uint32)
+SDL_GetTicks64 = _bind("SDL_GetTicks64", None, Uint64, added='2.0.18')
 SDL_GetPerformanceCounter = _bind("SDL_GetPerformanceCounter", None, Uint64)
 SDL_GetPerformanceFrequency = _bind("SDL_GetPerformanceFrequency", None, Uint64)
 SDL_Delay = _bind("SDL_Delay", [Uint32])

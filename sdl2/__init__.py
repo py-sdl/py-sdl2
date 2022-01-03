@@ -13,6 +13,7 @@ from .filesystem import *
 from .gamecontroller import *
 from .gesture import *
 from .haptic import *
+from .hidapi import *
 from .hints import *
 from .joystick import *
 from .keyboard import *

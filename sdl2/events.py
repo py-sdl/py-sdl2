@@ -1,5 +1,6 @@
 from ctypes import c_char, c_char_p, c_float, c_void_p, c_int, Structure, \
     Union, CFUNCTYPE, POINTER, sizeof
+from .dll import version as sdl_version
 from .dll import _bind
 from .stdinc import Sint16, Sint32, Uint8, Uint16, Uint32, SDL_bool
 from .keyboard import SDL_Keysym
@@ -49,7 +50,7 @@ __all__ = [
     "SDL_CLIPBOARDUPDATE", "SDL_DROPFILE", "SDL_DROPTEXT",
     "SDL_DROPBEGIN", "SDL_DROPCOMPLETE",
     "SDL_AUDIODEVICEADDED", "SDL_AUDIODEVICEREMOVED", "SDL_SENSORUPDATE",
-    "SDL_RENDER_TARGETS_RESET", "SDL_RENDER_DEVICE_RESET",
+    "SDL_RENDER_TARGETS_RESET", "SDL_RENDER_DEVICE_RESET", "SDL_POLLSENTINEL",
     "SDL_USEREVENT", "SDL_LASTEVENT",
 
     "SDL_eventaction",
@@ -123,6 +124,7 @@ SDL_AUDIODEVICEREMOVED = 0x1101
 SDL_SENSORUPDATE = 0x1200
 SDL_RENDER_TARGETS_RESET = 0x2000
 SDL_RENDER_DEVICE_RESET = 0x2001
+SDL_POLLSENTINEL = 0x7F00
 SDL_USEREVENT = 0x8000
 SDL_LASTEVENT = 0xFFFF
 SDL_EventType = c_int
@@ -212,15 +214,21 @@ class SDL_MouseButtonEvent(Structure):
                 ("y", Sint32)
                 ]
 
+_mousewheel_fields = [
+    ("type", Uint32),
+    ("timestamp", Uint32),
+    ("windowID", Uint32),
+    ("which", Uint32),
+    ("x", Sint32),
+    ("y", Sint32)
+]
+if sdl_version >= 2018:
+    _mousewheel_fields += [
+        ("preciseX", c_float),
+        ("preciseY", c_float)
+    ]
 class SDL_MouseWheelEvent(Structure):
-    _fields_ = [("type", Uint32),
-                ("timestamp", Uint32),
-                ("windowID", Uint32),
-                ("which", Uint32),
-                ("x", Sint32),
-                ("y", Sint32),
-                ("direction", Uint32)
-                ]
+    _fields_ = _mousewheel_fields
 
 class SDL_JoyAxisEvent(Structure):
     _fields_ = [("type", Uint32),
@@ -329,18 +337,21 @@ class SDL_AudioDeviceEvent(Structure):
                 ("padding3", Uint8)
             ]
 
+_touchfinger_fields = [
+    ("type", Uint32),
+    ("timestamp", Uint32),
+    ("touchId", SDL_TouchID),
+    ("fingerId", SDL_FingerID),
+    ("x", c_float),
+    ("y", c_float),
+    ("dx", c_float),
+    ("dy", c_float),
+    ("pressure", c_float)
+]
+if sdl_version >= 2012:
+    _touchfinger_fields += [("windowID", Uint32)]
 class SDL_TouchFingerEvent(Structure):
-    _fields_ = [("type", Uint32),
-                ("timestamp", Uint32),
-                ("touchId", SDL_TouchID),
-                ("fingerId", SDL_FingerID),
-                ("x", c_float),
-                ("y", c_float),
-                ("dx", c_float),
-                ("dy", c_float),
-                ("pressure", c_float),
-                ("windowID", Uint32)
-                ]
+    _fields_ = _touchfinger_fields
 
 class SDL_MultiGestureEvent(Structure):
     _fields_ = [("type", Uint32),

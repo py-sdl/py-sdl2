@@ -1,6 +1,7 @@
 from ctypes import Union, Structure, c_int, c_void_p, c_long, c_ulong, \
     c_longlong, c_ulonglong, c_uint, sizeof, POINTER
 from .dll import _bind
+from .dll import version as sdl_version
 from .stdinc import SDL_bool, Uint8, Uint32
 from .version import SDL_version
 from .video import SDL_Window
@@ -15,7 +16,7 @@ __all__ = [
     "SDL_SYSWM_DIRECTFB", "SDL_SYSWM_COCOA", "SDL_SYSWM_UIKIT",
     "SDL_SYSWM_WAYLAND", "SDL_SYSWM_MIR", "SDL_SYSWM_WINRT",
     "SDL_SYSWM_ANDROID", "SDL_SYSWM_VIVANTE", "SDL_SYSWM_OS2",
-    "SDL_SYSWM_HAIKU", "SDL_SYSWM_KMSDRM",
+    "SDL_SYSWM_HAIKU", "SDL_SYSWM_KMSDRM", "SDL_SYSWM_RISCOS",
 
     # Functions
     "SDL_GetWindowWMInfo"
@@ -38,6 +39,7 @@ SDL_SYSWM_VIVANTE = 10
 SDL_SYSWM_OS2 = 11
 SDL_SYSWM_HAIKU = 12
 SDL_SYSWM_KMSDRM = 13
+SDL_SYSWM_RISCOS = 14
 
 
 # FIXME: Hack around the ctypes "_type_ 'v' not supported" bug - remove
@@ -148,13 +150,21 @@ class _uikitinfo(Structure):
                 ("resolveFramebuffer", Uint32)]
 
 
+_wl_fields = [
+    ("display", c_void_p),
+    ("surface", c_void_p),
+    ("shell_surface", c_void_p)
+]
+if sdl_version >= 2016:
+    _wl_fields += [
+        ("egl_window", c_void_p),
+        ("xdg_surface", c_void_p)
+    ]
+if sdl_version >= 2018:
+    _wl_fields += [("xdg_toplevel", c_void_p)]
 class _wl(Structure):
     """Window information for Wayland."""
-    _fields_ = [("display", c_void_p),
-                ("surface", c_void_p),
-                ("shell_surface", c_void_p),
-                ("egl_window", c_void_p),
-                ("xdg_surface", c_void_p)]
+    _fields_ = _wl_fields
 
 class _mir(Structure):
     """Window information for Mir."""
