@@ -489,7 +489,7 @@ class TestSDLImage(object):
         assert os.path.exists(outpath)
         surface.SDL_FreeSurface(sf)
 
-    def test_IMG_SavePNG_RW(self):
+    def test_IMG_SavePNG_RW(self, tmpdir):
         # Open a PNG that we can re-save
         fpath = _get_image_path("png")
         sf = sdlimage.IMG_Load(fpath.encode("utf-8"))
@@ -524,7 +524,7 @@ class TestSDLImage(object):
         assert os.path.exists(outpath)
         surface.SDL_FreeSurface(sf)
 
-    def test_IMG_SaveJPG_RW(self):
+    def test_IMG_SaveJPG_RW(self, tmpdir):
         # Open a PNG that we can save to JPG
         fpath = _get_image_path("png")
         sf = sdlimage.IMG_Load(fpath.encode("utf-8"))
