@@ -47,6 +47,9 @@ bad_webp = is32bit and sdlimage.dll.version == 2002
 if bad_webp:
     formats.remove("webp")
 
+# JPG saving requires SDL2_image >= 2.0.2 and isn't in official mac binaries
+no_jpeg_save = sdlimage.dll.version < 2002 or ismacos
+
 
 def test_IMG_Linked_Version():
     v = sdlimage.IMG_Linked_Version()
@@ -511,6 +514,7 @@ class TestSDLImage(object):
         surface.SDL_FreeSurface(sf)
         surface.SDL_FreeSurface(sf2)
 
+    @pytest.mark.skipif(no_jpeg_save, reason="Added in 2.0.2, not in macOS bnaries")
     def test_IMG_SaveJPG(self, tmpdir):
         # Open a PNG that we can save to JPG
         fpath = _get_image_path("png")
@@ -526,6 +530,7 @@ class TestSDLImage(object):
         surface.SDL_FreeSurface(sf)
 
     @pytest.mark.skip("not working yet")
+    @pytest.mark.skipif(no_jpeg_save, reason="Added in 2.0.2, not in macOS bnaries")
     def test_IMG_SaveJPG_RW(self, tmpdir):
         # Open a PNG that we can save to JPG
         fpath = _get_image_path("png")

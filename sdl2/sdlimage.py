@@ -264,9 +264,11 @@ def IMG_SavePNG_RW(surface, dst, freedst):
     return _funcs["IMG_SavePNG_RW"](surface, dst, freedst)
 
 def IMG_SaveJPG(surface, file, quality):
+    # NOTE: Not available in official macOS binaries
     return _funcs["IMG_SaveJPG"](surface, file, quality)
 
 def IMG_SaveJPG_RW(surface, dst, freedst, quality):
+    # NOTE: Not available in official macOS binaries
     return _funcs["IMG_SaveJPG_RW"](surface, dst, freedst, quality)
 
 
