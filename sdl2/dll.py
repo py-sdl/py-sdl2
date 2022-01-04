@@ -43,6 +43,15 @@ class SDL_version(Structure):
                 ]
 
 
+# Defines an internal container class for SDL function definitions
+class SDLFunc(object):
+    def __init__(self, name, args=None, returns=None, added=None):
+        self.name = name
+        self.args = args
+        self.returns = returns
+        self.added = added
+
+
 def _using_ms_store_python():
     """Checks if the Python interpreter was installed from the Microsoft Store."""
     return 'WindowsApps\\PythonSoftwareFoundation.' in sys.executable
