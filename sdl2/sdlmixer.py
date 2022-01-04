@@ -365,8 +365,8 @@ def Mix_ReserveChannels(num):
 def Mix_GroupChannel(which, tag):
     return _funcs["Mix_GroupChannel"](which, tag)
 
-def Mix_GroupChannels(from, to, tag):
-    return _funcs["Mix_GroupChannels"](from, to, tag)
+def Mix_GroupChannels(from_, to, tag):
+    return _funcs["Mix_GroupChannels"](from_, to, tag)
 
 def Mix_GroupAvailable(tag):
     return _funcs["Mix_GroupAvailable"](tag)
