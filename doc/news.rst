@@ -21,6 +21,8 @@ Fixed Bugs:
 * Fixed a typo in the :mod:`~sdl2.sdlttf` bindings where an alias for the
   :func:`~sdl2.sdlttf.TTF_RenderUTF8_Shaded` function was incorrectly bound to
   ``TTF_RenderUTF`` instead of ``TTF_RenderUTF8``.
+* Fixed a bug introduced in 0.9.9 where the ``SDL_WINDOW_INPUT_GRABBED``
+  constant was no longer exported.
 
 
 0.9.9
