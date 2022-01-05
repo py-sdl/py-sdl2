@@ -1,8 +1,9 @@
 import sys
 import pytest
 import sdl2
-from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_GAMECONTROLLER
-from sdl2 import gamecontroller, joystick
+from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_GAMECONTROLLER, SDL_TRUE
+from sdl2 import joystick
+from sdl2 import gamecontroller as gamepad
 
 
 # TODO: Move tests that don't need GameController instance out of class
@@ -24,11 +25,24 @@ else:
 class TestSDLGamecontroller(object):
     __tags__ = ["sdl"]
 
-    def setup_method(self):
+    @classmethod
+    def setup_class(cls):
         SDL_Init(SDL_INIT_GAMECONTROLLER)
+        num = joystick.SDL_NumJoysticks()
+        if num < 1:
+            pytest.skip("no available joystick devices")
+        gamepad_ids = []
+        for i in range(num):
+            if gamepad.SDL_IsGameController(i) == SDL_TRUE:
+                gamepad_ids.append(i)
+        cls.gamepad_ids = gamepad_ids
 
-    def teardown_method(self):
+    @classmethod
+    def teardown_class(cls):
         SDL_Quit()
+
+    def setup_method(self):
+        SDL_ClearError()
 
     def test_SDL_GameControllerAddMapping(self):
         newmap = (
@@ -37,14 +51,14 @@ class TestSDLGamecontroller(object):
             b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
         )
         if sdl2.dll.version >= 2006:
-            n1 = gamecontroller.SDL_GameControllerNumMappings()
-            ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+            n1 = gamepad.SDL_GameControllerNumMappings()
+            ret = gamepad.SDL_GameControllerAddMapping(newmap)
             assert ret != -1
-            n2 = gamecontroller.SDL_GameControllerNumMappings()
+            n2 = gamepad.SDL_GameControllerNumMappings()
             assert n2 == n1 + 1
         else:
             # NumMappings not available before 2.0.6
-            ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+            ret = gamepad.SDL_GameControllerAddMapping(newmap)
             assert ret != -1
 
     @pytest.mark.skipif(not has_mapping_for_guid, reason="not available")
@@ -54,13 +68,13 @@ class TestSDLGamecontroller(object):
             b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
             b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
         )
-        ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+        ret = gamepad.SDL_GameControllerAddMapping(newmap)
         assert ret != 0
         # Get GUID for new mapping
         guid_str = newmap.split(b",")[0]
         guid = joystick.SDL_JoystickGetGUIDFromString(guid_str)
         # Get mapping for GUID
-        retmap = gamecontroller.SDL_GameControllerMappingForGUID(guid)
+        retmap = gamepad.SDL_GameControllerMappingForGUID(guid)
         assert retmap == newmap
 
     @pytest.mark.skip("not implemented")
@@ -111,22 +125,22 @@ class TestSDLGamecontroller(object):
 
     def test_SDL_GameControllerGetAxisFromString(self):
         expected = {
-            b'lefty': gamecontroller.SDL_CONTROLLER_AXIS_LEFTY,
-            b'lefttrigger': gamecontroller.SDL_CONTROLLER_AXIS_TRIGGERLEFT,
-            b'notanaxis': gamecontroller.SDL_CONTROLLER_AXIS_INVALID
+            b'lefty': gamepad.SDL_CONTROLLER_AXIS_LEFTY,
+            b'lefttrigger': gamepad.SDL_CONTROLLER_AXIS_TRIGGERLEFT,
+            b'notanaxis': gamepad.SDL_CONTROLLER_AXIS_INVALID
         }
         for string in expected.keys():
-            a = gamecontroller.SDL_GameControllerGetAxisFromString(string)
+            a = gamepad.SDL_GameControllerGetAxisFromString(string)
             assert a == expected[string]
 
     def test_SDL_GameControllerGetStringForAxis(self):
         expected = {
-            gamecontroller.SDL_CONTROLLER_AXIS_LEFTY: b'lefty',
-            gamecontroller.SDL_CONTROLLER_AXIS_TRIGGERLEFT: b'lefttrigger',
-            gamecontroller.SDL_CONTROLLER_AXIS_INVALID: None
+            gamepad.SDL_CONTROLLER_AXIS_LEFTY: b'lefty',
+            gamepad.SDL_CONTROLLER_AXIS_TRIGGERLEFT: b'lefttrigger',
+            gamepad.SDL_CONTROLLER_AXIS_INVALID: None
         }
         for axis in expected.keys():
-            s = gamecontroller.SDL_GameControllerGetStringForAxis(axis)
+            s = gamepad.SDL_GameControllerGetStringForAxis(axis)
             assert s == expected[axis]
 
     @pytest.mark.skip("not implemented")
@@ -144,22 +158,22 @@ class TestSDLGamecontroller(object):
 
     def test_SDL_GameControllerGetButtonFromString(self):
         expected = {
-            b'x': gamecontroller.SDL_CONTROLLER_BUTTON_X,
-            b'dpup': gamecontroller.SDL_CONTROLLER_BUTTON_DPAD_UP,
-            b'notabutton': gamecontroller.SDL_CONTROLLER_BUTTON_INVALID
+            b'x': gamepad.SDL_CONTROLLER_BUTTON_X,
+            b'dpup': gamepad.SDL_CONTROLLER_BUTTON_DPAD_UP,
+            b'notabutton': gamepad.SDL_CONTROLLER_BUTTON_INVALID
         }
         for string in expected.keys():
-            b = gamecontroller.SDL_GameControllerGetButtonFromString(string)
+            b = gamepad.SDL_GameControllerGetButtonFromString(string)
             assert b == expected[string]
 
     def test_SDL_GameControllerGetStringForButton(self):
         expected = {
-            gamecontroller.SDL_CONTROLLER_BUTTON_X: b'x',
-            gamecontroller.SDL_CONTROLLER_BUTTON_DPAD_UP: b'dpup',
-            gamecontroller.SDL_CONTROLLER_BUTTON_INVALID: None
+            gamepad.SDL_CONTROLLER_BUTTON_X: b'x',
+            gamepad.SDL_CONTROLLER_BUTTON_DPAD_UP: b'dpup',
+            gamepad.SDL_CONTROLLER_BUTTON_INVALID: None
         }
         for button in expected.keys():
-            s = gamecontroller.SDL_GameControllerGetStringForButton(button)
+            s = gamepad.SDL_GameControllerGetStringForButton(button)
             assert s == expected[button]
 
     @pytest.mark.skip("not implemented")
@@ -268,7 +282,7 @@ class TestSDLGamecontroller(object):
 
     @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
     def test_SDL_GameControllerNumMappings(self):
-        num = gamecontroller.SDL_GameControllerNumMappings()
+        num = gamepad.SDL_GameControllerNumMappings()
         assert num > 0
 
     @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
@@ -278,10 +292,10 @@ class TestSDLGamecontroller(object):
             b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
             b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
         )
-        ret = gamecontroller.SDL_GameControllerAddMapping(newmap)
+        ret = gamepad.SDL_GameControllerAddMapping(newmap)
         assert ret != 0
-        num = gamecontroller.SDL_GameControllerNumMappings()
-        retmap = gamecontroller.SDL_GameControllerMappingForIndex(num - 1)
+        num = gamepad.SDL_GameControllerNumMappings()
+        retmap = gamepad.SDL_GameControllerMappingForIndex(num - 1)
         assert newmap == retmap
 
     @pytest.mark.skip("not implemented")
@@ -304,9 +318,35 @@ class TestSDLGamecontroller(object):
     def test_SDL_GameControllerHasSetLED(self):
         pass
 
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_GameControllerHasRumble(self):
+        # If we ever add an interactive test suite, this should be moved there
+        for index in self.gamepad_ids:
+            pad = gamepad.SDL_GameControllerOpen(index)
+            has_rumble = gamepad.SDL_GameControllerHasRumble(pad)
+            assert has_rumble in [SDL_FALSE, SDL_TRUE]
+            joystick.SDL_JoystickClose(pad)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_GameControllerHasRumbleTriggers(self):
+        # If we ever add an interactive test suite, this should be moved there
+        for index in self.gamepad_ids:
+            pad = gamepad.SDL_GameControllerOpen(index)
+            has_rumble_triggers = gamepad.SDL_GameControllerHasRumbleTriggers(pad)
+            assert has_rumble_triggers in [SDL_FALSE, SDL_TRUE]
+            gamepad.SDL_GameControllerClose(pad)
+
     @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
     def test_SDL_GameControllerSendEffect(self):
         # Probably impossible to test since effect data would be specific
         # to each controller type?
+        pass
+
+    @pytest.mark.skip("Only relevant on iOS, not testable by PySDL2")
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_GameControllerGetAppleSFSymbolsNameForButtonAxis(self):
+        # The following two functions are deliberatly ignored:
+        # - SDL_GameControllerGetAppleSFSymbolsNameForButton
+        # - SDL_GameControllerGetAppleSFSymbolsNameForAxis
         pass

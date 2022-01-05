@@ -13,7 +13,7 @@ __all__ = [
     
     # Functions
     "SDL_malloc", "SDL_calloc", "SDL_realloc", "SDL_free",
-    "SDL_getenv", "SDL_setenv", "SDL_abs", "SDL_min", "SDL_max",
+    "SDL_getenv", "SDL_setenv", "SDL_abs", "SDL_min", "SDL_max", "SDL_clamp",
     "SDL_memset", "SDL_memcpy"
 ]
 
@@ -45,3 +45,11 @@ SDL_min = min
 SDL_max = max
 SDL_memset = _bind("SDL_memset", [c_void_p, c_int, c_size_t], c_void_p)
 SDL_memcpy = _bind("SDL_memcpy", [c_void_p, c_void_p, c_size_t], c_void_p)
+
+def SDL_clamp(x, a, b):
+    if x < a:
+        return a
+    elif x > b:
+        return b
+    else:
+        return x

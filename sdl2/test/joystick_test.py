@@ -340,6 +340,24 @@ class TestSDLJoystick(object):
                 assert ret == expected
             joystick.SDL_JoystickClose(stick)
 
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_JoystickHasRumble(self):
+        # If we ever add an interactive test suite, this should be moved there
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            has_rumble = joystick.SDL_JoystickHasRumble(stick)
+            assert has_rumble in [SDL_FALSE, SDL_TRUE]
+            joystick.SDL_JoystickClose(stick)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_JoystickHasRumbleTriggers(self):
+        # If we ever add an interactive test suite, this should be moved there
+        for index in range(self.jcount):
+            stick = joystick.SDL_JoystickOpen(index)
+            has_rumble_triggers = joystick.SDL_JoystickHasRumbleTriggers(stick)
+            assert has_rumble_triggers in [SDL_FALSE, SDL_TRUE]
+            joystick.SDL_JoystickClose(stick)
+
     @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
     def test_SDL_JoystickSendEffect(self):

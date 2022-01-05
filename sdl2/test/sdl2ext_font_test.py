@@ -3,7 +3,9 @@ import pytest
 from sdl2 import ext as sdl2ext
 from sdl2.ext.compat import byteify, ExperimentalWarning
 from sdl2.ext.pixelaccess import pixels2d
-from sdl2 import surface, sdlttf
+from sdl2 import surface
+
+sdlttf = pytest.importorskip("sdl2.sdlttf")
 
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")

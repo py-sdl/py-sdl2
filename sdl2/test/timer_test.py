@@ -1,6 +1,7 @@
 import sys
 import time
 import pytest
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_TIMER
 from sdl2 import timer
 
@@ -26,25 +27,24 @@ class TestSDLTimer(object):
 
     def test_SDL_GetTicks(self):
         ticks = timer.SDL_GetTicks()
-        time.sleep(1)
+        time.sleep(0.1)
         ticks2 = timer.SDL_GetTicks()
-        time.sleep(1)
+        time.sleep(0.1)
         ticks3 = timer.SDL_GetTicks()
 
-        assert ticks3 > ticks2
         assert ticks2 > ticks
-        # Add some latency, since the final numbers can heavily depend
-        # on the system's context switching behaviour, load, etc., etc.,
-        # etc.
-        # self.assertTrue(abs(ticks2 - 1000 - ticks) <= 3,
-        #     "1: %f is not <= 3 for %f and %f" % (abs(ticks2 - 1000 - ticks),
-        #                                       ticks2, ticks))
-        # self.assertTrue(abs(ticks3 - 1000 - ticks2) <= 3,
-        #     "2: %f is not <= 3 for %f and %f" % (abs(ticks3 - 1000 - ticks2),
-        #                                       ticks3, ticks2))
-        # self.assertTrue(abs(ticks3 - 2000 - ticks) <= 3,
-        #     "3: %f is not <= 3 for %f and %f" % (abs(ticks3 - 2000 - ticks2),
-        #                                       ticks3, ticks))
+        assert ticks3 > ticks2
+
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_GetTicks64(self):
+        ticks = timer.SDL_GetTicks64()
+        time.sleep(0.1)
+        ticks2 = timer.SDL_GetTicks64()
+        time.sleep(0.1)
+        ticks3 = timer.SDL_GetTicks64()
+
+        assert ticks2 > ticks
+        assert ticks3 > ticks2
 
     def test_SDL_GetPerformanceCounter(self):
         perf = timer.SDL_GetPerformanceCounter()
@@ -56,6 +56,7 @@ class TestSDLTimer(object):
 
     @pytest.mark.skip("precision problems")
     def test_SDL_Delay(self):
+        # NOTE: Try removing skip here?
         for wait in range(5, 200, 5):
             start = time.time() * 1000
             timer.SDL_Delay(wait)
@@ -64,7 +65,6 @@ class TestSDLTimer(object):
             err = "%f is not <= 3 for %f and %f" % (abs(wait - sm), wait, sm)
             assert abs(wait - sm) <= 3, err
                 
-
     @pytest.mark.skipif(hasattr(sys, "pypy_version_info"),
         reason="PyPy can't access other vars properly from a separate thread")
     def test_SDL_AddRemoveTimer(self):

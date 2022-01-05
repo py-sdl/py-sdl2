@@ -77,9 +77,13 @@ __all__ = [
     "SDL_GameControllerIsSensorEnabled", 
     "SDL_GameControllerGetSensorDataRate", "SDL_GameControllerGetSensorData",
     "SDL_GameControllerRumble", "SDL_GameControllerRumbleTriggers",
-    "SDL_GameControllerHasLED", "SDL_GameControllerSetLED",
+    "SDL_GameControllerHasLED", "SDL_GameControllerHasRumble",
+    "SDL_GameControllerHasRumbleTriggers",
+    "SDL_GameControllerSetLED",
     "SDL_GameControllerSendEffect",
-    "SDL_GameControllerClose"  
+    "SDL_GameControllerClose",
+    "SDL_GameControllerGetAppleSFSymbolsNameForButton",
+    "SDL_GameControllerGetAppleSFSymbolsNameForAxis",
 ]
 
 
@@ -195,7 +199,6 @@ SDL_GameControllerIsSensorEnabled = _bind("SDL_GameControllerIsSensorEnabled", [
 SDL_GameControllerGetSensorDataRate = _bind("SDL_GameControllerGetSensorDataRate", [POINTER(SDL_GameController), SDL_SensorType], c_float, added='2.0.16')
 # TODO: Read how GetSensorData is implemented to figure out how the # of floats is determined
 SDL_GameControllerGetSensorData = _bind("SDL_GameControllerGetSensorData", [POINTER(SDL_GameController), SDL_SensorType, POINTER(c_float), c_int], c_int, added='2.0.14')
-SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameController)])
 SDL_GameControllerAddMappingsFromRW = _bind("SDL_GameControllerAddMappingsFromRW", [POINTER(SDL_RWops), c_int], c_int)
 SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
 SDL_GameControllerFromInstanceID = _bind("SDL_GameControllerFromInstanceID", [SDL_JoystickID], POINTER(SDL_GameController))
@@ -212,8 +215,13 @@ SDL_GameControllerMappingForDeviceIndex = _bind("SDL_GameControllerMappingForDev
 SDL_GameControllerRumble = _bind("SDL_GameControllerRumble", [POINTER(SDL_GameController), Uint16, Uint16, Uint32], c_int, added='2.0.9')
 SDL_GameControllerRumbleTriggers = _bind("SDL_GameControllerRumbleTriggers", [POINTER(SDL_GameController), Uint16, Uint16, Uint32], c_int, added='2.0.14')
 SDL_GameControllerHasLED = _bind("SDL_GameControllerHasLED", [POINTER(SDL_GameController)], SDL_bool, added='2.0.14')
+SDL_GameControllerHasRumble = _bind("SDL_GameControllerHasRumble", [POINTER(SDL_GameController)], SDL_bool, added='2.0.18')
+SDL_GameControllerHasRumbleTriggers = _bind("SDL_GameControllerHasRumbleTriggers", [POINTER(SDL_GameController)], SDL_bool, added='2.0.18')
 SDL_GameControllerSetLED = _bind("SDL_GameControllerSetLED", [POINTER(SDL_GameController), Uint8, Uint8, Uint8], c_int, added='2.0.14')
 SDL_GameControllerSendEffect = _bind("SDL_GameControllerSendEffect", [POINTER(SDL_GameController), c_void_p, c_int], c_int, added='2.0.16')
+SDL_GameControllerClose = _bind("SDL_GameControllerClose", [POINTER(SDL_GameController)])
+SDL_GameControllerGetAppleSFSymbolsNameForButton = _bind("SDL_GameControllerGetAppleSFSymbolsNameForButton", [POINTER(SDL_GameController), SDL_GameControllerButton], c_char_p, added='2.0.18')
+SDL_GameControllerGetAppleSFSymbolsNameForAxis = _bind("SDL_GameControllerGetAppleSFSymbolsNameForAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], c_char_p, added='2.0.18')
 
 # Reimplemented w/ other functions due to crash-causing ctypes bug (fixed in 3.8)
 if sys.version_info >= (3, 8, 0, 'final'):

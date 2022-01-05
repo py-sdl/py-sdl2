@@ -256,6 +256,12 @@ class TestSDLSurface(object):
             assert isinstance(sf.contents, surface.SDL_Surface)
             surface.SDL_FreeSurface(sf)
 
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_PremultiplyAlpha(self):
+        # TODO: Add a test for this after the ext updates, when we have
+        # _create_surface to help
+        pass
+
     def test_SDL_FillRect(self):
         rectlist = (rect.SDL_Rect(0, 0, 0, 0),
                     rect.SDL_Rect(0, 0, 10, 10),
@@ -317,13 +323,6 @@ class TestSDLSurface(object):
                     surface.SDL_FreeSurface(sf)
 
     def test_SDL_FreeSurface(self):
-#        self.assertRaises((AttributeError, TypeError),
-#                          surface.SDL_FreeSurface, None)
-#        self.assertRaises((AttributeError, TypeError),
-#                          surface.free_surface, "Test")
-#        self.assertRaises((AttributeError, TypeError),
-#                          surface.free_surface, 5)
-
         formats = (pixels.SDL_PIXELFORMAT_INDEX1LSB,
                    pixels.SDL_PIXELFORMAT_RGB332,
                    pixels.SDL_PIXELFORMAT_RGBA4444,

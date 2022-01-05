@@ -1,10 +1,14 @@
 import sys
+import copy
 import pytest
-from ctypes import byref, POINTER, c_int
+import ctypes
+from ctypes import byref, POINTER, c_int, c_float, sizeof
 import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING, SDL_GetError
 import itertools
 from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
+from sdl2.rect import SDL_FPoint
+from sdl2.pixels import SDL_Color
 from sdl2 import render, video, surface, pixels, blendmode, rect
 from sdl2.ext.pixelaccess import PixelView
 
@@ -18,6 +22,85 @@ if _ISPYPY:
     dogc = gc.collect
 else:
     dogc = lambda: None
+
+
+class TestSDLVertex(object):
+    __tags__ = ["sdl"]
+
+    def test_init(self):
+        # Test creating an SDL vertex without any args
+        vtx = render.SDL_Vertex()
+        assert type(vtx.position) == rect.SDL_FPoint
+        assert type(vtx.color) == pixels.SDL_Color
+        assert type(vtx.tex_coord) == rect.SDL_FPoint
+
+        # Test creating a vertex with a custom position and color
+        pos = rect.SDL_FPoint(20, 30)
+        col = pixels.SDL_Color(255, 0, 0, 255)
+        vtx2 = render.SDL_Vertex(pos, col)
+        assert vtx2.position.x == 20 and vtx2.position.y == 30
+        assert vtx2.color.r == 255 and vtx2.color.g == 0
+
+        # Test creating an SDL vertex using Python types
+        vtx3 = render.SDL_Vertex([15, 25], [128, 127, 126], [5, 5])
+        assert vtx3.position.x == 15 and vtx3.position.y == 25
+        assert vtx3.color.r == 128 and vtx3.color.g == 127
+        assert vtx3.color.a == 255
+        assert vtx3.tex_coord.x == 5
+
+        # Test exceptions on bad input
+        with pytest.raises(ValueError):
+            render.SDL_Vertex(10)
+        with pytest.raises(ValueError):
+            render.SDL_Vertex(color="red")
+
+    def test_repr(self):
+        vtx = render.SDL_Vertex([1.5, 4], [0, 0, 0, 255])
+        assert repr(vtx) == "SDL_Vertex(x=1.5, y=4.0, color=[0, 0, 0, 255])"
+
+    def test_copy(self):
+        vtx = render.SDL_Vertex([15, 25], [128, 127, 126], [5, 5])
+        vtx2 = copy.copy(vtx)
+        assert vtx.position == vtx2.position
+        assert vtx.color == vtx2.color
+        assert vtx.tex_coord == vtx2.tex_coord
+        # Make sure editing the new copy doesn't affect the original
+        vtx2.position.x = 7
+        vtx2.color.r = 200
+        vtx2.tex_coord.y = 7
+        assert vtx.position != vtx2.position
+        assert vtx.color != vtx2.color
+        assert vtx.tex_coord != vtx2.tex_coord
+
+
+
+def _create_renderer(pos, size, renderer_num, flags):
+    # Convenience function to create renderer and window for tests
+    sdl2.SDL_ClearError()
+    window = video.SDL_CreateWindow(
+        b"Test", pos[0], pos[1], size[0], size[1], video.SDL_WINDOW_HIDDEN
+    )
+    assert SDL_GetError() == b""
+    renderer = render.SDL_CreateRenderer(window, renderer_num, flags)
+    assert SDL_GetError() == b""
+    return (renderer, window)
+
+def _software_renderer(height, width):
+    # Convenience function to create a renderer and its target surface
+    sdl2.SDL_ClearError()
+    target = surface.SDL_CreateRGBSurface(0, height, width, 32, 0, 0, 0, 0)
+    assert SDL_GetError() == b""
+    renderer = render.SDL_CreateSoftwareRenderer(target)
+    assert SDL_GetError() == b""
+    return (renderer, target)
+
+def _cleanup_renderer(renderer, target):
+    sdl2.SDL_DestroyRenderer(renderer)
+    if type(target.contents) == sdl2.SDL_Window:
+        video.SDL_DestroyWindow(target)
+    else:
+        sdl2.SDL_FreeSurface(target)
+    dogc()
 
 
 class TestSDLRender(object):
@@ -36,6 +119,9 @@ class TestSDLRender(object):
     @classmethod
     def teardown_class(cls):
         SDL_Quit()
+
+    def setup_method(self):
+        sdl2.SDL_ClearError()
 
     def test_SDL_RendererInfo(self):
         info = render.SDL_RendererInfo()
@@ -81,12 +167,6 @@ class TestSDLRender(object):
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
         dogc()
-
-        # TODO: the code below works, too - is that really expected from SDL?
-        #window, renderer = render.SDL_CreateWindowAndRenderer \
-        #   (-10, -10, video.SDL_WINDOW_HIDDEN)
-        #self.assertIsInstance(window, video.SDL_Window)
-        #self.assertIsInstance(renderer, render.SDL_Renderer)
 
     def test_SDL_CreateDestroyRenderer(self):
         failed = 0
@@ -429,6 +509,31 @@ class TestSDLRender(object):
         render.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
         dogc()
+
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_GetSetTextureUserData(self):
+        renderer, win = _create_renderer(
+            (30, 30), (100, 100), -1, self._RENDERFLAGS
+        )
+        tex = render.SDL_CreateTexture(
+            renderer, pixels.SDL_PIXELFORMAT_ARGB8888,
+            render.SDL_TEXTUREACCESS_STREAMING, 10, 10
+        )
+        assert SDL_GetError() == b""
+        # Create some user data and add it to the texture
+        dat_raw = ctypes.c_char_p(b"hello!")
+        dat = ctypes.cast(dat_raw, ctypes.c_void_p)
+        ret = render.SDL_SetTextureUserData(tex, dat)
+        assert SDL_GetError() == b""
+        assert ret == 0
+        # Try retrieving the user data
+        dat_ptr = render.SDL_GetTextureUserData(tex)
+        assert SDL_GetError() == b""
+        assert dat_ptr != None
+        dat_out = ctypes.cast(dat_ptr, ctypes.c_char_p)
+        assert dat_raw.value == dat_out.value
+        render.SDL_DestroyTexture(tex)
+        _cleanup_renderer(renderer, win)
 
     @pytest.mark.skip("not implemented")
     def test_SDL_UpdateTexture(self):
@@ -794,6 +899,53 @@ class TestSDLRender(object):
     def test_SDL_RenderCopyExF(self):
         pass
 
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_RenderGeometry(self):
+        renderer, target = _software_renderer(100, 100)
+        # Create vertices for rendering
+        RED = (255, 0, 0, 255)
+        vertices = [
+            render.SDL_Vertex((0, 0), RED),
+            render.SDL_Vertex((0, 50), RED),
+            render.SDL_Vertex((50, 50), RED)
+        ]
+        # Try rendering the vertices
+        vtx = (render.SDL_Vertex * len(vertices))(*vertices)
+        ret = render.SDL_RenderGeometry(
+            renderer, None, vtx, len(vertices), None, 0
+        )
+        assert SDL_GetError() == b""
+        assert ret == 0
+        # TODO: Actually check the surface for the rendered triangle
+        _cleanup_renderer(renderer, target)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_RenderGeometryRaw(self):
+        renderer, target = _software_renderer(100, 100)
+        # Create vertices for rendering
+        RED = [255, 0, 0, 255]
+        points = [0, 0, 0, 50, 50, 50]
+        colors = RED * 3
+        tex_coords = [0, 0, 0, 0, 0, 0]
+        # Convert vertices to ctypes-friendly format
+        xy_size = sizeof(c_float) * 2
+        col_size = sizeof(ctypes.c_ubyte) * 4
+        xy = (c_float * len(points))(*points)
+        col = (c_int * len(colors))(*colors)
+        uv = (c_float * len(tex_coords))(*tex_coords)
+        # Try rendering the vertices
+        ret = render.SDL_RenderGeometryRaw(
+            renderer, None,
+            xy, xy_size,
+            col, col_size,
+            uv, xy_size,
+            3, None, 0, 1
+        )
+        assert SDL_GetError() == b""
+        assert ret == 0
+        # TODO: Actually check the surface for the rendered triangle
+        _cleanup_renderer(renderer, target)
+
     @pytest.mark.skip("not implemented")
     def test_SDL_RenderReadPixels(self):
         pass
@@ -929,6 +1081,33 @@ class TestSDLRender(object):
     def test_SDL_RenderIsClipEnabled(self):
         pass
 
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_RenderWindowToLogical(self):
+        renderer, win = _create_renderer(
+            (30, 30), (100, 100), -1, self._RENDERFLAGS
+        )
+        wx, wy = (c_int(0), c_int(0))  # window coords
+        lx, ly = (c_float(0), c_float(0))  # renderer coords
+        # Test without resizing
+        render.SDL_RenderWindowToLogical(renderer, 50, 50, byref(lx), byref(ly))
+        assert lx.value == 50
+        assert ly.value == 50
+        render.SDL_RenderLogicalToWindow(renderer, 50, 50, byref(wx), byref(wy))
+        assert wx.value == 50
+        assert wy.value == 50
+        # Set custom scaling on the renderer
+        ret = render.SDL_RenderSetScale(renderer, 2.0, 0.5)
+        assert SDL_GetError() == b""
+        assert ret == 0
+        # Test again after resizing
+        render.SDL_RenderWindowToLogical(renderer, 50, 50, byref(lx), byref(ly))
+        assert lx.value == 25
+        assert ly.value == 100
+        render.SDL_RenderLogicalToWindow(renderer, 50, 50, byref(wx), byref(wy))
+        assert wx.value == 100
+        assert wy.value == 25
+        _cleanup_renderer(renderer, win)
+
     def test_SDL_RenderGetSetIntegerScale(self):
         sf = surface.SDL_CreateRGBSurface(0, 100, 100, 32,
                                           0xFF000000,
@@ -946,3 +1125,15 @@ class TestSDLRender(object):
         assert render.SDL_RenderGetIntegerScale(renderer) == SDL_FALSE
         render.SDL_DestroyRenderer(renderer)
         surface.SDL_FreeSurface(sf)
+
+    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+    def test_SDL_RenderSetVSync(self):
+        renderer, win = _create_renderer(
+            (30, 30), (100, 100), -1, self._RENDERFLAGS
+        )
+        # Not super thorough, but hard to test more extensively
+        ret = render.SDL_RenderSetVSync(renderer, 1)
+        assert ret <= 0
+        ret = render.SDL_RenderSetVSync(renderer, 0)
+        assert ret <= 0
+        _cleanup_renderer(renderer, win)
