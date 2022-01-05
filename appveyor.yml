@@ -1,3 +1,6 @@
+image:
+  - Visual Studio 2019
+
 environment:
   SDL_VIDEODRIVER: dummy
   SDL_AUDIODRIVER: dummy
