@@ -154,6 +154,9 @@ class Mix_Chunk(Structure):
 class Mix_Music(c_void_p):
     pass
 
+
+# Callback function definitions for various methods 
+
 mix_func = CFUNCTYPE(None, c_void_p, _P(Uint8), c_int)
 music_finished = CFUNCTYPE(None)
 channel_finished = CFUNCTYPE(None, c_int)
