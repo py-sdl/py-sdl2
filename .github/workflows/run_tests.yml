@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [2.7, 3.6, 3.7, 3.8, 3.9, 3.10]
+        python-version: ['2.7', '3.6', '3.7', '3.8', '3.9', '3.10']
         sdl2: ['2.0.18']
         name-prefix: ['Linux (Python ']
         include:
