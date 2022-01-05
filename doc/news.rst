@@ -13,8 +13,8 @@ New Features:
   and :mod:`~sdl2.sdlgfx` modules to use a new method of ctypes wrapping that
   allows functions to support kwargs (i.e. using function arguments by name),
   inline documentation, and more flexible handling of argument types and
-  SDL errors.
-
+  SDL errors (PR #199)
+* Updated to wrap new functions and constants in in SDL2 2.0.18 (PR #197)
 
 Fixed Bugs:
 
