@@ -2,6 +2,27 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.10
+------
+
+Released on XXXX-XX-XX.
+
+New Features:
+
+* Updated the :mod:`~sdl2.sdlttf`, :mod:`~sdl2.sdlimage`, :mod:`~sdl2.sdlmixer`,
+  and :mod:`~sdl2.sdlgfx` modules to use a new method of ctypes wrapping that
+  allows functions to support kwargs (i.e. using function arguments by name),
+  inline documentation, and more flexible handling of argument types and
+  SDL errors.
+
+
+Fixed Bugs:
+
+* Fixed a typo in the :mod:`~sdl2.sdlttf` bindings where an alias for the
+  :func:`~sdl2.sdlttf.TTF_RenderUTF8_Shaded` function was incorrectly bound to
+  ``TTF_RenderUTF`` instead of ``TTF_RenderUTF8``.
+
+
 0.9.9
 -----
 
