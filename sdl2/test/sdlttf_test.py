@@ -4,6 +4,7 @@ import sys
 import pytest
 from struct import unpack
 from ctypes import byref, c_int, c_uint16
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_Color, surface, version, rwops
 
 sdlttf = pytest.importorskip("sdl2.sdlttf")
@@ -19,11 +20,15 @@ class TestSDLTTF(object):
     def setup_class(cls):
         SDL_Init(0)
         sdlttf.TTF_Init()
+        cls.test_sizes = [6, 16, 26]
 
     @classmethod
     def teardown_class(cls):
         sdlttf.TTF_Quit()
         SDL_Quit()
+
+    def setup_method(self):
+        sdl2.SDL_ClearError()
 
     def test_TTF_Linked_Version(self):
         v = sdlttf.TTF_Linked_Version()
@@ -31,6 +36,10 @@ class TestSDLTTF(object):
         assert v.contents.major == 2
         assert v.contents.minor == 0
         assert v.contents.patch >= 12
+
+    def test_TTF_ByteSwappedUNICODE(self):
+        sdlttf.TTF_ByteSwappedUNICODE(0)
+        sdlttf.TTF_ByteSwappedUNICODE(1)
 
     def test_TTF_Font(self):
         font = sdlttf.TTF_Font()
@@ -51,13 +60,13 @@ class TestSDLTTF(object):
         assert sdlttf.TTF_WasInit()
 
     def test_TTF_OpenCloseFont(self):
-        for x in range(6, 26):
+        for x in self.test_sizes:
             font = sdlttf.TTF_OpenFont(fontfile, x)
             assert isinstance(font.contents, sdlttf.TTF_Font)
             sdlttf.TTF_CloseFont(font)
 
     def test_TTF_OpenFontIndex(self):
-        for x in range(6, 26):
+        for x in self.test_sizes:
             font = sdlttf.TTF_OpenFontIndex(fontfile, x, 0)
             assert isinstance(font.contents, sdlttf.TTF_Font)
             sdlttf.TTF_CloseFont(font)
@@ -65,7 +74,7 @@ class TestSDLTTF(object):
     def test_TTF_OpenFontRW(self):
         fp = open(fontfile, "rb")
         fontrw = rwops.rw_from_object(fp)
-        for x in range(6, 26):
+        for x in self.test_sizes:
             fp.seek(0)
             font = sdlttf.TTF_OpenFontRW(fontrw, 0, x)
             assert isinstance(font.contents, sdlttf.TTF_Font)
@@ -75,7 +84,7 @@ class TestSDLTTF(object):
     def test_TTF_OpenFontIndexRW(self):
         fp = open(fontfile, "rb")
         fontrw = rwops.rw_from_object(fp)
-        for x in range(6, 26):
+        for x in self.test_sizes:
             fp.seek(0)
             font = sdlttf.TTF_OpenFontIndexRW(fontrw, 0, x, 0)
             assert isinstance(font.contents, sdlttf.TTF_Font)
@@ -117,7 +126,7 @@ class TestSDLTTF(object):
 
     def test_TTF_FontHeight(self):
         last = cur = 0
-        for ptsize in range(6, 26):
+        for ptsize in self.test_sizes:
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontHeight(font)
             assert cur >= last
@@ -126,7 +135,7 @@ class TestSDLTTF(object):
 
     def test_TTF_FontAscent(self):
         last = cur = 0
-        for ptsize in range(6, 26):
+        for ptsize in self.test_sizes:
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontAscent(font)
             assert cur >= last
@@ -135,7 +144,7 @@ class TestSDLTTF(object):
 
     def test_TTF_FontDescent(self):
         last = cur = 0
-        for ptsize in range(6, 26):
+        for ptsize in self.test_sizes:
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontDescent(font)
             assert cur <= last
@@ -144,7 +153,7 @@ class TestSDLTTF(object):
 
     def test_TTF_FontLineSkip(self):
         last = cur = 0
-        for ptsize in range(6, 26):
+        for ptsize in self.test_sizes:
             font = sdlttf.TTF_OpenFont(fontfile, ptsize)
             cur = sdlttf.TTF_FontLineSkip(font)
             assert cur >= last
@@ -161,10 +170,6 @@ class TestSDLTTF(object):
         sdlttf.TTF_SetFontKerning(font, 0)
         assert sdlttf.TTF_GetFontKerning(font) == 0
         sdlttf.TTF_CloseFont(font)
-
-    @pytest.mark.skip("not implemented")
-    def test_TTF_GetFontKerningSizeGlyphs(self):
-        pass
 
     def test_TTF_FontFaces(self):
         font = sdlttf.TTF_OpenFont(fontfile, 10)
@@ -253,8 +258,8 @@ class TestSDLTTF(object):
         w, h = c_int(0), c_int(0)
         teststr = u"Hi there!"
         strlen = len(teststr) + 1 # +1 for byte-order mark
-        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
-        strarr = (c_uint16 * strlen)(*intstr)
+        intstr = unpack('H' * strlen, teststr.encode('utf-16')) + (0, )
+        strarr = (c_uint16 * (strlen + 1))(*intstr)
         sdlttf.TTF_SizeUNICODE(font, strarr, byref(w), byref(h))
         print(list(strarr))
         print("w = {0}, h = {1}".format(w.value, h.value))
@@ -276,8 +281,8 @@ class TestSDLTTF(object):
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
         teststr = u"Hi there!"
         strlen = len(teststr) + 1 # +1 for byte-order mark
-        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
-        strarr = (c_uint16 * strlen)(*intstr)
+        intstr = unpack('H' * strlen, teststr.encode('utf-16')) + (0, )
+        strarr = (c_uint16 * (strlen + 1))(*intstr)
         sf = sdlttf.TTF_RenderUNICODE_Solid(font, strarr, color)
         assert isinstance(sf.contents, surface.SDL_Surface)
         # Test TTF_RenderGlyph_Solid
@@ -299,11 +304,11 @@ class TestSDLTTF(object):
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
         teststr = u"Hi there!"
         strlen = len(teststr) + 1 # +1 for byte-order mark
-        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
-        strarr = (c_uint16 * strlen)(*intstr)
+        intstr = unpack('H' * strlen, teststr.encode('utf-16')) + (0, )
+        strarr = (c_uint16 * (strlen + 1))(*intstr)
         sf = sdlttf.TTF_RenderUNICODE_Shaded(font, strarr, color, bgcolor)
         assert isinstance(sf.contents, surface.SDL_Surface)
-        # Test TTF_RenderGlyph_Solid
+        # Test TTF_RenderGlyph_Shaded
         sf = sdlttf.TTF_RenderGlyph_Shaded(font, ord("A"), color, bgcolor)
         assert isinstance(sf.contents, surface.SDL_Surface)
         sdlttf.TTF_CloseFont(font)
@@ -322,17 +327,43 @@ class TestSDLTTF(object):
         # NOTE: no unicode chars because number -> glyph lookup is os-dependent
         teststr = u"Hi there!"
         strlen = len(teststr) + 1 # +1 for byte-order mark
-        intstr = unpack('H' * strlen, teststr.encode('utf-16'))
-        strarr = (c_uint16 * strlen)(*intstr)
+        intstr = unpack('H' * strlen, teststr.encode('utf-16')) + (0, )
+        strarr = (c_uint16 * (strlen + 1))(*intstr)
         sf = sdlttf.TTF_RenderUNICODE_Blended(font, strarr, color)
         assert isinstance(sf.contents, surface.SDL_Surface)
-        # Test TTF_RenderGlyph_Solid
+        # Test TTF_RenderGlyph_Blended
         sf = sdlttf.TTF_RenderGlyph_Blended(font, ord("A"), color)
         assert isinstance(sf.contents, surface.SDL_Surface)
         sdlttf.TTF_CloseFont(font)
 
-    @pytest.mark.skip("not implemented")
     def test_TTF_Render_Blended_Wrapped(self):
-        # TODO: Add tests for TTF_RenderText_Blended_Wrapped,
-        # TTF_RenderUTF8_Blended_Wrapped, and TTF_RenderUNICODE_Blended_Wrapped
-        pass
+        font = sdlttf.TTF_OpenFont(fontfile, 20)
+        color = SDL_Color(0, 0, 0, 255)
+        # Test TTF_RenderText_Blended_Wrapped
+        teststr = b"Hi there, this is a long line!"
+        sf = sdlttf.TTF_RenderText_Blended_Wrapped(font, teststr, color, 100)
+        assert isinstance(sf.contents, surface.SDL_Surface)
+        assert sf.contents.h > 30
+        # Test TTF_RenderUTF8_Blended_Wrapped
+        teststr = u"Hï thère, this is a long line!".encode('utf-8')
+        sf = sdlttf.TTF_RenderUTF8_Blended_Wrapped(font, teststr, color, 100)
+        assert isinstance(sf.contents, surface.SDL_Surface)
+        assert sf.contents.h > 30
+        # Test TTF_RenderUNICODE_Blended_Wrapped
+        # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+        teststr = u"Hi there, this is a long line!"
+        strlen = len(teststr) + 1 # +1 for byte-order mark
+        intstr = unpack('H' * strlen, teststr.encode('utf-16')) + (0, )
+        strarr = (c_uint16 * (strlen + 1))(*intstr)
+        sf = sdlttf.TTF_RenderUNICODE_Blended_Wrapped(font, strarr, color, 100)
+        assert isinstance(sf.contents, surface.SDL_Surface)
+        assert sf.contents.h > 30
+        sdlttf.TTF_CloseFont(font)
+
+    @pytest.mark.skipif(sdlttf.dll.version < 2014, reason="not available")
+    def test_TTF_GetFontKerningSizeGlyphs(self):
+        font = sdlttf.TTF_OpenFont(fontfile, 40)
+        # NOTE: Test font (tuffy) has no kerning info, so retval is always 0
+        sz = sdlttf.TTF_GetFontKerningSizeGlyphs(font, ord("A"), ord("B"))
+        assert sz == 0
+        sdlttf.TTF_CloseFont(font)

@@ -1,7 +1,7 @@
 import os
-from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_char_p, c_void_p, \
-    c_double
-from .dll import DLL
+from ctypes import Structure, CFUNCTYPE, c_int, c_char_p, c_void_p, c_double
+from ctypes import POINTER as _P
+from .dll import DLL, SDLFunc
 from .version import SDL_version, SDL_VERSIONNUM
 from .audio import AUDIO_S16LSB, AUDIO_S16MSB, SDL_MIX_MAXVOLUME
 from .stdinc import Uint8, Uint16, Uint32, Sint16, SDL_bool
@@ -88,10 +88,12 @@ def get_dll_file():
 
 _bind = dll.bind_function
 
+
+# Constants, enums, type definitions, and macros
+
 SDL_MIXER_MAJOR_VERSION = 2
 SDL_MIXER_MINOR_VERSION = 0
 SDL_MIXER_PATCHLEVEL = 4
-
 
 def SDL_MIXER_VERSION(x):
     x.major = SDL_MIXER_MAJOR_VERSION
@@ -106,7 +108,6 @@ MIX_VERSION = SDL_MIXER_VERSION
 SDL_MIXER_COMPILEDVERSION = SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL)
 SDL_MIXER_VERSION_ATLEAST = lambda x, y, z: (SDL_MIXER_COMPILEDVERSION >= SDL_VERSIONNUM(x, y, z))
 
-Mix_Linked_Version = _bind("Mix_Linked_Version", None, POINTER(SDL_version))
 MIX_InitFlags = c_int
 MIX_INIT_FLAC = 0x00000001
 MIX_INIT_MOD =  0x00000002
@@ -114,24 +115,6 @@ MIX_INIT_MP3 = 0x00000008
 MIX_INIT_OGG = 0x000000010
 MIX_INIT_MID = 0x00000020
 MIX_INIT_OPUS = 0x00000040
-
-Mix_Init = _bind("Mix_Init", [c_int], c_int)
-Mix_Quit = _bind("Mix_Quit")
-
-MIX_CHANNELS = 8
-MIX_DEFAULT_FREQUENCY = 22050
-if SDL_BYTEORDER == SDL_LIL_ENDIAN:
-    MIX_DEFAULT_FORMAT = AUDIO_S16LSB
-else:
-    MIX_DEFAULT_FORMAT = AUDIO_S16MSB
-MIX_DEFAULT_CHANNELS = 2
-MIX_MAX_VOLUME = SDL_MIX_MAXVOLUME
-
-class Mix_Chunk(Structure):
-    _fields_ = [("allocated", c_int),
-                ("abuf", POINTER(Uint8)),
-                ("alen", Uint32),
-                ("volume", Uint8)]
 
 Mix_Fading = c_int
 MIX_NO_FADING = 0
@@ -150,93 +133,377 @@ MUS_FLAC = 9
 MUS_MODPLUG_UNUSED = 10
 MUS_OPUS = 11
 
+MIX_CHANNELS = 8
+MIX_DEFAULT_FREQUENCY = 22050
+if SDL_BYTEORDER == SDL_LIL_ENDIAN:
+    MIX_DEFAULT_FORMAT = AUDIO_S16LSB
+else:
+    MIX_DEFAULT_FORMAT = AUDIO_S16MSB
+MIX_DEFAULT_CHANNELS = 2
+MIX_MAX_VOLUME = SDL_MIX_MAXVOLUME
+
+MIX_CHANNEL_POST = -2
+MIX_EFFECTSMAXSPEED = "MIX_EFFECTSMAXSPEED"
+
+class Mix_Chunk(Structure):
+    _fields_ = [("allocated", c_int),
+                ("abuf", _P(Uint8)),
+                ("alen", Uint32),
+                ("volume", Uint8)]
+
 class Mix_Music(c_void_p):
     pass
 
-Mix_OpenAudio = _bind("Mix_OpenAudio", [c_int, Uint16, c_int, c_int], c_int)
-Mix_OpenAudioDevice = _bind("Mix_OpenAudioDevice", [c_int, Uint16, c_int, c_int, c_char_p, c_int], c_int, added='2.0.2')
-Mix_AllocateChannels = _bind("Mix_AllocateChannels", [c_int], c_int)
-Mix_QuerySpec = _bind("Mix_QuerySpec", [POINTER(c_int), POINTER(Uint16), POINTER(c_int)], c_int)
-Mix_LoadWAV_RW = _bind("Mix_LoadWAV_RW", [POINTER(SDL_RWops), c_int], POINTER(Mix_Chunk))
-Mix_LoadWAV = lambda fname: Mix_LoadWAV_RW(SDL_RWFromFile(fname, b"rb"), 1)
-Mix_LoadMUS = _bind("Mix_LoadMUS", [c_char_p], POINTER(Mix_Music))
-Mix_LoadMUS_RW = _bind("Mix_LoadMUS_RW", [POINTER(SDL_RWops)], POINTER(Mix_Music))
-Mix_LoadMUSType_RW = _bind("Mix_LoadMUSType_RW", [POINTER(SDL_RWops), Mix_MusicType, c_int], POINTER(Mix_Music))
-Mix_QuickLoad_WAV = _bind("Mix_QuickLoad_WAV", [POINTER(Uint8)], POINTER(Mix_Chunk))
-Mix_QuickLoad_RAW = _bind("Mix_QuickLoad_RAW", [POINTER(Uint8), Uint32], POINTER(Mix_Chunk))
-Mix_FreeChunk = _bind("Mix_FreeChunk", [POINTER(Mix_Chunk)])
-Mix_FreeMusic = _bind("Mix_FreeMusic", [POINTER(Mix_Music)])
-Mix_GetNumChunkDecoders = _bind("Mix_GetNumChunkDecoders", None, c_int)
-Mix_GetChunkDecoder = _bind("Mix_GetChunkDecoder", [c_int], c_char_p)
-Mix_HasChunkDecoder = _bind("Mix_HasChunkDecoder", [c_char_p], SDL_bool, added='2.0.2')
-Mix_GetNumMusicDecoders = _bind("Mix_GetNumMusicDecoders", None, c_int)
-Mix_GetMusicDecoder = _bind("Mix_GetMusicDecoder", [c_int], c_char_p)
-#Mix_HasMusicDecoder = _bind("Mix_HasMusicDecoder", [c_char_p], SDL_bool) # not actually implemented in SDL_mixer
-Mix_GetMusicType = _bind("Mix_GetMusicType", [POINTER(Mix_Music)], Mix_MusicType)
-mix_func = CFUNCTYPE(None, c_void_p, POINTER(Uint8), c_int)
-Mix_SetPostMix = _bind("Mix_SetPostMix", [mix_func, c_void_p])
-Mix_HookMusic = _bind("Mix_HookMusic", [mix_func, c_void_p])
+
+# Callback function definitions for various methods 
+
+mix_func = CFUNCTYPE(None, c_void_p, _P(Uint8), c_int)
 music_finished = CFUNCTYPE(None)
-Mix_HookMusicFinished = _bind("Mix_HookMusicFinished", [music_finished])
-Mix_GetMusicHookData = _bind("Mix_GetMusicHookData", None, c_void_p)
 channel_finished = CFUNCTYPE(None, c_int)
-Mix_ChannelFinished = _bind("Mix_ChannelFinished", [channel_finished])
-MIX_CHANNEL_POST = -2
 Mix_EffectFunc_t = CFUNCTYPE(None, c_int, c_void_p, c_int, c_void_p)
 Mix_EffectDone_t = CFUNCTYPE(None, c_int, c_void_p)
-Mix_RegisterEffect = _bind("Mix_RegisterEffect", [c_int, Mix_EffectFunc_t, Mix_EffectDone_t, c_void_p], c_int)
-Mix_UnregisterEffect = _bind("Mix_UnregisterEffect", [c_int, Mix_EffectFunc_t], c_int)
-Mix_UnregisterAllEffects = _bind("Mix_UnregisterAllEffects", [c_int])
-MIX_EFFECTSMAXSPEED = "MIX_EFFECTSMAXSPEED"
-Mix_SetPanning = _bind("Mix_SetPanning", [c_int, Uint8, Uint8], c_int)
-Mix_SetPosition = _bind("Mix_SetPosition", [c_int, Sint16, Uint8], c_int)
-Mix_SetDistance = _bind("Mix_SetDistance", [c_int, Uint8])
-Mix_SetReverseStereo = _bind("Mix_SetReverseStereo", [c_int, c_int], c_int)
-Mix_ReserveChannels = _bind("Mix_ReserveChannels", [c_int], c_int)
-Mix_GroupChannel = _bind("Mix_GroupChannel", [c_int, c_int], c_int)
-Mix_GroupChannels = _bind("Mix_GroupChannels", [c_int, c_int, c_int], c_int)
-Mix_GroupAvailable = _bind("Mix_GroupAvailable", [c_int], c_int)
-Mix_GroupCount = _bind("Mix_GroupCount", [c_int], c_int)
-Mix_GroupOldest = _bind("Mix_GroupOldest", [c_int], c_int)
-Mix_GroupNewer = _bind("Mix_GroupNewer", [c_int], c_int)
-Mix_PlayChannel = lambda channel, chunk, loops: Mix_PlayChannelTimed(channel, chunk, loops, -1)
-Mix_PlayChannelTimed = _bind("Mix_PlayChannelTimed", [c_int, POINTER(Mix_Chunk), c_int, c_int], c_int)
-Mix_PlayMusic = _bind("Mix_PlayMusic", [POINTER(Mix_Music), c_int], c_int)
-Mix_FadeInMusic = _bind("Mix_FadeInMusic", [POINTER(Mix_Music), c_int, c_int], c_int)
-Mix_FadeInMusicPos = _bind("Mix_FadeInMusicPos", [POINTER(Mix_Music), c_int, c_int, c_double], c_int)
-Mix_FadeInChannel = lambda channel, chunk, loops, ms: Mix_FadeInChannelTimed(channel, chunk, loops, ms, -1)
-Mix_FadeInChannelTimed = _bind("Mix_FadeInChannelTimed", [c_int, POINTER(Mix_Chunk), c_int, c_int, c_int], c_int)
-Mix_Volume = _bind("Mix_Volume", [c_int, c_int], c_int)
-Mix_VolumeChunk = _bind("Mix_VolumeChunk", [POINTER(Mix_Chunk), c_int], c_int)
-Mix_VolumeMusic = _bind("Mix_VolumeMusic", [c_int], c_int)
-Mix_HaltChannel = _bind("Mix_HaltChannel", [c_int], c_int)
-Mix_HaltGroup = _bind("Mix_HaltGroup", [c_int], c_int)
-Mix_HaltMusic = _bind("Mix_HaltMusic", None, c_int)
-Mix_ExpireChannel = _bind("Mix_ExpireChannel", [c_int, c_int], c_int)
-Mix_FadeOutChannel = _bind("Mix_FadeOutChannel", [c_int, c_int], c_int)
-Mix_FadeOutGroup = _bind("Mix_FadeOutGroup", [c_int, c_int], c_int)
-Mix_FadeOutMusic = _bind("Mix_FadeOutMusic", [c_int], c_int)
-Mix_FadingMusic = _bind("Mix_FadingMusic", None, Mix_Fading)
-Mix_FadingChannel = _bind("Mix_FadingChannel", [c_int], Mix_Fading)
-Mix_Pause = _bind("Mix_Pause", [c_int])
-Mix_Resume = _bind("Mix_Resume", [c_int])
-Mix_Paused = _bind("Mix_Paused", [c_int], c_int)
-Mix_PauseMusic = _bind("Mix_PauseMusic")
-Mix_ResumeMusic = _bind("Mix_ResumeMusic")
-Mix_RewindMusic = _bind("Mix_RewindMusic")
-Mix_PausedMusic = _bind("Mix_PausedMusic", None, c_int)
-Mix_SetMusicPosition = _bind("Mix_SetMusicPosition", [c_double], c_int)
-Mix_Playing = _bind("Mix_Playing", [c_int], c_int)
-Mix_PlayingMusic = _bind("Mix_PlayingMusic", None, c_int)
-Mix_SetMusicCMD = _bind("Mix_SetMusicCMD", [c_char_p], c_int)
-Mix_SetSynchroValue = _bind("Mix_SetSynchroValue", [c_int], c_int)
-Mix_GetSynchroValue = _bind("Mix_GetSynchroValue", None, c_int)
-Mix_SetSoundFonts = _bind("Mix_SetSoundFonts", [c_char_p], c_int)
-Mix_GetSoundFonts = _bind("Mix_GetSoundFonts", None, c_char_p)
 soundfont_function = CFUNCTYPE(c_int, c_char_p, c_void_p)
-Mix_EachSoundFont = _bind("Mix_EachSoundFont", [soundfont_function, c_void_p], c_int)
-Mix_GetChunk = _bind("Mix_GetChunk", [c_int], POINTER(Mix_Chunk))
-Mix_CloseAudio = _bind("Mix_CloseAudio")
+
+
+# Raw ctypes function definitions
+
+_funcdefs = [
+    SDLFunc("Mix_Linked_Version", None, _P(SDL_version)),
+    SDLFunc("Mix_Init", [c_int], c_int),
+    SDLFunc("Mix_Quit"),
+    SDLFunc("Mix_OpenAudio", [c_int, Uint16, c_int, c_int], c_int),
+    SDLFunc("Mix_OpenAudioDevice", [c_int, Uint16, c_int, c_int, c_char_p, c_int], c_int, added='2.0.2'),
+    SDLFunc("Mix_AllocateChannels", [c_int], c_int),
+    SDLFunc("Mix_QuerySpec", [_P(c_int), _P(Uint16), _P(c_int)], c_int),
+    SDLFunc("Mix_LoadWAV_RW", [_P(SDL_RWops), c_int], _P(Mix_Chunk)),
+    SDLFunc("Mix_LoadMUS", [c_char_p], _P(Mix_Music)),
+    SDLFunc("Mix_LoadMUS_RW", [_P(SDL_RWops)], _P(Mix_Music)),
+    SDLFunc("Mix_LoadMUSType_RW", [_P(SDL_RWops), Mix_MusicType, c_int], _P(Mix_Music)),
+    SDLFunc("Mix_QuickLoad_WAV", [_P(Uint8)], _P(Mix_Chunk)),
+    SDLFunc("Mix_QuickLoad_RAW", [_P(Uint8), Uint32], _P(Mix_Chunk)),
+    SDLFunc("Mix_FreeChunk", [_P(Mix_Chunk)]),
+    SDLFunc("Mix_FreeMusic", [_P(Mix_Music)]),
+    SDLFunc("Mix_GetNumChunkDecoders", None, c_int),
+    SDLFunc("Mix_GetChunkDecoder", [c_int], c_char_p),
+    SDLFunc("Mix_HasChunkDecoder", [c_char_p], SDL_bool, added='2.0.2'),
+    SDLFunc("Mix_GetNumMusicDecoders", None, c_int),
+    SDLFunc("Mix_GetMusicDecoder", [c_int], c_char_p),
+    SDLFunc("Mix_GetMusicType", [_P(Mix_Music)], Mix_MusicType),
+    SDLFunc("Mix_SetPostMix", [mix_func, c_void_p]),
+    SDLFunc("Mix_HookMusic", [mix_func, c_void_p]),
+    SDLFunc("Mix_HookMusicFinished", [music_finished]),
+    SDLFunc("Mix_GetMusicHookData", None, c_void_p),
+    SDLFunc("Mix_ChannelFinished", [channel_finished]),
+    SDLFunc("Mix_RegisterEffect", [c_int, Mix_EffectFunc_t, Mix_EffectDone_t, c_void_p], c_int),
+    SDLFunc("Mix_UnregisterEffect", [c_int, Mix_EffectFunc_t], c_int),
+    SDLFunc("Mix_UnregisterAllEffects", [c_int]),
+    SDLFunc("Mix_SetPanning", [c_int, Uint8, Uint8], c_int),
+    SDLFunc("Mix_SetPosition", [c_int, Sint16, Uint8], c_int),
+    SDLFunc("Mix_SetDistance", [c_int, Uint8]),
+    SDLFunc("Mix_SetReverseStereo", [c_int, c_int], c_int),
+    SDLFunc("Mix_ReserveChannels", [c_int], c_int),
+    SDLFunc("Mix_GroupChannel", [c_int, c_int], c_int),
+    SDLFunc("Mix_GroupChannels", [c_int, c_int, c_int], c_int),
+    SDLFunc("Mix_GroupAvailable", [c_int], c_int),
+    SDLFunc("Mix_GroupCount", [c_int], c_int),
+    SDLFunc("Mix_GroupOldest", [c_int], c_int),
+    SDLFunc("Mix_GroupNewer", [c_int], c_int),
+    SDLFunc("Mix_PlayChannelTimed", [c_int, _P(Mix_Chunk), c_int, c_int], c_int),
+    SDLFunc("Mix_PlayMusic", [_P(Mix_Music), c_int], c_int),
+    SDLFunc("Mix_FadeInMusic", [_P(Mix_Music), c_int, c_int], c_int),
+    SDLFunc("Mix_FadeInMusicPos", [_P(Mix_Music), c_int, c_int, c_double], c_int),
+    SDLFunc("Mix_FadeInChannelTimed", [c_int, _P(Mix_Chunk), c_int, c_int, c_int], c_int),
+    SDLFunc("Mix_Volume", [c_int, c_int], c_int),
+    SDLFunc("Mix_VolumeChunk", [_P(Mix_Chunk), c_int], c_int),
+    SDLFunc("Mix_VolumeMusic", [c_int], c_int),
+    SDLFunc("Mix_HaltChannel", [c_int], c_int),
+    SDLFunc("Mix_HaltGroup", [c_int], c_int),
+    SDLFunc("Mix_HaltMusic", None, c_int),
+    SDLFunc("Mix_ExpireChannel", [c_int, c_int], c_int),
+    SDLFunc("Mix_FadeOutChannel", [c_int, c_int], c_int),
+    SDLFunc("Mix_FadeOutGroup", [c_int, c_int], c_int),
+    SDLFunc("Mix_FadeOutMusic", [c_int], c_int),
+    SDLFunc("Mix_FadingMusic", None, Mix_Fading),
+    SDLFunc("Mix_FadingChannel", [c_int], Mix_Fading),
+    SDLFunc("Mix_Pause", [c_int]),
+    SDLFunc("Mix_Resume", [c_int]),
+    SDLFunc("Mix_Paused", [c_int], c_int),
+    SDLFunc("Mix_PauseMusic"),
+    SDLFunc("Mix_ResumeMusic"),
+    SDLFunc("Mix_RewindMusic"),
+    SDLFunc("Mix_PausedMusic", None, c_int),
+    SDLFunc("Mix_SetMusicPosition", [c_double], c_int),
+    SDLFunc("Mix_Playing", [c_int], c_int),
+    SDLFunc("Mix_PlayingMusic", None, c_int),
+    SDLFunc("Mix_SetMusicCMD", [c_char_p], c_int),
+    SDLFunc("Mix_SetSynchroValue", [c_int], c_int),
+    SDLFunc("Mix_GetSynchroValue", None, c_int),
+    SDLFunc("Mix_SetSoundFonts", [c_char_p], c_int),
+    SDLFunc("Mix_GetSoundFonts", None, c_char_p),
+    SDLFunc("Mix_EachSoundFont", [soundfont_function, c_void_p], c_int),
+    SDLFunc("Mix_GetChunk", [c_int], _P(Mix_Chunk)),
+    SDLFunc("Mix_CloseAudio"),
+]
+_funcs = {}
+for f in _funcdefs:
+    _funcs[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Python wrapper functions
+
+def Mix_Linked_Version():
+    return _funcs["Mix_Linked_Version"]()
+
+def Mix_Init(flags):
+    return _funcs["Mix_Init"](flags)
+
+def Mix_Quit():
+    return _funcs["Mix_Quit"]()
+
+
+def Mix_OpenAudio(frequency, format, channels, chunksize):
+    return _funcs["Mix_OpenAudio"](frequency, format, channels, chunksize)
+
+def Mix_OpenAudioDevice(frequency, format, channels, chunksize, device, allowed_changes):
+    return _funcs["Mix_OpenAudioDevice"](
+        frequency, format, channels, chunksize, device, allowed_changes
+    )
+
+def Mix_AllocateChannels(numchans):
+    return _funcs["Mix_AllocateChannels"](numchans)
+
+def Mix_QuerySpec(frequency, format, channels):
+    return _funcs["Mix_QuerySpec"](frequency, format, channels)
+
+
+def Mix_LoadWAV_RW(src, freesrc):
+    return _funcs["Mix_LoadWAV_RW"](src, freesrc)
+
+def Mix_LoadWAV(file):
+    return Mix_LoadWAV_RW(SDL_RWFromFile(file, b"rb"), 1)
+
+def Mix_LoadMUS(file):
+    return _funcs["Mix_LoadMUS"](file)
+
+def Mix_LoadMUS_RW(src, freesrc):
+    return _funcs["Mix_LoadMUS_RW"](src, freesrc)
+
+def Mix_LoadMUSType_RW(src, type, freesrc):
+    return _funcs["Mix_LoadMUSType_RW"](src, type, freesrc)
+
+def Mix_QuickLoad_WAV(mem):
+    return _funcs["Mix_QuickLoad_WAV"](mem)
+
+def Mix_QuickLoad_RAW(mem, len):
+    return _funcs["Mix_QuickLoad_RAW"](mem, len)
+
+def Mix_FreeChunk(chunk):
+    return _funcs["Mix_FreeChunk"](chunk)
+
+def Mix_FreeMusic(music):
+    return _funcs["Mix_FreeMusic"](music)
+
+
+def Mix_GetNumChunkDecoders():
+    return _funcs["Mix_GetNumChunkDecoders"]()
+
+def Mix_GetChunkDecoder(index):
+    return _funcs["Mix_GetChunkDecoder"](index)
+
+def Mix_HasChunkDecoder(name):
+    return _funcs["Mix_HasChunkDecoder"](name)
+
+def Mix_GetNumMusicDecoders():
+    return _funcs["Mix_GetNumMusicDecoders"]()
+
+def Mix_GetMusicDecoder(index):
+    return _funcs["Mix_GetMusicDecoder"](index)
+
+def Mix_GetMusicType(music):
+    return _funcs["Mix_GetMusicType"](music)
+
+
+def Mix_SetPostMix(mix_func, arg):
+    return _funcs["Mix_SetPostMix"](mix_func, arg)
+
+def Mix_HookMusic(mix_func, arg):
+    return _funcs["Mix_HookMusic"](mix_func, arg)
+
+def Mix_HookMusicFinished(music_finished):
+    return _funcs["Mix_HookMusicFinished"](music_finished)
+
+def Mix_GetMusicHookData():
+    return _funcs["Mix_GetMusicHookData"]()
+
+def Mix_ChannelFinished(channel_finished):
+    return _funcs["Mix_ChannelFinished"](channel_finished)
+
+
+def Mix_RegisterEffect(chan, f, d, arg):
+    return _funcs["Mix_RegisterEffect"](chan, f, d, arg)
+
+def Mix_UnregisterEffect(channel, f):
+    return _funcs["Mix_UnregisterEffect"](channel, f)
+
+def Mix_UnregisterAllEffects(channel):
+    return _funcs["Mix_UnregisterAllEffects"](channel)
+
+
+def Mix_SetPanning(channel, left, right):
+    return _funcs["Mix_SetPanning"](channel, left, right)
+
+def Mix_SetPosition(channel, angle, distance):
+    return _funcs["Mix_SetPosition"](channel, angle, distance)
+
+def Mix_SetDistance(channel, distance):
+    return _funcs["Mix_SetDistance"](channel, distance)
+
+def Mix_SetReverseStereo(channel, flip):
+    return _funcs["Mix_SetReverseStereo"](channel, flip)
+
+def Mix_ReserveChannels(num):
+    return _funcs["Mix_ReserveChannels"](num)
+
+
+def Mix_GroupChannel(which, tag):
+    return _funcs["Mix_GroupChannel"](which, tag)
+
+def Mix_GroupChannels(from_, to, tag):
+    return _funcs["Mix_GroupChannels"](from_, to, tag)
+
+def Mix_GroupAvailable(tag):
+    return _funcs["Mix_GroupAvailable"](tag)
+
+def Mix_GroupCount(tag):
+    return _funcs["Mix_GroupCount"](tag)
+
+def Mix_GroupOldest(tag):
+    return _funcs["Mix_GroupOldest"](tag)
+
+def Mix_GroupNewer(tag):
+    return _funcs["Mix_GroupNewer"](tag)
+
+
+def Mix_PlayChannelTimed(channel, chunk, loops, ticks):
+    return _funcs["Mix_PlayChannelTimed"](channel, chunk, loops, ticks)
+
+def Mix_PlayChannel(channel, chunk, loops):
+    return Mix_PlayChannelTimed(channel, chunk, loops, -1)
+
+def Mix_PlayMusic(music, loops):
+    return _funcs["Mix_PlayMusic"](music, loops)
+
+
+def Mix_FadeInMusic(music, loops, ms):
+    return _funcs["Mix_FadeInMusic"](music, loops, ms)
+
+def Mix_FadeInMusicPos(music, loops, ms, position):
+    return _funcs["Mix_FadeInMusicPos"](music, loops, ms, position)
+
+def Mix_FadeInChannelTimed(channel, chunk, loops, ms, ticks):
+    return _funcs["Mix_FadeInChannelTimed"](channel, chunk, loops, ms, ticks)
+
+def Mix_FadeInChannel(channel, chunk, loops, ms):
+    return Mix_FadeInChannelTimed(channel, chunk, loops, ms, -1)
+
+
+def Mix_Volume(channel, volume):
+    return _funcs["Mix_Volume"](channel, volume)
+
+def Mix_VolumeChunk(chunk, volume):
+    return _funcs["Mix_VolumeChunk"](chunk, volume)
+
+def Mix_VolumeMusic(volume):
+    return _funcs["Mix_VolumeMusic"](volume)
+
+
+def Mix_HaltChannel(channel):
+    return _funcs["Mix_HaltChannel"](channel)
+
+def Mix_HaltGroup(tag):
+    return _funcs["Mix_HaltGroup"](tag)
+
+def Mix_HaltMusic():
+    return _funcs["Mix_HaltMusic"]()
+
+def Mix_ExpireChannel(channel, ticks):
+    return _funcs["Mix_ExpireChannel"](channel, ticks)
+
+
+def Mix_FadeOutChannel(which, ms):
+    return _funcs["Mix_FadeOutChannel"](which, ms)
+
+def Mix_FadeOutGroup(tag, ms):
+    return _funcs["Mix_FadeOutGroup"](tag, ms)
+
+def Mix_FadeOutMusic(ms):
+    return _funcs["Mix_FadeOutMusic"](ms)
+
+def Mix_FadingMusic():
+    return _funcs["Mix_FadingMusic"]()
+
+def Mix_FadingChannel(which):
+    return _funcs["Mix_FadingChannel"](which)
+
+
+def Mix_Pause(channel):
+    return _funcs["Mix_Pause"](channel)
+
+def Mix_Resume(channel):
+    return _funcs["Mix_Resume"](channel)
+
+def Mix_Paused(channel):
+    return _funcs["Mix_Paused"](channel)
+
+def Mix_PauseMusic():
+    return _funcs["Mix_PauseMusic"]()
+
+def Mix_ResumeMusic():
+    return _funcs["Mix_ResumeMusic"]()
+
+def Mix_RewindMusic():
+    return _funcs["Mix_RewindMusic"]()
+
+def Mix_PausedMusic():
+    return _funcs["Mix_PausedMusic"]()
+
+
+def Mix_SetMusicPosition(position):
+    return _funcs["Mix_SetMusicPosition"](position)
+
+def Mix_Playing(channel):
+    return _funcs["Mix_Playing"](channel)
+
+def Mix_PlayingMusic():
+    return _funcs["Mix_PlayingMusic"]()
+
+def Mix_SetMusicCMD(command):
+    return _funcs["Mix_SetMusicCMD"](command)
+
+
+def Mix_SetSynchroValue(value):
+    return _funcs["Mix_SetSynchroValue"](value)
+
+def Mix_GetSynchroValue():
+    return _funcs["Mix_GetSynchroValue"]()
+
+def Mix_SetSoundFonts(paths):
+    return _funcs["Mix_SetSoundFonts"](paths)
+
+def Mix_GetSoundFonts():
+    return _funcs["Mix_GetSoundFonts"]()
+
+def Mix_EachSoundFont(function, data):
+    return _funcs["Mix_EachSoundFont"](function, data)
+
+
+def Mix_GetChunk(channel):
+    return _funcs["Mix_GetChunk"](channel)
+
+def Mix_CloseAudio():
+    return _funcs["Mix_CloseAudio"]()
+
+
 Mix_SetError = SDL_SetError
 Mix_GetError = SDL_GetError
 Mix_ClearError = SDL_ClearError
