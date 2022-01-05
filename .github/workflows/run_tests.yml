@@ -22,15 +22,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
-        sdl2: ['2.0.16']
+        python-version: [2.7, 3.6, 3.7, 3.8, 3.9, 3.10]
+        sdl2: ['2.0.18']
         name-prefix: ['Linux (Python ']
         include:
           - python-version: 'pypy-2.7'
-            sdl2: '2.0.16'
+            sdl2: '2.0.18'
             name-prefix: 'Experimental / Linux ('
           - python-version: 'pypy-3.7'
-            sdl2: '2.0.16'
+            sdl2: '2.0.18'
             name-prefix: 'Experimental / Linux ('
 
     env:
@@ -70,14 +70,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
         sdl2: ['2.0.18', '2.0.16', '2.0.14']
         name-prefix: ['macOS (Python ']
         include:
           - python-version: '2.7'
             sdl2: '2.0.18'
             name-prefix: 'macOS (Python '
-          - python-version: '3.8'
+          - python-version: '3.9'
             sdl2: 'from Homebrew'
             name-prefix: 'Experimental / macOS (Python '
 
