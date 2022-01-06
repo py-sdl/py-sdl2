@@ -111,7 +111,7 @@ class FontTTF(object):
         _ttf_init()
 
         # Load the font data as an RWops object for fast repeat opening
-        self._font_rw = rwops.SDL_RWFromFile(fullpath, b"rb")
+        self._font_rw = rwops.rw_from_object(open(fullpath, "rb"))
         self._index = index
 
         # Get the px-to-pt scaling factor for the font
@@ -416,7 +416,6 @@ class FontTTF(object):
         if self._font_rw != None:
             for name, style in self._styles.items():
                 sdlttf.TTF_CloseFont(style['font'])
-            rwops.SDL_FreeRW(self._font_rw)
             self._styles = None
             self._font_rw = None
 
