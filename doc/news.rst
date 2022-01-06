@@ -53,6 +53,12 @@ New Features:
   widths and heights for each mapped character in a bitmap font.
 * Added a new argument ``line_h`` to :meth:`sdl2.ext.BitmapFont.render_on` to
   allow specifying custom line heights.
+* Added a new :class:`~sdl2.ext.FontTTF` class, providing a new and flexible
+  Pythonic wrapper around the :mod:`~sdl2.sdlttf` module for opening and
+  rendering text with TrueType and OpenType fonts. New features include custom
+  line heights for multi-line text, left/right/center justification operations
+  for multiline text, and specifying font sizes in units of pixels in addition
+  to pt.
 
 API Changes:
 
@@ -114,6 +120,8 @@ Deprecation Notices:
   :meth:`sdl2.ext.BitmapFont.render_text`, which returns an SDL surface instead
   of a SoftwareSprite and ensures the output surface is in ARGB8888 format by
   default.
+* The :class:`~sdl2.ext.FontManager` class has been deprecated in favor of the
+  new and more flexible :class:`~sdl2.ext.FontTTF` class.
 
 
 0.9.9

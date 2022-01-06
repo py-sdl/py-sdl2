@@ -74,7 +74,7 @@ def quit():
     # TODO: More subsystems? Also, is TTF_WasInit always 1?
     SDL_QuitSubSystem(SDL_INIT_VIDEO)
     if SDL_WasInit(0) != 0:
-        if _HASSDLTTF and sdlttf.TTF_WasInit() == 1:
+        if _HASSDLTTF and sdlttf.TTF_WasInit() > 0:
             sdlttf.TTF_Quit()
         if _HASSDLIMAGE:
             sdlimage.IMG_Quit()
