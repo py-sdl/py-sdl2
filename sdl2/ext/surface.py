@@ -33,7 +33,7 @@ def _get_target_surface(target, argname="target"):
     return rtarget
 
 
-def _create_surface(size, fill=None, fmt="ARGB8888"):
+def _create_surface(size, fill=None, fmt="ARGB8888", errname="SDL"):
     # Perform initial type and argument checking
     if not isiterable(size) and len(size) == 2:
         e = "Surface size must be a tuple of two positive integers."
@@ -41,7 +41,7 @@ def _create_surface(size, fill=None, fmt="ARGB8888"):
     if not all([i > 0 and int(i) == i for i in size]):
         e = "Surface height and width must both be positive integers (got {0})."
         raise ValueError(e.format(str(size)))
-    if fmt not in pixels.NAME_MAP.keys():
+    if fmt not in pixels.NAME_MAP.keys() and fmt not in pixels.ALL_PIXELFORMATS:
         e = "'{0}' is not a supported SDL pixel format."
         raise ValueError(e.format(fmt))
     if fill is not None:
@@ -50,10 +50,10 @@ def _create_surface(size, fill=None, fmt="ARGB8888"):
     # Actually create a surface with the given pixel format
     w, h = size
     bpp = 32  # NOTE: according to the SDL_surface.c code, this has no effect
-    fmt_enum = pixels.NAME_MAP[fmt]
+    fmt_enum = fmt if type(fmt) == int else pixels.NAME_MAP[fmt]
     sf = surf.SDL_CreateRGBSurfaceWithFormat(0, w, h, bpp, fmt_enum)
     if not sf:
-        raise_sdl_err("creating the SDL surface")
+        raise_sdl_err("creating the {0} surface".format(errname))
 
     # If provided, set the fill for the new surface
     if fill is not None:
@@ -65,7 +65,7 @@ def _create_surface(size, fill=None, fmt="ARGB8888"):
         surf.SDL_FillRect(sf, None, fill_col)
 
     return sf
-    
+
 
 def subsurface(surface, area):
     """Creates a new :obj:`~sdl2.SDL_Surface` from a part of another surface.
