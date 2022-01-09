@@ -6,11 +6,11 @@ PySDL2 offers. If you want to have a quick overview about the modules, use the
 function, use the :ref:`genindex` or :ref:`search`.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sdl2.rst
-   sdl2_sdlgfx.rst
+   sdl2ext.rst
+   sdl2_sdlttf.rst
    sdl2_sdlimage.rst
    sdl2_sdlmixer.rst
-   sdl2_sdlttf.rst
-   sdl2ext.rst
+   sdl2_sdlgfx.rst

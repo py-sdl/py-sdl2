@@ -115,7 +115,6 @@ available within :mod:`sdl2`.
 * Everything from ``SDL_atomic.h``
 * Everything from ``SDL_opengl.h`` (see PyOpenGL for a compatible OpenGL API)
 * Everything from ``SDL_mutex.h``
-* Everything from ``SDL_sensor.h`` (currently only supports iOS & Android APIs)
 
 Additional interfaces
 ---------------------
