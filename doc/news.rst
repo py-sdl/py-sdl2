@@ -15,6 +15,11 @@ New Features:
   inline documentation, and more flexible handling of argument types and
   SDL errors (PR #199)
 * Updated to wrap new functions and constants in in SDL2 2.0.18 (PR #197)
+* Added full inline documentation for the :mod:`~sdl2.sdlttf`,
+  :mod:`~sdl2.sdlimage`, and :mod:`~sdl2.sdlgfx` modules, as well as partial
+  inline documentation for the :mod:`~sdl2.sdlmixer` modlue. In addition to
+  Python-specific argument and return types, the new docstrings also include
+  including code examples and documentation of Python-specific quirks (PR #200)
 
 Fixed Bugs:
 

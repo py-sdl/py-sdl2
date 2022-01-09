@@ -4,26 +4,37 @@ PySDL2 is a wrapper around the SDL2 library and as such similar to the
 discontinued PySDL project. In contrast to PySDL, it has no licensing
 restrictions, nor does it rely on C code, but uses :mod:`ctypes` instead.
 
-Contents
-========
+Getting Started
+===============
 
 .. toctree::
    :maxdepth: 2
 
    install.rst
    integration.rst
-   tutorial/index.rst
-   modules/index.rst
    faq.rst
-   news.rst
+   tutorial/index.rst
 
-Further readings:
+
+API Reference
+=============
+
+.. toctree::
+   :maxdepth: 2
+
+   modules/index.rst
+
+
+Project Information
+===================
 
 .. toctree::
    :maxdepth: 1
 
+   news.rst
    todos.rst
    copying.rst
+
 
 Indices and tables
 ==================
@@ -31,11 +42,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-
-Documentation TODOs
-===================
-
-.. todolist::
-
-Last generated on: |today|
