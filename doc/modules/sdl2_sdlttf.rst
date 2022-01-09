@@ -42,9 +42,31 @@ Initialization functions
 
 .. autofunction:: TTF_WasInit
 
+.. function:: TTF_GetError()
+
+   Returns the most recently encountered SDL2 error message, if any.
+
+   This function is a simple wrapper around :func:`SDL_GetError`.
+
+   :retuns: A UTF-8 encoded string describing the most recent SDL2 error.
+   :rtype: bytes
+
+.. function:: TTF_SetError(fmt)
+
+   Sets the most recent SDL2 error message to a given string.
+
+   This function is a simple wrapper around :func:`SDL_SetError`.
+
+   :param fmt: A UTF-8 encoded string containing the error message to set.
+   :type fmt: bytes
+
+   :retuns: Always returns ``-1``.
+   :rtype: int
+
 .. autofunction:: TTF_ByteSwappedUNICODE
 
 .. autofunction:: TTF_Linked_Version
+
 
 
 Font loading functions
