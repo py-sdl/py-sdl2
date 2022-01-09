@@ -1,7 +1,7 @@
 .. currentmodule:: sdl2.sdlttf
 
-sdl2.sdlttf - Python bindings for SDL2_ttf
-==========================================
+sdl2.sdlttf - Python bindings for SDL_ttf
+=========================================
 
 py-sdl2 provides bindings for SDL2_ttf, a library designed for use with SDL2
 that provides high quality TrueType font rendering.

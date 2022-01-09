@@ -1,7 +1,7 @@
 .. currentmodule:: sdl2.sdlgfx
 
-sdl2.sdlgfx - SDL2_gfx library wrapper
-======================================
+sdl2.sdlgfx - Python bindings for SDL2_gfx
+==========================================
 
 py-sdl2 provides bindings for SDL2_gfx, an unofficial addon library for SDL2
 that contains a range of useful functions for rendering shapes, frame pacing,

@@ -1,7 +1,7 @@
 .. currentmodule:: sdl2.sdlimage
 
-sdl2.sdlimage - Python bindings for SDL2_image
-==============================================
+sdl2.sdlimage - Python bindings for SDL_image
+=============================================
 
 py-sdl2 provides bindings for SDL2_image, a library designed for use with SDL2
 that adds support for loading a wide range of different common (and uncommon)
