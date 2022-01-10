@@ -3,7 +3,6 @@ import pytest
 from sdl2.surface import SDL_CreateRGBSurface
 from sdl2.rect import SDL_Rect
 from sdl2.ext.color import Color, COLOR
-from sdl2.ext.compat import ExperimentalWarning
 from sdl2 import ext as sdl2ext
 
 try:
@@ -32,8 +31,7 @@ class TestSDL2ExtDraw(object):
         WHITE = (255, 255, 255)
         BLACK = (0, 0, 0)
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
-        with pytest.warns(ExperimentalWarning):
-            view = sdl2ext.pixels3d(sf.contents, False)
+        view = sdl2ext.pixels3d(sf.contents, False)
 
         # Test with no provided fill area
         sdl2ext.fill(sf.contents, WHITE, None)
@@ -75,8 +73,7 @@ class TestSDL2ExtDraw(object):
         WHITE = (255, 255, 255)
         BLACK = (0, 0, 0)
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
-        with pytest.warns(ExperimentalWarning):
-            view = sdl2ext.pixels3d(sf.contents, False)
+        view = sdl2ext.pixels3d(sf.contents, False)
 
         # Test with a single straight line
         sdl2ext.line(sf.contents, WHITE, (0, 0, 11, 0))
