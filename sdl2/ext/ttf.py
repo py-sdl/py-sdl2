@@ -1,10 +1,10 @@
-"""Font and text rendering routines."""
 import os
 from .. import surface, pixels
-from .common import SDLError
+from .common import raise_sdl_err
 from .compat import *
 from .color import Color, convert_to_color
 from .draw import prepare_color
+from .resources import _validate_path
 
 _HASSDLTTF = True
 try:
@@ -16,26 +16,79 @@ except ImportError:
 __all__ = ["FontManager"]
 
 
+def _ttf_init():
+    if not _HASSDLTTF:
+        raise RuntimeError("SDL_ttf is required, but is not installed.")
+
+    # Check if TTF already initialized, return immediately if it was
+    if sdlttf.TTF_WasInit() > 0:
+        return
+
+    # Handle a weirdness in how TTF_Init and TTF_Quit work: TTF_Init
+    # blindly increments TTF_WasInit every time it's called and TTF_Quit
+    # blindly decrements it, but TTF_Quit only *actually* quits when 
+    # TTF_WasInit - 1 == 0. Here, we try to ensure we're starting at 0.
+    while sdlttf.TTF_WasInit() < 1:
+        ret = sdlttf.TTF_Init()
+        if ret != 0:
+            raise_sdl_err("initializing the SDL_ttf library")
+
+
+def _ttf_quit():
+    if not _HASSDLTTF:
+        raise RuntimeError("SDL_ttf is required, but is not installed.")
+
+    # Make sure WasInit is non-negative before trying to quit
+    while sdlttf.TTF_WasInit() < 1:
+        ret = sdlttf.TTF_Init()
+        if ret != 0:
+            raise_sdl_err("initializing the SDL_ttf library")
+
+    # Actually quit the library (won't really quit until TTF_WasInit == 0)
+    while sdlttf.TTF_WasInit > 0:
+        sdlttf.TTF_Quit()
+
+
+
 class FontManager(object):
-    """Manage fonts and rendering of text."""
+    """A class for managing and rendering TrueType fonts.
+
+    .. note:: 
+       This class is has been deprecated in favor of the more flexible
+       :class:`~sdl2.ext.FontTTF` class.
+    
+    This class provides a basic wrapper around the SDL_ttf library. One font
+    path must be given to initialise the FontManager.
+    
+    The first face is always at index 0. It can be used for TTC (TrueType Font
+    Collection) fonts.
+
+    Args:
+        font_path (str): The relative (or absolute) path to the font
+            to load.
+        alias (str, optional): The name to give the font within the
+            FontManager. Defaults to the font filename if not specified.
+        size (int, optional): The size (in pt) at which to load the default
+            font. Defaults to 16pt if not specified.
+        color (~sdl2.ext.Color): The default font rendering color. Defaults
+            to opaque white if not specified.
+        bg_color (~sdl2.ext.Color, optional): The default background surface
+            color. Defaults to a fully-transparent background if not specified.
+        index (int, optional): The index of the font face to load if the
+            font file contains multiple faces. Defaults to 0 (first face in
+            the file) if not specified.
+
+    Attributes:
+        size (int): The default font size in pt.
+
+    """
     def __init__(self, font_path, alias=None, size=16,
                  color=Color(255, 255, 255), bg_color=Color(0, 0, 0), index=0):
-        """Initialize the FontManager
-
-        One font path must be given to initialize the FontManager. The
-        default_font will be set to this font. color and bg_color
-        will give the FontManager a default color. size is the default
-        font size in pixels.
-        """
-        if not _HASSDLTTF:
-            raise UnsupportedError(FontManager,
-                                   "FontManager requires sdlttf support")
-        if sdlttf.TTF_WasInit() == 0 and sdlttf.TTF_Init() != 0:
-            raise SDLError()
+        _ttf_init()
         self.fonts = {}  # fonts = {alias: {size:font_ptr}}
         self.aliases = {}  # aliases = {alias:font_path}
-        self._textcolor = pixels.SDL_Color(0, 0, 0)
-        self._bgcolor = pixels.SDL_Color(255, 255, 255)
+        self._textcolor = None
+        self._bgcolor = None
         self.color = color
         self.bg_color = bg_color
         self.size = size
@@ -46,7 +99,7 @@ class FontManager(object):
         self.close()
 
     def close(self):
-        """Close all opened fonts."""
+        """Closes all fonts opened by the class."""
         for alias, fonts in self.fonts.items():
             for size, font in fonts.items():
                 if font:
@@ -55,10 +108,23 @@ class FontManager(object):
         self.aliases = {}
 
     def add(self, font_path, alias=None, size=None, index=0):
-        """Add a font to the Font Manager.
+        """Adds a font to the :class:`FontManager`.
+        
+        Args:
+            font_path (str): The relative (or absolute) path to the font
+                to load.
+            alias (str, optional): The name to give the font within the
+                FontManager. Defaults to the font filename if not specified.
+            size (int, optional): The size (in pt) at which to load the font.
+                Defaults to the FontManager's default size if not specified.
+            index (int, optional): The index of the font face to load if the
+                font file contains multiple faces. Defaults to 0 (first face in
+                the file) if not specified.
 
-        alias is by default the font name. But another name can be
-        passed. Returns the font pointer stored in self.fonts.
+        Returns:
+            :obj:`~sdl2.sdlttf.TTF_Font`: A pointer to the ctypes font object
+            for the added font.
+
         """
         size = size or self.size
         if alias is None:
@@ -87,13 +153,11 @@ class FontManager(object):
 
         Raises an exception if something went wrong.
         """
-        if index == 0:
-            font = sdlttf.TTF_OpenFont(byteify(font_path, "utf-8"), size)
-        else:
-            font = sdlttf.TTF_OpenFontIndex(byteify(font_path, "utf-8"), size,
-                                            index)
+        fullpath, fname = _validate_path(font_path, "a font")
+        fullpath = byteify(fullpath)
+        font = sdlttf.TTF_OpenFontIndex(fullpath, size, index)
         if not font:
-            raise SDLError(sdlttf.TTF_GetError())
+            raise_sdl_err("opening the font '{0}'".format(fname))
         return font
 
     def _change_font_size(self, alias, size):
@@ -105,31 +169,32 @@ class FontManager(object):
 
     @property
     def color(self):
-        """The text color to be used."""
-        return Color(self._textcolor.r, self._textcolor.g, self._textcolor.b,
-                     self._textcolor.a)
+        """:obj:`~sdl2.ext.Color`: The color to use for rendering text."""
+        c = self._textcolor
+        return Color(c.r, c.g, c.b, c.a)
 
     @color.setter
     def color(self, value):
-        """The text color to be used."""
         c = convert_to_color(value)
         self._textcolor = pixels.SDL_Color(c.r, c.g, c.b, c.a)
 
     @property
     def bg_color(self):
-        """The background color to be used."""
-        return Color(self._bgcolor.r, self._bgcolor.g, self._bgcolor.b,
-                     self._bgcolor.a)
+        """:obj:`~sdl2.ext.Color`: The background color to use for rendering."""
+        c = self._bgcolor
+        return Color(c.r, c.g, c.b, c.a)
 
     @bg_color.setter
     def bg_color(self, value):
-        """The background color to be used."""
         c = convert_to_color(value)
         self._bgcolor = pixels.SDL_Color(c.r, c.g, c.b, c.a)
 
     @property
     def default_font(self):
-        """Returns the name of the current default_font."""
+        """str: The name of the default font. Must be set to the alias of a
+        currently-loaded font.
+
+        """
         for alias in self.fonts:
             for size, font in self.fonts[alias].items():
                 if font == self._default_font:
@@ -137,11 +202,6 @@ class FontManager(object):
 
     @default_font.setter
     def default_font(self, value):
-        """value must be a font alias
-
-        Set the default_font to the given font name alias,
-        provided it's loaded in the font manager.
-        """
         alias = value
         size = self.size
         if alias not in self.fonts:
@@ -156,11 +216,26 @@ class FontManager(object):
                bg_color=None, **kwargs):
         """Renders text to a surface.
 
-        This method uses the font designated by the alias or the
-        default_font.  A size can be passed even if the font was not
-        loaded with this size.  A width can be given for line wrapping.
-        If no bg_color or color are given, it will default to the
-        FontManager's bg_color and color.
+        Args:
+            text (str): The text to render.
+            alias (str, optional): The alias of the font to use for rendering
+                the text. Defaults to the FontManager's default font if not
+                specified.
+            size (int, optional): The size (in pt) at which to render the font.
+                Defaults to the FontManager's default size if not specified.
+            width (int, optional): The width (in pixels) of the output surface.
+                If a line of text exceeds this value, it will be automatically
+                wrapped to fit within the specified width. Defaults to ``None``.
+            color (~sdl2.ext.Color): The font rendering color. Defaults to the
+                FontManager's default color if not specified.
+            bg_color (~sdl2.ext.Color, optional): The background surface color.
+                Defaults to the FontManager's default background color if not
+                specified.
+
+        Returns:
+            :obj:`~sdl2.SDL_Surface`: A 32-bit ARGB surface containing the
+            rendered text.
+
         """
         alias = alias or self.default_font
         size = size or self.size
@@ -187,7 +262,7 @@ class FontManager(object):
             fontsf = sdlttf.TTF_RenderUTF8_Blended_Wrapped(font, text, color,
                                                            width)
             if not fontsf:
-                raise SDLError(sdlttf.TTF_GetError())
+                raise_sdl_err("rendering the text")
             if bg_color != pixels.SDL_Color(0, 0, 0):
                 fontsf = fontsf.contents
                 w, h = fontsf.w, fontsf.h
@@ -196,7 +271,7 @@ class FontManager(object):
                 bgsf = surface.SDL_CreateRGBSurfaceWithFormat(0, w, h, bpp, fmt)
                 if not bgsf:
                     surface.SDL_FreeSurface(fontsf)
-                    raise SDLError()
+                    raise_sdl_err("creating the background surface")
                 bg_color = prepare_color(bg_color, bgsf.contents)
                 surface.SDL_FillRect(bgsf, None, bg_color)
                 surface.SDL_BlitSurface(fontsf, None, bgsf, None)
@@ -209,5 +284,5 @@ class FontManager(object):
             sf = sdlttf.TTF_RenderUTF8_Shaded(font, text, color,
                                               bg_color)
         if not sf:
-            raise SDLError(sdlttf.TTF_GetError())
+            raise_sdl_err("rendering the text")
         return sf.contents
