@@ -1,4 +1,3 @@
-"""SDL2 helper functions."""
 import ctypes
 from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_WasInit, \
     SDL_INIT_VIDEO, error, events, timer
@@ -37,11 +36,26 @@ class SDLError(Exception):
         return repr(self.msg)
 
 
+def raise_sdl_err(desc=None):
+    # Raises and clears the latest SDL error. For internal use.
+    errmsg = error.SDL_GetError().decode('utf-8')
+    error.SDL_ClearError()
+    e = "Error encountered"
+    if desc:
+        e += " " + desc
+    if len(errmsg):
+        e += ": {0}".format(errmsg)
+    raise SDLError(e)
+
+
 def init():
     """Initializes the SDL2 video subsystem.
 
-    Raises an :exc:`SDLError` if the SDL2 video subsystem cannot be
-    initialized.
+    See :ref:`pygamers_pygame` for a comparison between this function and
+    ``pygame.init()``.
+
+    Raises:
+        :exc:`SDLError`: If the SDL2 video subsystem cannot be initialized.
 
     """
     # TODO: More subsystems?
@@ -60,7 +74,7 @@ def quit():
     # TODO: More subsystems? Also, is TTF_WasInit always 1?
     SDL_QuitSubSystem(SDL_INIT_VIDEO)
     if SDL_WasInit(0) != 0:
-        if _HASSDLTTF and sdlttf.TTF_WasInit() == 1:
+        if _HASSDLTTF and sdlttf.TTF_WasInit() > 0:
             sdlttf.TTF_Quit()
         if _HASSDLIMAGE:
             sdlimage.IMG_Quit()
@@ -72,7 +86,7 @@ def get_events():
 
     Returns:
         :obj:`List`: A list of all :obj:`~sdl2.SDL_Event` objects currently in
-            the event queue.
+        the event queue.
     
     """
     events.SDL_PumpEvents()
