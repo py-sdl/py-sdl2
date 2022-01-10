@@ -1,14 +1,13 @@
-"""Sprite, texture and pixel surface routines."""
 import abc
 from ctypes import byref, c_int
-from .common import SDLError
-from .compat import *
-from .surface import subsurface
+
 from .. import surface, rect, render
 from ..stdinc import Uint32
 
-__all__ = ["Sprite", "SoftwareSprite", "TextureSprite"]
+from .common import SDLError
+from .surface import subsurface
 
+__all__ = ["Sprite", "SoftwareSprite", "TextureSprite"]
 
 
 class Sprite(object):
@@ -152,4 +151,3 @@ class TextureSprite(Sprite):
         else:
             return "TextureSprite(format=%d, access=%d, size=%s, angle=%f)" % \
                 (flags.value, access.value, (w.value, h.value), self.angle)
-
