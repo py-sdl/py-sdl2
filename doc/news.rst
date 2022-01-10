@@ -27,6 +27,10 @@ New Features:
   compatibility functions to the :mod:`~sdl2.ext.compat` module for checking if
   an object is a non-string iterable and for converting input to a UTF-8 unicode
   string, respectively.
+* The :func:`sdl2.ext.subsurface` function has been re-documented and rewritten
+  to have improved input handling and type checking.
+* Added automatic inference of compression format from the filenames of 
+  .tar archives for the :mod:`sdl2.ext.resources` submodule.
 
 Fixed Bugs:
 
@@ -43,8 +47,12 @@ API Changes:
   bytes encoding/decoding and no longer require specifying an encoding type
   (defaults to UTF-8 if not manually specified).
 * The :func:`~sdl2.ext.subsurface` function now allows subsurface areas to be
-  specified using :obj:`~sdl2.SDL_Rect` objects.
+  specified using :obj:`~sdl2.SDL_Rect` objects and surfaces to be passed either
+  directly or as a pointer.
 
+Deprecation Notices:
+
+* The :func:`sdl2.ext.open_url` function has been deprecated.
 
 
 0.9.9
