@@ -2,7 +2,7 @@ import sys
 import pytest
 from sdl2 import ext as sdl2ext
 
-class TestSDL2ExtGUI(object):
+class TestSDL2ExtUISystem(object):
     __tags__ = ["sdl", "sdl2ext"]
 
     @classmethod
