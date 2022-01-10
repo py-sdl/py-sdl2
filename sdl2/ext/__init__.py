@@ -14,8 +14,8 @@ from .ebs import *
 from .common import *
 from .draw import *
 from .bitmapfont import *
-from .font import *
-from .gui import *
+from .ttf import *
+from .uisystem import *
 from .msgbox import *
 from .image import *
 from .pixelaccess import *
