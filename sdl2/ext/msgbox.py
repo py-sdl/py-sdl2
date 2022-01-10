@@ -10,7 +10,6 @@ __all__ = [
     "MessageBoxTheme", "MessageBox", "show_messagebox", "show_alert"
 ]
 
-
 class MessageBoxTheme(object):
     """Initializes a color scheme for use with :obj:`MessageBox` objects.
 
@@ -18,20 +17,21 @@ class MessageBoxTheme(object):
     to use when presenting dialog boxes to users. All colors must be defined
     as either :obj:`sdl2.ext.Color` objects or 8-bit ``(r, g, b)`` tuples.
 
-    .. note: SDL2 only supports MessageBox themes on a few platforms, including
+    .. note::
+       SDL2 only supports MessageBox themes on a few platforms, including
        Linux/BSD (if using X11) and Haiku. MessageBox themes will have no effect
        on Windows, macOS, or Linux if using Wayland.
 
     Args:
-        bg (:obj:~`sdl2.ext.Color`, tuple, optional): The color to use for the
+        bg (:obj:`~sdl2.ext.Color`, tuple, optional): The color to use for the
             background of the dialog box. Defaults to ``(56, 54, 53)``.
-        text (:obj:~`sdl2.ext.Color`, tuple, optional): The color to use for the
+        text (:obj:`~sdl2.ext.Color`, tuple, optional): The color to use for the
             text of the dialog box. Defaults to ``(209, 207, 205)``.
-        btn (:obj:~`sdl2.ext.Color`, tuple, optional): The color to use for the
+        btn (:obj:`~sdl2.ext.Color`, tuple, optional): The color to use for the
             backgrounds of buttons. Defaults to ``(140, 135, 129)``.
-        btn_border (:obj:~`sdl2.ext.Color`, tuple, optional): The color to use
+        btn_border (:obj:`~sdl2.ext.Color`, tuple, optional): The color to use
             for the borders of buttons. Defaults to ``(105, 102, 99)``.
-        btn_selected (:obj:~`sdl2.ext.Color`, tuple, optional): The color to use
+        btn_selected (:obj:`~sdl2.ext.Color`, tuple, optional): The color to use
             for selected buttons. Defaults to ``(205, 202, 53)``.
 
     """
@@ -191,6 +191,7 @@ def show_messagebox(msgbox, window=None):
     if ret == 0:
         return msgbox._buttons[resp.value]
     else:
+        # NOTE: replace with raise_sdl_err now that it exists?
         errmsg = error.SDL_GetError().decode('utf-8')
         error.SDL_ClearError()
         e = "Error encountered displaying message box"
@@ -229,6 +230,7 @@ def show_alert(title, msg, msgtype=None, window=None):
     )
     SDL_PumpEvents()
     if ret != 0:
+        # NOTE: replace with raise_sdl_err now that it exists?
         errmsg = error.SDL_GetError().decode('utf-8')
         error.SDL_ClearError()
         e = "Error encountered displaying message box"
