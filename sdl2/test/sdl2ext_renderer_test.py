@@ -1,15 +1,14 @@
 import sys
 import pytest
 from ctypes import addressof
-from sdl2.ext.resources import Resources
+
 from sdl2 import ext as sdl2ext
-from sdl2 import SDL_ClearError
+from sdl2 import dll
+from sdl2.rect import SDL_Point
+from sdl2.render import SDL_Renderer, SDL_Texture
 from sdl2.surface import SDL_CreateRGBSurface, SDL_FreeSurface
-from sdl2.render import SDL_Renderer
 
 _ISPYPY = hasattr(sys, "pypy_version_info")
-
-RESOURCES = Resources(__file__, "resources")
 
 if _ISPYPY:
     import gc
@@ -31,9 +30,6 @@ class TestSDL2ExtRenderer(object):
     @classmethod
     def teardown_class(cls):
         sdl2ext.quit()
-
-    def setup_method(self):
-        SDL_ClearError()
 
     def check_pixels(self, view, w, h, sprite, c1, c2, cx=0, cy=0):
         msg = "color mismatch at %d,%d: %d not in %s"
@@ -85,20 +81,20 @@ class TestSDL2ExtRenderer(object):
         renderer = sdl2ext.Renderer(sf.contents)
         assert addressof(renderer.rendertarget) == addressof(sf.contents)
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
 
         # Create renderer with SDL_Surface pointer
         renderer = sdl2ext.Renderer(sf)
         assert renderer.rendertarget == sf
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
 
         # Create renderer with SoftwareSprite
         sprite = sdl2ext.SoftwareSprite(sf.contents, True)
         renderer = sdl2ext.Renderer(sprite)
         assert renderer.rendertarget == sprite
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
         dogc()
 
         # Create renderer with Window
@@ -106,7 +102,7 @@ class TestSDL2ExtRenderer(object):
         renderer = sdl2ext.Renderer(window)
         assert renderer.rendertarget == window
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
         dogc()
 
         # Create renderer with SDL_Window
@@ -114,9 +110,12 @@ class TestSDL2ExtRenderer(object):
         renderer = sdl2ext.Renderer(sdlwindow)
         assert renderer.rendertarget == sdlwindow
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
-        del renderer
+        renderer.destroy()
         del window
 
+        # Test exception on using a destroyed renderer (and random type errors)
+        with pytest.raises(RuntimeError):
+            tst = renderer.sdlrenderer
         with pytest.raises(TypeError):
             sdl2ext.Renderer(None)
         with pytest.raises(TypeError):
@@ -125,6 +124,43 @@ class TestSDL2ExtRenderer(object):
             sdl2ext.Renderer("test")
         dogc()
 
+    def test_Texture(self):
+        # Create renderer and test surface
+        rendertarget = SDL_CreateRGBSurface(0, 100, 100, 32, 0, 0, 0, 0)
+        renderer = sdl2ext.Renderer(rendertarget.contents)
+        sf = SDL_CreateRGBSurface(
+            0, 16, 16, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+        )
+
+        # Test creation with surface pointer
+        tx = sdl2ext.Texture(renderer, sf)
+        assert isinstance(tx.tx.contents, SDL_Texture)
+
+        # Test destruction and associated behaviour
+        tx.destroy()
+        with pytest.raises(RuntimeError):
+            sdl_tx = tx.tx
+
+        # Test creation with surface contents
+        tx = sdl2ext.Texture(renderer, sf.contents)
+        assert isinstance(tx.tx.contents, SDL_Texture)
+        
+        # Test texture size
+        assert tx.size == (16, 16)
+
+        # Test exception on bad input
+        with pytest.raises(TypeError):
+            sdl2ext.Texture(sf, sf)
+        with pytest.raises(TypeError):
+            sdl2ext.Texture(renderer, renderer)
+
+        # Test exception when accessing Texture with destroyed Renderer
+        renderer.destroy()
+        with pytest.raises(RuntimeError):
+            sdl_tx = tx.tx
+        tx.destroy()  # Ensure texture destruction method doesn't error
+        SDL_FreeSurface(sf)
+        
     def test_Renderer_color(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
                                   0xFF000000,
@@ -146,7 +182,7 @@ class TestSDL2ExtRenderer(object):
         view = sdl2ext.PixelView(sf.contents)
         self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
         del view
-        del renderer
+        renderer.destroy()
         SDL_FreeSurface(sf)
         dogc()
 
@@ -174,21 +210,72 @@ class TestSDL2ExtRenderer(object):
         view = sdl2ext.PixelView(sf.contents)
         self.check_areas(view, 10, 10, [[0, 0, 10, 10]], 0xBBCCDDAA, (0x0,))
         del view
-        del renderer
+        renderer.destroy()
         SDL_FreeSurface(sf)
         dogc()
 
     def test_Renderer_copy(self):
+        # Initialize target surface and renderer
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
-        sdl2ext.fill(surface, 0x0)
         renderer = sdl2ext.Renderer(surface)
+        renderer.clear(0xAABBCC)
+        view = sdl2ext.PixelView(surface)
+
+        # Test copying a Texture without any arguments (should fill surface)
+        sf = SDL_CreateRGBSurface(0, 16, 16, 32, 0, 0, 0, 0)
+        sdl2ext.fill(sf, (0, 0, 0, 0))
+        tx = sdl2ext.Texture(renderer, sf)
+        renderer.copy(tx)
+        renderer.present()
+        assert view[0][0] == 0
+        assert view[127][127] == 0
+
+        # Test copying a Texture with only location argument
+        renderer.clear(0xAABBCC) # reset surface
+        renderer.copy(tx, dstrect=(10, 10))
+        renderer.present()
+        assert view[0][0] == 0xAABBCC
+        assert view[10][10] == 0
+        assert view[25][25] == 0
+        assert view[26][26] == 0xAABBCC
+
+        # Test copying a subset of a Texture
+        renderer.clear(0xAABBCC) # reset surface
+        renderer.copy(tx, srcrect=(0, 0, 10, 10), dstrect=(10, 10))
+        renderer.present()
+        assert view[0][0] == 0xAABBCC
+        assert view[10][10] == 0
+        assert view[19][19] == 0
+        assert view[20][20] == 0xAABBCC
+
+        # Test copying a Texture with location and size
+        renderer.clear(0xAABBCC) # reset surface
+        renderer.copy(tx, dstrect=(10, 10, 30, 40))
+        renderer.present()
+        assert view[0][0] == 0xAABBCC
+        assert view[10][10] == 0
+        assert view[49][39] == 0
+        assert view[50][40] == 0xAABBCC
+
+        if dll.version > 2005:
+            # Test copying a Texture with rotation
+            renderer.clear(0xAABBCC) # reset surface
+            renderer.copy(tx, dstrect=(32, 32), angle=180, center=(0, 0))
+            renderer.present()
+            assert view[0][0] == 0xAABBCC
+            assert view[16][16] == 0xFF000000  # Rotation suddenly adds alpha?
+            assert view[31][31] == 0xFF000000  # Rotation suddenly adds alpha?
+            assert view[32][32] == 0xAABBCC
+
+        # (legacy): Test copying texture from a SpriteFactory
+        renderer.clear(0)  # reset surface
         factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
         w, h = 32, 32
         sp = factory.from_color(0xFF0000, (w, h))
         sp.x, sp.y = 40, 50
         renderer.copy(sp, (0, 0, w, h), (sp.x, sp.y, w, h))
-        view = sdl2ext.PixelView(surface)
         self.check_pixels(view, 128, 128, sp, 0xFF0000, (0x0,))
+
         del view
 
     def test_Renderer_draw_line(self):
@@ -201,9 +288,42 @@ class TestSDL2ExtRenderer(object):
                          [((20, 10), (20, 86))], 0x0000FF, (0x0,))
         del view
 
-    @pytest.mark.skip("not implemented")
     def test_Renderer_draw_point(self):
-        pass
+        # Initialize target surface and renderer
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        sdl2ext.fill(surface, 0x0)
+        renderer = sdl2ext.Renderer(surface)
+
+        # Try drawing a single point
+        renderer.draw_point((1, 1), 0x0000FF)
+        view = sdl2ext.PixelView(surface)
+        assert view[1][1] == 0x0000FF
+
+        # Try drawing a single SDL_Point
+        renderer.draw_point(SDL_Point(3, 3), 0x0000FF)
+        assert view[3][3] == 0x0000FF
+
+        # Try drawing multiple points
+        renderer.draw_point([(8, 8), SDL_Point(5, 5)], 0x0000FF)
+        assert view[5][5] == 0x0000FF
+        assert view[8][8] == 0x0000FF
+
+        # Try subpixel rendering (if supported)
+        if dll.version >= 2010:
+            assert view[6][6] == 0x0
+            renderer.draw_point((6.5, 6.5), 0x0000FF)
+            assert view[6][6] != 0x0
+        else:
+            with pytest.raises(RuntimeError):
+               renderer.draw_point((6.5, 6.5), 0x0000FF) 
+        del view
+
+        # Test exceptions on bad input
+        with pytest.raises(ValueError):
+            renderer.draw_point((0, 0, 2), 0x0000FF)
+        with pytest.raises(ValueError):
+            renderer.draw_point([(0, 0), (1, 2, 3)], 0x0000FF)
+        
 
     def test_Renderer_draw_rect(self):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
@@ -243,6 +363,7 @@ class TestSDL2ExtRenderer(object):
         view = sdl2ext.PixelView(surface)
         self.check_pixels(view, 128, 128, sp, 0x0000FF, (0x0,))
         del view
+
         sdl2ext.fill(surface, 0x0)
         renderer.fill([(5, 5, 10, 10), (20, 15, 8, 10)], 0x0000FF)
         view = sdl2ext.PixelView(surface)
