@@ -1,27 +1,22 @@
 .. currentmodule:: sdl2.ext
 
-Image loaders
-=============
+`sdl2.ext.image` - Importing and Exporting Image Files
+======================================================
 
-.. function:: get_image_formats() -> (str, str, ...)
+The :mod:`sdl2.ext.image` module provides some simple functions for importing
+images as SDL surfaces and exporting SDL surfaces to image files.
 
-   Gets the formats supported by PySDL2 in the default installation.
+The basic functions :func:`load_bmp` and :func:`save_bmp` load and save BMP
+files, and are guaranteed to be available on all systems supported by PySDL2.
+The :func:`load_img` function can be used to import additional image formats
+(e.g. JPEG, PNG), but requires that the **SDL_image** library is installed on
+the target system (can be installed as a Python dependency with ``pysdl2-dll``
+on platforms that support it).
 
-.. function:: load_image(fname : str[, enforce=None]) -> sdl2.SDL_Surface
+In addition to importing images from files, this module also provides the
+:func:`pillow_to_surface` function for converting :obj:`Image` objects from the
+`Pillow <https://pillow.readthedocs.io/en/stable/>`_ Python library to SDL
+surfaces.
 
-   Creates a :class:`sdl2.SDL_Surface` from an image file.
-
-   This function makes use of the `Python Imaging Library
-   <http://www.pythonware.com/products/pil/>`_, if it is available on the
-   target execution environment. The function will try to load the file via
-   :mod:`sdl2` first. If the file could not be loaded, it will try to load it
-   via :mod:`sdl2.sdlimage` and PIL.
-
-   You can force the function to use only one of them, by passing the
-   *enforce* as either ``"PIL"`` or ``"SDL"``.
-
-   .. note::
-
-      This will call :func:`sdl2.sdlimage.IMG_Init()` implicitly with the
-      default arguments, if the module is available and if
-      :func:`sdl2.SDL_LoadBMP()` failed to load the image.
+.. automodule:: sdl2.ext.image
+   :members:

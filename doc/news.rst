@@ -33,6 +33,15 @@ New Features:
   :mod:`sdl2.ext.resources` submodule (PR #204)
 * Added a new function :func:`sdl2.ext.surface_to_ndarray` that returns a
   non-transposed copy of a given SDL surface as a 2D or 3D Numpy array (PR #204)
+* Added new functions :func:`sdl2.ext.load_bmp` and :func:`sdl2.ext.load_img`
+  for importing image files using SDL2 and SDL_image, respectively. Both new
+  functions automatically convert the obtained surfaces to the ARGB8888 pixel
+  format by default (PR #205)
+* Added a new function :func:`sdl2.ext.save_bmp` for saving SDL surfaces to
+  BMP files (PR #205)
+* Added a new function :func:`sdl2.ext.pillow_to_surface` for converting
+  :obj:`PIL.Image.Image` objects from the Pillow library to SDL
+  surfaces (PR #205)
 
 Fixed Bugs:
 
@@ -65,6 +74,13 @@ API Changes:
 Deprecation Notices:
 
 * The :func:`sdl2.ext.open_url` function has been deprecated (PR #204)
+* The :func:`sdl2.ext.load_image` function has been deprecated, as it
+  unexpectedly produces different surface formats depending on the backend used.
+  New projects should use the new :func:`sdl2.ext.load_img`,
+  :func:`sdl2.ext.load_bmp`, and/or :func:`sdl2.ext.pillow_to_surface` functions
+  instead (PR #205)
+* The :func:`sdl2.ext.get_image_formats` function has been deprecated, as it
+  gives inaccurate results in most cases (PR #205)
 
 
 0.9.9
