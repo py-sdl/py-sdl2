@@ -4,7 +4,7 @@ from sdl2 import ext as sdl2ext
 from sdl2.ext.compat import byteify
 from sdl2.ext.pixelaccess import pixels2d
 from sdl2.ext.surface import _create_surface
-from sdl2 import surface, pixels, SDL_ClearError
+from sdl2 import surface, pixels, SDL_ClearError, SDL_GetError
 
 _HASSDLTTF = True
 try:
@@ -14,6 +14,7 @@ except ImportError:
 
 
 RESOURCES = sdl2ext.Resources(__file__, "resources")
+RED_RGBA = (255, 0, 0, 255)
 FONTMAP = ["0123456789",
            "ABCDEFGHIJ",
            "KLMNOPQRST",
@@ -23,6 +24,24 @@ FONTMAP = ["0123456789",
            "uvwxyz    ",
            ",;.:!?-+()"
            ]
+
+
+@pytest.fixture(scope="module")
+def with_sdl():
+    sdl2ext.init()
+    yield
+    sdl2ext.quit()
+
+@pytest.fixture()
+def with_font_ttf(with_sdl):
+    if _HASSDLTTF:
+        SDL_ClearError()
+        fontpath = RESOURCES.get_path("tuffy.ttf")
+        font = sdl2ext.FontTTF(fontpath, 20, RED_RGBA)
+        assert SDL_GetError() == b""
+        assert font
+        yield font
+        font.close()
 
 
 class TestBitmapFont(object):
@@ -211,6 +230,202 @@ class TestBitmapFont(object):
         assert font.can_render("473285435hfsjadfhriuewtrhefd")
         assert not font.can_render("testä")
 
+
+
+@pytest.mark.skipif(not _HASSDLTTF, reason="SDL_TTF library not available")
+class TestFontTTF(object):
+    __tags__ = ["sdl", "sdl2ext"]
+
+    def test_init(self, with_sdl):
+        # Try opening and closing a font
+        fontpath = RESOURCES.get_path("tuffy.ttf")
+        font = sdl2ext.FontTTF(fontpath, 20, RED_RGBA)
+        assert SDL_GetError() == b""
+        assert font
+        font.close()
+
+        # Try opening a font with size specified in pt
+        font = sdl2ext.FontTTF(fontpath, "20pt", RED_RGBA)
+        assert SDL_GetError() == b""
+        assert font
+        font.close()
+
+        # Try opening a font with size specified in pixels
+        font = sdl2ext.FontTTF(fontpath, "20px", RED_RGBA)
+        assert SDL_GetError() == b""
+        assert font
+        
+        # Try opening a font with a custom set of height chars
+        chars = "aeiou"
+        font2 = sdl2ext.FontTTF(fontpath, "20px", RED_RGBA, height_chars=chars)
+        assert SDL_GetError() == b""
+        assert font
+        assert font._parse_size("20px") != font2._parse_size("20px")
+        font.close()
+        font2.close()
+
+        # Test exception on invalid font path
+        with pytest.raises(IOError):
+            sdl2ext.FontTTF("missing.ttf", 16, RED_RGBA)
+        
+        # Text exception on invalid size
+        with pytest.raises(ValueError):
+            sdl2ext.FontTTF(fontpath, 0, RED_RGBA)
+
+        # Test exception on missing height chars
+        with pytest.raises(RuntimeError):
+            sdl2ext.FontTTF(fontpath, 20, RED_RGBA, height_chars=u"的是不")
+
+    def test_get_ttf_font(self, with_font_ttf):
+        font = with_font_ttf
+        ttf_font = font.get_ttf_font()
+        assert isinstance(ttf_font, sdlttf.TTF_Font)
+
+        # Test exception for missing style
+        with pytest.raises(ValueError):
+            font.get_ttf_font("small")
+
+    def test_add_style(self, with_font_ttf):
+        font = with_font_ttf
+
+        # Add some new styles
+        font.add_style('large', '40px', RED_RGBA)
+        font.add_style('red', 20, pixels.SDL_Color(255, 0, 0))
+        font.add_style('red_on_white', 20, (255, 0, 0), (255, 255, 255))
+
+        # Test exception for existing style name
+        with pytest.raises(ValueError):
+            font.add_style('large', '50px', RED_RGBA)
+
+        # Test exception for invalid size unit
+        with pytest.raises(ValueError):
+            font.add_style('unit_err', '10cm', RED_RGBA)
+
+        # Test exception for non-integer size
+        with pytest.raises(ValueError):
+            font.add_style('float_err', '10.5pt', RED_RGBA)
+
+    def test_render_text(self, with_font_ttf):
+        font = with_font_ttf
+
+        # Try rendering some text
+        msg = "hello there!"
+        text = font.render_text(msg)
+        assert SDL_GetError() == b""
+        assert isinstance(text, surface.SDL_Surface)
+        assert text.format.contents.format == pixels.SDL_PIXELFORMAT_ARGB8888
+
+        # Test multiline rendering
+        msg = "hello\nthere!"
+        text2 = font.render_text(msg)
+        assert SDL_GetError() == b""
+        assert isinstance(text2, surface.SDL_Surface)
+        assert text2.h > text.h
+
+        # Test custom line height
+        msg = "hello\nthere!"
+        text3 = font.render_text(msg, line_h=100)
+        assert SDL_GetError() == b""
+        assert isinstance(text3, surface.SDL_Surface)
+        assert text3.h > text2.h
+        surface.SDL_FreeSurface(text3)
+
+        # Test wrap width
+        msg = "hello there! This is a very long line of text."
+        text3 = font.render_text(msg, width=200)
+        assert SDL_GetError() == b""
+        assert isinstance(text3, surface.SDL_Surface)
+        assert text3.h > text.h
+        surface.SDL_FreeSurface(text3)
+
+        # Test custom font style (no bg color)
+        msg = "hello there!"
+        font.add_style("blue", 30, (0, 0, 255, 255))
+        text3 = font.render_text(msg, "blue")
+        assert SDL_GetError() == b""
+        assert isinstance(text3, surface.SDL_Surface)
+        surface.SDL_FreeSurface(text3)
+
+        # Test custom font style (w/ bg color)
+        msg = "hello there!"
+        font.add_style("red_on_white", 30, RED_RGBA, (255, 255, 255))
+        text3 = font.render_text(msg, "red_on_white")
+        assert SDL_GetError() == b""
+        assert isinstance(text3, surface.SDL_Surface)
+        surface.SDL_FreeSurface(text3)
+
+        # Test font alignment (not extensive)
+        msg = "hello there!\nThis is a very long line of\ntext."
+        for align in ["left", "center", "right"]:
+            tmp = font.render_text(msg, align=align)
+            assert SDL_GetError() == b""
+            assert isinstance(text3, surface.SDL_Surface)
+            surface.SDL_FreeSurface(tmp)
+
+        surface.SDL_FreeSurface(text)
+        surface.SDL_FreeSurface(text2)
+
+        # Test exception for empty string
+        with pytest.raises(ValueError):
+            font.render_text("")
+
+        # Test exception for missing style
+        with pytest.raises(ValueError):
+            font.render_text(msg, "small")
+
+        # Test exceptions for bad line height
+        with pytest.raises(ValueError):
+            font.render_text(msg, line_h=12.4)
+        with pytest.raises(ValueError):
+            font.render_text(msg, line_h=0)
+
+        # Test exception for bad alignment
+        with pytest.raises(ValueError):
+            font.render_text(msg, align="flush")
+
+    def test_close(self, with_font_ttf):
+        font = with_font_ttf
+        font.close()
+
+        # Test that you can close the font multiple times
+        font.close()
+
+        # Make sure you can't use font after closing it
+        with pytest.raises(RuntimeError):
+            font.get_ttf_font()
+        with pytest.raises(RuntimeError):
+            font.add_style('large', 40, RED_RGBA)
+        with pytest.raises(RuntimeError):
+            font.render_text("hello!")
+        with pytest.raises(RuntimeError):
+            font.contains("A")
+        with pytest.raises(RuntimeError):
+            font.family_name
+        with pytest.raises(RuntimeError):
+            font.style_name
+        with pytest.raises(RuntimeError):
+            font.is_fixed_width
+
+    def test_contains(self, with_font_ttf):
+        font = with_font_ttf
+        for ch in "abcde12345":
+            assert font.contains(ch)
+        for ch in u"的是不":
+            assert not font.contains(ch)
+
+    def test_family_name(self, with_font_ttf):
+        font = with_font_ttf
+        name = font.family_name
+        assert name == None or isinstance(name, str)
+
+    def test_style_name(self, with_font_ttf):
+        font = with_font_ttf
+        name = font.style_name
+        assert name == None or isinstance(name, str)
+
+    def test_is_fixed_width(self, with_font_ttf):
+        font = with_font_ttf
+        assert font.is_fixed_width == False
 
 
 @pytest.mark.skipif(not _HASSDLTTF, reason="SDL_TTF library not available")
