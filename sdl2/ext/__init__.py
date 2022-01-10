@@ -13,6 +13,7 @@ from .ebs import *
 
 from .common import *
 from .draw import *
+from .bitmapfont import *
 from .font import *
 from .gui import *
 from .msgbox import *
