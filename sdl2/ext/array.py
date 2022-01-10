@@ -294,6 +294,22 @@ class MemoryView(object):
         """
         self._source[start:end] = value
 
+    def _getindex(self, index):
+        # Perform typechecking and preprocessing of view indices
+        if type(index) is slice:
+            raise IndexError("MemoryView slicing is not currently supported.")
+        elif type(index) is not int:
+            e = "Array indices must be integers (got '{0}')."
+            raise TypeError(e.format(str(index)))
+        else:
+            final_idx = index
+            if index < 0:
+                final_idx = len(self) + index  # Handle negative indexing
+            if index >= len(self):
+                e = "Index {0} is out of bounds for a view of length {1}."
+                raise IndexError(e.format(index, len(self)))
+        return final_idx
+
     def __len__(self):
         """The length of the MemoryView over the current dimension
         (amount of items for the current dimension).
@@ -311,50 +327,42 @@ class MemoryView(object):
 
     def __getitem__(self, index):
         """Returns the item at the specified index."""
-        if type(index) is slice:
-            raise IndexError("slicing is not supported")
+        index = self._getindex(index)
+        if self.ndim == 1:
+            offset = self._offset + index * self.itemsize
+            return self._getfunc(offset, offset + self.itemsize)
         else:
-            if index >= len(self):
-                raise IndexError("index '%d'is out of bounds for '%d'" %
-                                 (index, len(self)))
-            if self.ndim == 1:
-                offset = self._offset + index * self.itemsize
-                return self._getfunc(offset, offset + self.itemsize)
-            else:
-                advance = self.itemsize
-                for b in self.strides[1:]:
-                    advance *= b
-                offset = self._offset + advance * index
-                view = MemoryView(self._source, self.itemsize,
-                                  self.strides[1:], self._getfunc,
-                                  self._setfunc, self._srcsize)
-                view._offset = offset
-                return view
+            advance = self.itemsize
+            for b in self.strides[1:]:
+                advance *= b
+            offset = self._offset + advance * index
+            view = MemoryView(
+                self._source, self.itemsize, self.strides[1:],
+                self._getfunc, self._setfunc, self._srcsize
+            )
+            view._offset = offset
+            return view
 
     def __setitem__(self, index, value):
         """Sets the item at index to the specified value."""
-        if type(index) is slice:
-            raise IndexError("slicing is not supported")
+        index = self._getindex(index)
+        offset = self._offset + index * self.itemsize
+        if self.ndim == 1:
+            self._setfunc(offset, offset + self.itemsize, value)
         else:
-            if index >= len(self):
-                raise IndexError("index '%d'is out of bounds for '%d'" %
-                                 (index, len(self)))
-            offset = self._offset + index * self.itemsize
-            if self.ndim == 1:
-                self._setfunc(offset, offset + self.itemsize, value)
-            else:
-                advance = self.itemsize
-                for b in self.strides[1:]:
-                    advance *= b
-                offset = self._offset + advance * index
-                view = MemoryView(self._source, self.itemsize,
-                                  self.strides[1:], self._getfunc,
-                                  self._setfunc, self._srcsize)
-                view._offset = offset
-                if len(value) != len(view):
-                    raise ValueError("value does not match the view strides")
-                for x in range(len(view)):
-                    view[x] = value[x]
+            advance = self.itemsize
+            for b in self.strides[1:]:
+                advance *= b
+            offset = self._offset + advance * index
+            view = MemoryView(
+                self._source, self.itemsize, self.strides[1:],
+                self._getfunc, self._setfunc, self._srcsize
+            )
+            view._offset = offset
+            if len(value) != len(view):
+                raise ValueError("value does not match the view strides")
+            for x in range(len(view)):
+                view[x] = value[x]
 
     @property
     def size(self):

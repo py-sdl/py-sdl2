@@ -284,6 +284,10 @@ class TestSDL2ExtArray(object):
         for index, val in enumerate(view):
             assert val == source[index]
 
+        # Test negative indexing support
+        assert view[-1] == "r"
+        assert view[-3] == "f"
+
         view = sdlextarray.MemoryView(source, 1, (2, 7))
         word1 = view[0]  # "Example"
         word2 = view[1]  # " buffer"
@@ -295,6 +299,12 @@ class TestSDL2ExtArray(object):
         for index, val in enumerate(word2):
             assert val == source[index + 7]
         # TODO: more tests
+
+        # Test exceptions on bad input
+        with pytest.raises(IndexError):
+            view[1:5]
+        with pytest.raises(IndexError):
+            view[10]
 
     def test_MemoryView_ndim_strides(self):
         source = "Example buffer"

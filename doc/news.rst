@@ -39,6 +39,8 @@ Fixed Bugs:
   ``TTF_RenderUTF`` instead of ``TTF_RenderUTF8``.
 * Fixed a bug introduced in 0.9.9 where the ``SDL_WINDOW_INPUT_GRABBED``
   constant was no longer exported.
+* :class:`~sdl2.ext.MemoryView` objects now support negative indexing (would
+  previously access out-of-bounds values next to the viewed object) (PR #204)
 
 API Changes:
 
