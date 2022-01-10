@@ -84,7 +84,8 @@ class TestFramerate(object):
         for i in range(10):
             msec_since_last = sdlgfx.SDL_framerateDelay(manager)
             frametimes.append(msec_since_last)
-        assert round(sum(frametimes) / 10) == 10
+        avg_framerate = round(sum(frametimes) / 10)
+        assert abs(avg_framerate - 10) < 2
         assert manager.framecount == 11
 
 
