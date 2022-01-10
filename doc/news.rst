@@ -23,6 +23,10 @@ New Features:
 * Update bindings to allow for experimental SDL 2.0.3 support. Versions of SDL2
   this old are not officially supported, but this should allow for basic PySDL2
   support on old PowerPC macs.
+* Added new :func:`~sdl2.ext.isiterable` and :func:`~sdl2.ext.utf8` Python 2/3
+  compatibility functions to the :mod:`~sdl2.ext.compat` module for checking if
+  an object is a non-string iterable and for converting input to a UTF-8 unicode
+  string, respectively.
 
 Fixed Bugs:
 
@@ -31,6 +35,14 @@ Fixed Bugs:
   ``TTF_RenderUTF`` instead of ``TTF_RenderUTF8``.
 * Fixed a bug introduced in 0.9.9 where the ``SDL_WINDOW_INPUT_GRABBED``
   constant was no longer exported.
+
+API Changes:
+
+* Updated and redocumented the :func:`~sdl2.ext.stringify` and
+  :func:`~sdl2.ext.byteify` Python 2/3 compatibility functions to better handle
+  bytes encoding/decoding and no longer require specifying an encoding type
+  (defaults to UTF-8 if not manually specified).
+
 
 
 0.9.9
