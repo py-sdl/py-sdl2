@@ -17,6 +17,8 @@ from .font import *
 from .gui import *
 from .image import *
 from .pixelaccess import *
+from .renderer import *
 from .sprite import *
+from .spritesystem import *
 from .surface import *
 from .window import *
