@@ -57,6 +57,11 @@ New Features:
   when using SDL2 2.0.10 or newer (PR #207)
 * Added :meth:`sdl2.ext.Renderer.blit` as an alias for the 
   :meth:`sdl2.ext.Renderer.copy` method (PR #207)
+* Added a new method :meth:`~sdl2.ext.BitmapFont.remap` to the
+  :obj:`~sdl2.ext.BitmapFont` class to allow specifying custom character
+  widths and heights for each mapped character in a bitmap font (PR #208)
+* Added a new argument ``line_h`` to :meth:`sdl2.ext.BitmapFont.render_on` to
+  allow specifying custom line heights (PR #208)
 
 Fixed Bugs:
 
@@ -73,6 +78,14 @@ Fixed Bugs:
   try to unlock RLE surfaces once their corresponding view objects are deleted.
   This prevents a segmentation fault when a view is garbage-collected but the
   surface has already been freed (PR #204)
+* Fixed a bug where the rectangle returned by
+  :meth:`sdl2.ext.BitmapFont.render_on` would overestimate the size of the
+  rendered text by one character in both width and height (PR #208)
+* :meth:`sdl2.ext.BitmapFont.contains` no longer assumes that the font map
+  contains a space (PR #208)
+* Rendering multiline text with the :class:`sdl2.ext.BitmapFont` class now
+  always splits lines using the newline (`\n`) character. Previously on
+  Windows, it would only split on Windows-style line endings (`\r\n`) (PR #208)
 
 API Changes:
 
@@ -113,6 +126,11 @@ Deprecation Notices:
   instead (PR #205)
 * The :func:`sdl2.ext.get_image_formats` function has been deprecated, as it
   gives inaccurate results in most cases (PR #205)
+* The :meth:`sdl2.ext.BitmapFont.can_render` method has been deprecated (PR #208)
+* The :meth:`sdl2.ext.BitmapFont.render` method has been deprecated in favor of
+  :meth:`sdl2.ext.BitmapFont.render_text`, which returns an SDL surface instead
+  of a SoftwareSprite and ensures the output surface is in ARGB8888 format by
+  default (PR #208)
 
 
 0.9.9
