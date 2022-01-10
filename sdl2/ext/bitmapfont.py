@@ -208,6 +208,10 @@ class BitmapFont(object):
         Returns:
             :obj:`~sdl2.SDL_Surface`: A surface containing the rendered text.
 
+        Raises:
+            ValueError: If a character in the text is not provided by the
+            current font.
+
         """
         self._validate_chars(text)
         lines = text.split("\n")
@@ -252,6 +256,10 @@ class BitmapFont(object):
         Returns:
             tuple: The ``(x1, y1, x2, y2)`` rectangle of the target surface on
             which the text was rendered.
+
+        Raises:
+            ValueError: If a character in the text is not provided by the
+            current font.
 
         """
         x1, y1 = offset
