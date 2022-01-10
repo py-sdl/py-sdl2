@@ -29,8 +29,8 @@ New Features:
   string, respectively (PR #204)
 * The :func:`sdl2.ext.subsurface` function has been re-documented and rewritten
   to have improved input handling and type checking (PR #204)
-* Added automatic inference of compression format from the filenames of 
-  .tar archives for the :mod:`sdl2.ext.resources` submodule (PR #204)
+* Improved inference of compression format for .tar archives in the
+  :mod:`sdl2.ext.resources` submodule (PR #204)
 
 Fixed Bugs:
 
