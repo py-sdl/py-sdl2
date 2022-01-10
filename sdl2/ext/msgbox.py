@@ -1,9 +1,9 @@
 from ctypes import byref, c_int
 from .color import Color
 from .compat import isiterable, utf8
-from .common import SDLError
+from .common import raise_sdl_err
 from .window import Window
-from .. import dll, error, SDL_PumpEvents, SDL_Window
+from .. import dll, SDL_PumpEvents, SDL_Window
 from .. import messagebox as mb
 
 __all__ = [
@@ -191,13 +191,7 @@ def show_messagebox(msgbox, window=None):
     if ret == 0:
         return msgbox._buttons[resp.value]
     else:
-        # NOTE: replace with raise_sdl_err now that it exists?
-        errmsg = error.SDL_GetError().decode('utf-8')
-        error.SDL_ClearError()
-        e = "Error encountered displaying message box"
-        if len(errmsg):
-            e += ": {0}".format(errmsg)
-        raise SDLError(e)
+        raise_sdl_err("displaying the message box")
 
 
 def show_alert(title, msg, msgtype=None, window=None):
@@ -229,11 +223,5 @@ def show_alert(title, msg, msgtype=None, window=None):
         window
     )
     SDL_PumpEvents()
-    if ret != 0:
-        # NOTE: replace with raise_sdl_err now that it exists?
-        errmsg = error.SDL_GetError().decode('utf-8')
-        error.SDL_ClearError()
-        e = "Error encountered displaying message box"
-        if len(errmsg):
-            e += ": {0}".format(errmsg)
-        raise SDLError(e)
+    if ret < 0:
+        raise_sdl_err("displaying the message box")

@@ -1,5 +1,6 @@
 import ctypes
 from .compat import isiterable, UnsupportedError
+from .common import raise_sdl_err
 from .array import to_ctypes
 from .color import convert_to_color
 from .. import surface, pixels, rect
@@ -93,11 +94,13 @@ def fill(target, color, area=None):
     if len(rects) > 2:
         rects, count = to_ctypes(rects, rect.SDL_Rect)
         rects = ctypes.cast(rects, ctypes.POINTER(rect.SDL_Rect))
-        surface.SDL_FillRects(rtarget, rects, count, color)
+        ret = surface.SDL_FillRects(rtarget, rects, count, color)
     elif len(rects) == 1:
-        surface.SDL_FillRect(rtarget, rects[0], color)
+        ret = surface.SDL_FillRect(rtarget, rects[0], color)
     else:
-        surface.SDL_FillRect(rtarget, None, color)
+        ret = surface.SDL_FillRect(rtarget, None, color)
+    if ret < 0:
+        raise_sdl_err("filling the surface")
 
 
 def line(target, color, dline, width=1):
