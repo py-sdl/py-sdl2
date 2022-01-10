@@ -14,25 +14,18 @@ def run():
     window = sdl2.ext.Window("Sprite Transformations", size=(800, 600))
     window.show()
 
-    # Create a hardware-accelerated sprite factory. The sprite factory requires
-    # a rendering context, which enables it to create the underlying textures
-    # that serve as the visual parts for the sprites.
+    # Create a hardware-accelerated renderer for drawing to the new window.
+    # We'll also set the default scaling quality to 'best' for smoother
+    # edges when rendering.
     renderer = sdl2.ext.Renderer(window)
-    factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
+    sdl2.ext.set_texture_scale_quality(method="best")
 
-    # Create a simple rendering system for the window. We will use it to
-    # display the sprites.
-    rendersystem = factory.create_sprite_render_system(window)
-
-    # Create the sprite to display.
-    sprite = factory.from_image(RESOURCES.get_path("hello.bmp"))
-
-    # Use the sprite.center tuple to change the center of the sprite for
-    # rotation. You can reset a changed center simply by assinging None to it.
-    #
-    # sprite.center = 10, 30    # Changes the center
-    # sprite.center = None      # Resets the center
-
+    # Import an image file and convert it to a Texture for the renderer
+    tst_img = sdl2.ext.load_bmp(RESOURCES.get_path("hello.bmp"))
+    tx = sdl2.ext.Texture(renderer, tst_img)
+    
+    angle = 0
+    flip = 0
     running = True
     while running:
         events = sdl2.ext.get_events()
@@ -41,26 +34,30 @@ def run():
                 running = False
                 break
             elif event.type == sdl2.SDL_KEYDOWN:
-                # Flip the sprite over its vertical axis on pressing down or up
+                # Flip the sprite vertically using the up/down arrow keys
                 if event.key.keysym.sym in (sdl2.SDLK_DOWN, sdl2.SDLK_UP):
-                    sprite.flip ^= sdl2.SDL_FLIP_VERTICAL
-                # Flip the sprite over its horizontal axis on pressing left or
-                # right
+                    flip ^= sdl2.SDL_FLIP_VERTICAL
+                # Flip the sprite horizontally using the left/right arrow keys
                 elif event.key.keysym.sym in (sdl2.SDLK_LEFT, sdl2.SDLK_RIGHT):
-                    sprite.flip ^= sdl2.SDL_FLIP_HORIZONTAL
-                # Rotate the sprite around its center on pressing plus or
-                # minus. The center can be changed via sprite.center.
-                elif event.key.keysym.sym == sdl2.SDLK_PLUS:
-                    sprite.angle += 1.0
-                    if sprite.angle >= 360.0:
-                        sprite.angle = 0.0
+                    flip ^= sdl2.SDL_FLIP_HORIZONTAL
+                # Rotate the sprite around its center using the (+/-) keys
+                elif event.key.keysym.sym == sdl2.SDLK_EQUALS:
+                    angle += 1.0
+                    if angle >= 360.0:
+                        angle = 0.0
                 elif event.key.keysym.sym == sdl2.SDLK_MINUS:
-                    sprite.angle -= 1.0
-                    if sprite.angle <= 0.0:
-                        sprite.angle = 360.0
+                    angle -= 1.0
+                    if angle <= 0.0:
+                        angle = 360.0
+
+        # Clear the renderer, copy our texture to it at an offset of (100, 75)
+        # from the top-left corner, present it to the window, and wait 10 ms 
+        # before moving on
         renderer.clear()
-        rendersystem.render(sprite, 100, 75)
+        renderer.copy(tx, dstrect=(100, 75), angle=angle, flip=flip)
+        renderer.present()
         sdl2.SDL_Delay(10)
+
     sdl2.ext.quit()
     return 0
 

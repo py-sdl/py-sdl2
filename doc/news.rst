@@ -42,6 +42,21 @@ New Features:
 * Added a new function :func:`sdl2.ext.pillow_to_surface` for converting
   :obj:`PIL.Image.Image` objects from the Pillow library to SDL
   surfaces (PR #205)
+* Added a new class :class:`sdl2.ext.Texture` for creating renderer textures
+  from SDL surfaces, as a basic wrapper for the :obj:`sdl2.SDL_Texture`
+  structure (PR #207)
+* Added a new function :func:`sdl2.ext.set_texture_scale_quality` that globally
+  sets the scaling method (nearest-neighbour, linear filtering, or anisotropic
+  filtering) to use for new SDL textures (PR #207)
+* Added a new method :meth:`sdl2.ext.Renderer.reset_logical_size` to reset a
+  Renderer's logical size to its original value (PR #207)
+* Added a new method :meth:`sdl2.ext.Renderer.destroy` to safely destroy and
+  free memory associated with a Renderer after it is no longer needed (PR #207)
+* Added support for subpixel precision (i.e. using float coordinates)
+  with the drawing and copying methods of the :class:`~sdl2.ext.Renderer` class
+  when using SDL2 2.0.10 or newer (PR #207)
+* Added :meth:`sdl2.ext.Renderer.blit` as an alias for the 
+  :meth:`sdl2.ext.Renderer.copy` method (PR #207)
 
 Fixed Bugs:
 
@@ -70,6 +85,23 @@ API Changes:
   directly or as a pointer (PR #204)
 * The :func:`sdl2.ext.pixels2d` and :func:`sdl2.ext.pixels3d` functions no
   longer raise an ``ExperimentalWarning`` (PR #204)
+* Updated the :meth:`~sdl2.ext.Renderer.draw_line` and
+  :meth:`~sdl2.ext.Renderer.draw_point` methods of the
+  :class:`~sdl2.ext.Renderer` class to accept coordinates as lists of ``(x, y)``
+  tuples or :obj:`~sdl2.SDL_Point`s in addition to flat ``[x, y, x, y, x, y]``
+  lists (PR #207)
+* Updated the :meth:`~sdl2.ext.Renderer.draw_rect` and
+  :meth:`~sdl2.ext.Renderer.fill` methods of the
+  :class:`~sdl2.ext.Renderer` class to accept coordinates as lists of
+  :obj:`~sdl2.SDL_Rects`s in addition to lists of ``(x, y, w, h)``
+  tuples (PR #207)
+* Updated the :meth:`~sdl2.ext.Renderer.copy` method of the
+  :class:`~sdl2.ext.Renderer` class to accept an ``(x, y)`` tuple as a
+  destination, inferring the destination width and height from the dimensions
+  of the copied texture (PR #207)
+* Changed the ``index`` argument for the :class:`~sdl2.ext.Renderer` class to
+  take the name of the reqested rendering back end as a string instead of an
+  index for better clarity and cross-platform consistency (PR #207)
 
 Deprecation Notices:
 
