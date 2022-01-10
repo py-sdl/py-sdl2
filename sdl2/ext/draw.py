@@ -1,46 +1,35 @@
-"""Drawing routines for software surfaces."""
 import ctypes
 from .compat import isiterable, UnsupportedError
 from .array import to_ctypes
 from .color import convert_to_color
 from .. import surface, pixels, rect
 from .algorithms import clipline
-from .sprite import SoftwareSprite
+from .surface import _get_target_surface
 
 __all__ = ["prepare_color", "fill", "line"]
-
-
-def _get_target_surface(target, argname="target"):
-    """Gets the SDL_surface from the passed target."""
-    if isinstance(target, surface.SDL_Surface):
-        rtarget = target
-    elif isinstance(target, SoftwareSprite):
-        rtarget = target.surface
-    elif "SDL_Surface" in str(type(target)):
-        rtarget = target.contents
-    else:
-        raise TypeError("{0} must be a Sprite or SDL_Surface".format(argname))
-    return rtarget
 
 
 def prepare_color(color, target):
     """Prepares a given color for a specific target.
 
+    Targets can be :obj:`~sdl2.SDL_PixelFormat`, :obj:`~sdl2.SDL_Surface`,
+    or :obj:`~sdl2.ext.SoftwareSprite` objects. 
+    
     Colors can be provided in any form supported by
     :func:`sdl2.ext.convert_to_color`.
     
     Args:
         color (:obj:`sdl2.ext.Color`): The color to prepare for the pixel format
             of the given target.
-        target (:obj:`~sdl2.SDL_PixelFormat`, :obj:`~sdl2.SDL_Surface`,
-            :obj:`~sdl2.ext.SoftwareSprite`): The target pixel format, surface,
-            or sprite for which the color should be prepared.
+        target (:obj:`SDL_PixelFormat`, :obj:`SDL_Surface`, :obj:`SoftwareSprite`): The
+            target pixel format, surface, or sprite for which the color should be
+            prepared.
     
     Returns:
         int: An integer approximating the given color in the target's pixel
-            format.
+        format.
 
-"""
+    """
     color = convert_to_color(color)
     pformat = None
     # Software surfaces
@@ -58,7 +47,7 @@ def prepare_color(color, target):
 def fill(target, color, area=None):
     """Fills one or more rectangular areas on a surface with a given color.
 
-    Fill areas can be specified as 4-item (x, y, w, h) tuples,
+    Fill areas can be specified as 4-item ``(x, y, w, h)`` tuples,
     :obj:`~sdl2.rect.SDL_Rect` objects, or a list containing multiple areas to
     fill in either format. If no area is provided, the entire target will be
     filled with the provided color.
@@ -121,9 +110,9 @@ def line(target, color, dline, width=1):
         target (:obj:`~sdl2.SDL_Surface`, :obj:`~sdl2.ext.SoftwareSprite`): The
             target surface or sprite to modify.
         color (:obj:`sdl2.ext.Color`): The color with which to draw lines.
-        dline (tuple, list): The (x1, y1, x2, y2) integer coordinates of a line
-            to draw, or a list of multiple sets of (x1, y1, x2, y2) coordinates
-            for multiple lines.
+        dline (tuple, list): The ``(x1, y1, x2, y2)`` integer coordinates of a
+            line to draw, or a list of multiple sets of ``(x1, y1, x2, y2)``
+            coordinates for multiple lines.
         width (int, optional): The width of the line(s) in pixels. Defaults to
             1 if not specified.
 
@@ -155,7 +144,7 @@ def line(target, color, dline, width=1):
     top, bottom = clip_rect.y, clip_rect.y + clip_rect.h - 1
 
     if bpp == 3:
-        raise UnsupportedError(line, "24bpp are currently not supported")
+        raise UnsupportedError("24bpp surfaces are not currently supported.")
     if bpp == 2:
         pxbuf = ctypes.cast(rtarget.pixels, ctypes.POINTER(ctypes.c_uint16))
     elif bpp == 4:
@@ -182,7 +171,7 @@ def line(target, color, dline, width=1):
             fillrect(rtarget, varea, color)
             continue
         if width != 1:
-            raise UnsupportedError(line, "width > 1 is not supported")
+            raise ValueError("Diagonal lines must have a width of 1.")
         if width == 1:
             # Bresenham
             x1, y1, x2, y2 = clipline(left, top, right, bottom, x1, y1, x2, y2)
