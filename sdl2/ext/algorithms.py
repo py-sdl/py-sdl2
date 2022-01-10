@@ -1,4 +1,3 @@
-"""Common algorithms."""
 import sys
 
 __all__ = ["liangbarsky", "cohensutherland", "clipline", "point_on_line"]
@@ -23,8 +22,8 @@ def cohensutherland(left, top, right, bottom, x1, y1, x2, y2):
 
     Returns:
         tuple: The start and end coordinates of the clipped line in the form
-            ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
-            rectangular clipping area, all 4 values will be ``None``.
+        ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
+        rectangular clipping area, all 4 values will be ``None``.
 
     """
     LEFT, RIGHT, LOWER, UPPER = 1, 2, 4, 8
@@ -95,8 +94,8 @@ def liangbarsky(left, top, right, bottom, x1, y1, x2, y2):
 
     Returns:
         tuple: The start and end coordinates of the clipped line in the form
-            ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
-            rectangular clipping area, all 4 values will be ``None``.
+        ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
+        rectangular clipping area, all 4 values will be ``None``.
 
     """
     dx = x2 - x1 * 1.0
@@ -154,8 +153,8 @@ def clipline(l, t, r, b, x1, y1, x2, y2, method='liangbarsky'):
 
     Returns:
         tuple: The start and end coordinates of the clipped line in the form
-            ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
-            rectangular clipping area, all 4 values will be ``None``.
+        ``(cx1, cy1, cx2, cy2)``. If the line does not intersect with the
+        rectangular clipping area, all 4 values will be ``None``.
 
     """
     if method == 'cohensutherland':
@@ -176,7 +175,7 @@ def point_on_line(p1, p2, point):
     
     Returns:
         bool: ``True`` if the point falls along the line segment, otherwise
-            ``False``.
+        ``False``.
 
     """
     x1, y1 = p1

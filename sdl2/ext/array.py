@@ -1,6 +1,3 @@
-"""
-Conversion routines for sequences.
-"""
 import ctypes
 
 __all__ = ["CTypesView", "to_ctypes", "to_list", "to_tuple", "create_array",
@@ -33,8 +30,8 @@ def to_ctypes(dataseq, dtype, mcount=0):
 
     Returns:
         tuple: A tuple in the form ``(valset, count)``, where ``valset`` is
-            the converted ``ctypes`` array and ``count`` is the number of
-            elements in the array.
+        the converted ``ctypes`` array and ``count`` is the number of
+        elements in the array.
 
     Raises:
         TypeError: if any elements in the passed sequence do not
@@ -167,7 +164,7 @@ class CTypesView(object):
 
         Returns:
             :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint8`
-                array.
+            array.
 
         """
         castval = ctypes.POINTER(ctypes.c_uint8 * self.bytesize)
@@ -182,7 +179,7 @@ class CTypesView(object):
 
         Returns:
             :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint16`
-                array.
+            array.
 
         """
         castval = ctypes.POINTER(ctypes.c_uint16 * (self.bytesize // 2))
@@ -197,7 +194,7 @@ class CTypesView(object):
 
         Returns:
             :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint32`
-                array.
+            array.
 
         """
         castval = ctypes.POINTER(ctypes.c_uint32 * (self.bytesize // 4))
@@ -212,7 +209,7 @@ class CTypesView(object):
 
         Returns:
             :obj:`ctypes._Pointer`: A pointer to a :class:`ctypes.c_uint64`
-                array.
+            array.
 
         """
         castval = ctypes.POINTER(ctypes.c_uint64 * (self.bytesize // 8))
@@ -248,7 +245,8 @@ class CTypesView(object):
 class MemoryView(object):
     """A class that provides read-write access to indexable ``ctypes`` objects.
 
-    .. note: ``MemoryView`` makes heavy use of recursion for multi-dimensional
+    .. note::
+       ``MemoryView`` makes heavy use of recursion for multi-dimensional
        access, making it slow for many use-cases. For better performance, the
        ``numpy`` library can be used for fast access to many array-like data
        types, but it may support fewer types of arbitrary objects than the

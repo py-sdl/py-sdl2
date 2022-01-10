@@ -1,32 +1,33 @@
-"""
-Various indexed color palettes.
+"""This module defines a number of common color palettes.
 
-Each palette is a tuple of :obj:~`sdl2.ext.Color` objects. The following
+Each palette is a tuple of :obj:`~sdl2.ext.Color` objects. The following
 palettes are currently available:
 
 +--------------------+---------------------------------------------------+
-| MONOPALETTE        | 1-bit monochrome palette (black and white).       |
+| Palette            | Description                                       |
++====================+===================================================+
+| ``MONOPALETTE``    | 1-bit monochrome palette (black and white).       |
 +--------------------+---------------------------------------------------+
-| GRAY2PALETTE       | 2-bit grayscale palette with black, white and two |
+| ``GRAY2PALETTE``   | 2-bit grayscale palette with black, white and two |
 |                    | shades of gray.                                   |
 +--------------------+---------------------------------------------------+
-| GRAY4PALETTE       | 4-bit grayscale palette with black, white and     |
+| ``GRAY4PALETTE``   | 4-bit grayscale palette with black, white and     |
 |                    | 14 shades shades of gray.                         |
 +--------------------+---------------------------------------------------+
-| GRAY8PALETTE       | 8-bit grayscale palette with black, white and     |
+| ``GRAY8PALETTE``   | 8-bit grayscale palette with black, white and     |
 |                    | 254 shades shades of gray.                        |
 +--------------------+---------------------------------------------------+
-| RGB3PALETTE        | 3-bit RGB color palette with pure red, green and  |
+| ``RGB3PALETTE``    | 3-bit RGB color palette with pure red, green and  |
 |                    | blue and their complementary colors as well as    |
 |                    | black and white.                                  |
 +--------------------+---------------------------------------------------+
-| CGAPALETTE         | CGA color palette.                                |
+| ``CGAPALETTE``     | CGA color palette.                                |
 +--------------------+---------------------------------------------------+
-| EGAPALETTE         | EGA color palette.                                |
+| ``EGAPALETTE``     | EGA color palette.                                |
 +--------------------+---------------------------------------------------+
-| VGAPALETTE         | 8-bit VGA color palette.                          |
+| ``VGAPALETTE``     | 8-bit VGA color palette.                          |
 +--------------------+---------------------------------------------------+
-| WEBPALETTE         | "Safe" web color palette with 225 colors.         |
+| ``WEBPALETTE``     | "Safe" web color palette with 225 colors.         |
 +--------------------+---------------------------------------------------+
 """
 
@@ -48,14 +49,14 @@ MONOPALETTE = (ARGB(0xFF000000), ARGB(0xFFFFFFFF),)
 
 GRAY2PALETTE = (
     ARGB(0xFF000000), ARGB(0xFF555555), ARGB(0xFFAAAAAA), ARGB(0xFFFFFFFF),
-    )
+)
 
 GRAY4PALETTE = (
     ARGB(0xFF000000), ARGB(0xFF111111), ARGB(0xFF222222), ARGB(0xFF333333),
     ARGB(0xFF444444), ARGB(0xFF555555), ARGB(0xFF666666), ARGB(0xFF777777),
     ARGB(0xFF888888), ARGB(0xFF999999), ARGB(0xFFAAAAAA), ARGB(0xFFBBBBBB),
     ARGB(0xFFCCCCCC), ARGB(0xFFDDDDDD), ARGB(0xFFEEEEEE), ARGB(0xFFFFFFFF),
-    )
+)
 
 GRAY8PALETTE = _create_8bpp_gray()
 
@@ -64,7 +65,7 @@ CGAPALETTE = (
     ARGB(0xFFAA0000), ARGB(0xFFAA00AA), ARGB(0xFFAA5500), ARGB(0xFFAAAAAA),
     ARGB(0xFF555555), ARGB(0xFF5555FF), ARGB(0xFF55FF55), ARGB(0xFF55FFFF),
     ARGB(0xFFFF5555), ARGB(0xFFFF55FF), ARGB(0xFFFFFF55), ARGB(0xFFFFFFFF),
-    )
+)
 
 EGAPALETTE = (
     ARGB(0xFF000000), ARGB(0xFF0000AA), ARGB(0xFF00AA00), ARGB(0xFF00AAAA),
@@ -83,7 +84,7 @@ EGAPALETTE = (
     ARGB(0xFFFF5500), ARGB(0xFFFF55AA), ARGB(0xFFFFFF00), ARGB(0xFFFFFFAA),
     ARGB(0xFF555555), ARGB(0xFF5555FF), ARGB(0xFF55FF55), ARGB(0xFF55FFFF),
     ARGB(0xFFFF5555), ARGB(0xFFFF55FF), ARGB(0xFFFFFF55), ARGB(0xFFFFFFFF),
-    )
+)
 
 WEBPALETTE = (
     ARGB(0xFFFFFFFF), ARGB(0xFFFFFFCC), ARGB(0xFFFFFF99), ARGB(0xFFFFFF66),
@@ -140,12 +141,12 @@ WEBPALETTE = (
     ARGB(0xFF0033FF), ARGB(0xFF0033CC), ARGB(0xFF003399), ARGB(0xFF003366),
     ARGB(0xFF003333), ARGB(0xFF003300), ARGB(0xFF0000FF), ARGB(0xFF0000CC),
     ARGB(0xFF000099), ARGB(0xFF000066), ARGB(0xFF000033), ARGB(0xFF000000),
-    )
+)
 
 RGB3PALETTE = (
     ARGB(0xFF000000), ARGB(0xFF0000FF), ARGB(0xFF00FF00), ARGB(0xFF00FFFF),
     ARGB(0xFFFF0000), ARGB(0xFFFF00FF), ARGB(0xFFFFFF00), ARGB(0xFFFFFFFF),
-    )
+)
 
 VGAPALETTE = (
     ARGB(0xFF000000), ARGB(0xFF0000AA), ARGB(0xFF00AA00), ARGB(0xFF00AAAA),
@@ -212,4 +213,4 @@ VGAPALETTE = (
     ARGB(0xFF2D4141), ARGB(0xFF2D3D41), ARGB(0xFF2D3541), ARGB(0xFF2D3141),
     ARGB(0xFF000000), ARGB(0xFF000000), ARGB(0xFF000000), ARGB(0xFF000000),
     ARGB(0xFF000000), ARGB(0xFF000000), ARGB(0xFF000000), ARGB(0xFF000000),
-    )
+)
