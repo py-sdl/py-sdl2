@@ -53,7 +53,14 @@ jobs:
           python -m pip install numpy pytest pillow
           python -m pip install pysdl2-dll
       
+      - name: Install and test PySDL2 on PyPy
+        if: ${{ matrix.python-version == 'pypy-3.7' }}
+        run: |
+          python -m pip install .
+          python -B -x faulthandler -m pytest -vvl -rxXP
+
       - name: Install and test PySDL2
+        if: ${{ matrix.python-version != 'pypy-3.7' }}
         run: |
           python -m pip install .
           python -B -m pytest -vvl -rxXP
