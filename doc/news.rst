@@ -31,6 +31,8 @@ New Features:
   to have improved input handling and type checking (PR #204)
 * Improved inference of compression format for .tar archives in the
   :mod:`sdl2.ext.resources` submodule (PR #204)
+* Added a new function :func:`sdl2.ext.surface_to_ndarray` that returns a
+  non-transposed copy of a given SDL surface as a 2D or 3D Numpy array (PR #204)
 
 Fixed Bugs:
 
@@ -39,8 +41,14 @@ Fixed Bugs:
   ``TTF_RenderUTF`` instead of ``TTF_RenderUTF8``.
 * Fixed a bug introduced in 0.9.9 where the ``SDL_WINDOW_INPUT_GRABBED``
   constant was no longer exported.
-* :class:`~sdl2.ext.MemoryView` objects now support negative indexing (would
-  previously access out-of-bounds values next to the viewed object) (PR #204)
+* :class:`~sdl2.ext.MemoryView` and :class:`~sdl2.ext.PixelAccess `objects now
+  support negative indexing (e.g. ``arr[-1][-1]`` for accessing the last element
+  in a 2D array). In previous versions, negative indices would retrieve values
+  from undefined sections of memory outside the surface (PR #204)
+* Changed the functions in the :mod:`sdl2.ext.pixelaccess` module to no longer
+  try to unlock RLE surfaces once their corresponding view objects are deleted.
+  This prevents a segmentation fault when a view is garbage-collected but the
+  surface has already been freed (PR #204)
 
 API Changes:
 
@@ -51,6 +59,8 @@ API Changes:
 * The :func:`~sdl2.ext.subsurface` function now allows subsurface areas to be
   specified using :obj:`~sdl2.SDL_Rect` objects and surfaces to be passed either
   directly or as a pointer (PR #204)
+* The :func:`sdl2.ext.pixels2d` and :func:`sdl2.ext.pixels3d` functions no
+  longer raise an ``ExperimentalWarning`` (PR #204)
 
 Deprecation Notices:
 
