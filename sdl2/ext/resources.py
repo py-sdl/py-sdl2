@@ -19,6 +19,21 @@ else:
     import urllib2
 
 
+def _validate_path(path, what, write=False):
+    fullpath = os.path.abspath(path)
+    fname = os.path.basename(path)
+    if write:
+        parent = os.path.abspath(os.path.join(fullpath, os.pardir))
+        if not os.path.isdir(parent):
+            e = "The given parent directory '{0}' does not exist"
+            raise IOError(e.format(parent))
+    else:
+        if not os.path.exists(fullpath):
+            e = "Could not find {0} at the given path: {1}"
+            raise IOError(e.format(what, fullpath))
+    return (fullpath, fname)
+
+
 def open_zipfile(archive, filename, directory=None):
     """Retrieves a given file from a ZIP archive.
 
