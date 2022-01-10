@@ -206,6 +206,16 @@ class Texture(object):
 
     @property
     def scale_mode(self):
+        """str: The current scaling mode to use for rendering the texture. Can
+        be 'nearest', 'linear', 'best', or 'unknown'.
+        
+        See :func:`set_texture_scale_quality` for more information.
+
+        .. note::
+           For SDL versions older than 2.0.12, the scaling mode will always be
+           'unknown'.
+
+        """
         if dll.version < 2012:
             return "unknown"
         modes = ["nearest", "linear", "best"]
@@ -219,6 +229,22 @@ class Texture(object):
             return "unknown"
 
     def set_scale_mode(self, mode):
+        """Sets a custom scaling method to use for rendering the texture.
+
+        This method overrides the default texture scaling method specified by
+        :func:`set_texture_scale_quality`, the documentation for which describes
+        the different possible scaling modes.
+
+        .. note::
+           Support for custom per-texture scaling modes is only available in
+           SDL2 2.0.12 and up. As such, this method has no effect when used with
+           earlier releases of SDL2.
+
+        Args:
+            mode (str): The scaling method to use for the current texture. Must
+                be one of 'nearest', 'linear', or 'best'.
+
+        """
         if dll.version < 2012:
             return None
         modes = {
