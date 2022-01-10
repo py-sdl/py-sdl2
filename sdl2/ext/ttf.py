@@ -349,6 +349,7 @@ class FontTTF(object):
             bg_color = convert_to_color(bg_color)
 
         # Actually create font object for style
+        self._font_file.seek(0)
         font = sdlttf.TTF_OpenFontIndexRW(self._font_rw, 0, size_pt, self._index)
         if not font:
             raise_sdl_err("initializing the '{0}' font style".format(name))
