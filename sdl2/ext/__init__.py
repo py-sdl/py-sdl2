@@ -15,6 +15,7 @@ from .common import *
 from .draw import *
 from .font import *
 from .gui import *
+from .msgbox import *
 from .image import *
 from .pixelaccess import *
 from .renderer import *
