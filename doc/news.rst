@@ -20,6 +20,9 @@ New Features:
   inline documentation for the :mod:`~sdl2.sdlmixer` modlue. In addition to
   Python-specific argument and return types, the new docstrings also include
   including code examples and documentation of Python-specific quirks (PR #200)
+* Update bindings to allow for experimental SDL 2.0.3 support. Versions of SDL2
+  this old are not officially supported, but this should allow for basic PySDL2
+  support on old PowerPC macs.
 
 Fixed Bugs:
 
