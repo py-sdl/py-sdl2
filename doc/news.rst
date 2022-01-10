@@ -42,6 +42,8 @@ API Changes:
   :func:`~sdl2.ext.byteify` Python 2/3 compatibility functions to better handle
   bytes encoding/decoding and no longer require specifying an encoding type
   (defaults to UTF-8 if not manually specified).
+* The :func:`~sdl2.ext.subsurface` function now allows subsurface areas to be
+  specified using :obj:`~sdl2.SDL_Rect` objects.
 
 
 

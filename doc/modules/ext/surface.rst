@@ -1,14 +1,10 @@
-.. currentmodule:: sdl2.ext
+`sdl2.ext.surface` - Creating and Manipulating Software Surfaces
+================================================================
 
-Software Surface manipulation
-=============================
+This module provides methods for working with :obj:`~sdl2.SDL_Surface` objects.
 
-.. function:: subsurface(surface : SDL_Surface, area : (int, int, int, int)) -> SDL_Surface
+Currently, the only function provided by this module is :func:`subsurface`,
+which allows the creation of a new surface from a subsection of a larger one.
 
-   Creates a surface from a part of another surface. The two surfaces share
-   pixel data.
-   
-   .. note::
-      
-      The newly created surface *must not* be used after its parent has been
-      freed!
+.. automodule:: sdl2.ext.surface
+	:members:
