@@ -1,7 +1,11 @@
 .. currentmodule:: sdl2.ext
 
-User interface elements
-=======================
+Designing component-oriented user interfaces
+============================================
+
+.. warning::
+   This module is deprecated, and may be removed in a future release of PySDL2.
+
 User interface elements within :mod:`sdl2.ext` are simple
 :class:`Sprite` objects, which are enhanced by certain input hooks; as such,
 they are not classes on their own, but implemented as mixins. The user input
@@ -16,6 +20,7 @@ elements, which support the event type.
 .. image:: images/uiprocessing.png
 
 .. _ui-elem-types:
+
 
 UI element types
 ----------------

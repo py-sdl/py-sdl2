@@ -131,6 +131,10 @@ Deprecation Notices:
   :meth:`sdl2.ext.BitmapFont.render_text`, which returns an SDL surface instead
   of a SoftwareSprite and ensures the output surface is in ARGB8888 format by
   default (PR #208)
+* The :class:`~sdl2.ext.UIFactory` and :class:`~sdl2.ext.UIProcessor` classes
+  have been deprecated due to their complexity and maintenance burden. New
+  functions and classes for creating GUIs with PySDL2 may be introduced in a
+  future release (PR #209)
 
 
 0.9.9
