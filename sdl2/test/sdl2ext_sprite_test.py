@@ -194,13 +194,10 @@ class TestSDL2ExtSprite(object):
             assert isinstance(ssprite, sdl2ext.SoftwareSprite)
 
         for factory in (tfactory, sfactory):
-            with pytest.raises((ArgumentError, ValueError)):
+            with pytest.raises(ValueError):
                 factory.from_image(None)
-            #self.assertRaises((IOError, SDLError),
-            #                  factory.from_image, "banana")
-            if not _ISPYPY:
-                with pytest.raises(ArgumentError):
-                    factory.from_image(12345)
+            with pytest.raises(ValueError):
+                factory.from_image(12345)
         dogc()
 
     @pytest.mark.skip("not implemented")
