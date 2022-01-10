@@ -22,15 +22,15 @@ New Features:
   including code examples and documentation of Python-specific quirks (PR #200)
 * Update bindings to allow for experimental SDL 2.0.3 support. Versions of SDL2
   this old are not officially supported, but this should allow for basic PySDL2
-  support on old PowerPC macs.
+  support on old PowerPC macs (PR #202)
 * Added new :func:`~sdl2.ext.isiterable` and :func:`~sdl2.ext.utf8` Python 2/3
   compatibility functions to the :mod:`~sdl2.ext.compat` module for checking if
   an object is a non-string iterable and for converting input to a UTF-8 unicode
-  string, respectively.
+  string, respectively (PR #204)
 * The :func:`sdl2.ext.subsurface` function has been re-documented and rewritten
-  to have improved input handling and type checking.
+  to have improved input handling and type checking (PR #204)
 * Added automatic inference of compression format from the filenames of 
-  .tar archives for the :mod:`sdl2.ext.resources` submodule.
+  .tar archives for the :mod:`sdl2.ext.resources` submodule (PR #204)
 
 Fixed Bugs:
 
@@ -45,14 +45,14 @@ API Changes:
 * Updated and redocumented the :func:`~sdl2.ext.stringify` and
   :func:`~sdl2.ext.byteify` Python 2/3 compatibility functions to better handle
   bytes encoding/decoding and no longer require specifying an encoding type
-  (defaults to UTF-8 if not manually specified).
+  (defaults to UTF-8 if not manually specified) (PR #204)
 * The :func:`~sdl2.ext.subsurface` function now allows subsurface areas to be
   specified using :obj:`~sdl2.SDL_Rect` objects and surfaces to be passed either
-  directly or as a pointer.
+  directly or as a pointer (PR #204)
 
 Deprecation Notices:
 
-* The :func:`sdl2.ext.open_url` function has been deprecated.
+* The :func:`sdl2.ext.open_url` function has been deprecated (PR #204)
 
 
 0.9.9
