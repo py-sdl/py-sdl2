@@ -18,13 +18,21 @@ except ImportError:
 __all__ = ["FontTTF", "FontManager"]
 
 
+# This module variable keeps track of the number of separate times SDL_ttf has
+# been initialized. This is important to keep track of, since de-initializing
+# the library frees all associated font data, so we want to make sure this
+# hasn't changed during the lifetime of an object to avoid segfaults.
+_ttf_init_count = 0
+
+
 def _ttf_init():
+    global _ttf_init_count
     if not _HASSDLTTF:
         raise RuntimeError("SDL_ttf is required, but is not installed.")
 
     # Check if TTF already initialized, return immediately if it was
     if sdlttf.TTF_WasInit() > 0:
-        return
+        return _ttf_init_count
 
     # Handle a weirdness in how TTF_Init and TTF_Quit work: TTF_Init
     # blindly increments TTF_WasInit every time it's called and TTF_Quit
@@ -34,6 +42,10 @@ def _ttf_init():
         ret = sdlttf.TTF_Init()
         if ret != 0:
             raise_sdl_err("initializing the SDL_ttf library")
+
+    # If initialized successfully, update and return the global init count
+    _ttf_init_count += 1
+    return _ttf_init_count
 
 
 def _ttf_quit():
@@ -108,7 +120,7 @@ class FontTTF(object):
     def __init__(self, path, size, color, index=0, height_chars=None):
         fullpath, fname = _validate_path(path, "a font")
         fullpath = byteify(fullpath)
-        _ttf_init()
+        self._ttf_init_count = _ttf_init()
 
         # Load the font data as an RWops object for fast repeat opening
         self._font_file = open(fullpath, "rb")
@@ -127,8 +139,13 @@ class FontTTF(object):
 
     def _check_if_closed(self):
         # Makes sure the font hasn't been closed, raising an exception if it has
+        ttf_was_closed = _ttf_init_count > self._ttf_init_count
         if self._font_rw == None:
             e = "The font has been closed and can no longer be used."
+            raise RuntimeError(e)
+        elif sdlttf.TTF_WasInit() < 1 or ttf_was_closed:
+            e = "The SDL_ttf library has been de-initialized since creating the "
+            e += "font. The font can no longer be used."
             raise RuntimeError(e)
 
     def _get_scale_factor(self, testchars, fname):
@@ -415,9 +432,11 @@ class FontTTF(object):
         been called, the font can no longer be used.
 
         """
+        ttf_was_closed = _ttf_init_count > self._ttf_init_count
         if self._font_rw != None:
-            for name, style in self._styles.items():
-                sdlttf.TTF_CloseFont(style['font'])
+            if sdlttf.TTF_WasInit() > 0 and not ttf_was_closed:
+                for name, style in self._styles.items():
+                    sdlttf.TTF_CloseFont(style['font'])
             self._styles = None
             rwops.SDL_RWclose(self._font_rw)
             self._font_rw = None
@@ -502,7 +521,8 @@ class FontManager(object):
     """
     def __init__(self, font_path, alias=None, size=16,
                  color=Color(255, 255, 255), bg_color=Color(0, 0, 0), index=0):
-        _ttf_init()
+        self._ttf_init_count = 0
+        self._ttf_init_count = _ttf_init()
         self.fonts = {}  # fonts = {alias: {size:font_ptr}}
         self.aliases = {}  # aliases = {alias:font_path}
         self._textcolor = None
@@ -518,10 +538,12 @@ class FontManager(object):
 
     def close(self):
         """Closes all fonts opened by the class."""
-        for alias, fonts in self.fonts.items():
-            for size, font in fonts.items():
-                if font:
-                    sdlttf.TTF_CloseFont(font)
+        ttf_was_closed = _ttf_init_count > self._ttf_init_count
+        if sdlttf.TTF_WasInit() > 0 and not ttf_was_closed:
+            for alias, fonts in self.fonts.items():
+                for size, font in fonts.items():
+                    if font:
+                        sdlttf.TTF_CloseFont(font)
         self.fonts = {}
         self.aliases = {}
 
