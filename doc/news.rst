@@ -62,6 +62,12 @@ New Features:
   widths and heights for each mapped character in a bitmap font (PR #208)
 * Added a new argument ``line_h`` to :meth:`sdl2.ext.BitmapFont.render_on` to
   allow specifying custom line heights (PR #208)
+* Added the :class:`~sdl2.ext.FontTTF` class, providing a new and flexible
+  Pythonic wrapper around the :mod:`~sdl2.sdlttf` module for opening and
+  rendering text with TrueType and OpenType fonts. New features include custom
+  line heights for multi-line text, left/right/center justification operations
+  for multiline text, and specifying font sizes in units of pixels in addition
+  to pt (PR #210)
 
 Fixed Bugs:
 
@@ -135,6 +141,8 @@ Deprecation Notices:
   have been deprecated due to their complexity and maintenance burden. New
   functions and classes for creating GUIs with PySDL2 may be introduced in a
   future release (PR #209)
+* The :class:`~sdl2.ext.FontManager` class has been deprecated in favor of the
+  new and more flexible :class:`~sdl2.ext.FontTTF` class (PR #210)
 
 
 0.9.9

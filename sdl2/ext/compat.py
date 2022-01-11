@@ -37,6 +37,10 @@ def _to_unicode(x, enc):
             return str(x)
 
 
+def _is_text(x):
+    return isinstance(x, (str, bytes, unicode))
+
+
 def utf8(x):
     """Converts input to a unicode string in a Python 2/3 agnostic manner.
 
