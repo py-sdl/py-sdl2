@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import gc
 import pytest
 from sdl2 import ext as sdl2ext
 from sdl2.ext.compat import byteify
@@ -42,6 +43,7 @@ def with_font_ttf(with_sdl):
         assert font
         yield font
         font.close()
+        gc.collect()
 
 
 class TestBitmapFont(object):
@@ -60,6 +62,9 @@ class TestBitmapFont(object):
 
     def setup_method(self):
         SDL_ClearError()
+
+    def teardown_method(self):
+        gc.collect()
 
     def test_init(self):
         # Initialize surface and sprite for tests
@@ -445,6 +450,9 @@ class TestFontManager(object):
 
     def setup_method(self):
         SDL_ClearError()
+
+    def teardown_method(self):
+        gc.collect()
 
     def test_init(self):
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"),
