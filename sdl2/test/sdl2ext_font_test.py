@@ -5,7 +5,7 @@ from sdl2 import ext as sdl2ext
 from sdl2.ext.compat import byteify
 from sdl2.ext.pixelaccess import pixels2d
 from sdl2.ext.surface import _create_surface
-from sdl2 import surface, pixels, SDL_ClearError, SDL_GetError
+from sdl2 import surface, pixels, rwops, SDL_ClearError, SDL_GetError
 
 _HASSDLTTF = True
 try:
@@ -280,6 +280,16 @@ class TestFontTTF(object):
         # Test exception on missing height chars
         with pytest.raises(RuntimeError):
             sdl2ext.FontTTF(fontpath, 20, RED_RGBA, height_chars=u"的是不")
+
+    def test_init_rw(self, with_sdl):
+        # Try opening and closing a font
+        fontpath = RESOURCES.get_path("tuffy.ttf")
+        font_file = open(fontpath, "rb")
+        font_rw = rwops.rw_from_object(font_file)
+        font = sdl2ext.FontTTF(font_rw, 20, RED_RGBA)
+        assert SDL_GetError() == b""
+        assert font
+        font.close()
 
     def test_get_ttf_font(self, with_font_ttf):
         font = with_font_ttf

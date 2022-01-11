@@ -2,7 +2,7 @@ import os
 import re
 from ctypes import c_int, byref
 from .. import surface, pixels, rwops, rect
-from .compat import byteify, stringify, utf8
+from .compat import byteify, stringify, utf8, _is_text
 from .common import raise_sdl_err
 from .color import Color, convert_to_color
 from .draw import prepare_color
@@ -102,9 +102,15 @@ class FontTTF(object):
     maximum pixel height to a different subset of characters (e.g. just 0-9
     digits), you will need to specifiy a custom 'height_chars' string when
     creating the font object.
+
+    .. note::
+       If loading a font from an SDL RWops file object, you must not free the
+       file object until you are done with the font. Otherwise, SDL_ttf will
+       try to render with a closed font and hard-crash Python. 
     
     Args:
-        path (str): The relative (or absolute) path to the font to load.
+        font (str or :obj:`SDL_RWops`): The relative (or absolute) path to the
+            font to load, or an SDL file object containing the font data.
         size (int or str): The default size for the font, either as an integer
             (assumed to be in pt) or as a string specifying the unit of size
             (e.g. '12pt' or '22px').
@@ -117,14 +123,23 @@ class FontTTF(object):
             calculating the maximum height (in pixels) of the font for 
     
     """
-    def __init__(self, path, size, color, index=0, height_chars=None):
-        fullpath, fname = _validate_path(path, "a font")
-        fullpath = byteify(fullpath)
+    def __init__(self, font, size, color, index=0, height_chars=None):
+        # Load the font, either from a file or an SDL file object
+        if isinstance(font, rwops.SDL_RWops):
+            fname = None
+            self._font_file = None
+            self._font_rw = font
+        elif _is_text(font):
+            fullpath, fname = _validate_path(font, "a font")
+            fullpath = byteify(fullpath)
+            self._font_file = open(fullpath, "rb")
+            self._font_rw = rwops.rw_from_object(self._font_file)
+        else:
+            e = "'font' must be a path string or an SDL file object (got {0})."
+            raise ValueError(e.format(type(font).__str__))
+    
+        # Initialize the TTF library (if not already initialized)
         self._ttf_init_count = _ttf_init()
-
-        # Load the font data as an RWops object for fast repeat opening
-        self._font_file = open(fullpath, "rb")
-        self._font_rw = rwops.rw_from_object(self._font_file)
         self._index = index
 
         # Get the px-to-pt scaling factor for the font
@@ -156,7 +171,10 @@ class FontTTF(object):
         advance = c_int(0)
         tmpfont = sdlttf.TTF_OpenFontIndexRW(self._font_rw, 0, tmpsize, self._index)
         if not tmpfont:
-            raise_sdl_err("initializing the font '{0}'".format(fname))
+            e = "initializing the font"
+            if fname:
+                e += " '{0}'".format(fname)
+            raise_sdl_err(e)
         for char in testchars:
             if sdlttf.TTF_GlyphIsProvided(tmpfont, ord(char)) == 0:
                 e = "The current font does not provide a glyph for character "
@@ -399,7 +417,7 @@ class FontTTF(object):
             bg_color = convert_to_color(bg_color)
 
         # Actually create font object for style
-        self._font_file.seek(0)
+        rwops.SDL_RWseek(self._font_rw, 0, rwops.RW_SEEK_SET)
         font = sdlttf.TTF_OpenFontIndexRW(self._font_rw, 0, size_pt, self._index)
         if not font:
             raise_sdl_err("initializing the '{0}' font style".format(name))
@@ -474,7 +492,8 @@ class FontTTF(object):
                 for name, style in self._styles.items():
                     sdlttf.TTF_CloseFont(style['font'])
             self._styles = None
-            rwops.SDL_RWclose(self._font_rw)
+            if self._font_file:
+                rwops.SDL_RWclose(self._font_rw)
             self._font_rw = None
             self._font_file = None
 
