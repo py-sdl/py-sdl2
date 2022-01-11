@@ -2,6 +2,7 @@
 import os
 import sys
 import warnings
+from platform import machine as cpu_arch
 from ctypes import CDLL, POINTER, Structure, c_uint8, cast, addressof
 from ctypes.util import find_library
 
@@ -94,6 +95,38 @@ def _preload_deps(libname, dllpath):
     return preloaded
 
 
+def _finds_libs_at_path(libnames, path, patterns):
+
+    # Adding the potential 'd' suffix that is present on the library
+    # when built in debug configuration
+    searchfor = libnames + [libname + 'd' for libname in libnames]
+    results = []
+
+    # First, find any libraries matching pattern exactly within given path
+    for libname in searchfor:
+        for subpath in str.split(path, os.pathsep):
+            for pattern in patterns:
+                dllfile = os.path.join(subpath, pattern.format(libname))
+                if os.path.exists(dllfile):
+                    results.append(dllfile)
+
+    # Next, on Linux and similar, find any libraries with version suffixes matching
+    # pattern (e.g. libSDL2.so.2) at path and add them in descending version order
+    # (i.e. newest first)
+    if sys.platform not in ("win32", "darwin"):
+        versioned = []
+        files = os.listdir(path)
+        for f in files:
+            for libname in searchfor:
+                dllname = "lib{0}.so".format(libname)
+                if dllname in f and not (dllname == f or f.startswith(".")):
+                    versioned.append(os.path.join(path, f))
+        versioned.sort(key = _so_version_num, reverse = True)
+        results = results + versioned
+
+    return results
+
+
 def _findlib(libnames, path=None):
     """Finds SDL2 libraries and returns them in a list, with libraries found in the directory
     optionally specified by 'path' being first (taking precedence) and libraries found in system
@@ -108,33 +141,22 @@ def _findlib(libnames, path=None):
     else:
         patterns = ["lib{0}.so"]
 
+    # On Apple Silicon Macs, search the non-standard Homebrew library path if no other
+    # path explicitly set
+    arm_brewpath = "/opt/Homebrew/lib"
+    if not path and platform == "darwin" and os.path.exists(arm_brewpath):
+        path = arm_brewpath
+
     # Adding the potential 'd' suffix that is present on the library
     # when built in debug configuration
     searchfor = libnames + [libname + 'd' for libname in libnames]
+
+    # First, find any matching libraries at the given path (if specified)
     results = []
     if path and path.lower() != "system":
-        # First, find any libraries matching pattern exactly within given path
-        for libname in searchfor:
-            for subpath in str.split(path, os.pathsep):
-                for pattern in patterns:
-                    dllfile = os.path.join(subpath, pattern.format(libname))
-                    if os.path.exists(dllfile):
-                        results.append(dllfile)
+        results = _finds_libs_at_path(libnames, path, patterns)
 
-        # Next, on Linux and similar, find any libraries with version suffixes matching pattern
-        # (e.g. libSDL2.so.2) at path and add them in descending version order (i.e. newest first)
-        if platform not in ("win32", "darwin"):
-            versioned = []
-            files = os.listdir(path)
-            for f in files:
-                for libname in searchfor:
-                    dllname = "lib{0}.so".format(libname)
-                    if dllname in f and not (dllname == f or f.startswith(".")):
-                        versioned.append(os.path.join(path, f))
-            versioned.sort(key = _so_version_num, reverse = True)
-            results = results + versioned
-
-    # Finally, search for library in system library search paths
+    # Next, search for library in system library search paths
     for libname in searchfor:
         dllfile = find_library(libname)
         if dllfile:
@@ -142,6 +164,12 @@ def _findlib(libnames, path=None):
             if os.name == "nt" and not ("/" in dllfile or "\\" in dllfile):
                 dllfile = "./" + dllfile
             results.append(dllfile)
+
+    # On ARM64 Macs, search the non-standard brew library path as a fallback
+    arm_brewpath = "/opt/Homebrew/lib"
+    is_apple_silicon = platform == "darwin" and cpu_arch() == "arm64"
+    if is_apple_silicon and os.path.exists(arm_brewpath):
+        results += _finds_libs_at_path(libnames, arm_brewpath, patterns)
 
     return results
 
