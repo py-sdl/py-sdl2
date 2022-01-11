@@ -232,7 +232,7 @@ SDL_RenderFillRectsF = _bind("SDL_RenderFillRectsF", [POINTER(SDL_Renderer), POI
 SDL_RenderCopyF = _bind("SDL_RenderCopyF", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(SDL_FRect)], c_int, added='2.0.10')
 SDL_RenderCopyExF = _bind("SDL_RenderCopyExF", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(SDL_Rect), POINTER(SDL_FRect), c_double, POINTER(SDL_FPoint), SDL_RendererFlip], c_int, added='2.0.10')
 SDL_RenderGeometry = _bind("SDL_RenderGeometry", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(SDL_Vertex), c_int, POINTER(c_int), c_int], c_int, added='2.0.18')
-SDL_RenderGeometryRaw = _bind("SDL_RenderGeometryRaw", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(c_float), c_int, POINTER(c_int), c_int, POINTER(c_float), c_int, c_int, c_void_p, c_int, c_int], c_int, added='2.0.18')
+SDL_RenderGeometryRaw = _bind("SDL_RenderGeometryRaw", [POINTER(SDL_Renderer), POINTER(SDL_Texture), POINTER(c_float), c_int, POINTER(SDL_Color), c_int, POINTER(c_float), c_int, c_int, c_void_p, c_int, c_int], c_int, added='2.0.18')
 SDL_RenderReadPixels = _bind("SDL_RenderReadPixels", [POINTER(SDL_Renderer), POINTER(SDL_Rect), Uint32, c_void_p, c_int], c_int)
 SDL_RenderPresent = _bind("SDL_RenderPresent", [POINTER(SDL_Renderer)])
 SDL_DestroyTexture = _bind("SDL_DestroyTexture", [POINTER(SDL_Texture)])
