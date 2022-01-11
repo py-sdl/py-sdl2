@@ -50,9 +50,7 @@ class SoftwareSprite(Sprite):
     def __init__(self, imgsurface, free):
         """Creates a new SoftwareSprite."""
         super(SoftwareSprite, self).__init__()
-        self._parent = None
         self.free = free
-        self.surface = None
         if isinstance(imgsurface, surface.SDL_Surface):
             self.surface = imgsurface
         elif "SDL_Surface" in str(type(imgsurface)):
@@ -64,8 +62,9 @@ class SoftwareSprite(Sprite):
         """Releases the bound SDL_Surface, if it was created by the
         SoftwareSprite.
         """
-        if self.free and self.surface is not None:
-            surface.SDL_FreeSurface(self.surface)
+        imgsurface = getattr(self, "surface", None)
+        if self.free and imgsurface is not None:
+            surface.SDL_FreeSurface(imgsurface)
         self.surface = None
 
     @property
