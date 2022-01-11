@@ -335,6 +335,22 @@ class TestFontTTF(object):
         assert text3.h > text2.h
         surface.SDL_FreeSurface(text3)
 
+        # Test custom line height as a string (in px)
+        msg = "hello\nthere!"
+        text3 = font.render_text(msg, line_h='100px')
+        assert SDL_GetError() == b""
+        assert isinstance(text3, surface.SDL_Surface)
+        assert text3.h > text2.h
+        surface.SDL_FreeSurface(text3)
+
+        # Test custom line height as a percentage
+        msg = "hello\nthere!"
+        text3 = font.render_text(msg, line_h='110%')
+        assert SDL_GetError() == b""
+        assert isinstance(text3, surface.SDL_Surface)
+        assert text3.h > text2.h
+        surface.SDL_FreeSurface(text3)
+
         # Test wrap width
         msg = "hello there! This is a very long line of text."
         text3 = font.render_text(msg, width=200)
@@ -383,6 +399,10 @@ class TestFontTTF(object):
             font.render_text(msg, line_h=12.4)
         with pytest.raises(ValueError):
             font.render_text(msg, line_h=0)
+        with pytest.raises(ValueError):
+            font.render_text(msg, line_h='-50%')
+        with pytest.raises(ValueError):
+            font.render_text(msg, line_h='100pt')
 
         # Test exception for bad alignment
         with pytest.raises(ValueError):

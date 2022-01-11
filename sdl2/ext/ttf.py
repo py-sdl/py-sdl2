@@ -191,6 +191,34 @@ class FontTTF(object):
             sz = int(size)
         return sz
 
+    def _parse_line_height(self, height, default_skip):
+        if height is None:
+            h = default_skip
+        elif isinstance(height, str):
+            # If line height specified as a percentage of the default line skip
+            if height[-1] == "%":
+                pct = float(height[:-1])
+                if not pct > 0:
+                    e = "Relative line heights must be greater than 0% (got '{0}')."
+                    raise ValueError(e.format(height))
+                h = int(default_skip * (pct / 100.0))
+            # If line height specified explicitly in pixels
+            elif height[-2:] == "px":
+                if '-' in height or '.' in height:
+                    e = "Line height must be a positive whole number (got '{0}')."
+                    raise ValueError(e.format(height))
+                h = int("".join([i for i in height if i.isdigit()]))
+            else:
+                e = "Line height units must be either 'px' or '%' (got '{0}')."
+                raise ValueError(e.format(height))
+        else:
+            # If numeric, assume pixels
+            if height != int(height) or height < 1:
+                e = "Line height must be a positive integer (got {0})."
+                raise ValueError(e.format(height))
+            h = int(height)
+        return max(h, 1)
+
     def _get_line_size(self, line, style):
         # Get the height and width of a given line of text in a given style
         font = self._styles[style]['font']
@@ -292,7 +320,8 @@ class FontTTF(object):
 
         # Determine height and width of background surface
         font_height = sdlttf.TTF_FontHeight(font)
-        line_h = sdlttf.TTF_FontLineSkip(font) if not line_h else line_h
+        default_skip = sdlttf.TTF_FontLineSkip(font)
+        line_h = self._parse_line_height(line_h, default_skip)
         height = line_h * (len(lines) - 1) + font_height
         if width == None:
             width = max([line.contents.w for line in rendered])
@@ -377,6 +406,7 @@ class FontTTF(object):
         
         self._styles[name] = {
             'font': font,
+            'size': size_pt,
             'color': pixels.SDL_Color(c.r, c.g, c.b, c.a),
             'bg': bg_color
         }
@@ -391,13 +421,18 @@ class FontTTF(object):
         (the default), right-aligned, or centered, and the spacing between lines
         can be modified using the `line_h` argument.
 
+        Line heights can be specified in pixels (e.g. ``20`` or ``'20px'``) or
+        as percentages of the TTF-suggested line spacing for the font (e.g.
+        ``'150%'``).
+
         Args:
             text (str): The string of text to render to the target surface.
             style (str, optional): The font style with which to render the
                 given string. Defaults to the 'default' style if not specified.
-            line_h (int, optional): The line height (in pixels) to use for each
-                line of the rendered text. If not specified, the suggested line
-                height for the font will be used. Defaults to ``None``.
+            line_h (int or str, optional): The line height to use for each
+                line of the rendered text, either in pixels or as a percentage
+                of the font's suggested line height. If not specified, the
+                suggested line height for the font will be used.
             width (int, optional): The width (in pixels) of the output surface.
                 If a line of text exceeds this value, it will be automatically
                 wrapped to fit within the specified width. Defaults to ``None``.
@@ -416,9 +451,6 @@ class FontTTF(object):
         if style not in self._styles.keys():
             e = "The '{0}' style is not defined for the current font."
             raise ValueError(e.format(style))
-        if line_h != None and (line_h != int(line_h) or line_h < 1):
-            e = "Line height must be a positive integer (got {0})."
-            raise ValueError(e.format(line_h))
         if align not in ["left", "right", "center"]:
             e = "Text alignment mode must be 'left', 'right', or 'center'."
             raise ValueError(e)
