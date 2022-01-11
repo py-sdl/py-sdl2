@@ -74,7 +74,7 @@ class TestSDL2ExtRenderer(object):
                 else:
                     assert view[y][x] in c2, msg % (x, y, view[y][x], c2)
 
-    def test_Renderer(self):
+    def test_init(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
 
         # Create renderer with SDL_Surface
@@ -123,6 +123,31 @@ class TestSDL2ExtRenderer(object):
         with pytest.raises(TypeError):
             sdl2ext.Renderer("test")
         dogc()
+
+    def test_logical_size(self):
+        sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+        window = sdl2ext.Window("Test", size=(10, 10))
+        sprite = sdl2ext.SoftwareSprite(sf.contents, True)
+
+        targets = {
+            "SDL_Surface": sf.contents,
+            "SDL_Surface_pointer": sf,
+            "SoftwareSprite": sprite,
+            "Window": window,
+            "SDL_Window": window.window
+        }
+        for name, target in targets.items():
+            target_name = name
+            renderer = sdl2ext.Renderer(target)
+            assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
+            assert renderer.logical_size == (10, 10)
+            renderer.logical_size = (20, 30)
+            assert renderer.logical_size == (20, 30)
+            renderer.reset_logical_size()
+            assert renderer.logical_size == (10, 10)
+            renderer.destroy()
+
+        window.close()
 
     def test_Texture(self):
         # Create renderer and test surface

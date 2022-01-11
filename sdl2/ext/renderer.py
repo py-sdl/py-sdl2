@@ -341,16 +341,24 @@ class Renderer(object):
         else:
             index = backend
 
+        _size = None
         if isinstance(target, Window):
             _renderer = render.SDL_CreateRenderer(target.window, index, flags)
+            _size = target.size
         elif isinstance(target, video.SDL_Window):
             _renderer = render.SDL_CreateRenderer(target, index, flags)
+            w, h = c_int(0), c_int(0)
+            video.SDL_GetWindowSize(target, byref(w), byref(h))
+            _size = (w.value, h.value)
         elif isinstance(target, SoftwareSprite):
             _renderer = render.SDL_CreateSoftwareRenderer(target.surface)
+            _size = target.size
         elif isinstance(target, surface.SDL_Surface):
             _renderer = render.SDL_CreateSoftwareRenderer(target)
+            _size = (target.w, target.h)
         elif "SDL_Surface" in str(type(target)):
             _renderer = render.SDL_CreateSoftwareRenderer(target.contents)
+            _size = (target.contents.w, target.contents.h)
         else:
             raise TypeError("unsupported target type")
         if not _renderer:
@@ -359,6 +367,7 @@ class Renderer(object):
 
         self.rendertarget = target
         self.color = (0, 0, 0, 0)  # Set black as the default draw color
+        self.logical_size = _size
         self._original_logical_size = self.logical_size
         if logical_size is not None:
             self.logical_size = logical_size
@@ -402,7 +411,7 @@ class Renderer(object):
         ``(width, height)`` tuple.
 
         """
-        w, h = c_int(), c_int()
+        w, h = c_int(0), c_int(0)
         render.SDL_RenderGetLogicalSize(self.sdlrenderer, byref(w), byref(h))
         return w.value, h.value
 
@@ -416,7 +425,7 @@ class Renderer(object):
     @property
     def color(self):
         """:obj:`~sdl2.ext.Color`: The current drawing color of the renderer."""
-        r, g, b, a = Uint8(), Uint8(), Uint8(), Uint8()
+        r, g, b, a = Uint8(0), Uint8(0), Uint8(0), Uint8(0)
         ret = render.SDL_GetRenderDrawColor(self.sdlrenderer, byref(r), byref(g),
                                             byref(b), byref(a))
         if ret < 0:
