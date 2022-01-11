@@ -2,7 +2,7 @@ import os
 import re
 from ctypes import c_int, byref
 from .. import surface, pixels, rwops, rect
-from .compat import byteify, stringify
+from .compat import byteify, stringify, utf8
 from .common import raise_sdl_err
 from .color import Color, convert_to_color
 from .draw import prepare_color
@@ -278,6 +278,9 @@ class FontTTF(object):
         # Actually render the text
         rendered = []
         for line in lines:
+            if len(line) == 0:
+                rendered.append(None)
+                continue
             fontsf = sdlttf.TTF_RenderUTF8_Blended(font, byteify(line), color)
             if not fontsf:
                 raise_sdl_err("rendering text with the '{0}' style".format(style))
@@ -298,16 +301,17 @@ class FontTTF(object):
         sf = _create_surface((width, height), bg_col, errname="background")
         line_y = 0
         for line in rendered:
-            lw, lh = (line.contents.w, line.contents.h)
-            if align == "left":
-                line_x = 0
-            elif align == "center":
-                line_x = int((width - lw) / 2)
-            elif align == "right":
-                line_x = width - lw
-            line_rect = rect.SDL_Rect(line_x, line_y, lw, lh)
-            surface.SDL_BlitSurface(line, None, sf, line_rect)
-            surface.SDL_FreeSurface(line)
+            if line:
+                lw, lh = (line.contents.w, line.contents.h)
+                if align == "left":
+                    line_x = 0
+                elif align == "center":
+                    line_x = int((width - lw) / 2)
+                elif align == "right":
+                    line_x = width - lw
+                line_rect = rect.SDL_Rect(line_x, line_y, lw, lh)
+                surface.SDL_BlitSurface(line, None, sf, line_rect)
+                surface.SDL_FreeSurface(line)
             line_y += line_h
 
         return sf
@@ -420,7 +424,7 @@ class FontTTF(object):
             raise ValueError(e)
 
         # Actually render the text
-        lines = self._split_lines(text, style, width)
+        lines = self._split_lines(utf8(text), style, width)
         sf = self._render_lines(lines, style, line_h, width, align)
         return sf.contents
 
