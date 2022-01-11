@@ -68,6 +68,8 @@ New Features:
   line heights for multi-line text, left/right/center justification operations
   for multiline text, and specifying font sizes in units of pixels in addition
   to pt (PR #210)
+* Updated PySDL2 to automatically find and use Homebrew SDL2 binaries on
+  Apple Silicon macs if no other usable binaries can be found.
 
 Fixed Bugs:
 

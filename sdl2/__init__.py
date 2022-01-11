@@ -1,4 +1,5 @@
 """SDL2 wrapper package"""
+from __future__ import absolute_import
 from .dll import get_dll_file, _bind
 from ctypes import c_int as _cint
 
