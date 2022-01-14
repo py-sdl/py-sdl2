@@ -220,41 +220,39 @@ class TestSDLTTF(object):
 
     def test_TTF_SizeText(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
-        expected_w = 70
-        expected_h = [
-            25, # SDL2_ttf < 2.0.15
-            24, # SDL2_ttf == 2.0.15 w/ FreeType 2.9.1
-            21  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
-        ]
+        min_expected_w = 69     # SDL2_ttf 2.0.18
+        max_expected_w = 70     # SDL2_ttf <= 2.0.15
+        min_expected_h = 21     # SDL2_ttf 2.0.15 with FreeType 2.10.1
+        max_expected_h = 25     # SDL2_ttf < 2.0.15
         w, h = c_int(0), c_int(0)
         sdlttf.TTF_SizeText(font, b"Hi there!", byref(w), byref(h))
-        assert w.value == expected_w
-        assert h.value in expected_h
+        assert w.value >= min_expected_w
+        assert w.value <= max_expected_w
+        assert h.value >= min_expected_h
+        assert h.value <= max_expected_h
         sdlttf.TTF_CloseFont(font)
 
     def test_TTF_SizeUTF8(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
-        expected_w = 73
-        expected_h = [
-            25, # SDL2_ttf < 2.0.15
-            24, # SDL2_ttf == 2.0.15 w/ FreeType 2.9.1
-            21  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
-        ]
+        min_expected_w = 72     # SDL2_ttf 2.0.18
+        max_expected_w = 73     # SDL2_ttf <= 2.0.15
+        min_expected_h = 21     # SDL2_ttf 2.0.15 with FreeType 2.10.1
+        max_expected_h = 25     # SDL2_ttf < 2.0.15
         w, h = c_int(0), c_int(0)
         sdlttf.TTF_SizeUTF8(font, u"Hï thère!".encode('utf-8'), byref(w), byref(h))
-        assert w.value == expected_w
-        assert h.value in expected_h
+        assert w.value >= min_expected_w
+        assert w.value <= max_expected_w
+        assert h.value >= min_expected_h
+        assert h.value <= max_expected_h
         sdlttf.TTF_CloseFont(font)
 
     @pytest.mark.xfail(reason="Highly unstable under pytest for some reason")
     def test_TTF_SizeUNICODE(self):
         font = sdlttf.TTF_OpenFont(fontfile, 20)
-        expected_w = 70
-        expected_h = [
-            25, # SDL2_ttf < 2.0.15
-            24, # SDL2_ttf == 2.0.15 w/ FreeType 2.9.1
-            21  # SDL2_ttf == 2.0.15 w/ FreeType 2.10.1
-        ]
+        min_expected_w = 69     # SDL2_ttf 2.0.18
+        max_expected_w = 70     # SDL2_ttf <= 2.0.15
+        min_expected_h = 21     # SDL2_ttf 2.0.15 with FreeType 2.10.1
+        max_expected_h = 25     # SDL2_ttf < 2.0.15
         w, h = c_int(0), c_int(0)
         teststr = u"Hi there!"
         strlen = len(teststr) + 1 # +1 for byte-order mark
@@ -263,8 +261,10 @@ class TestSDLTTF(object):
         sdlttf.TTF_SizeUNICODE(font, strarr, byref(w), byref(h))
         print(list(strarr))
         print("w = {0}, h = {1}".format(w.value, h.value))
-        assert w.value == expected_w
-        assert h.value in expected_h
+        assert w.value >= min_expected_w
+        assert w.value <= max_expected_w
+        assert h.value >= min_expected_h
+        assert h.value <= max_expected_h
         sdlttf.TTF_CloseFont(font)
 
     def test_TTF_Render_Solid(self):
