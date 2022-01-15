@@ -19,9 +19,9 @@ The :mod:`sdl2` package relies on an external SDL2 library for creating the
 wrapper functions. This means that the user needs to have SDL2 installed or
 that you ship a SDL2 library with your project.
 
-For macOS, Windows, and most distributions of x86 Linux, the easiest and most
-flexible way to bundle and install the SDL2 binaries with your project is via
-the ``pysdl2-dll`` package on PyPI,
+For macOS, Windows, and most distributions of x86 and ARM64 Linux, the easiest
+and most flexible way to bundle and install the SDL2 binaries with your project
+is via the ``pysdl2-dll`` package on PyPI,
 which pysdl2 will load automatically if available. This approach allows you to
 add the SDL2 binaries as a dependency for your project in a requirements.txt
 file, a setup.py file, a Pipfile, or any other form of Python dependency
@@ -30,7 +30,7 @@ project using this mechanism if your project depends on a function not
 available in earlier versions of SDL2.
 
 For platforms without any available pysdl2-dll binaries (e.g. Alpine Linux, 
-ARM64 Linux, BSD), PySDL2 will still work as long as a recent version of SDL2
+ARM32 Linux, BSD), PySDL2 will still work as long as a recent version of SDL2
 is installed using the system's package manager. Additionally, pysdl2-dll will
 still install successfully on unsupported platforms as an empty pacakge with
 no binaries, making it safe to add as a dependency for cross-platform projects.
@@ -53,7 +53,7 @@ be found.
    it will try to use that one in the first place, before using any SDL2
    library installed on the target system.
 
-Let's assume, you ship your own library *SDL2.dll* within your project
+Let's assume you ship your own library *SDL2.dll* within your project
 location *fancy_project/third_party*. You can set the environment
 variable :envvar:`PYSDL2_DLL_PATH` before starting Python. ::
 

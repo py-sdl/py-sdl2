@@ -78,7 +78,7 @@ Fixed Bugs:
   ``TTF_RenderUTF`` instead of ``TTF_RenderUTF8``.
 * Fixed a bug introduced in 0.9.9 where the ``SDL_WINDOW_INPUT_GRABBED``
   constant was no longer exported.
-* :class:`~sdl2.ext.MemoryView` and :class:`~sdl2.ext.PixelAccess `objects now
+* :class:`~sdl2.ext.MemoryView` and :class:`~sdl2.ext.PixelAccess` objects now
   support negative indexing (e.g. ``arr[-1][-1]`` for accessing the last element
   in a 2D array). In previous versions, negative indices would retrieve values
   from undefined sections of memory outside the surface (PR #204)
@@ -92,8 +92,8 @@ Fixed Bugs:
 * :meth:`sdl2.ext.BitmapFont.contains` no longer assumes that the font map
   contains a space (PR #208)
 * Rendering multiline text with the :class:`sdl2.ext.BitmapFont` class now
-  always splits lines using the newline (`\n`) character. Previously on
-  Windows, it would only split on Windows-style line endings (`\r\n`) (PR #208)
+  always splits lines using the newline (``\n``) character. Previously on
+  Windows, it would only split on Windows-style line endings (``\r\n``) (PR #208)
 
 API Changes:
 
@@ -109,12 +109,12 @@ API Changes:
 * Updated the :meth:`~sdl2.ext.Renderer.draw_line` and
   :meth:`~sdl2.ext.Renderer.draw_point` methods of the
   :class:`~sdl2.ext.Renderer` class to accept coordinates as lists of ``(x, y)``
-  tuples or :obj:`~sdl2.SDL_Point`s in addition to flat ``[x, y, x, y, x, y]``
+  tuples or :obj:`~sdl2.SDL_Point` in addition to flat ``[x, y, x, y, x, y]``
   lists (PR #207)
 * Updated the :meth:`~sdl2.ext.Renderer.draw_rect` and
   :meth:`~sdl2.ext.Renderer.fill` methods of the
   :class:`~sdl2.ext.Renderer` class to accept coordinates as lists of
-  :obj:`~sdl2.SDL_Rects`s in addition to lists of ``(x, y, w, h)``
+  :obj:`~sdl2.SDL_Rect` in addition to lists of ``(x, y, w, h)``
   tuples (PR #207)
 * Updated the :meth:`~sdl2.ext.Renderer.copy` method of the
   :class:`~sdl2.ext.Renderer` class to accept an ``(x, y)`` tuple as a
