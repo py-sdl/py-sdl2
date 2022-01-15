@@ -493,12 +493,13 @@ class TestFontManager(object):
         assert fm.bg_color == sdl2ext.Color(100, 0, 0, 0)
 
     def test_default_font(self):
-        fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
+        fontpath = RESOURCES.get_path("tuffy.ttf")
+        fm = sdl2ext.FontManager(fontpath)
         assert fm.default_font == "tuffy"
         assert fm.size == 16
         with pytest.raises(ValueError):
             fm.default_font = "Inexistent Alias"
-        fm.add(RESOURCES.get_path("tuffy.copy.ttf"), size = 10)
+        fm.add(fontpath, alias = "tuffy.copy", size = 10)
         fm.default_font = "tuffy.copy"
         fm.size = 10
         assert fm.default_font == "tuffy.copy"

@@ -33,8 +33,7 @@ License
 
 Some files are **not** covered by the license above.
 
-* For ``examples/resources/tuffy.ttf``,
-  ``examples/resources/tuffy.copy.ttf`` and
+* For ``examples/resources/tuffy.ttf`` and
   ``sdl2/test/resources/tuffy.ttf`` the following terms apply:
 
   ::
