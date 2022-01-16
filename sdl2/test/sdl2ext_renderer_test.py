@@ -1,3 +1,4 @@
+import gc
 import sys
 import pytest
 from ctypes import addressof
@@ -7,14 +8,6 @@ from sdl2 import dll
 from sdl2.rect import SDL_Point
 from sdl2.render import SDL_Renderer, SDL_Texture
 from sdl2.surface import SDL_CreateRGBSurface, SDL_FreeSurface
-
-_ISPYPY = hasattr(sys, "pypy_version_info")
-
-if _ISPYPY:
-    import gc
-    dogc = gc.collect
-else:
-    dogc = lambda: None
 
 
 class TestSDL2ExtRenderer(object):
@@ -30,6 +23,9 @@ class TestSDL2ExtRenderer(object):
     @classmethod
     def teardown_class(cls):
         sdl2ext.quit()
+
+    def teardown_method(self):
+        gc.collect()
 
     def check_pixels(self, view, w, h, sprite, c1, c2, cx=0, cy=0):
         msg = "color mismatch at %d,%d: %d not in %s"
@@ -95,7 +91,6 @@ class TestSDL2ExtRenderer(object):
         assert renderer.rendertarget == sprite
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         renderer.destroy()
-        dogc()
 
         # Create renderer with Window
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -103,7 +98,6 @@ class TestSDL2ExtRenderer(object):
         assert renderer.rendertarget == window
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         renderer.destroy()
-        dogc()
 
         # Create renderer with SDL_Window
         sdlwindow = window.window
@@ -122,7 +116,6 @@ class TestSDL2ExtRenderer(object):
             sdl2ext.Renderer(1234)
         with pytest.raises(TypeError):
             sdl2ext.Renderer("test")
-        dogc()
 
     def test_logical_size(self):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
@@ -209,7 +202,6 @@ class TestSDL2ExtRenderer(object):
         del view
         renderer.destroy()
         SDL_FreeSurface(sf)
-        dogc()
 
     @pytest.mark.skip("not implemented")
     def test_Renderer_blendmode(self):
@@ -237,7 +229,6 @@ class TestSDL2ExtRenderer(object):
         del view
         renderer.destroy()
         SDL_FreeSurface(sf)
-        dogc()
 
     def test_Renderer_copy(self):
         # Initialize target surface and renderer

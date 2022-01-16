@@ -1,3 +1,4 @@
+import gc
 import sys
 import pytest
 from ctypes import ArgumentError
@@ -9,17 +10,7 @@ from sdl2.render import (
 )
 from sdl2.surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 
-
-_ISPYPY = hasattr(sys, "pypy_version_info")
-
-
 RESOURCES = Resources(__file__, "resources")
-
-if _ISPYPY:
-    import gc
-    dogc = gc.collect
-else:
-    dogc = lambda: None
 
 
 class TestSDL2ExtSpriteSystem(object):
@@ -35,6 +26,9 @@ class TestSDL2ExtSpriteSystem(object):
     @classmethod
     def teardown_class(cls):
         sdl2ext.quit()
+
+    def teardown_method(self):
+        gc.collect()
 
     def check_pixels(self, view, w, h, sprite, c1, c2, cx=0, cy=0):
         msg = "color mismatch at %d,%d: %d not in %s"
@@ -77,7 +71,6 @@ class TestSDL2ExtSpriteSystem(object):
             sdl2ext.SpriteFactory(123)
         with pytest.raises(ValueError):
             sdl2ext.SpriteFactory(sdl2ext.TEXTURE)
-        dogc()
 
     def test_SpriteFactory_create_sprite(self):
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -97,7 +90,6 @@ class TestSDL2ExtSpriteSystem(object):
                     continue
                 sprite = tfactory.create_sprite(size=(w, h))
                 assert isinstance(sprite, sdl2ext.TextureSprite)
-        dogc()
 
     def test_SpriteFactory_create_software_sprite(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -122,7 +114,6 @@ class TestSDL2ExtSpriteSystem(object):
         with pytest.raises((ArgumentError, TypeError)):
             factory.create_software_sprite(size=(10, 10),
                           masks=("Test", 1, 2, 3))
-        dogc()
 
     def test_SpriteFactory_create_texture_sprite(self):
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -141,7 +132,6 @@ class TestSDL2ExtSpriteSystem(object):
                                                    access=flag)
             assert isinstance(sprite, sdl2ext.TextureSprite)
             del sprite
-        dogc()
 
     def test_SpriteFactory_from_image(self):
         window = sdl2ext.Window("Test", size=(1, 1))
@@ -161,7 +151,6 @@ class TestSDL2ExtSpriteSystem(object):
                 factory.from_image(None)
             with pytest.raises(ValueError):
                 factory.from_image(12345)
-        dogc()
 
     @pytest.mark.skip("not implemented")
     def test_SpriteFactory_from_object(self):
@@ -192,7 +181,6 @@ class TestSDL2ExtSpriteSystem(object):
             # TODO: crashes pypy 2.0
             #self.assertRaises((AttributeError, ArgumentError, TypeError),
             #                  factory.from_surface, 1234)
-        dogc()
 
     def test_SpriteFactory_from_text(self):
         sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -217,7 +205,6 @@ class TestSDL2ExtSpriteSystem(object):
                                          fontmanager=fm)
         sprite = tfactory.from_text("Test", alias="tuffy")
         assert isinstance(sprite, sdl2ext.TextureSprite)
-        dogc()
 
     def test_SpriteRenderSystem(self):
         renderer = sdl2ext.SpriteRenderSystem()
@@ -275,7 +262,6 @@ class TestSDL2ExtSpriteSystem(object):
         assert renderer.sortfunc is not None
         assert not (sdl2ext.Sprite in renderer.componenttypes)
         assert sdl2ext.SoftwareSprite in renderer.componenttypes
-        dogc()
 
     def test_SoftwareSpriteRenderSystem_render(self):
         sf1 = SDL_CreateRGBSurface(0, 12, 7, 32, 0, 0, 0, 0)
