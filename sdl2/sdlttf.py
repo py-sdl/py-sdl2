@@ -26,27 +26,8 @@ __all__ = [
     "SDL_TTF_VERSION",  "TTF_VERSION", "SDL_TTF_COMPILEDVERSION",
     "SDL_TTF_VERSION_ATLEAST",
 
-    # Functions
-    "TTF_Linked_Version", "TTF_ByteSwappedUNICODE", "TTF_Init",
-    "TTF_OpenFont", "TTF_OpenFontIndex", "TTF_OpenFontRW",
-    "TTF_OpenFontIndexRW", "TTF_GetFontStyle", "TTF_SetFontStyle",
-    "TTF_GetFontOutline", "TTF_SetFontOutline",
-    "TTF_GetFontHinting", "TTF_SetFontHinting",
-    "TTF_FontHeight", "TTF_FontAscent", "TTF_FontDescent",
-    "TTF_FontLineSkip", "TTF_GetFontKerning", "TTF_SetFontKerning",
-    "TTF_FontFaces", "TTF_FontFaceIsFixedWidth", "TTF_FontFaceFamilyName",
-    "TTF_FontFaceStyleName", "TTF_GlyphIsProvided", "TTF_GlyphMetrics",
-    "TTF_SizeText", "TTF_SizeUTF8", "TTF_SizeUNICODE",
-    "TTF_RenderText_Solid", "TTF_RenderUTF8_Solid",
-    "TTF_RenderUNICODE_Solid", "TTF_RenderGlyph_Solid",
-    "TTF_RenderText_Shaded", "TTF_RenderUTF8_Shaded",
-    "TTF_RenderUNICODE_Shaded", "TTF_RenderGlyph_Shaded",
-    "TTF_RenderText_Blended", "TTF_RenderUTF8_Blended",
-    "TTF_RenderUNICODE_Blended", "TTF_RenderText_Blended_Wrapped",
-    "TTF_RenderUTF8_Blended_Wrapped", "TTF_RenderUNICODE_Blended_Wrapped",
-    "TTF_RenderGlyph_Blended", "TTF_RenderText", "TTF_RenderUTF",
-    "TTF_RenderUNICODE", "TTF_CloseFont", "TTF_Quit", "TTF_WasInit",
-    "TTF_GetFontKerningSize", "TTF_GetFontKerningSizeGlyphs",
+    # Functions not contained in _funcdefs
+    "TTF_RenderText", "TTF_RenderUTF8", "TTF_RenderUNICODE",
     "TTF_SetError", "TTF_GetError",
 
     # Python Functions
@@ -165,6 +146,7 @@ _funcdefs = [
 _funcs = {}
 for f in _funcdefs:
     _funcs[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name)
 
 
 # Python wrapper functions
