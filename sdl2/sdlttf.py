@@ -1,10 +1,10 @@
 import os
-from ctypes import Structure, POINTER, c_int, c_long, c_char_p, c_void_p
+from ctypes import c_int, c_uint, c_long, c_char_p, c_void_p
 from ctypes import POINTER as _P
 from .dll import DLL, SDLFunc
 from .version import SDL_version, SDL_VERSIONNUM
 from .rwops import SDL_RWops
-from .stdinc import Uint16, Uint32
+from .stdinc import Uint16, Uint32, SDL_bool
 from .pixels import SDL_Color
 from .surface import SDL_Surface
 from .error import SDL_GetError, SDL_SetError
@@ -20,7 +20,7 @@ __all__ = [
     "TTF_STYLE_NORMAL", "TTF_STYLE_BOLD", "TTF_STYLE_ITALIC",
     "TTF_STYLE_UNDERLINE", "TTF_STYLE_STRIKETHROUGH",
     "TTF_HINTING_NORMAL", "TTF_HINTING_LIGHT", "TTF_HINTING_MONO",
-    "TTF_HINTING_NONE",
+    "TTF_HINTING_NONE", "TTF_HINTING_LIGHT_SUBPIXEL",
 
     # Macro Functions
     "SDL_TTF_VERSION",  "TTF_VERSION", "SDL_TTF_COMPILEDVERSION",
@@ -52,7 +52,7 @@ _bind = dll.bind_function
 
 SDL_TTF_MAJOR_VERSION = 2
 SDL_TTF_MINOR_VERSION = 0
-SDL_TTF_PATCHLEVEL = 15
+SDL_TTF_PATCHLEVEL = 18
 
 def SDL_TTF_VERSION(x):
     x.major = SDL_TTF_MAJOR_VERSION
@@ -80,6 +80,7 @@ TTF_HINTING_NORMAL = 0
 TTF_HINTING_LIGHT = 1
 TTF_HINTING_MONO = 2
 TTF_HINTING_NONE = 3
+TTF_HINTING_LIGHT_SUBPIXEL = 4
 
 class TTF_Font(c_void_p):
     """The opaque data type for fonts opened using the TTF library.
@@ -95,12 +96,20 @@ class TTF_Font(c_void_p):
 
 _funcdefs = [
     SDLFunc("TTF_Linked_Version", None, _P(SDL_version)),
+    SDLFunc("TTF_GetFreeTypeVersion", [_P(c_int), _P(c_int), _P(c_int)], added='2.0.18'),
+    SDLFunc("TTF_GetHarfBuzzVersion", [_P(c_int), _P(c_int), _P(c_int)], added='2.0.18'),
     SDLFunc("TTF_ByteSwappedUNICODE", [c_int], None),
     SDLFunc("TTF_Init", None, c_int),
     SDLFunc("TTF_OpenFont", [c_char_p, c_int], _P(TTF_Font)),
     SDLFunc("TTF_OpenFontIndex", [c_char_p, c_int, c_long], _P(TTF_Font)),
     SDLFunc("TTF_OpenFontRW", [_P(SDL_RWops), c_int, c_int], _P(TTF_Font)),
     SDLFunc("TTF_OpenFontIndexRW", [_P(SDL_RWops), c_int, c_int, c_long], _P(TTF_Font)),
+    SDLFunc("TTF_OpenFontDPI", [c_char_p, c_int, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
+    SDLFunc("TTF_OpenFontIndexDPI", [c_char_p, c_int, c_long, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
+    SDLFunc("TTF_OpenFontDPIRW", [_P(SDL_RWops), c_int, c_int, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
+    SDLFunc("TTF_OpenFontIndexDPIRW", [_P(SDL_RWops), c_int, c_int, c_long, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
+    SDLFunc("TTF_SetFontSize", [_P(TTF_Font), c_int], c_int, added='2.0.18'),
+    SDLFunc("TTF_SetFontSizeDPI", [_P(TTF_Font), c_int, c_uint, c_uint], c_int, added='2.0.18'),
     SDLFunc("TTF_GetFontStyle", [_P(TTF_Font)], c_int),
     SDLFunc("TTF_SetFontStyle", [_P(TTF_Font), c_int], None),
     SDLFunc("TTF_GetFontOutline", [_P(TTF_Font)], c_int),
@@ -118,18 +127,31 @@ _funcdefs = [
     SDLFunc("TTF_FontFaceFamilyName", [_P(TTF_Font)], c_char_p),
     SDLFunc("TTF_FontFaceStyleName", [_P(TTF_Font)], c_char_p),
     SDLFunc("TTF_GlyphIsProvided", [_P(TTF_Font), Uint16], c_int),
+    SDLFunc("TTF_GlyphIsProvided32", [_P(TTF_Font), Uint32], c_int, added='2.0.18'),
     SDLFunc("TTF_GlyphMetrics", [_P(TTF_Font), Uint16, _P(c_int), _P(c_int), _P(c_int), _P(c_int), _P(c_int)], c_int),
+    SDLFunc("TTF_GlyphMetrics32", [_P(TTF_Font), Uint32, _P(c_int), _P(c_int), _P(c_int), _P(c_int), _P(c_int)], c_int, added='2.0.18'),
     SDLFunc("TTF_SizeText", [_P(TTF_Font), c_char_p, _P(c_int), _P(c_int)], c_int),
     SDLFunc("TTF_SizeUTF8", [_P(TTF_Font), c_char_p, _P(c_int), _P(c_int)], c_int),
     SDLFunc("TTF_SizeUNICODE", [_P(TTF_Font), _P(Uint16), _P(c_int), _P(c_int)], c_int),
+    SDLFunc("TTF_MeasureText", [_P(TTF_Font), c_char_p, c_int, _P(c_int), _P(c_int)], c_int, added='2.0.18'),
+    SDLFunc("TTF_MeasureUTF8", [_P(TTF_Font), c_char_p, c_int, _P(c_int), _P(c_int)], c_int, added='2.0.18'),
+    SDLFunc("TTF_MeasureUNICODE", [_P(TTF_Font), _P(Uint16), c_int, _P(c_int), _P(c_int)], c_int, added='2.0.18'),
     SDLFunc("TTF_RenderText_Solid", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUTF8_Solid", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUNICODE_Solid", [_P(TTF_Font), _P(Uint16), SDL_Color], _P(SDL_Surface)),
+    SDLFunc("TTF_RenderText_Solid_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_RenderUTF8_Solid_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_RenderUNICODE_Solid_Wrapped", [_P(TTF_Font), _P(Uint16), SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
     SDLFunc("TTF_RenderGlyph_Solid", [_P(TTF_Font), Uint16, SDL_Color], _P(SDL_Surface)),
+    SDLFunc("TTF_RenderGlyph32_Solid", [_P(TTF_Font), Uint32, SDL_Color], _P(SDL_Surface), added='2.0.18'),
     SDLFunc("TTF_RenderText_Shaded", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUTF8_Shaded", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUNICODE_Shaded", [_P(TTF_Font), _P(Uint16), SDL_Color, SDL_Color], _P(SDL_Surface)),
+    SDLFunc("TTF_RenderText_Shaded_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_RenderUTF8_Shaded_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_RenderUNICODE_Shaded_Wrapped", [_P(TTF_Font), _P(Uint16), SDL_Color, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
     SDLFunc("TTF_RenderGlyph_Shaded", [_P(TTF_Font), Uint16, SDL_Color, SDL_Color], _P(SDL_Surface)),
+    SDLFunc("TTF_RenderGlyph32_Shaded", [_P(TTF_Font), Uint32, SDL_Color, SDL_Color], _P(SDL_Surface), added='2.0.18'),
     SDLFunc("TTF_RenderText_Blended", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUTF8_Blended", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUNICODE_Blended", [_P(TTF_Font), _P(Uint16), SDL_Color], _P(SDL_Surface)),
@@ -137,11 +159,17 @@ _funcdefs = [
     SDLFunc("TTF_RenderUTF8_Blended_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, Uint32], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUNICODE_Blended_Wrapped", [_P(TTF_Font), _P(Uint16), SDL_Color, Uint32], _P(SDL_Surface)),
     SDLFunc("TTF_RenderGlyph_Blended", [_P(TTF_Font), Uint16, SDL_Color], _P(SDL_Surface)),
+    SDLFunc("TTF_RenderGlyph32_Blended", [_P(TTF_Font), Uint32, SDL_Color], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_SetDirection", [c_int], c_int, added='2.0.18'),
+    SDLFunc("TTF_SetScript", [c_int], c_int, added='2.0.18'),
     SDLFunc("TTF_CloseFont", [_P(TTF_Font)]),
     SDLFunc("TTF_Quit"),
     SDLFunc("TTF_WasInit", None, c_int),
     SDLFunc("TTF_GetFontKerningSize", [_P(TTF_Font), c_int, c_int], c_int),
     SDLFunc("TTF_GetFontKerningSizeGlyphs", [_P(TTF_Font), Uint16, Uint16], c_int, added='2.0.14'),
+    SDLFunc("TTF_GetFontKerningSizeGlyphs32", [_P(TTF_Font), Uint32, Uint32], c_int, added='2.0.18'),
+    SDLFunc("TTF_SetFontSDF", [_P(TTF_Font), SDL_bool], c_int, added='2.0.18'),
+    SDLFunc("TTF_GetFontSDF", [_P(TTF_Font)], SDL_bool, added='2.0.18'),
 ]
 _funcs = {}
 for f in _funcdefs:
@@ -160,6 +188,12 @@ def TTF_Linked_Version():
 
     """
     return _funcs["TTF_Linked_Version"]()
+
+def TTF_GetFreeTypeVersion(major, minor, patch):
+    return _funcs["TTF_GetFreeTypeVersion"](major, minor, patch)
+
+def TTF_GetHarfBuzzVersion(major, minor, patch):
+    return _funcs["TTF_GetHarfBuzzVersion"](major, minor, patch)
 
 def TTF_ByteSwappedUNICODE(swapped):
     """Tells the library whether UCS-2 unicode text is generally byteswapped.
@@ -278,6 +312,24 @@ def TTF_OpenFontIndexRW(src, freesrc, ptsize, index):
 
     """
     return _funcs["TTF_OpenFontIndexRW"](src, freesrc, ptsize, index)
+
+def TTF_OpenFontDPI(file, ptsize, hdpi, vdpi):
+    return _funcs["TTF_OpenFontDPI"](file, ptsize, hdpi, vdpi)
+
+def TTF_OpenFontIndexDPI(file, ptsize, index, hdpi, vdpi):
+    return _funcs["TTF_OpenFontIndexDPI"](file, ptsize, index, hdpi, vdpi)
+
+def TTF_OpenFontDPIRW(src, freesrc, ptsize, hdpi, vdpi):
+    return _funcs["TTF_OpenFontDPIRW"](src, freesrc, ptsize, hdpi, vdpi)
+
+def TTF_OpenFontIndexDPIRW(src, freesrc, ptsize, index, hdpi, vdpi):
+    return _funcs["TTF_OpenFontIndexDPIRW"](src, freesrc, ptsize, index, hdpi, vdpi)
+
+def TTF_SetFontSize(font, ptsize):
+    return _funcs["TTF_SetFontSize"](font, ptsize)
+
+def TTF_SetFontSizeDPI(font, ptsize, hdpi, vdpi):
+    return _funcs["TTF_SetFontSizeDPI"](font, ptsize, hdpi, vdpi)
 
 
 def TTF_GetFontStyle(font):
@@ -577,6 +629,9 @@ def TTF_GlyphIsProvided(font, ch):
     """
     return _funcs["TTF_GlyphIsProvided"](font, ch)
 
+def TTF_GlyphIsProvided32(font, ch):
+    return _funcs["TTF_GlyphIsProvided32"](font, ch)
+
 def TTF_GlyphMetrics(font, ch, minx, maxx, miny, maxy, advance):
     """Gets the glyph metrics for a character with a given font.
     
@@ -615,6 +670,9 @@ def TTF_GlyphMetrics(font, ch, minx, maxx, miny, maxy, advance):
 
     """
     return _funcs["TTF_GlyphMetrics"](font, ch, minx, maxx, miny, maxy, advance)
+
+def TTF_GlyphMetrics32(font, ch, minx, maxx, miny, maxy, advance):
+    return _funcs["TTF_GlyphMetrics32"](font, ch, minx, maxx, miny, maxy, advance)
 
 
 def TTF_SizeText(font, text, w, h):
@@ -691,6 +749,15 @@ def TTF_SizeUNICODE(font, text, w, h):
 
     """
     return _funcs["TTF_SizeUNICODE"](font, text, w, h)
+
+def TTF_MeasureText(font, text, measure_width, extent, count):
+    return _funcs["TTF_MeasureText"](font, text, measure_width, extent, count)
+
+def TTF_MeasureUTF8(font, text, measure_width, extent, count):
+    return _funcs["TTF_MeasureUTF8"](font, text, measure_width, extent, count)
+
+def TTF_MeasureUNICODE(font, text, measure_width, extent, count):
+    return _funcs["TTF_MeasureUNICODE"](font, text, measure_width, extent, count)
 
 
 def TTF_RenderText_Solid(font, text, fg):
@@ -789,6 +856,15 @@ def TTF_RenderUNICODE_Solid(font, text, fg):
     """
     return _funcs["TTF_RenderUNICODE_Solid"](font, text, fg)
 
+def TTF_RenderText_Solid_Wrapped(font, text, fg, wrapLength):
+    return _funcs["TTF_RenderText_Solid_Wrapped"](font, text, fg, wrapLength)
+
+def TTF_RenderUTF8_Solid_Wrapped(font, text, fg, wrapLength):
+    return _funcs["TTF_RenderUTF8_Solid_Wrapped"](font, text, fg, wrapLength)
+
+def TTF_RenderUNICODE_Solid_Wrapped(font, text, fg, wrapLength):
+    return _funcs["TTF_RenderUNICODE_Solid_Wrapped"](font, text, fg, wrapLength)
+
 def TTF_RenderGlyph_Solid(font, ch, fg):
     """Renders a unicode character to a non-antialiased 8-bit surface.
 
@@ -811,6 +887,10 @@ def TTF_RenderGlyph_Solid(font, ch, fg):
 
     """
     return _funcs["TTF_RenderGlyph_Solid"](font, ch, fg)
+
+def TTF_RenderGlyph32_Solid(font, ch, fg):
+    return _funcs["TTF_RenderGlyph32_Solid"](font, ch, fg)
+
 
 def TTF_RenderText_Shaded(font, text, fg, bg):
     """Renders an ASCII-encoded string to a solid antialiased 8-bit surface.
@@ -888,6 +968,15 @@ def TTF_RenderUNICODE_Shaded(font, text, fg, bg):
     """
     return _funcs["TTF_RenderUNICODE_Shaded"](font, text, fg, bg)
 
+def TTF_RenderText_Shaded_Wrapped(font, text, fg, bg, wrapLength):
+    return _funcs["TTF_RenderText_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
+
+def TTF_RenderUTF8_Shaded_Wrapped(font, text, fg, bg, wrapLength):
+    return _funcs["TTF_RenderUTF8_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
+
+def TTF_RenderUNICODE_Shaded_Wrapped(font, text, fg, bg, wrapLength):
+    return _funcs["TTF_RenderUNICODE_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
+
 def TTF_RenderGlyph_Shaded(font, ch, fg, bg):
     """Renders a unicode character to an 8-bit surface using a given font.
 
@@ -908,6 +997,10 @@ def TTF_RenderGlyph_Shaded(font, ch, fg, bg):
 
     """
     return _funcs["TTF_RenderGlyph_Shaded"](font, ch, fg, bg)
+
+def TTF_RenderGlyph32_Shaded(font, ch, fg, bg):
+    return _funcs["TTF_RenderGlyph32_Shaded"](font, ch, fg, bg)
+
 
 def TTF_RenderText_Blended(font, text, fg):
     """Renders an ASCII-encoded string to an antialiased 32-bit surface.
@@ -1052,10 +1145,21 @@ def TTF_RenderGlyph_Blended(font, ch, fg):
     """
     return _funcs["TTF_RenderGlyph_Blended"](font, ch, fg)
 
+def TTF_RenderGlyph32_Blended(font, ch, fg):
+    return _funcs["TTF_RenderGlyph32_Blended"](font, ch, fg)
+
 TTF_RenderText = TTF_RenderText_Shaded
 TTF_RenderUTF8 = TTF_RenderUTF8_Shaded
 TTF_RenderUNICODE = TTF_RenderUNICODE_Shaded
 
+
+def TTF_SetDirection(direction):
+    # NOTE: requires HarfBuzz constant as argument
+    return _funcs["TTF_SetDirection"](direction)
+
+def TTF_SetScript(script):
+    # NOTE: requires HarfBuzz macro result (HB_TAG) as argument
+    return _funcs["TTF_SetScript"](script)
 
 def TTF_CloseFont(font):
     """Closes and frees the memory associated with a given font.
@@ -1119,6 +1223,15 @@ def TTF_GetFontKerningSizeGlyphs(font, previous_ch, ch):
 
     """
     return _funcs["TTF_GetFontKerningSizeGlyphs"](font, previous_ch, ch)
+
+def TTF_GetFontKerningSizeGlyphs32(font, previous_ch, ch):
+    return _funcs["TTF_GetFontKerningSizeGlyphs32"](font, previous_ch, ch)
+
+def TTF_SetFontSDF(font, on_off):
+    return _funcs["TTF_SetFontSDF"](font, on_off)
+
+def TTF_GetFontSDF(font):
+    return _funcs["TTF_GetFontSDF"](font)
 
 TTF_SetError = SDL_SetError
 TTF_GetError = SDL_GetError
