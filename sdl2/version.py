@@ -26,7 +26,7 @@ class SDL_version(Structure):
 
 SDL_MAJOR_VERSION = 2
 SDL_MINOR_VERSION = 0
-SDL_PATCHLEVEL = 18
+SDL_PATCHLEVEL = 20
 
 def SDL_VERSION(x):
     x.major = SDL_MAJOR_VERSION

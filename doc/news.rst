@@ -2,6 +2,16 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.11
+------
+
+Released on XXXX-XX-XX.
+
+New Features:
+
+* Updated to wrap new functions and constants in SDL2 2.0.20 (PR #214)
+
+
 0.9.10
 ------
 
@@ -14,7 +24,7 @@ New Features:
   allows functions to support kwargs (i.e. using function arguments by name),
   inline documentation, and more flexible handling of argument types and
   SDL errors (PR #199)
-* Updated to wrap new functions and constants in in SDL2 2.0.18 (PR #197)
+* Updated to wrap new functions and constants in SDL2 2.0.18 (PR #197)
 * Added full inline documentation for the :mod:`~sdl2.sdlttf`,
   :mod:`~sdl2.sdlimage`, and :mod:`~sdl2.sdlgfx` modules, as well as partial
   inline documentation for the :mod:`~sdl2.sdlmixer` modlue. In addition to
@@ -154,7 +164,7 @@ Released on 2021-09-02.
 
 New Features:
 
-* Updated to wrap new functions and constants in in SDL2 2.0.16 (PR #190)
+* Updated to wrap new functions and constants in SDL2 2.0.16 (PR #190)
 
 Fixed bugs:
 
@@ -169,7 +179,7 @@ Released on 2021-08-06.
 
 New Features:
 
-* Updated to wrap new functions and constants in introduced in SDL2 2.0.12
+* Updated to wrap new functions and constants introduced in SDL2 2.0.12
   and 2.0.14 (PR #163 & PR #181)
 * Fixed DLL loading issues with Python installed from the Microsoft Store
   on Windows (PR #185)

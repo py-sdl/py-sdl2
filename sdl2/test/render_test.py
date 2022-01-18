@@ -944,15 +944,15 @@ class TestSDLRender(object):
     def test_SDL_RenderGeometryRaw(self):
         renderer, target = _software_renderer(100, 100)
         # Create vertices for rendering
-        RED = [255, 0, 0, 255]
+        RED = SDL_Color(255, 0, 0, 255)
         points = [0, 0, 0, 50, 50, 50]
-        colors = RED * 3
+        colors = [RED, RED, RED]
         tex_coords = [0, 0, 0, 0, 0, 0]
         # Convert vertices to ctypes-friendly format
         xy_size = sizeof(c_float) * 2
-        col_size = sizeof(ctypes.c_ubyte) * 4
+        col_size = sizeof(SDL_Color)
         xy = (c_float * len(points))(*points)
-        col = (c_int * len(colors))(*colors)
+        col = (SDL_Color * len(colors))(*colors)
         uv = (c_float * len(tex_coords))(*tex_coords)
         # Try rendering the vertices
         ret = render.SDL_RenderGeometryRaw(
