@@ -9,7 +9,7 @@ from sdl2 import surface, pixels, rwops, SDL_ClearError, SDL_GetError
 
 _HASSDLTTF = True
 try:
-    from .. import sdlttf
+    from sdl2 import sdlttf
 except ImportError:
     _HASSDLTTF = False
 

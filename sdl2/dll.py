@@ -141,12 +141,6 @@ def _findlib(libnames, path=None):
     else:
         patterns = ["lib{0}.so"]
 
-    # On Apple Silicon Macs, search the non-standard Homebrew library path if no other
-    # path explicitly set
-    arm_brewpath = "/opt/Homebrew/lib"
-    if not path and platform == "darwin" and os.path.exists(arm_brewpath):
-        path = arm_brewpath
-
     # Adding the potential 'd' suffix that is present on the library
     # when built in debug configuration
     searchfor = libnames + [libname + 'd' for libname in libnames]
