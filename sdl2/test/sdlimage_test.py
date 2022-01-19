@@ -11,6 +11,8 @@ sdlimage = pytest.importorskip("sdl2.sdlimage")
 
 is32bit = sys.maxsize <= 2**32
 ismacos = sys.platform == "darwin"
+iswindows = "win" in sys.platform
+isconda = os.getenv("CONDA_PREFIX") != None
 
 formats = ["bmp",
            "cur",
@@ -33,14 +35,18 @@ formats = ["bmp",
            #"xv",
            ]
 
-# SVG unsupported on SDL2_image < 2.0.2
-if sdlimage.dll.version < 2002:
+# SVG unsupported on SDL2_image < 2.0.2 as well as in Conda's current (2.0.5)
+# Windows binaries
+if sdlimage.dll.version < 2002 or (isconda and iswindows):
     formats.remove("svg")
 
 # As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
-# XCF support is also broken in official SDL2_image macOS .frameworks
-if is32bit or ismacos:
+# XCF support is also broken in official SDL2_image macOS .frameworks and
+# Conda's SDL2_image Windows binaries
+bad_xcf = False
+if is32bit or ismacos or (isconda and iswindows):
     formats.remove("xcf")
+    bad_xcf = True
 
 # WEBP support seems to be broken in the 32-bit Windows SDL2_image 2.0.2 binary
 bad_webp = is32bit and sdlimage.dll.version == 2002
@@ -254,6 +260,7 @@ class TestSDLImage(object):
         surface.SDL_FreeSurface(sf)
 
     @pytest.mark.skipif(sdlimage.dll.version < 2002, reason="Added in 2.0.2")
+    @pytest.mark.xfail(isconda and iswindows, reason="Broken w/ win64 Conda")
     def test_IMG_LoadSVG_RW(self):
         fp = open(_get_image_path("svg"), "rb")
         sf = sdlimage.IMG_LoadSVG_RW(rwops.rw_from_object(fp))
@@ -283,7 +290,7 @@ class TestSDLImage(object):
         assert isinstance(sf.contents, surface.SDL_Surface)
         surface.SDL_FreeSurface(sf)
 
-    @pytest.mark.xfail(is32bit or ismacos, reason="XCF currently broken on 32-bit and macOS")
+    @pytest.mark.xfail(bad_xcf, reason="XCF currently broken on some platforms")
     def test_IMG_LoadXCF_RW(self):
         fp = open(_get_image_path("xcf"), "rb")
         sf = sdlimage.IMG_LoadXCF_RW(rwops.rw_from_object(fp))
@@ -397,6 +404,7 @@ class TestSDLImage(object):
                     assert not sdlimage.IMG_isPNM(imgrw)
 
     @pytest.mark.skipif(sdlimage.dll.version < 2002, reason="Added in 2.0.2")
+    @pytest.mark.xfail(isconda and iswindows, reason="Broken w/ win64 Conda")
     def test_IMG_isSVG(self):
         for fmt in formats:
             fpath = _get_image_path(fmt)
@@ -427,7 +435,7 @@ class TestSDLImage(object):
                 else:
                     assert not sdlimage.IMG_isWEBP(imgrw)
 
-    @pytest.mark.xfail(ismacos, reason="XCF currently broken on macOS")
+    @pytest.mark.xfail(bad_xcf, reason="XCF currently broken on some platforms")
     def test_IMG_isXCF(self):
         for fmt in formats:
             fpath = _get_image_path(fmt)

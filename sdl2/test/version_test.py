@@ -34,10 +34,13 @@ class TestSDLVersion(object):
         assert not version.SDL_VERSION_ATLEAST(2, 0, 100)
 
     def test_SDL_GetRevision(self):
-        if dll.version >= 2016:
-            assert version.SDL_GetRevision()[0:4] == b"http"
-        else:
-            assert version.SDL_GetRevision()[0:3] == b"hg-"
+        rev = version.SDL_GetRevision()
+        # If revision not empty string (e.g. Conda), test the prefix
+        if len(rev):
+            if dll.version >= 2016:
+                assert rev[0:4] == b"http"
+            else:
+                assert rev[0:3] == b"hg-"
 
     def test_SDL_GetRevisionNumber(self):
         if sys.platform in ("win32",) or dll.version >= 2016:

@@ -141,6 +141,7 @@ class TestSDL2ExtImage(object):
             sdl2ext.save_bmp(sf_saved, bad_path)
 
 
+    @pytest.mark.skipif(not _HASSDLIMAGE, reason="Requires SDL2_image")
     def test_load_img(self):
         # Test loading all test images, with and without ARGB conversion
         resources = os.listdir(resource_path)
@@ -222,7 +223,7 @@ class TestSDL2ExtImage(object):
                 self.check_image_contents(sf)
             surf.SDL_FreeSurface(sf)
 
-
+    @pytest.mark.skipif(not _HASSDLIMAGE, reason="Requires SDL2_image")
     def test_load_image(self):
         resources = os.listdir(resource_path)
         test_imgs = [f for f in resources if f[:11] == "surfacetest"]
