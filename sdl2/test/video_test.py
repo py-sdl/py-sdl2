@@ -8,18 +8,18 @@ import sdl2
 from sdl2.stdinc import SDL_FALSE, SDL_TRUE
 from sdl2 import video, rect, surface, SDL_GetError
 
+DUMMY_DRIVER = os.getenv('SDL_VIDEODRIVER', '') == "dummy"
+
 if sys.version_info[0] >= 3:
     long = int
 
 to_ctypes = lambda seq, dtype: (dtype * len(seq))(*seq)
-
 
 def has_opengl_lib():
     for libname in("gl", "opengl", "opengl32"):
         path = find_library(libname)
         if path is not None:
             return True
-
 
 def get_opengl_path():
     for libname in("gl", "opengl", "opengl32"):
@@ -28,87 +28,67 @@ def get_opengl_path():
             return path
 
 
-# TODO: mostly covers positive tests right now - fix this!
-class TestSDLVideo(object):
-    __tags__ = ["sdl"]
+# Test custom macros
 
-    @classmethod
-    def setup_class(cls):
-        if video.SDL_VideoInit(None) != 0:
-            raise pytest.skip('Video subsystem not supported')
+def test_SDL_WINDOWPOS_UNDEFINED_DISPLAY():
+    undef_mask = video.SDL_WINDOWPOS_UNDEFINED_MASK
+    for x in range(0xFFFF):
+        undef = video.SDL_WINDOWPOS_UNDEFINED_DISPLAY(x)
+        assert undef_mask | x == undef
+        assert (undef & undef_mask) == undef_mask
+        assert undef != video.SDL_WINDOWPOS_CENTERED_DISPLAY(x)
 
-    @classmethod
-    def teardown_class(cls):
-        video.SDL_VideoQuit()
+def test_SDL_WINDOWPOS_ISUNDEFINED():
+    assert video.SDL_WINDOWPOS_ISUNDEFINED(video.SDL_WINDOWPOS_UNDEFINED)
+    assert not video.SDL_WINDOWPOS_ISUNDEFINED(video.SDL_WINDOWPOS_CENTERED)
+    for x in range(0xFFFF):
+        undef = video.SDL_WINDOWPOS_UNDEFINED_DISPLAY(x)
+        assert video.SDL_WINDOWPOS_ISUNDEFINED(undef)
 
-    def setup_method(self):
-        sdl2.SDL_ClearError()
+def test_SDL_WINDOWPOS_CENTERED_DISPLAY():
+    centered_mask = video.SDL_WINDOWPOS_CENTERED_MASK
+    for x in range(0xFFFF):
+        centered = video.SDL_WINDOWPOS_CENTERED_DISPLAY(x)
+        assert centered_mask | x == centered
+        assert (centered & centered_mask) == centered_mask
+        assert centered != video.SDL_WINDOWPOS_UNDEFINED_DISPLAY(x)
 
-    def test_SDL_WINDOWPOS_UNDEFINED_DISPLAY(self):
-        undef_mask = video.SDL_WINDOWPOS_UNDEFINED_MASK
-        for x in range(0xFFFF):
-            undef = video.SDL_WINDOWPOS_UNDEFINED_DISPLAY(x)
-            assert undef_mask | x == undef
-            assert (undef & undef_mask) == undef_mask
-            assert undef != video.SDL_WINDOWPOS_CENTERED_DISPLAY(x)
+def test_SDL_WINDOWPOS_ISCENTERED():
+    assert video.SDL_WINDOWPOS_ISCENTERED(video.SDL_WINDOWPOS_CENTERED)
+    assert not video.SDL_WINDOWPOS_ISCENTERED(video.SDL_WINDOWPOS_UNDEFINED)
+    for x in range(0xFFFF):
+        centered = video.SDL_WINDOWPOS_CENTERED_DISPLAY(x)
+        assert video.SDL_WINDOWPOS_ISCENTERED(centered)
 
-    def test_SDL_WINDOWPOS_ISUNDEFINED(self):
-        assert video.SDL_WINDOWPOS_ISUNDEFINED(video.SDL_WINDOWPOS_UNDEFINED)
-        assert not video.SDL_WINDOWPOS_ISUNDEFINED(video.SDL_WINDOWPOS_CENTERED)
-        for x in range(0xFFFF):
-            undef = video.SDL_WINDOWPOS_UNDEFINED_DISPLAY(x)
-            assert video.SDL_WINDOWPOS_ISUNDEFINED(undef)
 
-    def test_SDL_WINDOWPOS_CENTERED_DISPLAY(self):
-        centered_mask = video.SDL_WINDOWPOS_CENTERED_MASK
-        for x in range(0xFFFF):
-            centered = video.SDL_WINDOWPOS_CENTERED_DISPLAY(x)
-            assert centered_mask | x == centered
-            assert (centered & centered_mask) == centered_mask
-            assert centered != video.SDL_WINDOWPOS_UNDEFINED_DISPLAY(x)
+# Test structures and classes
 
-    def test_SDL_WINDOWPOS_ISCENTERED(self):
-        assert video.SDL_WINDOWPOS_ISCENTERED(video.SDL_WINDOWPOS_CENTERED)
-        assert not video.SDL_WINDOWPOS_ISCENTERED(video.SDL_WINDOWPOS_UNDEFINED)
-        for x in range(0xFFFF):
-            centered = video.SDL_WINDOWPOS_CENTERED_DISPLAY(x)
-            assert video.SDL_WINDOWPOS_ISCENTERED(centered)
+def test_SDL_Window():
+    window = video.SDL_Window()
+    assert isinstance(window, video.SDL_Window)
 
-    def test_SDL_DisplayMode(self):
+
+class TestSDLDisplayMode(object):
+
+    def test_init(self):
         mode = video.SDL_DisplayMode()
         assert isinstance(mode, video.SDL_DisplayMode)
-        for fmt in range(0, 10):
-            for w in range(0, 20):
-                for h in range(0, 30):
-                    for r in range(0, 40):
-                        mode = video.SDL_DisplayMode(fmt, w, h, r)
-                        assert isinstance(mode, video.SDL_DisplayMode)
-                        assert mode.format == fmt
-                        assert mode.w == w
-                        assert mode.h == h
-                        assert mode.refresh_rate == r
+        fmt = sdl2.SDL_PIXELFORMAT_ARGB8888
+        mode = video.SDL_DisplayMode(fmt, 800, 600, 60)
+        assert isinstance(mode, video.SDL_DisplayMode)
+        assert mode.format == fmt
+        assert mode.w == 800
+        assert mode.h == 600
+        assert mode.refresh_rate == 60
+        # Test exceptions on bad input
         with pytest.raises(TypeError):
             video.SDL_DisplayMode("Test")
         with pytest.raises(TypeError):
-            video.SDL_DisplayMode("Test", 10, 10, 10)
-        with pytest.raises(TypeError):
-            video.SDL_DisplayMode(10, "Test", 10, 10)
-        with pytest.raises(TypeError):
-            video.SDL_DisplayMode(10, 10, "Test", 10)
-        with pytest.raises(TypeError):
-            video.SDL_DisplayMode(10, 10, 10, "Test")
-        with pytest.raises(TypeError):
-            video.SDL_DisplayMode(None)
-        with pytest.raises(TypeError):
-            video.SDL_DisplayMode(None, 10, 10, 10)
-        with pytest.raises(TypeError):
-            video.SDL_DisplayMode(10, None, 10, 10)
-        with pytest.raises(TypeError):
-            video.SDL_DisplayMode(10, 10, None, 10)
+            video.SDL_DisplayMode(10, 10.6, 10, 10)
         with pytest.raises(TypeError):
             video.SDL_DisplayMode(10, 10, 10, None)
 
-    def test_SDL_DisplayMode__eq__(self):
+    def test___eq__(self):
         DMode = video.SDL_DisplayMode
         assert DMode() == DMode()
         assert DMode(10, 0, 0, 0) == DMode(10, 0, 0, 0)
@@ -125,7 +105,7 @@ class TestSDLVideo(object):
         assert not (DMode(10, 0, 0, 0) == DMode(0, 0, 10, 0))
         assert not (DMode(10, 0, 0, 0) == DMode(0, 0, 0, 10))
 
-    def test_SDL_DisplayMode__ne__(self):
+    def test___ne__(self):
         DMode = video.SDL_DisplayMode
         assert not (DMode() != DMode())
         assert not (DMode(10, 0, 0, 0) != DMode(10, 0, 0, 0))
@@ -142,135 +122,144 @@ class TestSDLVideo(object):
         assert DMode(10, 0, 0, 0) != DMode(0, 0, 10, 0)
         assert DMode(10, 0, 0, 0) != DMode(0, 0, 0, 10)
 
-    def test_SDL_Window(self):
-        window = video.SDL_Window()
-        assert isinstance(window, video.SDL_Window)
 
-    def test_SDL_GetNumVideoDrivers(self):
-        numdrivers = video.SDL_GetNumVideoDrivers()
-        assert numdrivers >= 1
+# Test module SDL functions
 
-    def test_SDL_GetVideoDriver(self):
-        numdrivers = video.SDL_GetNumVideoDrivers()
-        for i in range(numdrivers):
-            name = video.SDL_GetVideoDriver(i)
-            assert type(name) in (str, bytes)
+def test_SDL_VideoInitQuit():
+    # Test with default driver
+    assert sdl2.SDL_WasInit(0) & sdl2.SDL_INIT_VIDEO != sdl2.SDL_INIT_VIDEO
+    ret = video.SDL_VideoInit(None)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    assert video.SDL_GetCurrentVideoDriver() # If initialized, should be string
+    video.SDL_VideoQuit()
+    assert not video.SDL_GetCurrentVideoDriver()
+    # TODO: Test with string input (fails with b"dummy" for some reason?)
 
-    def test_SDL_GetCurrentVideoDriver(self):
-        curdriver = video.SDL_GetCurrentVideoDriver()
-        found = False
-        numdrivers = video.SDL_GetNumVideoDrivers()
-        for i in range(numdrivers):
-            name = video.SDL_GetVideoDriver(i)
-            if name == curdriver:
-                found = True
-                break
-        assert found, "Current video driver not found"
+def test_SDL_GetNumVideoDrivers(with_sdl):
+    numdrivers = video.SDL_GetNumVideoDrivers()
+    assert numdrivers >= 1
 
-    def test_SDL_GetNumVideoDisplays(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        assert numdisplays >= 1
+def test_SDL_GetVideoDriver(with_sdl):
+    numdrivers = video.SDL_GetNumVideoDrivers()
+    for i in range(numdrivers):
+        name = video.SDL_GetVideoDriver(i)
+        assert type(name) in (str, bytes)
 
-    def test_SDL_GetNumDisplayModes(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            modes = video.SDL_GetNumDisplayModes(index)
-            assert modes >= 1
+def test_SDL_GetCurrentVideoDriver(with_sdl):
+    curdriver = video.SDL_GetCurrentVideoDriver()
+    numdrivers = video.SDL_GetNumVideoDrivers()
+    drivers = []
+    for i in range(numdrivers):
+        drivers.append(video.SDL_GetVideoDriver(i))
+    assert curdriver in drivers
 
-    def test_SDL_GetDisplayMode(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            modes = video.SDL_GetNumDisplayModes(index)
-            for mode in range(modes):
-                dmode = video.SDL_DisplayMode()
-                ret = video.SDL_GetDisplayMode(index, mode, byref(dmode))
-                assert ret == 0
+def test_SDL_GetNumVideoDisplays(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    assert numdisplays >= 1
 
-    def test_SDL_GetCurrentDisplayMode(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
+def test_SDL_GetNumDisplayModes(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        modes = video.SDL_GetNumDisplayModes(index)
+        assert modes >= 1
+
+def test_SDL_GetDisplayMode(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        modes = video.SDL_GetNumDisplayModes(index)
+        for mode in range(modes):
             dmode = video.SDL_DisplayMode()
-            ret = video.SDL_GetCurrentDisplayMode(index, byref(dmode))
+            ret = video.SDL_GetDisplayMode(index, mode, byref(dmode))
+            assert sdl2.SDL_GetError() == b""
             assert ret == 0
+            assert dmode.w > 0
+            assert dmode.h > 0
 
-    def test_SDL_GetDesktopDisplayMode(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            dmode = video.SDL_DisplayMode()
-            ret = video.SDL_GetDesktopDisplayMode(index, byref(dmode))
-            assert ret == 0
+def test_SDL_GetCurrentDisplayMode(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        dmode = video.SDL_DisplayMode()
+        ret = video.SDL_GetCurrentDisplayMode(index, byref(dmode))
+        assert sdl2.SDL_GetError() == b""
+        assert ret == 0
+        assert dmode.w > 0
+        assert dmode.h > 0
 
-    def test_SDL_GetClosestDisplayMode(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support closest display modes")
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            modes = video.SDL_GetNumDisplayModes(index)
-            dmode = video.SDL_DisplayMode()
-            for mode in range(modes):
-                ret = video.SDL_GetDisplayMode(index, mode, byref(dmode))
-                #self.assertIsInstance(dmode.contents, video.SDL_DisplayMode)
-                assert ret == 0
-                cmode = video.SDL_DisplayMode(dmode.format,
-                                              dmode.w - 1, dmode.h - 1,
-                                              dmode.refresh_rate)
-                closest = video.SDL_DisplayMode()
-                video.SDL_GetClosestDisplayMode(index, cmode, byref(closest))
-                assert closest == dmode, SDL_GetError()
+def test_SDL_GetDesktopDisplayMode(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        dmode = video.SDL_DisplayMode()
+        ret = video.SDL_GetDesktopDisplayMode(index, byref(dmode))
+        assert sdl2.SDL_GetError() == b""
+        assert ret == 0
+        assert dmode.w > 0
+        assert dmode.h > 0
 
-    def test_SDL_VideoInit(self):
-        video.SDL_VideoInit(None)
-        video.SDL_VideoInit(None)
-        video.SDL_VideoInit(None)
-        video.SDL_VideoQuit(None)
-        video.SDL_VideoInit(None)
+@pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
+def test_SDL_GetClosestDisplayMode(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        dmode = video.SDL_DisplayMode()
+        ret = video.SDL_GetCurrentDisplayMode(index, byref(dmode))
+        assert sdl2.SDL_GetError() == b""
+        assert ret == 0
+        cmode = video.SDL_DisplayMode(
+            dmode.format, dmode.w - 1, dmode.h - 1, dmode.refresh_rate
+        )
+        closest = video.SDL_DisplayMode()
+        video.SDL_GetClosestDisplayMode(index, cmode, byref(closest))
+        assert closest == dmode
 
-    def test_SDL_VideoQuit(self):
-        video.SDL_VideoQuit()
-        video.SDL_VideoQuit()
-        video.SDL_VideoQuit()
-        video.SDL_VideoInit(None)
+def test_SDL_GetDisplayName(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        name = video.SDL_GetDisplayName(index)
+        assert type(name) in (str, bytes)
 
-    def test_SDL_GetDisplayName(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            name = video.SDL_GetDisplayName(index)
-            assert name != None
+def test_SDL_GetDisplayBounds(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        bounds = rect.SDL_Rect()
+        ret = video.SDL_GetDisplayBounds(index, byref(bounds))
+        assert sdl2.SDL_GetError() == b""
+        assert ret == 0
+        assert bounds.w > 0
+        assert bounds.h > 0
+        assert not rect.SDL_RectEmpty(bounds)
 
-    def test_SDL_GetDisplayBounds(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            bounds = rect.SDL_Rect()
-            ret = video.SDL_GetDisplayBounds(index, byref(bounds))
-            assert ret == 0
-            assert not rect.SDL_RectEmpty(bounds)
+@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+def test_SDL_GetDisplayOrientation(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        orientation = video.SDL_GetDisplayOrientation(index)
+        assert isinstance(orientation, int)
+        assert orientation >= 0
 
-    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
-    def test_SDL_GetDisplayOrientation(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            orientation = video.SDL_GetDisplayOrientation(index)
-            assert isinstance(orientation, int)
+def test_GetDisplayInfo(with_sdl):
+    current = video.SDL_GetCurrentVideoDriver().decode('utf-8')
+    print("Available Video Drivers:")
+    for i in range(video.SDL_GetNumVideoDrivers()):
+        name = video.SDL_GetVideoDriver(i).decode('utf-8')
+        if name == current:
+            name += " (*)"
+        print(" - " + name)
+    print("")
+    print("Detected Displays:")
+    for i in range(video.SDL_GetNumVideoDisplays()):
+        name = video.SDL_GetDisplayName(i).decode('utf-8')
+        info = " - " + name
+        dm = video.SDL_DisplayMode()
+        ret = video.SDL_GetDesktopDisplayMode(i, byref(dm))
+        if ret == 0:
+            res = " ({0}x{1} @ {2}Hz)".format(dm.w, dm.h, dm.refresh_rate)
+            info += res
+        print(info)
 
-    def test_GetDisplayInfo(self):
-        current = video.SDL_GetCurrentVideoDriver().decode('utf-8')
-        print("Available Video Drivers:")
-        for i in range(video.SDL_GetNumVideoDrivers()):
-            name = video.SDL_GetVideoDriver(i).decode('utf-8')
-            if name == current:
-                name += " (*)"
-            print(" - " + name)
-        print("")
-        print("Detected Displays:")
-        for i in range(video.SDL_GetNumVideoDisplays()):
-            name = video.SDL_GetDisplayName(i).decode('utf-8')
-            info = " - " + name
-            dm = video.SDL_DisplayMode()
-            ret = video.SDL_GetDesktopDisplayMode(i, byref(dm))
-            if ret == 0:
-                res = " ({0}x{1} @ {2}Hz)".format(dm.w, dm.h, dm.refresh_rate)
-                info += res
-            print(info)
+
+# TODO: mostly covers positive tests right now - fix this!
+class TestSDLVideo(object):
+    __tags__ = ["sdl"]
 
     def test_screensaver(self):
         initial = video.SDL_IsScreenSaverEnabled()
@@ -483,13 +472,13 @@ class TestSDLVideo(object):
         video.SDL_DestroyWindow(window)
 
     def test_SDL_GetSetWindowPosition(self):
-        window = video.SDL_CreateWindow(b"Test", 10, 10, 10, 10, 0)
+        window = video.SDL_CreateWindow(b"Test", 10, 200, 10, 10, 0)
         px, py = c_int(0), c_int(0)
         video.SDL_GetWindowPosition(window, byref(px), byref(py))
-        assert (px.value, py.value) == (10, 10)
-        video.SDL_SetWindowPosition(window, 0, 0)
+        assert (px.value, py.value) == (10, 200)
+        video.SDL_SetWindowPosition(window, 0, 150)
         video.SDL_GetWindowPosition(window, byref(px), byref(py))
-        assert (px.value, py.value) == (0, 0)
+        assert (px.value, py.value) == (0, 150)
         video.SDL_SetWindowPosition(window, 600, 900)
         video.SDL_GetWindowPosition(window, byref(px), byref(py))
         assert (px.value, py.value) == (600, 900)
@@ -708,11 +697,8 @@ class TestSDLVideo(object):
         assert not bounds_out  # bounds_out should be null pointer
         video.SDL_DestroyWindow(window)
 
-    @pytest.mark.skipif(os.environ.get("APPVEYOR") == "True",
-        reason="Appveyor cannot set the brightness")
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GetSetWindowBrightness(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support brightness")
         flags = (video.SDL_WINDOW_BORDERLESS,
                  video.SDL_WINDOW_BORDERLESS | video.SDL_WINDOW_HIDDEN,
                  video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
@@ -750,9 +736,8 @@ class TestSDLVideo(object):
         # Would need to be an interactive test
         pass
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_LoadUnloadLibrary(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
         # Try the default library
         assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
         video.SDL_GL_UnloadLibrary()
@@ -762,10 +747,8 @@ class TestSDLVideo(object):
             assert video.SDL_GL_LoadLibrary(fpath) == 0, SDL_GetError()
             video.SDL_GL_UnloadLibrary()
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_GetProcAddress(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
         if sys.platform != "darwin":
             procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
             assert procaddr is None
@@ -789,10 +772,8 @@ class TestSDLVideo(object):
             procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
             assert procaddr is None
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_ExtensionSupported(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
         assert not video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra")
 
         assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
@@ -809,10 +790,8 @@ class TestSDLVideo(object):
 
         assert not video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra")
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_GetSetAttribute(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
         assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
 
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
@@ -849,10 +828,8 @@ class TestSDLVideo(object):
         video.SDL_DestroyWindow(window)
         video.SDL_GL_UnloadLibrary()
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_CreateDeleteContext(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
         assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
                                         video.SDL_WINDOW_OPENGL)
@@ -868,10 +845,8 @@ class TestSDLVideo(object):
         video.SDL_GL_DeleteContext(ctx)
         video.SDL_GL_UnloadLibrary()
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_MakeCurrent(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
         assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
         window = video.SDL_CreateWindow(b"No OpenGL", 10, 10, 10, 10,
                                         video.SDL_WINDOW_BORDERLESS)
@@ -881,11 +856,8 @@ class TestSDLVideo(object):
         video.SDL_DestroyWindow(window)
         video.SDL_GL_UnloadLibrary()
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_GetSetSwapInterval(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
-
         assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
                                         video.SDL_WINDOW_OPENGL)
@@ -903,10 +875,8 @@ class TestSDLVideo(object):
         video.SDL_DestroyWindow(window)
         video.SDL_GL_UnloadLibrary()
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_SwapWindow(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
         assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
         window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
                                         video.SDL_WINDOW_OPENGL)
@@ -921,15 +891,12 @@ class TestSDLVideo(object):
         video.SDL_GL_UnloadLibrary()
 
     @pytest.mark.skip("not implemented")
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GL_ResetAttributes(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support GL loading")
-
         pass
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_GetDisplayDPI(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support display DPI")
         numdisplays = video.SDL_GetNumVideoDisplays()
         for index in range(numdisplays):
             ddpi, hdpi, vdpi = c_float(), c_float(), c_float()
@@ -940,9 +907,8 @@ class TestSDLVideo(object):
             assert hdpi.value >= 96.0
             assert vdpi.value >= 96.0
 
+    @pytest.mark.skipif(DUMMY_DRIVER, reason="Doesn't work with dummy driver")
     def test_SDL_SetWindowResizable(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support resizable flags")
         window = video.SDL_CreateWindow(b"Resizable", 10, 10, 10, 10,
                                         video.SDL_WINDOW_RESIZABLE)
         flags = video.SDL_GetWindowFlags(window)
@@ -999,39 +965,37 @@ class TestSDLVideo(object):
             assert ret == 0
             assert not rect.SDL_RectEmpty(bounds)
 
-    def test_SDL_GetWindowsBordersSize(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support the window border size")
+    def test_SDL_GetWindowBordersSize(self):
+        # Create/show a window, make sure all borders are >= 0
         window = video.SDL_CreateWindow(b"Borders", 10, 10, 10, 10, 0)
         video.SDL_ShowWindow(window)
-        l, r, t, b = c_int(), c_int(), c_int(), c_int()
-        ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
-                                             byref(b), byref(r))
-        if sys.platform in ("cygwin", "darwin"):
-            assert ret == -1
-            assert t.value == 0
-            assert l.value == 0
-            assert b.value == 0
-            assert r.value == 0
-        else:
-            assert ret == 0
-            assert t.value != 0
-            assert l.value != 0
-            assert b.value != 0
-            assert r.value != 0
+        t, l, b, r = c_int(), c_int(), c_int(), c_int()
+        ret = video.SDL_GetWindowBordersSize(
+            window, byref(t), byref(l), byref(b), byref(r)
+        )
         video.SDL_DestroyWindow(window)
-        window = video.SDL_CreateWindow(b"No Borders", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_BORDERLESS)
+        values = [x.value for x in (t, l, b, r)]
+        assert all([v >= 0 for v in values])
+
+        # Currently, only X11 and Windows video drivers support border size
+        supports_borders = [b"x11", b"windows"]
+        if video.SDL_GetCurrentVideoDriver() in supports_borders:
+            assert ret == 0
+
+        # Test again with a borderless window & make sure borders are all 0
+        window = video.SDL_CreateWindow(
+            b"No Borders", 10, 10, 10, 10, video.SDL_WINDOW_BORDERLESS
+        )
         video.SDL_ShowWindow(window)
-        ret = video.SDL_GetWindowBordersSize(window, byref(t), byref(l),
-                                             byref(b), byref(r))
-        if sys.platform not in ("cygwin", "darwin"):
-            assert ret == 0
-            assert t.value == 0
-            assert l.value == 0
-            assert b.value == 0
-            assert r.value == 0
+        ret = video.SDL_GetWindowBordersSize(
+            window, byref(t), byref(l), byref(b), byref(r)
+        )
         video.SDL_DestroyWindow(window)
+        values = [x.value for x in (t, l, b, r)]
+        assert all([v == 0 for v in values])
+        if video.SDL_GetCurrentVideoDriver() in supports_borders:
+            assert ret == 0
+        
 
     @pytest.mark.skip("not implemented")
     def test_SDL_SetWindowModalFor(self):
