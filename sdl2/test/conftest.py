@@ -1,6 +1,8 @@
 # pytest configuration file
+import gc
 import pytest
 import sdl2
+from sdl2 import ext as sdl2ext
 
 
 @pytest.fixture(scope="module")
@@ -11,3 +13,10 @@ def with_sdl():
     assert ret == 0
     yield
     sdl2.SDL_Quit()
+
+@pytest.fixture(autouse=True)
+def sdl_cleanup():
+    sdl2.SDL_ClearError()
+    yield
+    sdl2.SDL_ClearError()
+    gc.collect()

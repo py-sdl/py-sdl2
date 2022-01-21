@@ -10,13 +10,6 @@ try:
 except:
     _HASNUMPY = False
 
-@pytest.fixture(autouse=True)
-def sdl_cleanup():
-    sdl2.SDL_ClearError()
-    yield
-    sdl2.SDL_ClearError()
-    gc.collect()
-
 
 @pytest.mark.skipif(not _HASNUMPY, reason="Numpy not available")
 def test_subsurface(with_sdl):

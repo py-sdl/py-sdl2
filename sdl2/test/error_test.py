@@ -4,6 +4,11 @@ import sdl2
 from ctypes import create_string_buffer, byref
 from sdl2 import error
 
+# Override global cleanup fixture since it calls SDL_ClearError
+@pytest.fixture(autouse=True)
+def sdl_cleanup():
+    yield
+
 
 def test_SDL_GetSetClearError():
     error.SDL_SetError(b"Hi there!")
