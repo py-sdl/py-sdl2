@@ -1,8 +1,5 @@
-import sys
 from math import floor
-
-if sys.version_info[0] >= 3:
-    long = int
+from .compat import *
 
 __all__ = ["Color", "is_rgb_color", "is_rgba_color", "argb_to_color", "ARGB",
            "rgba_to_color", "RGBA", "string_to_color", "convert_to_color",

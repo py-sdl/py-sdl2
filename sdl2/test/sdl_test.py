@@ -42,13 +42,14 @@ def test_SDL_InitSubSystem():
     assert sdl2.SDL_GetError() == b""
     assert ret == 0
     # Test initializing an additional subsystem
-    ret = sdl2.SDL_InitSubSystem(SDL_INIT_JOYSTICK)
+    assert sdl2.SDL_WasInit(0) & SDL_INIT_TIMER != SDL_INIT_TIMER
+    ret = sdl2.SDL_InitSubSystem(SDL_INIT_TIMER)
     assert sdl2.SDL_GetError() == b""
-    assert sdl2.SDL_WasInit(0) & SDL_INIT_JOYSTICK == SDL_INIT_JOYSTICK
+    assert sdl2.SDL_WasInit(0) & SDL_INIT_TIMER == SDL_INIT_TIMER
     # Test shutting down a single subsystem
     sdl2.SDL_QuitSubSystem(SDL_INIT_AUDIO)
     assert sdl2.SDL_WasInit(0) & SDL_INIT_AUDIO != SDL_INIT_AUDIO
-    remaining = SDL_INIT_VIDEO | SDL_INIT_JOYSTICK
+    remaining = SDL_INIT_VIDEO | SDL_INIT_TIMER
     assert sdl2.SDL_WasInit(remaining) == remaining
     # Shut down all subsystems once complete
     sdl2.SDL_Quit()
