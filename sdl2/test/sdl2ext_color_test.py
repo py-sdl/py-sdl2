@@ -5,62 +5,35 @@ from sdl2.ext import color
 from sdl2.ext.color import Color
 from sdl2.ext.compat import *
 
-combs = [0, 1, 2, 4, 8, 16, 32, 62, 63, 64, 126, 127, 128, 255]
-all_combos = [(r, g, b, a) for r in combs
-                           for g in combs
-                           for b in combs
-                           for a in combs]
+@pytest.fixture(scope="module")
+def test_colors():
+    # Define some RGB colors for testing
+    rgb = [
+        (0, 0, 0), (255, 255, 255),
+        (255, 0, 0), (0, 255, 0), (0, 0, 255),
+        (128, 64, 0), (1, 2, 3), (5, 5, 5)
+    ]
+    # Use those colors to create RGBA test colors in different formats
+    colors = []
+    for vals in rgb:
+        r, g, b, = vals
+        for a in (0, 128, 255):
+            col = Color(r, g, b, a)
+            formats = {
+                'hex': "0x%.2x%.2x%.2x%.2x" % (r, g, b, a),
+                'hash': "#%.2x%.2x%.2x%.2x" % (r, g, b, a),
+                'rgba': (r << 24 | g << 16 | b << 8 | a),
+                'argb': (a << 24 | r << 16 | g << 8 | b),
+            }
+            colors.append([col, formats])
+    yield colors
 
 
-def color_combos():
-    for x in all_combos:
-        yield Color(*x)
 
-
-def hex_combos():
-    for r, g, b, a in all_combos:
-        yield "0x%.2x%.2x%.2x%.2x" % (r, g, b, a)
-
-
-def hash_combos():
-    for r, g, b, a in all_combos:
-        yield "#%.2x%.2x%.2x%.2x" % (r, g, b, a)
-
-
-def rgba_combos():
-    for r, g, b, a in all_combos:
-        yield (r << 24 | g << 16 | b << 8 | a)
-
-
-def argb_combos():
-    for r, g, b, a in all_combos:
-        yield (a << 24 | r << 16 | g << 8 | b)
-
-
-def _assignr(x, y):
-    x.r = y
-
-
-def _assigng(x, y):
-    x.g = y
-
-
-def _assignb(x, y):
-    x.b = y
-
-
-def _assigna(x, y):
-    x.a = y
-
-
-def _assign_item(x, p, y):
-    x[p] = y
-
-
-class TestSDL2ExtColor(object):
+class TestExtColor(object):
     __tags__ = ["sdl2ext"]
 
-    def test_Color(self):
+    def test_init(self):
         c = Color(10, 20, 30, 40)
         assert c.r == 10
         assert c.g == 20
@@ -70,23 +43,19 @@ class TestSDL2ExtColor(object):
         with pytest.raises(ValueError):
             Color(257, 10, 105, 44)
         with pytest.raises(ValueError):
-            Color(10, 257, 105, 44)
-        with pytest.raises(ValueError):
-            Color(10, 105, 257, 44)
-        with pytest.raises(ValueError):
-            Color(10, 105, 44, 257)
+            Color(-1, 257, 105, 44)
 
 
-    def test_Color__copy__(self):
+    def test__copy__(self, test_colors):
         copy_copy = copy.copy
-        for c in color_combos():
+        for c, formats in test_colors:
             c2 = copy_copy(c)
             assert c == c2
             c2 = ~c2
             assert c != c2
 
 
-    def test_Color__eq__(self):
+    def test__eq__(self):
         assert Color(255, 0, 0, 0) == Color(255, 0, 0, 0)
         assert Color(0, 255, 0, 0) == Color(0, 255, 0, 0)
         assert Color(0, 0, 255, 0) == Color(0, 0, 255, 0)
@@ -118,7 +87,7 @@ class TestSDL2ExtColor(object):
         assert not (int(Color(0, 0, 0, 0)) == 0x000000ff)
 
 
-    def test_Color__ne__(self):
+    def test__ne__(self):
         assert Color(0, 0, 0, 0) != Color(255, 0, 0, 0)
         assert Color(0, 0, 0, 0) != Color(0, 255, 0, 0)
         assert Color(0, 0, 0, 0) != Color(0, 0, 255, 0)
@@ -150,13 +119,13 @@ class TestSDL2ExtColor(object):
         assert not (int(Color(0, 0, 0, 255)) != 0x000000ff)
 
 
-    def test_Color__repr__(self):
+    def test__repr__(self):
         c = Color(68, 38, 26, 69)
         c1 = eval(repr(c))
         assert c == c1
 
 
-    def test_Color__int__(self):
+    def test__int__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
         assert c.r == 0x00
         assert c.g == 0xCC
@@ -172,7 +141,7 @@ class TestSDL2ExtColor(object):
         assert int(c) == int(0x72759233)
 
 
-    def test_Color__long__(self):
+    def test__long__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
         assert c.r == 0x00
         assert c.g == 0xCC
@@ -188,7 +157,7 @@ class TestSDL2ExtColor(object):
         assert long(c) == long(0x72759233)
 
 
-    def test_Color__float__(self):
+    def test__float__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
         assert c.r == 0x00
         assert c.g == 0xCC
@@ -204,7 +173,7 @@ class TestSDL2ExtColor(object):
         assert float(c) == float(0x72759233)
 
 
-    def test_Color__oct__(self):
+    def test__oct__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
         assert c.r == 0x00
         assert c.g == 0xCC
@@ -220,7 +189,7 @@ class TestSDL2ExtColor(object):
         assert oct(c) == oct(0x72759233)
 
 
-    def test_Color__hex__(self):
+    def test__hex__(self):
         c = Color(0x00, 0xCC, 0x00, 0xCC)
         assert c.r == 0x00
         assert c.g == 0xCC
@@ -236,7 +205,7 @@ class TestSDL2ExtColor(object):
         assert hex(c) == hex(0x72759233)
 
 
-    def test_Color__invert__(self):
+    def test__invert__(self):
         assert ~Color() == Color(0, 0, 0, 0)
         assert ~Color(0, 0, 0, 0) == Color(255, 255, 255, 255)
         assert ~Color(255, 0, 0, 0) == Color(0, 255, 255, 255)
@@ -249,7 +218,7 @@ class TestSDL2ExtColor(object):
         assert ~Color(127, 127, 127, 0) == Color(128, 128, 128, 255)
 
 
-    def test_Color__mod__(self):
+    def test__mod__(self):
         c1 = Color()
         assert c1.r == 255
         assert c1.g == 255
@@ -269,7 +238,7 @@ class TestSDL2ExtColor(object):
         assert c3.a == 15
 
 
-    def test_Color__div__(self):
+    def test__div__(self):
         c1 = Color(128, 128, 128, 128)
         assert c1.r == 128
         assert c1.g == 128
@@ -295,7 +264,7 @@ class TestSDL2ExtColor(object):
         assert c3.a == 0
 
 
-    def test_Color__mul__(self):
+    def test__mul__(self):
         c1 = Color(1, 1, 1, 1)
         assert c1.r == 1
         assert c1.g == 1
@@ -321,7 +290,7 @@ class TestSDL2ExtColor(object):
         assert c3.a == 255
 
 
-    def test_Color__sub__(self):
+    def test__sub__(self):
         c1 = Color(255, 255, 255, 255)
         assert c1.r == 255
         assert c1.g == 255
@@ -347,7 +316,7 @@ class TestSDL2ExtColor(object):
         assert c3.a == 0
 
 
-    def test_Color__add__(self):
+    def test__add__(self):
         c1 = Color(0, 0, 0, 0)
         assert c1.r == 0
         assert c1.g == 0
@@ -373,14 +342,14 @@ class TestSDL2ExtColor(object):
         assert c3.a == 255
 
 
-    def test_Color__len__(self):
+    def test__len__(self):
         c = Color(204, 38, 194, 55)
         assert len(c) == 4
         assert len(Color()) == 4
         assert len(Color(2)) == 4
 
 
-    def test_Color__getitem__(self):
+    def test__getitem__(self):
         c = Color(204, 38, 194, 55)
         assert c[0] == 204
         assert c[1] == 38
@@ -388,7 +357,7 @@ class TestSDL2ExtColor(object):
         assert c[3] == 55
 
 
-    def test_Color__setitem(self):
+    def test__setitem(self):
         c = Color(204, 38, 194, 55)
         assert c[0] == 204
         assert c[1] == 38
@@ -406,132 +375,37 @@ class TestSDL2ExtColor(object):
 
         # Now try some 'invalid' ones
         with pytest.raises(ValueError):
-            _assign_item(c, 1, -83)
+            c[1] = -1
         assert c[1] == 48
         with pytest.raises(TypeError):
-            _assign_item(c, 2, "Hello")
+            c[2] = "Hello"
         assert c[2] == 173
 
 
-    def test_Color_r(self):
-        c = Color(100, 100, 100)
-        assert c.r == 100
-
+    def test_rgba(self):
         c = Color(100, 100, 100, 100)
-        assert c.r == 100
-
-        c = Color(100, 100, 100)
-        assert c.r == 100
-        c.r = 200
-        assert c.r == 200
-        c.r += 22
-        assert c.r == 222
-
-
-    def test_Color_g(self):
-        c = Color(100, 100, 100)
-        assert c.g == 100
-
-        c = Color(100, 100, 100, 100)
-        assert c.g == 100
-
-        c = Color(100, 100, 100)
-        assert c.g == 100
-        c.g = 200
-        assert c.g == 200
+        for val in [c.r, c.g, c.b, c.a]:
+            assert val == 100
+        c.r = 255
+        c.g = 128
+        c.b = 64
+        c.a = 32
+        assert c.r == 255
+        assert c.g == 128
+        assert c.b == 64
+        assert c.a == 32
+        c.r -= 55
         c.g += 22
-        assert c.g == 222
+        c.b -= 14
+        c.a += 32
+        assert c.r == 200
+        assert c.g == 150
+        assert c.b == 50
+        assert c.a == 64
 
 
-    def test_Color_b(self):
-        c = Color(100, 100, 100)
-        assert c.b == 100
-
-        c = Color(100, 100, 100, 100)
-        assert c.b == 100
-
-        c = Color(100, 100, 100)
-        assert c.b == 100
-        c.b = 200
-        assert c.b == 200
-        c.b += 22
-        assert c.b == 222
-
-
-    def test_Color_a(self):
-        c = Color(100, 100, 100)
-        assert c.a == 255
-
-        c = Color(100, 100, 100, 100)
-        assert c.a == 100
-
-        c = Color(100, 100, 100)
-        assert c.a == 255
-        c.a = 200
-        assert c.a == 200
-        c.a += 22
-        assert c.a == 222
-
-
-    def test_Color_rgba(self):
-        c = Color(0)
-        assert c.r == 0
-        assert c.g == 255
-        assert c.b == 255
-        assert c.a == 255
-
-        # Test simple assignments
-        c.r = 123
-        assert c.r == 123
-        with pytest.raises(ValueError):
-            _assignr(c, 537)
-        assert c.r == 123
-        with pytest.raises(ValueError):
-            _assignr(c, -3)
-        assert c.r == 123
-        assert c.g == 255
-        assert c.b == 255
-        assert c.a == 255
-
-        c.g = 55
-        assert c.g == 55
-        with pytest.raises(ValueError):
-            _assigng(c, 348)
-        assert c.g == 55
-        with pytest.raises(ValueError):
-            _assigng(c, -44)
-        assert c.g == 55
-        assert c.r == 123
-        assert c.b == 255
-        assert c.a == 255
-
-        c.b = 77
-        assert c.b == 77
-        with pytest.raises(ValueError):
-            _assignb(c, 256)
-        assert c.b == 77
-        with pytest.raises(ValueError):
-            _assignb(c, -12)
-        assert c.b == 77
-        assert c.r == 123
-        assert c.g == 55
-        assert c.a == 255
-
-        c.a = 251
-        assert c.a == 251
-        with pytest.raises(ValueError):
-            _assigna(c, 312)
-        assert c.a == 251
-        with pytest.raises(ValueError):
-            _assigna(c, -10)
-        assert c.a == 251
-        assert c.r == 123
-        assert c.g == 55
-        assert c.b == 77
-
-
-    def test_Color_hsva(self):
-        for c in color_combos():
+    def test_hsva(self, test_colors):
+        for c, formats in test_colors:
             h, s, v, a = c.hsva
             assert 0 <= h <= 360
             assert 0 <= s <= 100
@@ -550,8 +424,8 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.a - c.a <= 1), err
 
 
-    def test_Color_hsla(self):
-        for c in color_combos():
+    def test_hsla(self, test_colors):
+        for c, formats in test_colors:
             h, s, l, a = c.hsla
             assert 0 <= h <= 360
             assert 0 <= s <= 100
@@ -570,8 +444,8 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.a - c.a <= 1), err
 
 
-    def test_Color_i1i2i3(self):
-        for c in color_combos():
+    def test_i1i2i3(self, test_colors):
+        for c, formats in test_colors:
             i1, i2, i3 = c.i1i2i3
             assert 0 <= i1 <= 1
             assert -0.5 <= i2 <= 0.5
@@ -589,8 +463,8 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.b - c.b <= 1), err
 
 
-    def test_Color_cmy(self):
-        for val in color_combos():
+    def test_cmy(self, test_colors):
+        for val, formats in test_colors:
             c, m, y = val.cmy
             assert 0 <= c <= 1
             assert 0 <= m <= 1
@@ -608,7 +482,7 @@ class TestSDL2ExtColor(object):
                 assert abs(c2.b - val.b <= 1), err
 
 
-    def test_Color_normalize(self):
+    def test_normalize(self):
         c = Color(204, 38, 194, 55)
         assert c.r == 204
         assert c.g == 38
@@ -640,171 +514,99 @@ class TestSDL2ExtColor(object):
         assert round(abs(t[3]-0.2), 2) == 0
 
 
-    def test_is_rgb_color(self):
-        for v in color_combos():
-            assert color.is_rgba_color(v)
-
-        for v in rgba_combos():
-            assert not color.is_rgba_color(v)
-        for v in argb_combos():
-            assert not color.is_rgba_color(v)
-        for v in hex_combos():
-            assert not color.is_rgba_color(v)
-        for v in hash_combos():
-            assert not color.is_rgba_color(v)
+def test_is_rgb_color(test_colors):
+    for col, formats in test_colors:
+        assert color.is_rgba_color(col)
+        assert color.is_rgba_color(tuple(col))
+        assert not color.is_rgba_color(formats['rgba'])
+        assert not color.is_rgba_color(formats['argb'])
+        assert not color.is_rgba_color(formats['hex'])
+        assert not color.is_rgba_color(formats['hash'])
 
 
-    def test_is_rgba_color(self):
-        for v in color_combos():
-            assert color.is_rgba_color(v)
-
-        for v in rgba_combos():
-            assert not color.is_rgba_color(v)
-        for v in argb_combos():
-            assert not color.is_rgba_color(v)
-        for v in hex_combos():
-            assert not color.is_rgba_color(v)
-        for v in hash_combos():
-            assert not color.is_rgba_color(v)
+def test_is_rgba_color(test_colors):
+    for col, formats in test_colors:
+        assert color.is_rgba_color(col)
+        assert color.is_rgba_color(tuple(col))
+        assert not color.is_rgba_color(tuple(col)[:3])
+        assert not color.is_rgba_color(formats['rgba'])
+        assert not color.is_rgba_color(formats['argb'])
+        assert not color.is_rgba_color(formats['hex'])
+        assert not color.is_rgba_color(formats['hash'])
 
 
-    def test_rgba_argb_to_color(self):
-
-        assert color.RGBA == color.rgba_to_color
-        assert color.ARGB == color.argb_to_color
-
-        cvals = list(color_combos())
-        for index, val in enumerate(rgba_combos()):
-            c = cvals[index]
-            if c.r == c.g == c.b == c.a:
-                assert color.RGBA(val) == c
-                assert color.ARGB(val) == c
-                continue
-
-            assert color.RGBA(val) == c, "Failed for '%s'" % val
-            assert not color.ARGB(val) == c, "Failed for '0x%.8x'" % val
-
-        for index, val in enumerate(argb_combos()):
-            c = cvals[index]
-            if c.r == c.g == c.b == c.a:
-                assert color.RGBA(val) == c
-                assert color.ARGB(val) == c
-                continue
-
-            assert color.ARGB(val) == c, "Failed for '%s'" % val
-            assert not color.RGBA(val) == c, "Failed for '0x%.8x'" % val
+def test_rgba_argb_to_color(test_colors):
+    # Test aliases
+    assert color.RGBA == color.rgba_to_color
+    assert color.ARGB == color.argb_to_color
+    # Test RGBA/ARGB int conversion
+    for c, formats in test_colors:
+        from_rgba = color.RGBA(formats['rgba'])
+        from_argb = color.ARGB(formats['argb'])
+        assert from_rgba == from_argb
+        assert from_rgba == c
 
 
-    def test_string_to_color(self):
-        for method in (color.string_to_color, color.convert_to_color,
-                       color.COLOR):
-            assert method('#00000000').r == 0x00
-            assert method('#10000000').r == 0x10
-            assert method('#20000000').r == 0x20
-            assert method('#30000000').r == 0x30
-            assert method('#40000000').r == 0x40
-            assert method('#50000000').r == 0x50
-            assert method('#60000000').r == 0x60
-            assert method('#70000000').r == 0x70
-            assert method('#80000000').r == 0x80
-            assert method('#90000000').r == 0x90
-            assert method('#A0000000').r == 0xA0
-            assert method('#B0000000').r == 0xB0
-            assert method('#C0000000').r == 0xC0
-            assert method('#D0000000').r == 0xD0
-            assert method('#E0000000').r == 0xE0
-            assert method('#F0000000').r == 0xF0
-            assert method('#01000000').r == 0x01
-            assert method('#02000000').r == 0x02
-            assert method('#03000000').r == 0x03
-            assert method('#04000000').r == 0x04
-            assert method('#05000000').r == 0x05
-            assert method('#06000000').r == 0x06
-            assert method('#07000000').r == 0x07
-            assert method('#08000000').r == 0x08
-            assert method('#09000000').r == 0x09
-            assert method('#0A000000').r == 0x0A
-            assert method('#0B000000').r == 0x0B
-            assert method('#0C000000').r == 0x0C
-            assert method('#0D000000').r == 0x0D
-            assert method('#0E000000').r == 0x0E
-            assert method('#0F000000').r == 0x0F
+def test_string_to_color(test_colors):
+    for col, formats in test_colors:
+        assert color.string_to_color(formats['hex']) == col
+        assert color.string_to_color(formats['hash']) == col
 
+    for method in (color.string_to_color, color.convert_to_color):
+        assert method('#00000000').r == 0x00
+        assert method('#10000000').r == 0x10
+        assert method('#20000000').r == 0x20
+        assert method('#30000000').r == 0x30
+        assert method('#40000000').r == 0x40
+        assert method('#50000000').r == 0x50
+        assert method('#60000000').r == 0x60
+        assert method('#70000000').r == 0x70
+        assert method('#80000000').r == 0x80
+        assert method('#90000000').r == 0x90
+        assert method('#A0000000').r == 0xA0
+        assert method('#B0000000').r == 0xB0
+        assert method('#C0000000').r == 0xC0
+        assert method('#D0000000').r == 0xD0
+        assert method('#E0000000').r == 0xE0
+        assert method('#F0000000').r == 0xF0
+        assert method('#01000000').r == 0x01
+        assert method('#02000000').r == 0x02
+        assert method('#03000000').r == 0x03
+        assert method('#04000000').r == 0x04
+        assert method('#05000000').r == 0x05
+        assert method('#06000000').r == 0x06
+        assert method('#07000000').r == 0x07
+        assert method('#08000000').r == 0x08
+        assert method('#09000000').r == 0x09
+        assert method('#0A000000').r == 0x0A
+        assert method('#0B000000').r == 0x0B
+        assert method('#0C000000').r == 0x0C
+        assert method('#0D000000').r == 0x0D
+        assert method('#0E000000').r == 0x0E
+        assert method('#0F000000').r == 0x0F
+
+        bad_strs = ["0x12345", "#1234567", "# f000000", "0xAABBCCQQ", "Red"]
+        for bad in bad_strs:   
             with pytest.raises(ValueError):
-                method("0x12345")
-            with pytest.raises(ValueError):
-                method("0x1234567")
-            with pytest.raises(ValueError):
-                method("#123456789")
-            with pytest.raises(ValueError):
-                method("#12345")
-            with pytest.raises(ValueError):
-                method("#1234567")
-            with pytest.raises(ValueError):
-                method("#123456789")
+                method(bad)
 
-            with pytest.raises(ValueError):
-                method("# f000000")
-            with pytest.raises(ValueError):
-                method("#f 000000")
-            with pytest.raises(ValueError):
-                method("#-f000000")
-            with pytest.raises(ValueError):
-                method("-#f000000")
-
-            with pytest.raises(ValueError):
-                method("0x f000000")
-            with pytest.raises(ValueError):
-                method("0xf 000000")
-            with pytest.raises(ValueError):
-                method("0x-f000000")
-            with pytest.raises(ValueError):
-                method("-0xf000000")
-
-            with pytest.raises(ValueError):
-                method("#cc00qq")
-            with pytest.raises(ValueError):
-                method("0xcc00qq")
-            with pytest.raises(ValueError):
-                method("09abcdef")
-            with pytest.raises(ValueError):
-                method("09abcde")
-            with pytest.raises(ValueError):
-                method("quarky")
-
-            cvals = list(color_combos())
-            for index, val in enumerate(hex_combos()):
-                assert method(val) == cvals[index], "Failed for '%s'" % val
-            for index, val in enumerate(hash_combos()):
-                assert method(val) == cvals[index], "Failed for '%s'" % val
-
-        with pytest.raises(TypeError):
-            color.string_to_color(0xff000000)
-        with pytest.raises(TypeError):
-            color.string_to_color(Color())
+    with pytest.raises(TypeError):
+        color.string_to_color(0xff000000)
+    with pytest.raises(TypeError):
+        color.string_to_color(Color())
 
 
-    def test_convert_to_color(self):
-        assert color.COLOR == color.convert_to_color
-        cvals = list(color_combos())
+def test_convert_to_color(test_colors):
+    assert color.COLOR == color.convert_to_color
+    
+    for col, formats in test_colors:
+        assert color.COLOR(formats['hex']) == col
+        assert color.COLOR(formats['hash']) == col
+        assert color.COLOR(formats['argb']) == col
+        assert color.COLOR(tuple(col)) == col
+        assert color.COLOR(col) == col
 
-        for index, val in enumerate(hex_combos()):
-            assert color.COLOR(val) == cvals[index], "Failed for '%s'" % val
-
-        for index, val in enumerate(hash_combos()):
-            assert color.COLOR(val) == cvals[index], "Failed for '%s'" % val
-
-        for index, val in enumerate(hex_combos()):
-            assert color.COLOR(val) == cvals[index], "Failed for '%s'" % val
-
-        for index, val in enumerate(argb_combos()):
-            assert color.COLOR(val) == cvals[index], "Failed for '0x%.8x'" % val
-
-        for index, val in enumerate(color_combos()):
-            assert color.COLOR(val) == cvals[index], "Failed for '%s'" % val
-
-        with pytest.raises(ValueError):
-            color.convert_to_color(self)
-
-        with pytest.raises(ValueError):
-            color.convert_to_color("Test")
+    with pytest.raises(ValueError):
+        color.convert_to_color((255, 255, -1))
+    with pytest.raises(ValueError):
+        color.convert_to_color("Mauve")
