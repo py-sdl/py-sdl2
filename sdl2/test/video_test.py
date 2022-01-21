@@ -173,8 +173,9 @@ def test_SDL_GetDisplayMode(with_sdl):
             ret = video.SDL_GetDisplayMode(index, mode, byref(dmode))
             assert sdl2.SDL_GetError() == b""
             assert ret == 0
-            assert dmode.w > 0
-            assert dmode.h > 0
+            if not DUMMY_DRIVER:
+                assert dmode.w > 0
+                assert dmode.h > 0
 
 def test_SDL_GetCurrentDisplayMode(with_sdl):
     numdisplays = video.SDL_GetNumVideoDisplays()
