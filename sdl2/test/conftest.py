@@ -10,4 +10,4 @@ def with_sdl():
     assert sdl2.SDL_GetError() == b""
     assert ret == 0
     yield
-    SDL_Quit()
+    sdl2.SDL_Quit()
