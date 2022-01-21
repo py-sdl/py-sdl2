@@ -1,58 +1,59 @@
 import sys
 import pytest
-from sdl2 import SDL_Init, SDL_WasInit, SDL_InitSubSystem, SDL_QuitSubSystem, \
-    SDL_Quit, SDL_INIT_AUDIO, SDL_INIT_EVERYTHING, SDL_INIT_GAMECONTROLLER, \
-    SDL_INIT_HAPTIC, SDL_INIT_JOYSTICK, SDL_INIT_NOPARACHUTE, SDL_INIT_TIMER, \
-    SDL_INIT_VIDEO, SDL_GetError
+import sdl2
+from sdl2 import (
+    SDL_INIT_TIMER, SDL_INIT_AUDIO, SDL_INIT_VIDEO, SDL_INIT_JOYSTICK, SDL_INIT_HAPTIC,
+    SDL_INIT_GAMECONTROLLER, SDL_INIT_EVENTS, SDL_INIT_SENSOR, SDL_INIT_EVERYTHING
+)
+
+subsystems = {
+    'timer': SDL_INIT_TIMER,
+    'audio': SDL_INIT_AUDIO,
+    'video': SDL_INIT_VIDEO,
+    'joystick': SDL_INIT_JOYSTICK,
+    'haptic': SDL_INIT_HAPTIC,
+    'gamecontroller': SDL_INIT_GAMECONTROLLER,
+    'events': SDL_INIT_EVENTS,
+    'sensor': SDL_INIT_SENSOR,
+}
 
 
-class TestSDL(object):
-    __tags__ = ["sdl"]
+def test_SDL_Init():
+    supported = []
+    sdl2.SDL_ClearError()
+    for name, flags in subsystems.items():
+        ret = sdl2.SDL_Init(flags)
+        err = sdl2.SDL_GetError()
+        if err:
+            err = err.decode('utf-8')
+            print("Error loading {0} subsystem: {1}".format(name, err))
+            sdl2.SDL_ClearError()
+            assert ret < 0
+        if sdl2.SDL_WasInit(0) & flags == flags:
+            supported.append(name)
+        sdl2.SDL_Quit()
+    print("Supported SDL2 subsystems:")
+    print(supported)
 
-    def setup_method(self):
-        SDL_Init(0)
+def test_SDL_InitSubSystem():
+    sdl2.SDL_ClearError()
+    ret = sdl2.SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    # Test initializing an additional subsystem
+    ret = sdl2.SDL_InitSubSystem(SDL_INIT_JOYSTICK)
+    assert sdl2.SDL_GetError() == b""
+    assert sdl2.SDL_WasInit(0) & SDL_INIT_JOYSTICK == SDL_INIT_JOYSTICK
+    # Test shutting down a single subsystem
+    sdl2.SDL_QuitSubSystem(SDL_INIT_AUDIO)
+    assert sdl2.SDL_WasInit(0) & SDL_INIT_AUDIO != SDL_INIT_AUDIO
+    remaining = SDL_INIT_VIDEO | SDL_INIT_JOYSTICK
+    assert sdl2.SDL_WasInit(remaining) == remaining
+    # Shut down all subsystems once complete
+    sdl2.SDL_Quit()
+    assert sdl2.SDL_WasInit(0) == 0
 
-    def teardown_method(self):
-        SDL_Quit()
-
-    def test_SDL_INIT_TIMER(self):
-        ret = SDL_Init(SDL_INIT_TIMER)
-        if ret != 0:
-            pytest.skip('Timer subsystem not supported')
-        ret = SDL_WasInit(SDL_INIT_TIMER)
-        assert ret == SDL_INIT_TIMER
-        SDL_QuitSubSystem(SDL_INIT_TIMER)
-
-    def test_SDL_INIT_AUDIO(self):
-        ret = SDL_Init(SDL_INIT_AUDIO)
-        if ret != 0:
-            pytest.skip('Audio subsystem not supported')
-        ret = SDL_WasInit(SDL_INIT_AUDIO)
-        assert ret == SDL_INIT_AUDIO
-        SDL_QuitSubSystem(SDL_INIT_AUDIO)
-
-    def test_SDL_INIT_VIDEO(self):
-        ret = SDL_Init(SDL_INIT_VIDEO)
-        if ret != 0:
-            pytest.skip('Video subsystem not supported')
-        ret = SDL_WasInit(SDL_INIT_VIDEO)
-        assert ret == SDL_INIT_VIDEO
-        SDL_QuitSubSystem(SDL_INIT_VIDEO)
-
-    def test_SDL_INIT_JOYSTICK(self):
-        ret = SDL_Init(SDL_INIT_JOYSTICK)
-        if ret != 0:
-            pytest.skip('Joystick subsystem not supported')
-        ret = SDL_WasInit(SDL_INIT_JOYSTICK)
-        assert ret == SDL_INIT_JOYSTICK
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
-
-    @pytest.mark.skipif(sys.platform.startswith("freebsd"),
-        reason="FreeBSD des not support haptic input yet")
-    def test_SDL_INIT_HAPTIC(self):
-        ret = SDL_Init(SDL_INIT_HAPTIC)
-        if ret != 0:
-            pytest.skip('Haptic subsystem not supported')
-        ret = SDL_WasInit(SDL_INIT_HAPTIC)
-        assert ret == SDL_INIT_HAPTIC
-        SDL_QuitSubSystem(SDL_INIT_HAPTIC)
+def test_SDL_INIT_EVERYTHING():
+    # Make sure all the other flags are in the everything flag
+    for name, flags in subsystems.items():
+        assert sdl2.SDL_INIT_EVERYTHING & flags == flags
