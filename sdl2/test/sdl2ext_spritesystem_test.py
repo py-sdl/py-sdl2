@@ -2,15 +2,19 @@ import gc
 import sys
 import pytest
 from ctypes import ArgumentError
-
 from sdl2 import ext as sdl2ext
 from sdl2.ext.resources import Resources
 from sdl2.render import (
     SDL_TEXTUREACCESS_STATIC, SDL_TEXTUREACCESS_STREAMING, SDL_TEXTUREACCESS_TARGET
 )
 from sdl2.surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
+from sdl2.pixels import SDL_MapRGBA
 
 RESOURCES = Resources(__file__, "resources")
+
+BLACK = (0, 0, 0, 255)
+RED = (255, 0, 0, 255)
+BLUE = (0, 0, 255, 255)
 
 
 class TestSDL2ExtSpriteSystem(object):
@@ -30,19 +34,22 @@ class TestSDL2ExtSpriteSystem(object):
     def teardown_method(self):
         gc.collect()
 
-    def check_pixels(self, view, w, h, sprite, c1, c2, cx=0, cy=0):
-        msg = "color mismatch at %d,%d: %d not in %s"
+    def check_pixels(self, surf, w, h, sprite, c1, c2, cx=0, cy=0):
         cx = cx + sprite.x
         cy = cy + sprite.y
         cw, ch = sprite.size
         cmy = cy + ch
         cmx = cx + cw
+        c1 = SDL_MapRGBA(surf.format, c1[0], c1[1], c1[2], c1[3])
+        c2 = [SDL_MapRGBA(surf.format, c[0], c[1], c[2], c[3]) for c in c2]
+        view = sdl2ext.PixelView(surf)
         for y in range(w):
             for x in range(h):
                 if cy <= y < cmy and cx <= x < cmx:
-                    assert view[y][x] == c1, msg % (x, y, view[y][x], c1)
+                    assert view[y][x] == c1
                 else:
-                    assert view[y][x] in c2, msg % (x, y, view[y][x], c2)
+                    assert view[y][x] in c2
+        del view
 
     def test_SpriteFactory(self):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -264,70 +271,64 @@ class TestSDL2ExtSpriteSystem(object):
         assert sdl2ext.SoftwareSprite in renderer.componenttypes
 
     def test_SoftwareSpriteRenderSystem_render(self):
+        # Create two software sprites for testing
         sf1 = SDL_CreateRGBSurface(0, 12, 7, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
-        sdl2ext.fill(sp1, 0xFF0000)
-
+        sdl2ext.fill(sp1, RED)
         sf2 = SDL_CreateRGBSurface(0, 3, 9, 32, 0, 0, 0, 0)
         sp2 = sdl2ext.SoftwareSprite(sf2.contents, True)
-        sdl2ext.fill(sp2, 0x00FF00)
+        sdl2ext.fill(sp2, BLUE)
         sprites = [sp1, sp2]
 
+        # Create a window and renderer for the tests
         window = sdl2ext.Window("Test", size=(20, 20))
         renderer = sdl2ext.SoftwareSpriteRenderSystem(window)
         assert isinstance(renderer, sdl2ext.SpriteRenderSystem)
+        sdl2ext.fill(renderer.surface, BLACK)
 
-        with pytest.raises(AttributeError):
-            renderer.render(None, None, None)
-        with pytest.raises(AttributeError):
-            renderer.render([None, None],
-                          None, None)
-
+        # Test rendering a single sprite to different locations
+        surf = renderer.surface
         for x, y in ((0, 0), (3, 3), (20, 20), (1, 12), (5, 6)):
             sp1.position = x, y
             renderer.render(sp1)
-            view = sdl2ext.PixelView(renderer.surface)
-            self.check_pixels(view, 20, 20, sp1, 0xFF0000, (0x0,))
-            del view
-            sdl2ext.fill(renderer.surface, 0x0)
+            self.check_pixels(surf, 20, 20, sp1, RED, [BLACK])
+            sdl2ext.fill(surf, BLACK)
+        
+        # Test rendering multiple sprites in different positions
         sp1.position = 0, 0
         sp2.position = 14, 1
         renderer.render(sprites)
-        view = sdl2ext.PixelView(renderer.surface)
-        self.check_pixels(view, 20, 20, sp1, 0xFF0000, (0x0, 0x00FF00))
-        self.check_pixels(view, 20, 20, sp2, 0x00FF00, (0x0, 0xFF0000))
-        del view
-        sdl2ext.fill(renderer.surface, 0x0)
+        self.check_pixels(surf, 20, 20, sp1, RED, [BLACK, BLUE])
+        self.check_pixels(surf, 20, 20, sp2, BLUE, [BLACK, RED])
+        sdl2ext.fill(surf, BLACK)
+
+        # Test rendering multiple sprites with an x/y offset
         renderer.render(sprites, 1, 2)
-        view = sdl2ext.PixelView(renderer.surface)
-        self.check_pixels(view, 20, 20, sp1, 0xFF0000, (0x0, 0x00FF00), 1, 2)
-        self.check_pixels(view, 20, 20, sp2, 0x00FF00, (0x0, 0xFF0000), 1, 2)
-        del view
+        self.check_pixels(surf, 20, 20, sp1, RED, [BLACK, BLUE], 1, 2)
+        self.check_pixels(surf, 20, 20, sp2, BLUE, [BLACK, RED], 1, 2)
 
     def test_SoftwareSpriteRenderSystem_process(self):
+        # Create two software sprites for testing & give them depths
         sf1 = SDL_CreateRGBSurface(0, 5, 10, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
-        sp1.depth = 0
-        sdl2ext.fill(sp1, 0xFF0000)
-
+        sdl2ext.fill(sp1, RED)
         sf2 = SDL_CreateRGBSurface(0, 5, 10, 32, 0, 0, 0, 0)
         sp2 = sdl2ext.SoftwareSprite(sf2.contents, True)
+        sdl2ext.fill(sp2, BLUE)
+        sp1.depth = 0
         sp2.depth = 99
-        sdl2ext.fill(sp2, 0x00FF00)
         sprites = [sp1, sp2]
 
+        # Create a window and renderer for the tests
         window = sdl2ext.Window("Test", size=(20, 20))
         renderer = sdl2ext.SoftwareSpriteRenderSystem(window)
+        assert isinstance(renderer, sdl2ext.SpriteRenderSystem)
+        sdl2ext.fill(renderer.surface, BLACK)
 
+        # Make sure only sp2 visible on surface, since its depth is higher
         renderer.process("fakeworld", sprites)
-        view = sdl2ext.PixelView(renderer.surface)
-        # Only sp2 wins, since its depth is higher
-        self.check_pixels(view, 20, 20, sp1, 0x00FF00, (0x0,))
-        self.check_pixels(view, 20, 20, sp2, 0x00FF00, (0x0,))
-        del view
-
-        with pytest.raises(TypeError):
-            renderer.process(None, None)
+        self.check_pixels(renderer.surface, 20, 20, sp1, BLUE, [BLACK])
+        self.check_pixels(renderer.surface, 20, 20, sp2, BLUE, [BLACK])
 
     @pytest.mark.skip("not implemented")
     def test_TextureSpriteRenderSystem(self):
