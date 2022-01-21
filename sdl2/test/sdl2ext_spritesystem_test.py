@@ -9,6 +9,7 @@ from sdl2.render import (
 )
 from sdl2.surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.pixels import SDL_MapRGBA
+from sdl2.error import SDL_GetError, SDL_ClearError
 
 RESOURCES = Resources(__file__, "resources")
 
@@ -16,42 +17,40 @@ BLACK = (0, 0, 0, 255)
 RED = (255, 0, 0, 255)
 BLUE = (0, 0, 255, 255)
 
+sprite_test_sizes = [
+    (1, 1), (100, 100), (16, 32), (55, 77), (20, 4)
+]
 
-class TestSDL2ExtSpriteSystem(object):
+
+def check_pixels(surf, w, h, sprite, c1, c2, cx=0, cy=0):
+    cx = cx + sprite.x
+    cy = cy + sprite.y
+    cw, ch = sprite.size
+    cmy = cy + ch
+    cmx = cx + cw
+    c1 = SDL_MapRGBA(surf.format, c1[0], c1[1], c1[2], c1[3])
+    c2 = [SDL_MapRGBA(surf.format, c[0], c[1], c[2], c[3]) for c in c2]
+    view = sdl2ext.PixelView(surf)
+    for y in range(w):
+        for x in range(h):
+            if cy <= y < cmy and cx <= x < cmx:
+                assert view[y][x] == c1
+            else:
+                assert view[y][x] in c2
+    del view
+
+@pytest.fixture(autouse=True)
+def sdl_cleanup():
+    SDL_ClearError()
+    yield
+    SDL_ClearError()
+    gc.collect()
+
+
+class TestSpriteFactory(object):
     __tags__ = ["sdl", "sdl2ext"]
 
-    @classmethod
-    def setup_class(cls):
-        try:
-            sdl2ext.init()
-        except sdl2ext.SDLError:
-            raise pytest.skip('Video subsystem not supported')
-
-    @classmethod
-    def teardown_class(cls):
-        sdl2ext.quit()
-
-    def teardown_method(self):
-        gc.collect()
-
-    def check_pixels(self, surf, w, h, sprite, c1, c2, cx=0, cy=0):
-        cx = cx + sprite.x
-        cy = cy + sprite.y
-        cw, ch = sprite.size
-        cmy = cy + ch
-        cmx = cx + cw
-        c1 = SDL_MapRGBA(surf.format, c1[0], c1[1], c1[2], c1[3])
-        c2 = [SDL_MapRGBA(surf.format, c[0], c[1], c[2], c[3]) for c in c2]
-        view = sdl2ext.PixelView(surf)
-        for y in range(w):
-            for x in range(h):
-                if cy <= y < cmy and cx <= x < cmx:
-                    assert view[y][x] == c1
-                else:
-                    assert view[y][x] in c2
-        del view
-
-    def test_SpriteFactory(self):
+    def test_init(self, with_sdl):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         assert isinstance(factory, sdl2ext.SpriteFactory)
         assert factory.default_args == {}
@@ -60,7 +59,7 @@ class TestSDL2ExtSpriteSystem(object):
         assert isinstance(factory, sdl2ext.SpriteFactory)
         assert factory.default_args == {"bananas": "tasty"}
 
-        window = sdl2ext.Window("Test", size=(1, 1))
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.Renderer(window)
 
         factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
@@ -74,41 +73,33 @@ class TestSDL2ExtSpriteSystem(object):
             sdl2ext.SpriteFactory("Test")
         with pytest.raises(ValueError):
             sdl2ext.SpriteFactory(-456)
-        with pytest.raises(ValueError):
-            sdl2ext.SpriteFactory(123)
-        with pytest.raises(ValueError):
-            sdl2ext.SpriteFactory(sdl2ext.TEXTURE)
 
-    def test_SpriteFactory_create_sprite(self):
-        window = sdl2ext.Window("Test", size=(1, 1))
+    def test_create_sprite(self, with_sdl):
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.Renderer(window)
         tfactory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
         sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
 
-        for w in range(0, 100):
-            for h in range(0, 100):
-                for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
-                    sprite = sfactory.create_sprite(size=(w, h), bpp=bpp)
-                    assert isinstance(sprite, sdl2ext.SoftwareSprite)
+        for w, h in sprite_test_sizes:
+            for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
+                sprite = sfactory.create_sprite(size=(w, h), bpp=bpp)
+                assert isinstance(sprite, sdl2ext.SoftwareSprite)
+                assert SDL_GetError() == b""
+            sprite = tfactory.create_sprite(size=(w, h))
+            assert isinstance(sprite, sdl2ext.TextureSprite)
+            assert SDL_GetError() == b""
 
-                if w == 0 or h == 0:
-                    with pytest.raises(sdl2ext.SDLError):
-                        tfactory.create_sprite(size=(w, h))
-                    continue
-                sprite = tfactory.create_sprite(size=(w, h))
-                assert isinstance(sprite, sdl2ext.TextureSprite)
+        with pytest.raises(sdl2ext.SDLError):
+            tfactory.create_sprite(size=(0, 1))
 
-    def test_SpriteFactory_create_software_sprite(self):
+    def test_create_software_sprite(self, with_sdl):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
-        for w in range(0, 100):
-            for h in range(0, 100):
-                for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
-                    sprite = factory.create_software_sprite((w, h), bpp)
-                    assert isinstance(sprite, sdl2ext.SoftwareSprite)
+        for w, h in sprite_test_sizes:
+            for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
+                sprite = factory.create_software_sprite((w, h), bpp)
+                assert isinstance(sprite, sdl2ext.SoftwareSprite)
+                assert SDL_GetError() == b""
 
-        #self.assertRaises(ValueError, factory.create_software_sprite, (-1,-1))
-        #self.assertRaises(ValueError, factory.create_software_sprite, (-10,5))
-        #self.assertRaises(ValueError, factory.create_software_sprite, (10,-5))
         with pytest.raises(TypeError):
             factory.create_software_sprite(size=None)
         with pytest.raises(sdl2ext.SDLError):
@@ -116,32 +107,39 @@ class TestSDL2ExtSpriteSystem(object):
         with pytest.raises(TypeError):
             factory.create_software_sprite(masks=5)
         with pytest.raises((ArgumentError, TypeError)):
-            factory.create_software_sprite(size=(10, 10),
-                          masks=(None, None, None, None))
+            factory.create_software_sprite(
+                size=(10, 10), masks=(None, None, None, None)
+            )
         with pytest.raises((ArgumentError, TypeError)):
-            factory.create_software_sprite(size=(10, 10),
-                          masks=("Test", 1, 2, 3))
+            factory.create_software_sprite(
+                size=(10, 10), masks=("Test", 1, 2, 3)
+            )
 
-    def test_SpriteFactory_create_texture_sprite(self):
-        window = sdl2ext.Window("Test", size=(1, 1))
+    def test_create_texture_sprite(self, with_sdl):
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.Renderer(window)
         factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
-        for w in range(1, 100):
-            for h in range(1, 100):
-                sprite = factory.create_texture_sprite(renderer, size=(w, h))
-                assert isinstance(sprite, sdl2ext.TextureSprite)
-                del sprite
-
-        # Test different access flags
-        for flag in (SDL_TEXTUREACCESS_STATIC, SDL_TEXTUREACCESS_STREAMING,
-                     SDL_TEXTUREACCESS_TARGET):
-            sprite = factory.create_texture_sprite(renderer, size=(64, 64),
-                                                   access=flag)
+        for w, h in sprite_test_sizes:
+            sprite = factory.create_texture_sprite(renderer, size=(w, h))
             assert isinstance(sprite, sdl2ext.TextureSprite)
+            assert SDL_GetError() == b""
             del sprite
 
-    def test_SpriteFactory_from_image(self):
-        window = sdl2ext.Window("Test", size=(1, 1))
+        # Test different access flags
+        for flag in (
+            SDL_TEXTUREACCESS_STATIC,
+            SDL_TEXTUREACCESS_STREAMING,
+            SDL_TEXTUREACCESS_TARGET
+        ):
+            sprite = factory.create_texture_sprite(
+                renderer, size=(64, 64), access=flag
+            )
+            assert isinstance(sprite, sdl2ext.TextureSprite)
+            assert SDL_GetError() == b""
+            del sprite
+
+    def test_from_image(self, with_sdl):
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.Renderer(window)
         tfactory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
         sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -160,14 +158,14 @@ class TestSDL2ExtSpriteSystem(object):
                 factory.from_image(12345)
 
     @pytest.mark.skip("not implemented")
-    def test_SpriteFactory_from_object(self):
-        window = sdl2ext.Window("Test", size=(1, 1))
+    def test_from_object(self, with_sdl):
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.Renderer(window)
         tfactory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
         sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
 
-    def test_SpriteFactory_from_surface(self):
-        window = sdl2ext.Window("Test", size=(1, 1))
+    def test_from_surface(self, with_sdl):
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.Renderer(window)
         tfactory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
         sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
@@ -185,11 +183,8 @@ class TestSDL2ExtSpriteSystem(object):
                 factory.from_surface(None)
             with pytest.raises((AttributeError, ArgumentError, TypeError)):
                 factory.from_surface("test")
-            # TODO: crashes pypy 2.0
-            #self.assertRaises((AttributeError, ArgumentError, TypeError),
-            #                  factory.from_surface, 1234)
 
-    def test_SpriteFactory_from_text(self):
+    def test_from_text(self, with_sdl):
         sfactory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         fm = sdl2ext.FontManager(RESOURCES.get_path("tuffy.ttf"))
 
@@ -205,21 +200,25 @@ class TestSDL2ExtSpriteSystem(object):
         assert isinstance(sprite, sdl2ext.SoftwareSprite)
 
         # Get text from a texture sprite factory
-        window = sdl2ext.Window("Test", size=(1, 1))
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.Renderer(window)
-        tfactory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE,
-                                         renderer=renderer,
-                                         fontmanager=fm)
+        tfactory = sdl2ext.SpriteFactory(
+            sdl2ext.TEXTURE, renderer=renderer, fontmanager=fm
+        )
         sprite = tfactory.from_text("Test", alias="tuffy")
         assert isinstance(sprite, sdl2ext.TextureSprite)
 
-    def test_SpriteRenderSystem(self):
+
+class TestSpriteRenderSystem(object):
+    __tags__ = ["sdl", "sdl2ext"]
+
+    def test_init(self, with_sdl):
         renderer = sdl2ext.SpriteRenderSystem()
         assert isinstance(renderer, sdl2ext.SpriteRenderSystem)
         assert renderer.sortfunc is not None
         assert sdl2ext.Sprite in renderer.componenttypes
 
-    def test_SpriteRenderSystem_sortfunc(self):
+    def test_sortfunc(self, with_sdl):
         def func(p):
             pass
 
@@ -238,24 +237,19 @@ class TestSDL2ExtSpriteSystem(object):
             setf(renderer, 1234)
 
     @pytest.mark.skip("not implemented")
-    def test_SpriteRenderSystem_render(self):
+    def test_render(self, with_sdl):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_SpriteRenderSystem_process(self):
+    def test_process(self, with_sdl):
         pass
 
-    def test_SoftwareSpriteRenderSystem(self):
-        with pytest.raises(TypeError):
-            sdl2ext.SoftwareSpriteRenderSystem()
-        with pytest.raises(TypeError):
-            sdl2ext.SoftwareSpriteRenderSystem(None)
-        with pytest.raises(TypeError):
-            sdl2ext.SoftwareSpriteRenderSystem("Test")
-        with pytest.raises(TypeError):
-            sdl2ext.SoftwareSpriteRenderSystem(12345)
 
-        window = sdl2ext.Window("Test", size=(1, 1))
+class TestSoftwareSpriteRenderSystem(object):
+    __tags__ = ["sdl", "sdl2ext"]
+
+    def test_init(self, with_sdl):
+        window = sdl2ext.Window("Test", size=(10, 10))
         renderer = sdl2ext.SoftwareSpriteRenderSystem(window)
         assert isinstance(renderer, sdl2ext.SpriteRenderSystem)
         assert renderer.window == window.window
@@ -270,7 +264,12 @@ class TestSDL2ExtSpriteSystem(object):
         assert not (sdl2ext.Sprite in renderer.componenttypes)
         assert sdl2ext.SoftwareSprite in renderer.componenttypes
 
-    def test_SoftwareSpriteRenderSystem_render(self):
+        with pytest.raises(TypeError):
+            sdl2ext.SoftwareSpriteRenderSystem()
+        with pytest.raises(TypeError):
+            sdl2ext.SoftwareSpriteRenderSystem(None)
+
+    def test_render(self, with_sdl):
         # Create two software sprites for testing
         sf1 = SDL_CreateRGBSurface(0, 12, 7, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
@@ -291,23 +290,23 @@ class TestSDL2ExtSpriteSystem(object):
         for x, y in ((0, 0), (3, 3), (20, 20), (1, 12), (5, 6)):
             sp1.position = x, y
             renderer.render(sp1)
-            self.check_pixels(surf, 20, 20, sp1, RED, [BLACK])
+            check_pixels(surf, 20, 20, sp1, RED, [BLACK])
             sdl2ext.fill(surf, BLACK)
         
         # Test rendering multiple sprites in different positions
         sp1.position = 0, 0
         sp2.position = 14, 1
         renderer.render(sprites)
-        self.check_pixels(surf, 20, 20, sp1, RED, [BLACK, BLUE])
-        self.check_pixels(surf, 20, 20, sp2, BLUE, [BLACK, RED])
+        check_pixels(surf, 20, 20, sp1, RED, [BLACK, BLUE])
+        check_pixels(surf, 20, 20, sp2, BLUE, [BLACK, RED])
         sdl2ext.fill(surf, BLACK)
 
         # Test rendering multiple sprites with an x/y offset
         renderer.render(sprites, 1, 2)
-        self.check_pixels(surf, 20, 20, sp1, RED, [BLACK, BLUE], 1, 2)
-        self.check_pixels(surf, 20, 20, sp2, BLUE, [BLACK, RED], 1, 2)
+        check_pixels(surf, 20, 20, sp1, RED, [BLACK, BLUE], 1, 2)
+        check_pixels(surf, 20, 20, sp2, BLUE, [BLACK, RED], 1, 2)
 
-    def test_SoftwareSpriteRenderSystem_process(self):
+    def test_process(self, with_sdl):
         # Create two software sprites for testing & give them depths
         sf1 = SDL_CreateRGBSurface(0, 5, 10, 32, 0, 0, 0, 0)
         sp1 = sdl2ext.SoftwareSprite(sf1.contents, True)
@@ -327,17 +326,21 @@ class TestSDL2ExtSpriteSystem(object):
 
         # Make sure only sp2 visible on surface, since its depth is higher
         renderer.process("fakeworld", sprites)
-        self.check_pixels(renderer.surface, 20, 20, sp1, BLUE, [BLACK])
-        self.check_pixels(renderer.surface, 20, 20, sp2, BLUE, [BLACK])
+        check_pixels(renderer.surface, 20, 20, sp1, BLUE, [BLACK])
+        check_pixels(renderer.surface, 20, 20, sp2, BLUE, [BLACK])
+
+
+class TestTextureSpriteRenderSystem(object):
+    __tags__ = ["sdl", "sdl2ext"]
 
     @pytest.mark.skip("not implemented")
-    def test_TextureSpriteRenderSystem(self):
+    def test_init(self, with_sdl):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_TextureSpriteRenderSystem_render(self):
+    def test_render(self, with_sdl):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_TextureSpriteRenderSystem_process(self):
+    def test_process(self, with_sdl):
         pass
