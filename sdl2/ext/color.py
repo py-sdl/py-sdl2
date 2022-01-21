@@ -1,5 +1,7 @@
 from math import floor
-from .compat import long, isiterable
+
+if sys.version_info[0] >= 3:
+    long = int
 
 __all__ = ["Color", "is_rgb_color", "is_rgba_color", "argb_to_color", "ARGB",
            "rgba_to_color", "RGBA", "string_to_color", "convert_to_color",
