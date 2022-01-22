@@ -480,9 +480,9 @@ class TestSDLVideo(object):
         video.SDL_SetWindowPosition(window, 0, 150)
         video.SDL_GetWindowPosition(window, byref(px), byref(py))
         assert (px.value, py.value) == (0, 150)
-        video.SDL_SetWindowPosition(window, 600, 900)
+        video.SDL_SetWindowPosition(window, 480, 320)
         video.SDL_GetWindowPosition(window, byref(px), byref(py))
-        assert (px.value, py.value) == (600, 900)
+        assert (px.value, py.value) == (480, 320)
         video.SDL_DestroyWindow(window)
 
     def test_SDL_GetSetWindowSize(self):
