@@ -14,12 +14,6 @@ if sys.byteorder == "big":
     RGBA32.reverse()
     RGBX32.reverse()
 
-@pytest.fixture(autouse=True)
-def err_cleanup():
-    sdl2.SDL_ClearError()
-    yield
-    sdl2.SDL_ClearError()
-
 
 # Test custom macros
 
@@ -233,13 +227,13 @@ def test_SDL_SetPaletteColors():
     pixels.SDL_FreePalette(palette)
 
 def test_SDL_SetPixelFormatPalette():
-    palette = pixels.SDL_AllocPalette(4)
+    palette = pixels.SDL_AllocPalette(2)
     assert isinstance(palette.contents, pixels.SDL_Palette)
     palette.contents.colors[1].r = 128
     palette.contents.colors[1].g = 64
     palette.contents.colors[1].b = 0
 
-    pixfmt = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_INDEX4MSB)
+    pixfmt = pixels.SDL_AllocFormat(pixels.SDL_PIXELFORMAT_INDEX1MSB)
     assert isinstance(pixfmt.contents, pixels.SDL_PixelFormat)
     ret = pixels.SDL_SetPixelFormatPalette(pixfmt, palette)
     assert sdl2.SDL_GetError() == b""
