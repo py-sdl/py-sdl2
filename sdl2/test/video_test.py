@@ -23,6 +23,9 @@ try:
 except:
     pass
 
+# Some tests don't work right on PyPy
+is_pypy = hasattr(sys, "pypy_version_info")
+
 if sys.version_info[0] >= 3:
     long = int
 
@@ -398,6 +401,7 @@ def test_SDL_SetWindowIcon(window):
     video.SDL_SetWindowIcon(window, sf)
     assert SDL_GetError() == b""
 
+@pytest.mark.xfail(is_pypy, reason="PyPy can't create proper py_object values")
 def test_SDL_GetSetWindowData(window):
     values = {
         b"text": py_object("Teststring"),
