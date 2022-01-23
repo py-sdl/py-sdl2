@@ -39,13 +39,6 @@ def check_pixels(surf, w, h, sprite, c1, c2, cx=0, cy=0):
                 assert view[y][x] in c2
     del view
 
-@pytest.fixture(autouse=True)
-def sdl_cleanup():
-    SDL_ClearError()
-    yield
-    SDL_ClearError()
-    gc.collect()
-
 
 class TestSpriteFactory(object):
     __tags__ = ["sdl", "sdl2ext"]
