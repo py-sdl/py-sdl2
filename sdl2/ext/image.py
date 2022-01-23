@@ -171,6 +171,7 @@ def load_img(path, as_argb=True):
         img_surf = surfcopy
         if not img_surf:
             raise_sdl_err("converting '{0}' to ARGB format".format(fname))
+        error.SDL_ClearError() # Clear any non-critical errors during loading
 
     return img_surf.contents
 
