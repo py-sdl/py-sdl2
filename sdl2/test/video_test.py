@@ -15,7 +15,9 @@ from sdl2 import video, rect, surface, SDL_GetError
 DRIVER_DUMMY = False
 DRIVER_X11 = False
 try:
+    sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
     driver_name = video.SDL_GetCurrentVideoDriver()
+    sdl2.SDL_Quit()
     DRIVER_DUMMY = driver_name == b"dummy"
     DRIVER_X11 = driver_name == b"x11"
 except:
@@ -470,9 +472,10 @@ def test_SDL_SetWindowBordered(window):
     border_flag = video.SDL_WINDOW_BORDERLESS
     assert video.SDL_GetWindowFlags(window) & border_flag == border_flag
     video.SDL_SetWindowBordered(window, SDL_TRUE)
-    assert not video.SDL_GetWindowFlags(window) & border_flag == border_flag
-    video.SDL_SetWindowBordered(window, SDL_FALSE)
-    assert video.SDL_GetWindowFlags(window) & border_flag == border_flag
+    if not DRIVER_DUMMY:
+        assert not video.SDL_GetWindowFlags(window) & border_flag == border_flag
+        video.SDL_SetWindowBordered(window, SDL_FALSE)
+        assert video.SDL_GetWindowFlags(window) & border_flag == border_flag
 
 def test_SDL_ShowHideWindow(window):
     shown_flag = video.SDL_WINDOW_SHOWN
@@ -495,7 +498,8 @@ def test_SDL_MaximizeWindow(decorated_window):
     assert video.SDL_GetWindowFlags(window) & shown_flag == shown_flag
     assert not video.SDL_GetWindowFlags(window) & max_flag == max_flag
     video.SDL_MaximizeWindow(window)
-    assert video.SDL_GetWindowFlags(window) & max_flag == max_flag
+    if not DRIVER_DUMMY:
+        assert video.SDL_GetWindowFlags(window) & max_flag == max_flag
 
 def test_SDL_MinimizeRestoreWindow(decorated_window):
     shown_flag = video.SDL_WINDOW_SHOWN
@@ -505,9 +509,11 @@ def test_SDL_MinimizeRestoreWindow(decorated_window):
     assert video.SDL_GetWindowFlags(window) & shown_flag == shown_flag
     assert not video.SDL_GetWindowFlags(window) & min_flag == min_flag
     video.SDL_MinimizeWindow(window)
-    assert video.SDL_GetWindowFlags(window) & min_flag == min_flag
+    if not DRIVER_DUMMY:
+        assert video.SDL_GetWindowFlags(window) & min_flag == min_flag
     video.SDL_RestoreWindow(window)
-    assert not video.SDL_GetWindowFlags(window) & min_flag == min_flag
+    if not DRIVER_DUMMY:
+        assert not video.SDL_GetWindowFlags(window) & min_flag == min_flag
 
 def test_SDL_SetWindowFullscreen(with_sdl):
     # TODO: Add non-hidden test once annoying test toggle implemented
