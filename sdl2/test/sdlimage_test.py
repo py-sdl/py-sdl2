@@ -66,6 +66,17 @@ def with_sdl_image(with_sdl):
     yield
     sdlimage.IMG_Quit()
 
+def _get_image_path(fmt):
+    fname = "surfacetest.{0}".format(fmt)
+    testdir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(testdir, "resources", fname)
+
+def _verify_img_load(surf):
+    if not surf:
+        assert sdlimage.IMG_GetError() == b""
+        assert surf
+    assert isinstance(surf.contents, surface.SDL_Surface)
+
 
 def test_IMG_Linked_Version():
     v = sdlimage.IMG_Linked_Version()
@@ -99,12 +110,6 @@ def test_IMG_Init():
     assert len(supported) == len(libs.keys())
 
 
-def _get_image_path(fmt):
-    fname = "surfacetest.{0}".format(fmt)
-    testdir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(testdir, "resources", fname)
-
-
 class TestSDLImage(object):
     __tags__ = ["sdl", "sdlimage"]
 
@@ -112,8 +117,7 @@ class TestSDLImage(object):
         for fmt in formats:
             fpath = _get_image_path(fmt)
             sf = sdlimage.IMG_Load(fpath.encode("utf-8"))
-            assert sdlimage.IMG_GetError() == b""
-            assert isinstance(sf.contents, surface.SDL_Surface)
+            _verify_img_load(sf)
             surface.SDL_FreeSurface(sf)
 
     def test_IMG_Load_RW(self, with_sdl_image):
@@ -124,8 +128,7 @@ class TestSDLImage(object):
             fpath = _get_image_path(fmt)
             with open(fpath, "rb") as fp:
                 sf = sdlimage.IMG_Load_RW(rwops.rw_from_object(fp), False)
-            assert sdlimage.IMG_GetError() == b""
-            assert isinstance(sf.contents, surface.SDL_Surface)
+            _verify_img_load(sf)
             surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadTexture(self, with_sdl_image):
@@ -137,7 +140,9 @@ class TestSDLImage(object):
                 continue
             fpath = _get_image_path(fmt)
             tex = sdlimage.IMG_LoadTexture(rd, fpath.encode("utf-8"))
-            assert sdlimage.IMG_GetError() == b""
+            if not tex:
+                assert sdlimage.IMG_GetError() == b""
+                assert tex
             assert isinstance(tex.contents, render.SDL_Texture)
             render.SDL_DestroyTexture(tex)
 
@@ -154,8 +159,9 @@ class TestSDLImage(object):
             fpath = _get_image_path(fmt)
             with open(fpath, "rb") as fp:
                 tex = sdlimage.IMG_LoadTexture_RW(rd, rwops.rw_from_object(fp), 0)
-                assert sdlimage.IMG_GetError() == b""
-                assert tex is not None
+                if not tex:
+                    assert sdlimage.IMG_GetError() == b""
+                    assert tex
                 assert isinstance(tex.contents, render.SDL_Texture)
                 render.SDL_DestroyTexture(tex)
 
@@ -174,8 +180,9 @@ class TestSDLImage(object):
                 rw = rwops.rw_from_object(fp)
                 fmtx = fmt.upper().encode("utf-8")
                 tex = sdlimage.IMG_LoadTextureTyped_RW(rd, rw, 0, fmtx)
-                assert sdlimage.IMG_GetError() == b""
-                assert tex is not None
+                if not tex:
+                    assert sdlimage.IMG_GetError() == b""
+                    assert tex
                 assert isinstance(tex.contents, render.SDL_Texture)
             render.SDL_DestroyTexture(tex)
         render.SDL_DestroyRenderer(rd)
@@ -191,80 +198,70 @@ class TestSDLImage(object):
                 sf = sdlimage.IMG_LoadTyped_RW(
                     rwops.rw_from_object(fp), False, fmt.upper().encode("utf-8")
                 )
-                assert sdlimage.IMG_GetError() == b""
-                assert isinstance(sf.contents, surface.SDL_Surface)
+                _verify_img_load(sf)
                 surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadBMP_RW(self, with_sdl_image):
         fp = open(_get_image_path("bmp"), "rb")
         sf = sdlimage.IMG_LoadBMP_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadCUR_RW(self, with_sdl_image):
         fp = open(_get_image_path("cur"), "rb")
         sf = sdlimage.IMG_LoadCUR_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadGIF_RW(self, with_sdl_image):
         fp = open(_get_image_path("gif"), "rb")
         sf = sdlimage.IMG_LoadGIF_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadICO_RW(self, with_sdl_image):
         fp = open(_get_image_path("ico"), "rb")
         sf = sdlimage.IMG_LoadICO_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadJPG_RW(self, with_sdl_image):
         fp = open(_get_image_path("jpg"), "rb")
         sf = sdlimage.IMG_LoadJPG_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadLBM_RW(self, with_sdl_image):
         fp = open(_get_image_path("lbm"), "rb")
         sf = sdlimage.IMG_LoadLBM_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadPCX_RW(self, with_sdl_image):
         fp = open(_get_image_path("pcx"), "rb")
         sf = sdlimage.IMG_LoadPCX_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadPNG_RW(self, with_sdl_image):
         fp = open(_get_image_path("png"), "rb")
         sf = sdlimage.IMG_LoadPNG_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadPNM_RW(self, with_sdl_image):
         fp = open(_get_image_path("pnm"), "rb")
         sf = sdlimage.IMG_LoadPNM_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     @pytest.mark.skipif(sdlimage.dll.version < 2002, reason="Added in 2.0.2")
@@ -273,24 +270,21 @@ class TestSDLImage(object):
         fp = open(_get_image_path("svg"), "rb")
         sf = sdlimage.IMG_LoadSVG_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadTGA_RW(self, with_sdl_image):
         fp = open(_get_image_path("tga"), "rb")
         sf = sdlimage.IMG_LoadTGA_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadTIF_RW(self, with_sdl_image):
         fp = open(_get_image_path("tif"), "rb")
         sf = sdlimage.IMG_LoadTIF_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     @pytest.mark.xfail(bad_webp, reason="WEBP broken in 2.0.2 binaries for 32-bit Windows")
@@ -298,8 +292,7 @@ class TestSDLImage(object):
         fp = open(_get_image_path("webp"), "rb")
         sf = sdlimage.IMG_LoadWEBP_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     @pytest.mark.xfail(bad_xcf, reason="XCF currently broken on some platforms")
@@ -307,16 +300,14 @@ class TestSDLImage(object):
         fp = open(_get_image_path("xcf"), "rb")
         sf = sdlimage.IMG_LoadXCF_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_LoadXPM_RW(self, with_sdl_image):
         fp = open(_get_image_path("xpm"), "rb")
         sf = sdlimage.IMG_LoadXPM_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     @pytest.mark.skip("not implemented")
@@ -324,8 +315,7 @@ class TestSDLImage(object):
         fp = open(_get_image_path("xv"), "rb")
         sf = sdlimage.IMG_LoadXV_RW(rwops.rw_from_object(fp))
         fp.close()
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_isBMP(self, with_sdl_image):
@@ -498,8 +488,7 @@ class TestSDLImage(object):
                 xpm += line[1:-3]
         pxpm = ctypes.c_char_p(xpm)
         sf = sdlimage.IMG_ReadXPMFromArray(ctypes.byref(pxpm))
-        assert sdlimage.IMG_GetError() == b""
-        assert isinstance(sf.contents, surface.SDL_Surface)
+        _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
     def test_IMG_SavePNG(self, tmpdir):
