@@ -10,7 +10,9 @@ from sdl2 import joystick
 
 # Get status of joystick support/availability before running tests
 any_joysticks = False
-joystick_works = SDL_Init(SDL_INIT_JOYSTICK) == 0
+SDL_ClearError()
+ret = SDL_Init(SDL_INIT_JOYSTICK)
+joystick_works = ret == 0 and SDL_GetError() == b""
 if joystick_works:
     devices = joystick.SDL_NumJoysticks()
     if sdl2.dll.version >= 2014:

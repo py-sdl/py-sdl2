@@ -24,14 +24,15 @@ def test_SDL_Init():
     for name, flags in subsystems.items():
         ret = sdl2.SDL_Init(flags)
         err = sdl2.SDL_GetError()
+        if name in ['timer', 'audio', 'video', 'events']:
+            assert ret == 0
         if err:
             err = err.decode('utf-8')
             print("Error loading {0} subsystem: {1}".format(name, err))
             sdl2.SDL_ClearError()
-        if name in ['timer', 'audio', 'video', 'events']:
-            assert ret == 0
-        if sdl2.SDL_WasInit(0) & flags == flags:
-            supported.append(name)
+        else:
+            if ret == 0 and sdl2.SDL_WasInit(0) & flags == flags:
+                supported.append(name)
         sdl2.SDL_Quit()
     print("Supported SDL2 subsystems:")
     print(supported)
