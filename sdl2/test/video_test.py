@@ -734,6 +734,7 @@ def test_SDL_SetWindowInputFocus(window):
         assert SDL_GetError() == b""
         assert ret == 0
 
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GetSetWindowGammaRamp(window):
     vals = (Uint16 * 256)()
     pixels.SDL_CalculateGammaRamp(0.5, vals)
@@ -762,8 +763,9 @@ def test_SDL_SetWindowHitTest(self):
 def test_SDL_FlashWindow(window):
     # NOTE: Not the most comprehensive test, but it does test the basic bindings
     ret = video.SDL_FlashWindow(window, video.SDL_FLASH_BRIEFLY)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    if not DRIVER_DUMMY:
+        assert SDL_GetError() == b""
+        assert ret == 0
 
 def test_screensaver(with_sdl):
     video.SDL_EnableScreenSaver()
