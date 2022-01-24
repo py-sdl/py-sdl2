@@ -9,9 +9,6 @@ from sdl2 import surface, render
 sdlgfx = pytest.importorskip("sdl2.sdlgfx")
 
 
-# Framerate test doesn't work right on Github Actions macOS CI
-is_macos_ci = sys.platform == "darwin" and "PYSDL2_DLL_VERSION" in os.environ
-
 
 @pytest.fixture(scope="module")
 def with_sdl():
@@ -72,7 +69,7 @@ class TestFramerate(object):
         sdlgfx.SDL_framerateDelay(manager)
         assert sdlgfx.SDL_getFramecount(manager) == 1
 
-    @pytest.mark.skipif(is_macos_ci, reason="Github macOS CI has wonky timing")
+    @pytest.mark.xfail(reason="Timing can be super wonky on CI platforms")
     def test_SDL_framerateDelay(self):
         manager = sdlgfx.FPSManager()
         sdlgfx.SDL_initFramerate(manager)
