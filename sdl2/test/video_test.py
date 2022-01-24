@@ -5,8 +5,8 @@ from ctypes.util import find_library
 from ctypes import c_int, c_ubyte, c_float, byref, cast, POINTER, py_object
 import pytest
 import sdl2
-from sdl2.stdinc import SDL_FALSE, SDL_TRUE
-from sdl2 import video, rect, surface, SDL_GetError
+from sdl2.stdinc import SDL_FALSE, SDL_TRUE, Uint16
+from sdl2 import video, rect, pixels, surface, SDL_GetError
 
 # TODO: Have optional environment variable to toggle annoying video tests
 # (e.g. fullscreen, window maximize/minimize, flash window)
@@ -42,6 +42,14 @@ def get_opengl_path():
         path = find_library(libname)
         if path is not None:
             return path
+
+@pytest.fixture
+def with_sdl_gl(with_sdl):
+    ret = video.SDL_GL_LoadLibrary(None)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    yield
+    video.SDL_GL_UnloadLibrary()
 
 @pytest.fixture
 def window(with_sdl):
@@ -262,6 +270,29 @@ def test_SDL_GetDisplayBounds(with_sdl):
         assert bounds.h > 0
         assert not rect.SDL_RectEmpty(bounds)
 
+@pytest.mark.skipif(sdl2.dll.version < 2005, reason="not available")
+def test_SDL_GetDisplayUsableBounds(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        bounds = rect.SDL_Rect()
+        ret = video.SDL_GetDisplayUsableBounds(index, byref(bounds))
+        assert ret == 0
+        assert not rect.SDL_RectEmpty(bounds)
+
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GetDisplayDPI(with_sdl):
+    numdisplays = video.SDL_GetNumVideoDisplays()
+    for index in range(numdisplays):
+        ddpi, hdpi, vdpi = c_float(0), c_float(0), c_float(0)
+        ret = video.SDL_GetDisplayDPI(
+            index, byref(ddpi), byref(hdpi), byref(vdpi)
+        )
+        assert SDL_GetError() == b""
+        assert ret == 0
+        assert ddpi.value >= 96.0
+        assert hdpi.value >= 96.0
+        assert vdpi.value >= 96.0
+
 @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
 def test_SDL_GetDisplayOrientation(with_sdl):
     numdisplays = video.SDL_GetNumVideoDisplays()
@@ -289,20 +320,6 @@ def test_GetDisplayInfo(with_sdl):
             res = " ({0}x{1} @ {2}Hz)".format(dm.w, dm.h, dm.refresh_rate)
             info += res
         print(info)
-
-def test_screensaver(with_sdl):
-    video.SDL_EnableScreenSaver()
-    assert video.SDL_IsScreenSaverEnabled() == SDL_TRUE
-    video.SDL_EnableScreenSaver()
-    assert video.SDL_IsScreenSaverEnabled() == SDL_TRUE
-    video.SDL_DisableScreenSaver()
-    assert video.SDL_IsScreenSaverEnabled() == SDL_FALSE
-    video.SDL_DisableScreenSaver()
-    assert video.SDL_IsScreenSaverEnabled() == SDL_FALSE
-    video.SDL_EnableScreenSaver()
-    assert video.SDL_IsScreenSaverEnabled() == SDL_TRUE
-    video.SDL_DisableScreenSaver()
-    assert video.SDL_IsScreenSaverEnabled() == SDL_FALSE
 
 def test_SDL_CreateDestroyWindow(with_sdl):
     flag = video.SDL_WINDOW_BORDERLESS
@@ -442,6 +459,29 @@ def test_SDL_GetSetWindowSize(window):
     video.SDL_GetWindowSize(window, byref(sx), byref(sy))
     assert (sx.value, sy.value) == (480, 320)
 
+def test_SDL_GetWindowBordersSize(window, decorated_window):
+    # Currently, only X11 and Windows video drivers support border size
+    supports_borders = video.SDL_GetCurrentVideoDriver() in [b"x11", b"windows"]
+    # For a decorated window, make sure all borders are >= 0
+    video.SDL_ShowWindow(decorated_window)
+    t, l, b, r = c_int(), c_int(), c_int(), c_int()
+    ret = video.SDL_GetWindowBordersSize(
+       decorated_window, byref(t), byref(l), byref(b), byref(r)
+    )
+    values = [x.value for x in (t, l, b, r)]
+    assert all([v >= 0 for v in values])
+    if supports_borders:
+        assert ret == 0
+    # Test again with a borderless window & make sure borders are all 0
+    video.SDL_ShowWindow(window)
+    ret = video.SDL_GetWindowBordersSize(
+        window, byref(t), byref(l), byref(b), byref(r)
+    )
+    values = [x.value for x in (t, l, b, r)]
+    assert all([v == 0 for v in values])
+    if supports_borders:
+        assert ret == 0
+
 def test_SDL_GetSetWindowMinimumSize(window):
     sx, sy = c_int(0), c_int(0)
     minx, miny = c_int(0), c_int(0)
@@ -480,6 +520,35 @@ def test_SDL_SetWindowBordered(window):
         assert not video.SDL_GetWindowFlags(window) & border_flag == border_flag
         video.SDL_SetWindowBordered(window, SDL_FALSE)
         assert video.SDL_GetWindowFlags(window) & border_flag == border_flag
+
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_SetWindowResizable(window):
+    flags = video.SDL_GetWindowFlags(window)
+    assert flags & video.SDL_WINDOW_RESIZABLE != video.SDL_WINDOW_RESIZABLE
+    video.SDL_SetWindowResizable(window, SDL_TRUE)
+    flags = video.SDL_GetWindowFlags(window)
+    assert flags & video.SDL_WINDOW_RESIZABLE == video.SDL_WINDOW_RESIZABLE
+    video.SDL_SetWindowResizable(window, SDL_FALSE)
+    flags = video.SDL_GetWindowFlags(window)
+    assert flags & video.SDL_WINDOW_RESIZABLE != video.SDL_WINDOW_RESIZABLE
+
+@pytest.mark.skip("Test doesn't work, may need to be interactive")
+@pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+def test_SDL_SetWindowAlwaysOnTop(with_sdl):
+    ON_TOP_FLAG = video.SDL_WINDOW_ALWAYS_ON_TOP
+    window = video.SDL_CreateWindow(
+        b"Always On Top", 10, 100, 10, 10, ON_TOP_FLAG
+    )
+    video.SDL_ShowWindow(window)
+    flags = video.SDL_GetWindowFlags(window)
+    assert flags & ON_TOP_FLAG == ON_TOP_FLAG
+    video.SDL_SetWindowAlwaysOnTop(window, SDL_FALSE)
+    flags = video.SDL_GetWindowFlags(window)
+    assert flags & ON_TOP_FLAG != ON_TOP_FLAG
+    video.SDL_SetWindowAlwaysOnTop(window, SDL_TRUE)
+    flags = video.SDL_GetWindowFlags(window)
+    assert flags & ON_TOP_FLAG == ON_TOP_FLAG
+    video.SDL_DestroyWindow(window)
 
 def test_SDL_ShowHideWindow(window):
     shown_flag = video.SDL_WINDOW_SHOWN
@@ -599,73 +668,138 @@ def test_SDL_GetGrabbedWindow(window):
     # NOTE: Should implement this once the above tests are fixed
     pass
 
+@pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
+def test_SDL_GetSetWindowMouseRect(with_sdl):
+    flags = video.SDL_WINDOW_BORDERLESS
+    bounds_in = rect.SDL_Rect(0, 0, 100, 50)
+    window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flags)
+    # Try setting a mouse boundary
+    ret = video.SDL_SetWindowMouseRect(window, byref(bounds_in))
+    assert SDL_GetError() == b""
+    assert ret == 0
+    bounds_out = video.SDL_GetWindowMouseRect(window)
+    assert bounds_out != None
+    assert bounds_in == bounds_out.contents
+    # Try removing the boundary
+    ret = video.SDL_SetWindowMouseRect(window, None)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    bounds_out = video.SDL_GetWindowMouseRect(window)
+    assert not bounds_out  # bounds_out should be null pointer
+    video.SDL_DestroyWindow(window)
 
-# TODO: mostly covers positive tests right now - fix this!
-class TestSDLVideo(object):
-    __tags__ = ["sdl"]
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GetSetWindowBrightness(window):
+    orig = video.SDL_GetWindowBrightness(window)
+    assert isinstance(orig, float)
+    assert orig >= 0
+    # Go from 0.0, 0.1 ... to 1.0
+    gammas = (x * 0.1 for x in range(0, 10))
+    count = 0
+    for b in gammas:
+        ret = video.SDL_SetWindowBrightness(window, b)
+        if ret == 0:
+            val = video.SDL_GetWindowBrightness(window)
+            assert round(abs(val-b), 7) == 0
+            count += 1
+    assert count > 0
 
-    @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
-    def test_SDL_GetSetWindowMouseRect(self):
-        flags = video.SDL_WINDOW_BORDERLESS
-        bounds_in = rect.SDL_Rect(0, 0, 100, 50)
-        window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flags)
-        # Try setting a mouse boundary
-        ret = video.SDL_SetWindowMouseRect(window, byref(bounds_in))
-        err = SDL_GetError()
+def test_SDL_GetSetWindowOpacity(window):
+    opacity = c_float(0)
+    ret = video.SDL_GetWindowOpacity(window, byref(opacity))
+    assert ret == 0
+    assert opacity.value == 1.0
+    if not DRIVER_DUMMY:
+        ret = video.SDL_SetWindowOpacity(window, 0.5)
+        assert SDL_GetError() == b""
         assert ret == 0
-        bounds_out = video.SDL_GetWindowMouseRect(window)
-        assert bounds_out != None
-        assert bounds_in == bounds_out.contents
-        # Try removing the boundary
-        ret = video.SDL_SetWindowMouseRect(window, None)
-        err = SDL_GetError()
+        ret = video.SDL_GetWindowOpacity(window, byref(opacity))
+        assert SDL_GetError() == b""
         assert ret == 0
-        bounds_out = video.SDL_GetWindowMouseRect(window)
-        assert not bounds_out  # bounds_out should be null pointer
-        video.SDL_DestroyWindow(window)
+        assert opacity.value == 0.5
 
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GetSetWindowBrightness(self):
-        flags = (video.SDL_WINDOW_BORDERLESS,
-                 video.SDL_WINDOW_BORDERLESS | video.SDL_WINDOW_HIDDEN,
-                 video.SDL_WINDOW_RESIZABLE | video.SDL_WINDOW_MINIMIZED)
-        for flag in flags:
-            window = video.SDL_CreateWindow(b"Test", 200, 200, 200, 200, flag)
-            orig = video.SDL_GetWindowBrightness(window)
-            assert isinstance(orig, float)
-            # Go from 0.0, 0.1 ... to 1.0
-            gammas = (x * 0.1 for x in range(0, 10))
-            count = 0
-            for b in gammas:
-                ret = video.SDL_SetWindowBrightness(window, b)
-                if ret == 0:
-                    val = video.SDL_GetWindowBrightness(window)
-                    assert round(abs(val-b), 7) == 0
-                    count += 1
-            assert count > 0
-            video.SDL_DestroyWindow(window)
+@pytest.mark.skipif(sdl2.dll.version < 2005, reason="not available")
+def test_SDL_SetWindowModalFor(window, decorated_window):
+    # NOTE: Only supported on X11
+    ret = video.SDL_SetWindowModalFor(window, decorated_window)
+    if video.SDL_GetCurrentVideoDriver() == b"x11":
+        assert SDL_GetError() == b""
+        assert ret == 0
 
-    @pytest.mark.skip("not implemented")
-    def test_SDL_GetSetWindowGammaRamp(self):
-        # SDL_SetWindowGammaRamp & SDL_GetWindowGammaRamp
-        pass
+@pytest.mark.skipif(sdl2.dll.version < 2005, reason="not available")
+def test_SDL_SetWindowInputFocus(window):
+    # NOTE: Only supported on X11 and Wayland
+    ret = video.SDL_SetWindowInputFocus(window)
+    if video.SDL_GetCurrentVideoDriver() in [b"x11", b"wayland"]:
+        assert SDL_GetError() == b""
+        assert ret == 0
 
-    @pytest.mark.skip("not implemented")
-    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
-    def test_SDL_FlashWindow(self):
-        # Would need to be an interactive test
-        pass
+def test_SDL_GetSetWindowGammaRamp(window):
+    vals = (Uint16 * 256)()
+    pixels.SDL_CalculateGammaRamp(0.5, vals)
+    ret = video.SDL_SetWindowGammaRamp(window, vals, vals, vals)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    r = (Uint16 * 256)()
+    g = (Uint16 * 256)()
+    b = (Uint16 * 256)()
+    ret = video.SDL_GetWindowGammaRamp(window, r, g, b)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    for i in range(len(vals)):
+        assert r[i] == vals[i]
+        assert g[i] == vals[i]
+        assert b[i] == vals[i]
 
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_LoadUnloadLibrary(self):
-        # Try the default library
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdl2.dll.version < 2004, reason="not available")
+def test_SDL_SetWindowHitTest(self):
+    # NOTE: This sets a callback that's triggered when you mouse over certain
+    # regions of a window. Pretty sure this can't be tested non-interactively.
+    pass
+
+@pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
+def test_SDL_FlashWindow(window):
+    # NOTE: Not the most comprehensive test, but it does test the basic bindings
+    ret = video.SDL_FlashWindow(window, video.SDL_FLASH_BRIEFLY)
+    assert SDL_GetError() == b""
+    assert ret == 0
+
+def test_screensaver(with_sdl):
+    video.SDL_EnableScreenSaver()
+    assert video.SDL_IsScreenSaverEnabled() == SDL_TRUE
+    video.SDL_EnableScreenSaver()
+    assert video.SDL_IsScreenSaverEnabled() == SDL_TRUE
+    video.SDL_DisableScreenSaver()
+    assert video.SDL_IsScreenSaverEnabled() == SDL_FALSE
+    video.SDL_DisableScreenSaver()
+    assert video.SDL_IsScreenSaverEnabled() == SDL_FALSE
+    video.SDL_EnableScreenSaver()
+    assert video.SDL_IsScreenSaverEnabled() == SDL_TRUE
+    video.SDL_DisableScreenSaver()
+    assert video.SDL_IsScreenSaverEnabled() == SDL_FALSE
+
+
+# Test SDL OpenGL functions
+
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_LoadUnloadLibrary(with_sdl):
+    # Try the default library
+    ret = video.SDL_GL_LoadLibrary(None)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    video.SDL_GL_UnloadLibrary()
+
+    if has_opengl_lib():
+        fpath = get_opengl_path().encode("utf-8")
+        ret = video.SDL_GL_LoadLibrary(fpath)
+        assert SDL_GetError() == b""
+        assert ret == 0
         video.SDL_GL_UnloadLibrary()
 
-        if has_opengl_lib():
-            fpath = get_opengl_path().encode("utf-8")
-            assert video.SDL_GL_LoadLibrary(fpath) == 0, SDL_GetError()
-            video.SDL_GL_UnloadLibrary()
+
+class TestSDLVideo(object):
+    __tags__ = ["sdl"]
 
     @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
     def test_SDL_GL_GetProcAddress(self):
@@ -813,114 +947,4 @@ class TestSDLVideo(object):
     @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
     def test_SDL_GL_ResetAttributes(self):
-        pass
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GetDisplayDPI(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            ddpi, hdpi, vdpi = c_float(0), c_float(0), c_float(0)
-            ret = video.SDL_GetDisplayDPI(index, byref(ddpi), byref(hdpi),
-                                          byref(vdpi))
-            assert ret == 0, SDL_GetError()
-            assert ddpi.value >= 96.0
-            assert hdpi.value >= 96.0
-            assert vdpi.value >= 96.0
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_SetWindowResizable(self):
-        window = video.SDL_CreateWindow(b"Resizable", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_RESIZABLE)
-        flags = video.SDL_GetWindowFlags(window)
-        assert flags & video.SDL_WINDOW_RESIZABLE == video.SDL_WINDOW_RESIZABLE
-        video.SDL_SetWindowResizable(window, SDL_FALSE)
-        flags = video.SDL_GetWindowFlags(window)
-        assert flags & video.SDL_WINDOW_RESIZABLE != video.SDL_WINDOW_RESIZABLE
-        video.SDL_SetWindowResizable(window, SDL_TRUE)
-        flags = video.SDL_GetWindowFlags(window)
-        assert flags & video.SDL_WINDOW_RESIZABLE == video.SDL_WINDOW_RESIZABLE
-        video.SDL_DestroyWindow(window)
-
-    @pytest.mark.skip("Test doesn't work, may need to be interactive")
-    @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
-    def test_SDL_SetWindowAlwaysOnTop(self):
-        ON_TOP_FLAG = video.SDL_WINDOW_ALWAYS_ON_TOP
-        window = video.SDL_CreateWindow(b"Always On Top", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_ALWAYS_ON_TOP)
-        video.SDL_ShowWindow(window)
-        flags = video.SDL_GetWindowFlags(window)
-        assert flags & ON_TOP_FLAG == ON_TOP_FLAG
-        video.SDL_SetWindowAlwaysOnTop(window, SDL_FALSE)
-        flags = video.SDL_GetWindowFlags(window)
-        assert flags & ON_TOP_FLAG != ON_TOP_FLAG
-        video.SDL_SetWindowAlwaysOnTop(window, SDL_TRUE)
-        flags = video.SDL_GetWindowFlags(window)
-        assert flags & ON_TOP_FLAG == ON_TOP_FLAG
-        video.SDL_DestroyWindow(window)
-
-    def test_SDL_GetSetWindowOpacity(self):
-        window = video.SDL_CreateWindow(b"Opacity", 10, 10, 10, 10, 0)
-        opacity = c_float()
-        ret = video.SDL_GetWindowOpacity(window, byref(opacity))
-        assert ret == 0
-        assert opacity.value == 1.0
-        if video.SDL_GetCurrentVideoDriver() != b"dummy":
-            ret = video.SDL_SetWindowOpacity(window, 0.0)
-            assert ret == 0, SDL_GetError()
-            ret = video.SDL_GetWindowOpacity(window, byref(opacity))
-            assert ret == 0
-            assert opacity.value == 0.0
-            ret = video.SDL_SetWindowOpacity(window, 0.653)
-            assert ret == 0
-            ret = video.SDL_GetWindowOpacity(window, byref(opacity))
-            assert ret == 0
-            assert round(abs(opacity.value-0.653), 2) == 0
-        video.SDL_DestroyWindow(window)
-
-    def test_SDL_GetDisplayUsableBounds(self):
-        numdisplays = video.SDL_GetNumVideoDisplays()
-        for index in range(numdisplays):
-            bounds = rect.SDL_Rect()
-            ret = video.SDL_GetDisplayUsableBounds(index, byref(bounds))
-            assert ret == 0
-            assert not rect.SDL_RectEmpty(bounds)
-
-    def test_SDL_GetWindowBordersSize(self):
-        # Create/show a window, make sure all borders are >= 0
-        window = video.SDL_CreateWindow(b"Borders", 10, 10, 10, 10, 0)
-        video.SDL_ShowWindow(window)
-        t, l, b, r = c_int(), c_int(), c_int(), c_int()
-        ret = video.SDL_GetWindowBordersSize(
-            window, byref(t), byref(l), byref(b), byref(r)
-        )
-        video.SDL_DestroyWindow(window)
-        values = [x.value for x in (t, l, b, r)]
-        assert all([v >= 0 for v in values])
-
-        # Currently, only X11 and Windows video drivers support border size
-        supports_borders = [b"x11", b"windows"]
-        if video.SDL_GetCurrentVideoDriver() in supports_borders:
-            assert ret == 0
-
-        # Test again with a borderless window & make sure borders are all 0
-        window = video.SDL_CreateWindow(
-            b"No Borders", 10, 10, 10, 10, video.SDL_WINDOW_BORDERLESS
-        )
-        video.SDL_ShowWindow(window)
-        ret = video.SDL_GetWindowBordersSize(
-            window, byref(t), byref(l), byref(b), byref(r)
-        )
-        video.SDL_DestroyWindow(window)
-        values = [x.value for x in (t, l, b, r)]
-        assert all([v == 0 for v in values])
-        if video.SDL_GetCurrentVideoDriver() in supports_borders:
-            assert ret == 0
-        
-
-    @pytest.mark.skip("not implemented")
-    def test_SDL_SetWindowModalFor(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_SDL_SetWindowInputFocus(self):
         pass
