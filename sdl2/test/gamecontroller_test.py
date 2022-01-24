@@ -1,7 +1,7 @@
 import sys
 import pytest
 import sdl2
-from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_GAMECONTROLLER, SDL_TRUE
+from sdl2 import SDL_Init, SDL_Quit, SDL_FALSE, SDL_TRUE
 from sdl2 import joystick
 from sdl2 import gamecontroller as gamepad
 
@@ -10,7 +10,7 @@ from sdl2 import gamecontroller as gamepad
 # TODO: Add support for actual device tests from joystick
 
 # Make sure gamecontroller subsystem works before running tests
-ret = SDL_Init(SDL_INIT_GAMECONTROLLER)
+ret = SDL_Init(sdl2.SDL_INIT_GAMECONTROLLER)
 SDL_Quit()
 skipmsg = 'Game controller subsystem not supported'
 pytestmark = pytest.mark.skipif(ret != 0, reason=skipmsg)
@@ -27,7 +27,7 @@ class TestSDLGamecontroller(object):
 
     @classmethod
     def setup_class(cls):
-        SDL_Init(SDL_INIT_GAMECONTROLLER)
+        SDL_Init(sdl2.SDL_INIT_GAMECONTROLLER)
         num = joystick.SDL_NumJoysticks()
         if num < 1:
             pytest.skip("no available joystick devices")
@@ -53,7 +53,7 @@ class TestSDLGamecontroller(object):
         if sdl2.dll.version >= 2006:
             n1 = gamepad.SDL_GameControllerNumMappings()
             ret = gamepad.SDL_GameControllerAddMapping(newmap)
-            assert ret != -1
+            assert ret >= 0
             n2 = gamepad.SDL_GameControllerNumMappings()
             assert n2 == n1 + 1
         else:
@@ -69,7 +69,7 @@ class TestSDLGamecontroller(object):
             b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
         )
         ret = gamepad.SDL_GameControllerAddMapping(newmap)
-        assert ret != 0
+        assert ret >= 0
         # Get GUID for new mapping
         guid_str = newmap.split(b",")[0]
         guid = joystick.SDL_JoystickGetGUIDFromString(guid_str)
