@@ -42,7 +42,7 @@ class TestSDLGamecontroller(object):
         SDL_Quit()
 
     def setup_method(self):
-        SDL_ClearError()
+        sdl2.SDL_ClearError()
 
     def test_SDL_GameControllerAddMapping(self):
         newmap = (

@@ -272,16 +272,14 @@ def test_SDL_JoystickGetProductVersion(joysticks):
     for stick in joysticks:
         pver = joystick.SDL_JoystickGetProductVersion(stick)
         assert SDL_GetError() == b""
-        if not is_virtual(stick):
-            assert pver > 0
+        assert pver >= 0
 
 @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
 def test_SDL_JoystickGetSerial(joysticks):
     for stick in joysticks:
         serial = joystick.SDL_JoystickGetSerial(stick)
         assert SDL_GetError() == b""
-        if not is_virtual(stick):
-            assert type(serial) in (str, bytes)
+        assert type(serial) in (str, bytes, None)
 
 def test_SDL_JoystickGetAxisInitialState(joysticks):
     init_state = c_int16(0)
@@ -323,8 +321,7 @@ def test_SDL_JoystickGetDeviceProductVersion(with_sdl):
     for index in range(count):
         pver = joystick.SDL_JoystickGetDeviceProductVersion(index)
         assert SDL_GetError() == b""
-        if not is_virtual(index):
-            assert pver > 0
+        assert pver >= 0
 
 def test_SDL_JoystickGetDeviceType(with_sdl):
     count = joystick.SDL_NumJoysticks()
