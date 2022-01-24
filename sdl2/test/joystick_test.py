@@ -279,7 +279,7 @@ def test_SDL_JoystickGetSerial(joysticks):
     for stick in joysticks:
         serial = joystick.SDL_JoystickGetSerial(stick)
         assert SDL_GetError() == b""
-        assert type(serial) in (str, bytes, None)
+        assert serial == None or type(serial) in (str, bytes)
 
 def test_SDL_JoystickGetAxisInitialState(joysticks):
     init_state = c_int16(0)
