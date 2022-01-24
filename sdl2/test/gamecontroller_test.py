@@ -293,7 +293,7 @@ class TestSDLGamecontroller(object):
             b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
         )
         ret = gamepad.SDL_GameControllerAddMapping(newmap)
-        assert ret != 0
+        assert ret >= 0
         num = gamepad.SDL_GameControllerNumMappings()
         retmap = gamepad.SDL_GameControllerMappingForIndex(num - 1)
         assert newmap == retmap
@@ -325,7 +325,7 @@ class TestSDLGamecontroller(object):
             pad = gamepad.SDL_GameControllerOpen(index)
             has_rumble = gamepad.SDL_GameControllerHasRumble(pad)
             assert has_rumble in [SDL_FALSE, SDL_TRUE]
-            joystick.SDL_JoystickClose(pad)
+            gamepad.SDL_GameControllerClose(pad)
 
     @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
     def test_SDL_GameControllerHasRumbleTriggers(self):

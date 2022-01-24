@@ -41,6 +41,7 @@ joystick_types = [
 @pytest.fixture(scope="module")
 def with_sdl():
     sdl2.SDL_ClearError()
+    sdl2.SDL_SetHint(b"SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", b"1")
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_JOYSTICK)
     assert sdl2.SDL_GetError() == b""
     assert ret == 0
@@ -417,7 +418,6 @@ def test_SDL_JoystickSendEffect(joysticks):
     # to each controller type, so can't easily test this.
     pass
 
-@pytest.mark.skip("Not working yet for some reason")
 @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
 def test_SDL_JoystickVirtual(with_sdl):
     jcount = joystick.SDL_NumJoysticks()
@@ -427,16 +427,23 @@ def test_SDL_JoystickVirtual(with_sdl):
     assert joystick.SDL_JoystickIsVirtual(index) == SDL_TRUE
     assert joystick.SDL_NumJoysticks() == (jcount + 1)
     stick = joystick.SDL_JoystickOpen(index)
+    # Test joystick configuration
+    assert joystick.SDL_JoystickNumAxes(stick) == 1
+    assert joystick.SDL_JoystickNumButtons(stick) == 2
+    assert joystick.SDL_JoystickNumHats(stick) == 1
     # Try setting and checking for some virtual values
     assert joystick.SDL_JoystickSetVirtualAxis(stick, 0, -30) == 0
     assert joystick.SDL_JoystickSetVirtualButton(stick, 0, 255) == 0
     assert joystick.SDL_JoystickSetVirtualButton(stick, 1, 128) == 0
     assert joystick.SDL_JoystickSetVirtualHat(stick, 0, 36) == 0
     joystick.SDL_JoystickUpdate()
-    assert joystick.SDL_JoystickGetAxis(stick, 0) == -30
-    assert joystick.SDL_JoystickGetButton(stick, 0) == 255
-    assert joystick.SDL_JoystickGetButton(stick, 1) == 128
-    assert joystick.SDL_JoystickGetHat(stick, 0) == 36
+    # NOTE: SDL2 doesn't update joystick values unless it has a window that
+    # has input focus. There's a hint to disable that but it doesn't seem to
+    # work, so for now these tests are disabled.
+    #assert joystick.SDL_JoystickGetAxis(stick, 0) == -30
+    #assert joystick.SDL_JoystickGetButton(stick, 0) == 255
+    #assert joystick.SDL_JoystickGetButton(stick, 1) == 128
+    #assert joystick.SDL_JoystickGetHat(stick, 0) == 36
     # Check that removing the virtual joystick works properly
     joystick.SDL_JoystickClose(stick)
     jcount = joystick.SDL_NumJoysticks()

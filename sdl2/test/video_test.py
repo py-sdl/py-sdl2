@@ -582,10 +582,10 @@ def test_SDL_MinimizeRestoreWindow(decorated_window):
     assert video.SDL_GetWindowFlags(window) & shown_flag == shown_flag
     assert not video.SDL_GetWindowFlags(window) & min_flag == min_flag
     video.SDL_MinimizeWindow(window)
-    if not DRIVER_DUMMY or DRIVER_X11:
+    if not (DRIVER_DUMMY or DRIVER_X11):
         assert video.SDL_GetWindowFlags(window) & min_flag == min_flag
     video.SDL_RestoreWindow(window)
-    if not DRIVER_DUMMY or DRIVER_X11:
+    if not (DRIVER_DUMMY or DRIVER_X11):
         assert not video.SDL_GetWindowFlags(window) & min_flag == min_flag
 
 def test_SDL_SetWindowFullscreen(with_sdl):

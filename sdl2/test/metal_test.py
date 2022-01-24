@@ -7,12 +7,6 @@ from sdl2 import metal, video, error
 
 macos = sys.platform == "darwin"
 
-@pytest.fixture(autouse=True)
-def err_cleanup():
-    sdl2.SDL_ClearError()
-    yield
-    sdl2.SDL_ClearError()
-
 
 # TODO: Add more complete tests with pyobjc
 
