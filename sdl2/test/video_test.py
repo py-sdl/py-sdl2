@@ -68,6 +68,17 @@ def decorated_window(with_sdl):
     yield w
     video.SDL_DestroyWindow(w)
 
+@pytest.fixture
+def gl_window(with_sdl_gl):
+    flag = video.SDL_WINDOW_OPENGL
+    w = video.SDL_CreateWindow(b"OpenGL", 10, 40, 12, 13, flag)
+    assert SDL_GetError() == b""
+    ctx = video.SDL_GL_CreateContext(w)
+    assert SDL_GetError() == b""
+    yield (w, ctx)
+    video.SDL_GL_DeleteContext(ctx)
+    video.SDL_DestroyWindow(w)
+
 
 # Test custom macros
 
@@ -786,12 +797,13 @@ def test_screensaver(with_sdl):
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_LoadUnloadLibrary(with_sdl):
-    # Try the default library
+    # TODO: Test whether other GL functions work after GL is unloaded
+    # (unloading doesn't always work right on macOS for some reason)
     ret = video.SDL_GL_LoadLibrary(None)
     assert SDL_GetError() == b""
     assert ret == 0
     video.SDL_GL_UnloadLibrary()
-
+    # Try loading a library from a path
     if has_opengl_lib():
         fpath = get_opengl_path().encode("utf-8")
         ret = video.SDL_GL_LoadLibrary(fpath)
@@ -799,154 +811,99 @@ def test_SDL_GL_LoadUnloadLibrary(with_sdl):
         assert ret == 0
         video.SDL_GL_UnloadLibrary()
 
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_CreateDeleteContext(with_sdl_gl):
+    window = video.SDL_CreateWindow(
+        b"OpenGL", 10, 40, 32, 24, video.SDL_WINDOW_OPENGL
+    )
+    ctx = video.SDL_GL_CreateContext(window)
+    assert SDL_GetError() == b""
+    video.SDL_GL_DeleteContext(ctx)
+    ctx = video.SDL_GL_CreateContext(window)
+    assert SDL_GetError() == b""
+    video.SDL_GL_DeleteContext(ctx)
+    video.SDL_DestroyWindow(window)
 
-class TestSDLVideo(object):
-    __tags__ = ["sdl"]
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_GetProcAddress(gl_window):
+    procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
+    assert SDL_GetError() == b""
+    assert procaddr is not None and int(procaddr) != 0
 
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_GetProcAddress(self):
-        if sys.platform != "darwin":
-            procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
-            assert procaddr is None
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_ExtensionSupported(gl_window):
+    assert video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra")
+    assert SDL_GetError() == b""
 
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_GetSetResetAttribute(with_sdl_gl):
+    # Create a context and get its bit depth
+    window = video.SDL_CreateWindow(
+        b"OpenGL", 10, 40, 12, 13, video.SDL_WINDOW_OPENGL
+    )
+    ctx = video.SDL_GL_CreateContext(window)
+    bufstate = c_int(0)
+    ret = video.SDL_GL_GetAttribute(video.SDL_GL_DOUBLEBUFFER, byref(bufstate))
+    video.SDL_GL_DeleteContext(ctx)
+    video.SDL_DestroyWindow(window)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    # Try setting a different GL bit depth
+    new_bufstate = 0 if bufstate.value == 1 else 1
+    video.SDL_GL_SetAttribute(video.SDL_GL_DOUBLEBUFFER, new_bufstate)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    # Create a new context to see if it's using the new bit depth 
+    window = video.SDL_CreateWindow(
+        b"OpenGL", 10, 40, 12, 13, video.SDL_WINDOW_OPENGL
+    )
+    ctx = video.SDL_GL_CreateContext(window)
+    val = c_int(0)
+    ret = video.SDL_GL_GetAttribute(video.SDL_GL_DOUBLEBUFFER, byref(val))
+    video.SDL_GL_DeleteContext(ctx)
+    video.SDL_DestroyWindow(window)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    assert bufstate.value != val.value
+    assert val.value == new_bufstate
+    # Try resetting the context and see if it goes back to the original depth
+    video.SDL_GL_ResetAttributes()
+    window = video.SDL_CreateWindow(
+        b"OpenGL", 10, 40, 12, 13, video.SDL_WINDOW_OPENGL
+    )
+    ctx = video.SDL_GL_CreateContext(window)
+    val = c_int(0)
+    ret = video.SDL_GL_GetAttribute(video.SDL_GL_DOUBLEBUFFER, byref(val))
+    video.SDL_GL_DeleteContext(ctx)
+    video.SDL_DestroyWindow(window)
+    assert bufstate.value == val.value
 
-        # Behaviour is undefined as long as there is no window and context.
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_MakeCurrent(gl_window):
+    window, ctx = gl_window
+    ret = video.SDL_GL_MakeCurrent(window, ctx)
+    assert SDL_GetError() == b""
+    assert ret == 0
 
-        ctx = video.SDL_GL_CreateContext(window)
-
-        procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
-        assert procaddr is not None and int(procaddr) != 0
-
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-        video.SDL_GL_UnloadLibrary()
-
-        if sys.platform != "darwin":
-            procaddr = video.SDL_GL_GetProcAddress(b"glGetString")
-            assert procaddr is None
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_ExtensionSupported(self):
-        assert not video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra")
-
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
-
-        ctx = video.SDL_GL_CreateContext(window)
-
-        assert video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra")
-
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-        video.SDL_GL_UnloadLibrary()
-
-        assert not video.SDL_GL_ExtensionSupported(b"GL_EXT_bgra")
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_GetSetAttribute(self):
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
-
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
-
-        ctx = video.SDL_GL_CreateContext(window)
-
-        depth = c_int()
-        video.SDL_GL_GetAttribute(video.SDL_GL_DEPTH_SIZE, byref(depth))
-
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-
-        newdepth = 24
-        if depth == 8:
-            newdepth = 16
-        elif depth == 16:
-            newdepth = 24
-        elif depth == 24:
-            newdepth = 16
-        video.SDL_GL_SetAttribute(video.SDL_GL_DEPTH_SIZE, newdepth)
-
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
-        ctx = video.SDL_GL_CreateContext(window)
-
-        val = c_int()
-        video.SDL_GL_GetAttribute(video.SDL_GL_DEPTH_SIZE, byref(val))
-        assert depth != val
-        assert val.value >= newdepth
-        # self.assertEqual(val.value, newdepth)
-
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-        video.SDL_GL_UnloadLibrary()
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_CreateDeleteContext(self):
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
-
-        ctx = video.SDL_GL_CreateContext(window)
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
-        ctx = video.SDL_GL_CreateContext(window)
-        video.SDL_DestroyWindow(window)
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_GL_UnloadLibrary()
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_MakeCurrent(self):
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
-        window = video.SDL_CreateWindow(b"No OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_BORDERLESS)
-        ctx = video.SDL_GL_CreateContext(window)
-        video.SDL_GL_MakeCurrent(window, ctx)
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-        video.SDL_GL_UnloadLibrary()
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_GetSetSwapInterval(self):
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
-        ctx = video.SDL_GL_CreateContext(window)
-        video.SDL_GL_MakeCurrent(window, ctx)
-
-        ret = video.SDL_GL_SetSwapInterval(0)
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_GetSetSwapInterval(gl_window):
+    window, ctx = gl_window
+    ret = video.SDL_GL_MakeCurrent(window, ctx)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    # Try enabling/disabling OpenGL vsync
+    for value in [0, 1]:
+        ret = video.SDL_GL_SetSwapInterval(value)
         if ret == 0:
-            assert video.SDL_GL_GetSwapInterval() == 0
-        ret = video.SDL_GL_SetSwapInterval(1)
-        if ret == 0:
-            assert video.SDL_GL_GetSwapInterval() == 1
+            assert video.SDL_GL_GetSwapInterval() == value
 
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-        video.SDL_GL_UnloadLibrary()
-
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_SwapWindow(self):
-        assert video.SDL_GL_LoadLibrary(None) == 0, SDL_GetError()
-        window = video.SDL_CreateWindow(b"OpenGL", 10, 10, 10, 10,
-                                        video.SDL_WINDOW_OPENGL)
-        ctx = video.SDL_GL_CreateContext(window)
-        video.SDL_GL_MakeCurrent(window, ctx)
-        video.SDL_GL_SwapWindow(window)
-        video.SDL_GL_SwapWindow(window)
-        video.SDL_GL_SwapWindow(window)
-        video.SDL_GL_SwapWindow(window)
-        video.SDL_GL_DeleteContext(ctx)
-        video.SDL_DestroyWindow(window)
-        video.SDL_GL_UnloadLibrary()
-
-    @pytest.mark.skip("not implemented")
-    @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
-    def test_SDL_GL_ResetAttributes(self):
-        pass
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
+def test_SDL_GL_SwapWindow(gl_window):
+    window, ctx = gl_window
+    ret = video.SDL_GL_MakeCurrent(window, ctx)
+    assert SDL_GetError() == b""
+    assert ret == 0
+    video.SDL_GL_SwapWindow(window)
+    video.SDL_GL_SwapWindow(window)
+    video.SDL_GL_SwapWindow(window)
+    assert SDL_GetError() == b""
