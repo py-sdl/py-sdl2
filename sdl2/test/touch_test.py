@@ -5,65 +5,77 @@ from sdl2.error import SDL_GetError, SDL_ClearError
 from sdl2 import touch
 
 
+# Check if we have any touch devices before running tests
+devices = 0
+sdl2.SDL_SetHint(sdl2.SDL_HINT_MOUSE_TOUCH_EVENTS, b"1")
+ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+if ret == 0:
+    devices = touch.SDL_GetNumTouchDevices()
+SDL_Quit()
+
+# Override the global fixture to enable trackpads as touch devices
 @pytest.fixture(scope="module", autouse=True)
-def sdl_setup():
-    SDL_Init(0)
+def with_sdl():
+    sdl2.SDL_SetHint(sdl2.SDL_HINT_MOUSE_TOUCH_EVENTS, b"1")
+    sdl2.SDL_ClearError()
+    ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
     yield
-    SDL_Quit()
+    sdl2.SDL_Quit()
 
 
 def test_SDL_GetNumTouchDevices():
     assert touch.SDL_GetNumTouchDevices() >= 0
 
+@pytest.mark.skipif(devices == 0, reason="No available touch devices")
+def test_SDL_GetTouchDevice():
+    count = touch.SDL_GetNumTouchDevices()
+    for i in range(count):
+        dev_id = touch.SDL_GetTouchDevice(i)
+        assert SDL_GetError() == b""
+        assert dev_id != 0
 
-class TestSDLTouchDevice(object):
+@pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
+@pytest.mark.skipif(devices == 0, reason="No available touch devices")
+def test_SDL_GetTouchDeviceType():
+    types = [
+        touch.SDL_TOUCH_DEVICE_INVALID, touch.SDL_TOUCH_DEVICE_DIRECT,
+        touch.SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE,
+        touch.SDL_TOUCH_DEVICE_INDIRECT_RELATIVE
+    ]
+    count = touch.SDL_GetNumTouchDevices()
+    for i in range(count):
+        dev_id = touch.SDL_GetTouchDevice(i)
+        assert SDL_GetError() == b""
+        assert dev_id != 0
+        dev_type = touch.SDL_GetTouchDeviceType(dev_id)
+        assert dev_type in types
 
-    # NOTE: these are currently untested due to lack of hardware
-    
-    @classmethod
-    def setup_class(cls):
-        num = touch.SDL_GetNumTouchDevices()
-        if num < 1:
-            pytest.skip("no available touch devices")
-        cls.num_devices = num
+@pytest.mark.skipif(devices == 0, reason="No available touch devices")
+def test_SDL_GetNumTouchFingers():
+    count = touch.SDL_GetNumTouchDevices()
+    for i in range(count):
+        dev_id = touch.SDL_GetTouchDevice(i)
+        assert SDL_GetError() == b""
+        assert dev_id != 0
+        fingers = touch.SDL_GetNumTouchFingers(dev_id)
+        assert SDL_GetError() == b""
+        assert fingers >= 0
 
-    def setup_method(self):
-        SDL_ClearError()
-
-    def test_SDL_GetTouchDevice(self):
-        for i in range(0, self.num_devices):
-            dev_id = touch.SDL_GetTouchDevice(i)
-            assert dev_id > 0
-
-    @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
-    def test_SDL_GetTouchDeviceType(self):
-        types = [
-            touch.SDL_TOUCH_DEVICE_INVALID, touch.SDL_TOUCH_DEVICE_DIRECT,
-            touch.SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE,
-            touch.SDL_TOUCH_DEVICE_INDIRECT_RELATIVE
-        ]
-        for i in range(0, self.num_devices):
-            dev_id = touch.SDL_GetTouchDevice(i)
-            assert dev_id > 0
-            dev_type = touch.SDL_GetTouchDeviceType(dev_id)
-            assert dev_type in types
-
-    def test_SDL_GetNumTouchFingers(self):
-        for i in range(0, self.num_devices):
-            dev_id = touch.SDL_GetTouchDevice(i)
-            assert dev_id > 0
-            fingers = touch.SDL_GetNumTouchFingers(dev_id)
-            err = SDL_GetError()
-            assert fingers > 0
-            assert len(err) == 0
-
-    def test_SDL_GetTouchFinger(self):
-        for i in range(0, self.num_devices):
-            dev_id = touch.SDL_GetTouchDevice(i)
-            assert dev_id > 0
-            fingers = touch.SDL_GetNumTouchFingers(dev_id)
-            assert fingers > 0
-            for f in range(0, fingers):
-                finger = touch.SDL_GetTouchFinger(dev_id, f)
-                assert isinstance(finger.contents, touch.SDL_Finger)
+@pytest.mark.skipif(devices == 0, reason="No available touch devices")
+def test_SDL_GetTouchFinger():
+    count = touch.SDL_GetNumTouchDevices()
+    for i in range(count):
+        dev_id = touch.SDL_GetTouchDevice(i)
+        assert SDL_GetError() == b""
+        assert dev_id != 0
+        fingers = touch.SDL_GetNumTouchFingers(dev_id)
+        assert fingers >= 0
+        for f in range(0, fingers):
+            finger = touch.SDL_GetTouchFinger(dev_id, f)
+            assert isinstance(finger.contents, touch.SDL_Finger)
+            assert finger.contents.id >= 0
+            assert 0 <= finger.contents.x <= 1
+            assert 0 <= finger.contents.y <= 1
                 
