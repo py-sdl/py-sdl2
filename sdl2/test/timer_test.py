@@ -37,6 +37,7 @@ def test_SDL_GetPerformanceFrequency(with_sdl):
     assert type(freq) in (int, long)
     assert freq > 0
 
+@pytest.mark.xfail(reason="Unreliable on CI runners")
 def test_SDL_Delay(with_sdl):
     for wait in [5, 10, 50, 100]:
         start = timer.SDL_GetTicks()
@@ -47,6 +48,7 @@ def test_SDL_Delay(with_sdl):
                 
 @pytest.mark.skipif(hasattr(sys, "pypy_version_info"),
     reason="PyPy can't access other vars properly from a separate thread")
+@pytest.mark.xfail(reason="Unreliable on CI runners")
 def test_SDL_AddRemoveTimer(with_sdl):
     # Create a timer callback that adds a value to a Python list
     calls = []
@@ -62,6 +64,7 @@ def test_SDL_AddRemoveTimer(with_sdl):
     assert len(calls) in [5, 6]
     # Try removing the timer and make sure the callback doesn't run anymore
     timer.SDL_RemoveTimer(timerid)
+    timer.SDL_Delay(10)
     orig_calls = len(calls)
     start = timer.SDL_GetTicks()
     while (timer.SDL_GetTicks() - start) <= 200:
