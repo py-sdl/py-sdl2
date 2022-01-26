@@ -303,7 +303,8 @@ def test_SDL_CreateDestroyTexture(with_renderer):
 def test_SDL_CreateTextureFromSurface(with_renderer, testsurf):
     renderer, win = with_renderer
     tx = render.SDL_CreateTextureFromSurface(renderer, testsurf)
-    assert SDL_GetError() == b""
+    if sdl2.dll.version != 2008: # Weird non-fatal colorkey error on 2.0.8
+        assert SDL_GetError() == b"" 
     assert isinstance(tx.contents, render.SDL_Texture)
     render.SDL_DestroyTexture(tx)
 
