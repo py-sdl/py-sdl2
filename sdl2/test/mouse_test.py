@@ -2,57 +2,74 @@ import sys
 import pytest
 from sdl2 import mouse
 
+# NOTE: Will need to use a window fixture to test most of these. Will also want
+# to mark most as "SKIP_ANNOYING".
+
 
 @pytest.mark.skip("not implemented")
-class TestSDLMouse(object):
-    __tags__ = ["sdl"]
+def test_SDL_GetMouseFocus():
+    pass
 
-    @classmethod
-    def setup_class(cls):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_GetMouseState():
+    pass
 
-    @classmethod
-    def teardown_class(cls):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_GetRelativeMouseState():
+    pass
 
-    def test_SDL_GetMouseFocus(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_WarpMouseInWindow():
+    pass
 
-    def test_SDL_GetMouseState(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_SetRelativeMouseMode():
+    pass
 
-    def test_SDL_GetRelativeMouseState(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_GetRelativeMouseMode():
+    pass
 
-    def test_SDL_WarpMouseInWindow(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_CreateCursor():
+    pass
 
-    def test_SDL_GetSetRelativeMouseMode(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_CreateColorCursor():
+    pass
 
-    def test_SDL_CreateFreeCursor(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_CreateSystemCursor():
+    pass
 
-    def test_SDL_CreateColorCursor(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_SetCursor():
+    pass
 
-    def test_SDL_CreateSystemCursor(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_GetCursor():
+    pass
 
-    def test_SDL_GetSetCursor(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_GetDefaultCursor():
+    pass
 
-    def test_SDL_GetDefaultCursor(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_FreeCursor():
+    pass
 
-    def test_SDL_ShowCursor(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_ShowCursor():
+    pass
 
-    def test_SDL_WarpMouseGlobal(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_WarpMouseGlobal():
+    pass
 
-    def test_SDL_CaptureMouse(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_CaptureMouse():
+    pass
 
-    def test_SDL_GetGlobalMouseState(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_GetGlobalMouseState():
+    pass
