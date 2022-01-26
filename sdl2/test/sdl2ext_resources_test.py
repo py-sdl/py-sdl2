@@ -9,105 +9,106 @@ import pytest
 from sdl2.ext import resources
 
 
+def test_open_zipfile():
+    fpath = os.path.join(os.path.dirname(__file__), "resources")
+    zfile = os.path.join(fpath, "resources.zip")
+
+    # resources.zip is a packed version of resources/, which at
+    # least contains
+    #
+    # resources/rwopstest.txt
+    # resources/surfacetest.bmp
+
+    resfile = resources.open_zipfile(zfile, "rwopstest.txt", "resources")
+    assert resfile is not None
+    resfile = resources.open_zipfile(zfile, "resources/rwopstest.txt")
+    assert resfile is not None
+
+    with pytest.raises(KeyError):
+        resources.open_zipfile(zfile, "invalid")
+    with pytest.raises(KeyError):
+        resources.open_zipfile(zfile, None)
+    with pytest.raises(KeyError):
+        resources.open_zipfile(zfile,
+                        "rwopstest.txt", "data")
+    with pytest.raises(KeyError):
+        resources.open_zipfile(zfile,
+                        "rwopstest.txt", 1234)
+    with pytest.raises(KeyError):
+        resources.open_zipfile(zfile,
+                        None, None)
+
+    with pytest.raises(TypeError):
+        resources.open_zipfile(None,
+                        "rwopstest.txt")
+    with pytest.raises(TypeError):
+        resources.open_zipfile(None, None)
+    with pytest.raises(TypeError):
+        resources.open_zipfile(None,
+                        "rwopstest.txt", "resources")
+
+def test_open_tarfile():
+    fpath = os.path.join(os.path.dirname(__file__), "resources")
+    tfile = os.path.join(fpath, "resources.tar.gz")
+
+    # resources.tar.gz is a packed version of resources/, which at
+    # least contains
+    #
+    # resources/rwopstest.txt
+    # resources/surfacetest.bmp
+
+    resfile = resources.open_tarfile(tfile, "rwopstest.txt", "resources")
+    assert resfile is not None
+    resfile = resources.open_tarfile(tfile, "resources/rwopstest.txt")
+    assert resfile is not None
+
+    # TODO: refine the error handling in open_tarfile()
+    with pytest.raises(KeyError):
+        resources.open_tarfile(tfile, "invalid")
+    with pytest.raises(AttributeError):
+        resources.open_tarfile(tfile, None)
+    with pytest.raises(KeyError):
+        resources.open_tarfile(tfile,
+                        "rwopstest.txt", "data")
+    with pytest.raises(KeyError):
+        resources.open_tarfile(tfile,
+                        "rwopstest.txt", 1234)
+    with pytest.raises(AttributeError):
+        resources.open_tarfile(tfile,
+                        None, None)
+
+    with pytest.raises(ValueError):
+        resources.open_tarfile(None,
+                        "rwopstest.txt")
+    with pytest.raises(ValueError):
+        resources.open_tarfile(None, None)
+    with pytest.raises(ValueError):
+        resources.open_tarfile(None,
+                        "rwopstest.txt", "resources")
+
+def test_open_url():
+    if sys.version_info[0] < 3:
+        p2url = urllib.pathname2url
+    else:
+        p2url = urllib2.pathname2url
+
+    fpath = os.path.join(os.path.dirname(__file__), "resources")
+    fpath = os.path.abspath(fpath)
+    tfile = os.path.join(fpath, "rwopstest.txt")
+    urlpath = "file:%s" % p2url(tfile)
+    resfile = resources.open_url(urlpath)
+    assert resfile is not None
+
+    tfile = os.path.join(fpath, "invalid")
+    urlpath = "file:%s" % p2url(tfile)
+    with pytest.raises(urllib2.URLError):
+        resources.open_url(urlpath)
+
+
 class TestSDL2ExtResources(object):
     __tags__ = ["sdl2ext"]
 
-    def test_open_zipfile(self):
-        fpath = os.path.join(os.path.dirname(__file__), "resources")
-        zfile = os.path.join(fpath, "resources.zip")
-
-        # resources.zip is a packed version of resources/, which at
-        # least contains
-        #
-        # resources/rwopstest.txt
-        # resources/surfacetest.bmp
-
-        resfile = resources.open_zipfile(zfile, "rwopstest.txt", "resources")
-        assert resfile is not None
-        resfile = resources.open_zipfile(zfile, "resources/rwopstest.txt")
-        assert resfile is not None
-
-        with pytest.raises(KeyError):
-            resources.open_zipfile(zfile, "invalid")
-        with pytest.raises(KeyError):
-            resources.open_zipfile(zfile, None)
-        with pytest.raises(KeyError):
-            resources.open_zipfile(zfile,
-                          "rwopstest.txt", "data")
-        with pytest.raises(KeyError):
-            resources.open_zipfile(zfile,
-                          "rwopstest.txt", 1234)
-        with pytest.raises(KeyError):
-            resources.open_zipfile(zfile,
-                          None, None)
-
-        with pytest.raises(TypeError):
-            resources.open_zipfile(None,
-                          "rwopstest.txt")
-        with pytest.raises(TypeError):
-            resources.open_zipfile(None, None)
-        with pytest.raises(TypeError):
-            resources.open_zipfile(None,
-                          "rwopstest.txt", "resources")
-
-    def test_open_tarfile(self):
-        fpath = os.path.join(os.path.dirname(__file__), "resources")
-        tfile = os.path.join(fpath, "resources.tar.gz")
-
-        # resources.tar.gz is a packed version of resources/, which at
-        # least contains
-        #
-        # resources/rwopstest.txt
-        # resources/surfacetest.bmp
-
-        resfile = resources.open_tarfile(tfile, "rwopstest.txt", "resources")
-        assert resfile is not None
-        resfile = resources.open_tarfile(tfile, "resources/rwopstest.txt")
-        assert resfile is not None
-
-        # TODO: refine the error handling in open_tarfile()
-        with pytest.raises(KeyError):
-            resources.open_tarfile(tfile, "invalid")
-        with pytest.raises(AttributeError):
-            resources.open_tarfile(tfile, None)
-        with pytest.raises(KeyError):
-            resources.open_tarfile(tfile,
-                          "rwopstest.txt", "data")
-        with pytest.raises(KeyError):
-            resources.open_tarfile(tfile,
-                          "rwopstest.txt", 1234)
-        with pytest.raises(AttributeError):
-            resources.open_tarfile(tfile,
-                          None, None)
-
-        with pytest.raises(ValueError):
-            resources.open_tarfile(None,
-                          "rwopstest.txt")
-        with pytest.raises(ValueError):
-            resources.open_tarfile(None, None)
-        with pytest.raises(ValueError):
-            resources.open_tarfile(None,
-                          "rwopstest.txt", "resources")
-
-    def test_open_url(self):
-        if sys.version_info[0] < 3:
-            p2url = urllib.pathname2url
-        else:
-            p2url = urllib2.pathname2url
-
-        fpath = os.path.join(os.path.dirname(__file__), "resources")
-        fpath = os.path.abspath(fpath)
-        tfile = os.path.join(fpath, "rwopstest.txt")
-        urlpath = "file:%s" % p2url(tfile)
-        resfile = resources.open_url(urlpath)
-        assert resfile is not None
-
-        tfile = os.path.join(fpath, "invalid")
-        urlpath = "file:%s" % p2url(tfile)
-        with pytest.raises(urllib2.URLError):
-            resources.open_url(urlpath)
-
-    def test_Resources(self):
+    def test_init(self):
         with pytest.raises(ValueError):
             resources.Resources("invalid")
 
@@ -129,7 +130,7 @@ class TestSDL2ExtResources(object):
         assert res3.get("rwopstest.txt") is not None
         assert res3.get("surfacetest.bmp") is not None
 
-    def test_Resources_add(self):
+    def test_add(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         sfile = os.path.join(fpath, "surfacetest.bmp")
         zfile = os.path.join(fpath, "resources.zip")
@@ -149,7 +150,7 @@ class TestSDL2ExtResources(object):
         with pytest.raises(ValueError):
             res.add("invalid_name.txt")
 
-    def test_Resources_add_file(self):
+    def test_add_file(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         sfile = os.path.join(fpath, "surfacetest.bmp")
         zfile = os.path.join(fpath, "resources.zip")
@@ -168,7 +169,7 @@ class TestSDL2ExtResources(object):
         with pytest.raises(ValueError):
             res.add_file("invalid_name.txt")
 
-    def test_Resources_add_archive(self):
+    def test_add_archive(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         zfile = os.path.join(fpath, "resources.zip")
         tfile = os.path.join(fpath, "resources.tar.gz")
@@ -193,7 +194,7 @@ class TestSDL2ExtResources(object):
         with pytest.raises(KeyError):
             res.get("resources.tar.gz")
 
-    def test_Resources_get(self):
+    def test_get(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
 
         for path in (fpath, None):
@@ -214,7 +215,7 @@ class TestSDL2ExtResources(object):
                 assert res.get("surfacetest.bmp") is not None
                 assert res.get("rwopstest.txt") is not None
 
-    def test_Resources_get_filelike(self):
+    def test_get_filelike(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         zfile = os.path.join(fpath, "resources.zip")
         pfile = os.path.join(fpath, "rwopstest.txt")
@@ -239,7 +240,7 @@ class TestSDL2ExtResources(object):
         with pytest.raises(KeyError):
             res.get_filelike(1234)
 
-    def test_Resources_get_path(self):
+    def test_get_path(self):
         fpath = os.path.join(os.path.dirname(__file__), "resources")
         zfile = os.path.join(fpath, "resources.zip")
         pfile = os.path.join(fpath, "rwopstest.txt")
@@ -261,7 +262,7 @@ class TestSDL2ExtResources(object):
         with pytest.raises(KeyError):
             res.get_path(1234)
 
-    def test_Resources_scan(self):
+    def test_scan(self):
         fpath = os.path.join(os.path.dirname(__file__))
         res = resources.Resources()
         res.scan(fpath)

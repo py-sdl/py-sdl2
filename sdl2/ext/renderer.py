@@ -363,6 +363,7 @@ class Renderer(object):
             raise TypeError("unsupported target type")
         if not _renderer:
             raise_sdl_err("creating the SDL renderer")
+        error.SDL_ClearError()  # Clear any errors from renderer selection
         self._renderer_ref = [_renderer]
 
         self.rendertarget = target

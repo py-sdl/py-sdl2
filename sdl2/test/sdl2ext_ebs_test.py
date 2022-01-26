@@ -3,6 +3,8 @@ import pytest
 from sdl2.ext.ebs import Entity, System, Applicator, World
 
 
+# Define some classes for testing the module
+
 class Position(object):
     def __init__(self, x=0, y=0):
         self.x = x
@@ -11,28 +13,23 @@ class Position(object):
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
-
 class Movement(object):
     def __init__(self, vx=0, vy=0):
         self.vx = vx
         self.vy = vy
 
-
 class PositionEntity(Entity):
     def __init__(self, world, x=0, y=0):
         self.position = Position(x, y)
-
 
 class MovingEntity(Entity):
     def __init__(self, world, x=0, y=0, vx=0, vy=0):
         self.position = Position(x, y)
         self.movement = Movement(vx, vy)
 
-
 class PosEntity(Entity):
     def __init__(self, world, x=0, y=0):
         self.pos = Position(x, y)
-
 
 class PositionSystem(System):
     def __init__(self):
@@ -43,7 +40,6 @@ class PositionSystem(System):
         for c in components:
             c.x += 1
             c.y += 1
-
 
 class MovementApplicator(Applicator):
     def __init__(self):
@@ -56,10 +52,12 @@ class MovementApplicator(Applicator):
             p.y += m.vy
 
 
-class TestSDL2ExtEBS(object):
+# Test the classes of the module
+
+class TestExtEntity(object):
     __tags__ = ["ebs", "sdl2ext"]
 
-    def test_Entity(self):
+    def test_init(self):
         world = World()
         world.add_system(PositionSystem())
 
@@ -73,13 +71,13 @@ class TestSDL2ExtEBS(object):
         assert isinstance(p, PositionEntity)
         assert isinstance(p, Entity)
 
-    def test_Entity_id(self):
+    def test_id(self):
         world = World()
         ent1 = Entity(world)
         ent2 = Entity(world)
         assert ent1.id != ent2.id
 
-    def test_Entity_world(self):
+    def test_world(self):
         world = World()
         world2 = World()
         ent1 = Entity(world)
@@ -90,7 +88,7 @@ class TestSDL2ExtEBS(object):
         assert ent2.world != world
         assert ent1.world != ent2.world
 
-    def test_Entity_delete(self):
+    def test_delete(self):
         w = World()
         e1 = Entity(w)
         e2 = Entity(w)
@@ -105,7 +103,7 @@ class TestSDL2ExtEBS(object):
         e1.delete()
         e2.delete()
 
-    def test_Entity__inheritance(self):
+    def test__inheritance(self):
         world = World()
 
         pos1 = PositionEntity(world)
@@ -115,7 +113,7 @@ class TestSDL2ExtEBS(object):
             assert isinstance(p, Entity)
             assert isinstance(p.position, Position)
 
-    def test_Entity__access(self):
+    def test__access(self):
         world = World()
         pos1 = PositionEntity(world)
         pos2 = PosEntity(world)
@@ -128,11 +126,15 @@ class TestSDL2ExtEBS(object):
         with pytest.raises(AttributeError):
             sx(pos2, 10)
 
-    def test_World(self):
+
+class TestExtWorld(object):
+    __tags__ = ["ebs", "sdl2ext"]
+
+    def test_init(self):
         w = World()
         assert isinstance(w, World)
 
-    def test_World_add_remove_system(self):
+    def test_add_remove_system(self):
         world = World()
         assert isinstance(world, World)
 
@@ -172,7 +174,7 @@ class TestSDL2ExtEBS(object):
         # system has been removed.
         assert isinstance(entity.position, Position)
 
-    def test_World_entities(self):
+    def test_entities(self):
         w = World()
         assert len(w.entities) == 0
 
@@ -180,7 +182,7 @@ class TestSDL2ExtEBS(object):
             Entity(w)
         assert len(w.entities) == 100
 
-    def test_World_delete(self):
+    def test_delete(self):
         w = World()
         e1 = Entity(w)
         e2 = Entity(w)
@@ -195,7 +197,7 @@ class TestSDL2ExtEBS(object):
         w.delete(e1)
         w.delete(e2)
 
-    def test_World_delete_entities(self):
+    def test_delete_entities(self):
         w = World()
         e1 = Entity(w)
         e2 = Entity(w)
@@ -206,7 +208,7 @@ class TestSDL2ExtEBS(object):
         # The next should have no effect
         w.delete_entities((e1, e2))
 
-    def test_World_get_entities(self):
+    def test_get_entities(self):
         w = World()
         e1 = PositionEntity(w, 1, 1)
         e2 = PositionEntity(w, 1, 2)
@@ -214,7 +216,11 @@ class TestSDL2ExtEBS(object):
         e2.position.y = 1
         assert len(w.get_entities(e1.position)) == 2
 
-    def test_System(self):
+
+class TestExtSystem(object):
+    __tags__ = ["ebs", "sdl2ext"]
+
+    def test_init(self):
         world = World()
         with pytest.raises(ValueError):
             world.add_system(None)
@@ -237,7 +243,7 @@ class TestSDL2ExtEBS(object):
         world.add_system(psystem)
         assert psystem in world.systems
 
-    def test_System_process(self):
+    def test_process(self):
         world = World()
 
         class ErrornousSystem(System):
@@ -268,7 +274,11 @@ class TestSDL2ExtEBS(object):
             assert c.x == 2
             assert c.y == 2
 
-    def test_Applicator(self):
+
+class TestExtApplicator(object):
+    __tags__ = ["ebs", "sdl2ext"]
+
+    def test_init(self):
         world = World()
 
         class ErrornousApplicator(Applicator):
@@ -285,7 +295,7 @@ class TestSDL2ExtEBS(object):
         world.add_system(mapplicator)
         assert mapplicator in world.systems
 
-    def test_Applicator_process(self):
+    def test_process(self):
         world = World()
 
         class ErrornousApplicator(Applicator):

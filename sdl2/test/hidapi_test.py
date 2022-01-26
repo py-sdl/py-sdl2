@@ -20,6 +20,8 @@ def hidapi_setup():
     assert ret == 0
 
 
+# NOTE: Remove this xfail once libudev is officially removed from pysdl2-dll
+@pytest.mark.xfail("linux" in sys.platform, reason="udev problems")
 def test_SDL_hid_init_exit():
     SDL_ClearError()
     # Initialize the library

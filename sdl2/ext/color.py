@@ -454,17 +454,12 @@ def is_rgb_color(v):
         False.
 
     """
-    try:
-        if hasattr(v, "r") and hasattr(v, "g") and hasattr(v, "b"):
-            if 0 <= int(v.r) <= 255 and 0 <= int(v.g) <= 255 and \
-                    0 <= v.b <= 255:
-                return True
-
-        if len(v) >= 3:
-            if 0 <= int(v[0]) <= 255 and 0 <= int(v[1]) <= 255 and \
-                    0 < int(v[2]) < 255:
-                return True
+    if hasattr(v, "r") and hasattr(v, "g") and hasattr(v, "b"):
+        v = [v.r, v.g, v.b]
+    if not isiterable(v) or len(v) < 3:
         return False
+    try:
+        return all([0 <= int(x) <= 255 for x in v[:3]])
     except (TypeError, ValueError):
         return False
 

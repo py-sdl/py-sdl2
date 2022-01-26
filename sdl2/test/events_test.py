@@ -5,6 +5,123 @@ import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from sdl2 import events
 
+# NOTE: These tests are very incomplete and in need of a rewrite
+
+
+# Test initializing event structs (is this actually useful?)
+
+def test_SDL_AudioDeviceEvent():
+    event = events.SDL_AudioDeviceEvent()
+    assert isinstance(event, events.SDL_AudioDeviceEvent)
+
+def test_SDL_DisplayEvent():
+    event = events.SDL_DisplayEvent()
+    assert isinstance(event, events.SDL_DisplayEvent)
+
+def test_SDL_WindowEvent():
+    event = events.SDL_WindowEvent()
+    assert isinstance(event, events.SDL_WindowEvent)
+
+def test_SDL_KeyboardEvent():
+    event = events.SDL_KeyboardEvent()
+    assert isinstance(event, events.SDL_KeyboardEvent)
+
+def test_SDL_TextEditingEvent():
+    event = events.SDL_TextEditingEvent()
+    assert isinstance(event, events.SDL_TextEditingEvent)
+
+def test_SDL_TextInputEvent():
+    event = events.SDL_TextInputEvent()
+    assert isinstance(event, events.SDL_TextInputEvent)
+
+def test_SDL_MouseMotionEvent():
+    event = events.SDL_MouseMotionEvent()
+    assert isinstance(event, events.SDL_MouseMotionEvent)
+
+def test_SDL_MouseButtonEvent():
+    event = events.SDL_MouseButtonEvent()
+    assert isinstance(event, events.SDL_MouseButtonEvent)
+
+def test_SDL_MouseWheelEvent():
+    event = events.SDL_MouseWheelEvent()
+    assert isinstance(event, events.SDL_MouseWheelEvent)
+
+def test_SDL_JoyAxisEvent():
+    event = events.SDL_JoyAxisEvent()
+    assert isinstance(event, events.SDL_JoyAxisEvent)
+
+def test_SDL_JoyBallEvent():
+    event = events.SDL_JoyBallEvent()
+    assert isinstance(event, events.SDL_JoyBallEvent)
+
+def test_SDL_JoyHatEvent():
+    event = events.SDL_JoyHatEvent()
+    assert isinstance(event, events.SDL_JoyHatEvent)
+
+def test_SDL_JoyButtonEvent():
+    event = events.SDL_JoyButtonEvent()
+    assert isinstance(event, events.SDL_JoyButtonEvent)
+
+def test_SDL_JoyDeviceEvent():
+    event = events.SDL_JoyDeviceEvent()
+    assert isinstance(event, events.SDL_JoyDeviceEvent)
+
+def test_SDL_ControllerAxisEvent():
+    event = events.SDL_ControllerAxisEvent()
+    assert isinstance(event, events.SDL_ControllerAxisEvent)
+
+def test_SDL_ControllerButtonEvent():
+    event = events.SDL_ControllerButtonEvent()
+    assert isinstance(event, events.SDL_ControllerButtonEvent)
+
+def test_SDL_ControllerDeviceEvent():
+    event = events.SDL_ControllerDeviceEvent()
+    assert isinstance(event, events.SDL_ControllerDeviceEvent)
+
+def test_SDL_ControllerTouchpadEvent():
+    event = events.SDL_ControllerTouchpadEvent()
+    assert isinstance(event, events.SDL_ControllerTouchpadEvent)
+
+def test_SDL_ControllerSensorEvent():
+    event = events.SDL_ControllerSensorEvent()
+    assert isinstance(event, events.SDL_ControllerSensorEvent)
+
+def test_SDL_TouchFingerEvent():
+    event = events.SDL_TouchFingerEvent()
+    assert isinstance(event, events.SDL_TouchFingerEvent)
+
+def test_SDL_MultiGestureEvent():
+    event = events.SDL_MultiGestureEvent()
+    assert isinstance(event, events.SDL_MultiGestureEvent)
+
+def test_SDL_DollarGestureEvent():
+    event = events.SDL_DollarGestureEvent()
+    assert isinstance(event, events.SDL_DollarGestureEvent)
+
+def test_SDL_DropEvent():
+    event = events.SDL_DropEvent()
+    assert isinstance(event, events.SDL_DropEvent)
+
+def test_SDL_SensorEvent():
+    event = events.SDL_SensorEvent()
+    assert isinstance(event, events.SDL_SensorEvent)
+
+def test_SDL_QuitEvent():
+    event = events.SDL_QuitEvent()
+    assert isinstance(event, events.SDL_QuitEvent)
+
+def test_SDL_UserEvent():
+    event = events.SDL_UserEvent()
+    assert isinstance(event, events.SDL_UserEvent)
+
+def test_SDL_SysWMEvent():
+    event = events.SDL_SysWMEvent()
+    assert isinstance(event, events.SDL_SysWMEvent)
+
+def test_SDL_Event():
+    event = events.SDL_Event()
+    assert isinstance(event, events.SDL_Event)
+
 
 class TestSDLEvents(object):
     __tags__ = ["sdl"]
@@ -17,118 +134,6 @@ class TestSDLEvents(object):
     def teardown_class(cls):
         SDL_QuitSubSystem(SDL_INIT_EVERYTHING)
         SDL_Quit()
-
-    def test_SDL_AudioDeviceEvent(self):
-        event = events.SDL_AudioDeviceEvent()
-        assert isinstance(event, events.SDL_AudioDeviceEvent)
-
-    def test_SDL_DisplayEvent(self):
-        event = events.SDL_DisplayEvent()
-        assert isinstance(event, events.SDL_DisplayEvent)
-
-    def test_SDL_WindowEvent(self):
-        event = events.SDL_WindowEvent()
-        assert isinstance(event, events.SDL_WindowEvent)
-
-    def test_SDL_KeyboardEvent(self):
-        event = events.SDL_KeyboardEvent()
-        assert isinstance(event, events.SDL_KeyboardEvent)
-
-    def test_SDL_TextEditingEvent(self):
-        event = events.SDL_TextEditingEvent()
-        assert isinstance(event, events.SDL_TextEditingEvent)
-
-    def test_SDL_TextInputEvent(self):
-        event = events.SDL_TextInputEvent()
-        assert isinstance(event, events.SDL_TextInputEvent)
-
-    def test_SDL_MouseMotionEvent(self):
-        event = events.SDL_MouseMotionEvent()
-        assert isinstance(event, events.SDL_MouseMotionEvent)
-
-    def test_SDL_MouseButtonEvent(self):
-        event = events.SDL_MouseButtonEvent()
-        assert isinstance(event, events.SDL_MouseButtonEvent)
-
-    def test_SDL_MouseWheelEvent(self):
-        event = events.SDL_MouseWheelEvent()
-        assert isinstance(event, events.SDL_MouseWheelEvent)
-
-    def test_SDL_JoyAxisEvent(self):
-        event = events.SDL_JoyAxisEvent()
-        assert isinstance(event, events.SDL_JoyAxisEvent)
-
-    def test_SDL_JoyBallEvent(self):
-        event = events.SDL_JoyBallEvent()
-        assert isinstance(event, events.SDL_JoyBallEvent)
-
-    def test_SDL_JoyHatEvent(self):
-        event = events.SDL_JoyHatEvent()
-        assert isinstance(event, events.SDL_JoyHatEvent)
-
-    def test_SDL_JoyButtonEvent(self):
-        event = events.SDL_JoyButtonEvent()
-        assert isinstance(event, events.SDL_JoyButtonEvent)
-
-    def test_SDL_JoyDeviceEvent(self):
-        event = events.SDL_JoyDeviceEvent()
-        assert isinstance(event, events.SDL_JoyDeviceEvent)
-
-    def test_SDL_ControllerAxisEvent(self):
-        event = events.SDL_ControllerAxisEvent()
-        assert isinstance(event, events.SDL_ControllerAxisEvent)
-
-    def test_SDL_ControllerButtonEvent(self):
-        event = events.SDL_ControllerButtonEvent()
-        assert isinstance(event, events.SDL_ControllerButtonEvent)
-
-    def test_SDL_ControllerDeviceEvent(self):
-        event = events.SDL_ControllerDeviceEvent()
-        assert isinstance(event, events.SDL_ControllerDeviceEvent)
-
-    def test_SDL_ControllerTouchpadEvent(self):
-        event = events.SDL_ControllerTouchpadEvent()
-        assert isinstance(event, events.SDL_ControllerTouchpadEvent)
-
-    def test_SDL_ControllerSensorEvent(self):
-        event = events.SDL_ControllerSensorEvent()
-        assert isinstance(event, events.SDL_ControllerSensorEvent)
-
-    def test_SDL_TouchFingerEvent(self):
-        event = events.SDL_TouchFingerEvent()
-        assert isinstance(event, events.SDL_TouchFingerEvent)
-
-    def test_SDL_MultiGestureEvent(self):
-        event = events.SDL_MultiGestureEvent()
-        assert isinstance(event, events.SDL_MultiGestureEvent)
-
-    def test_SDL_DollarGestureEvent(self):
-        event = events.SDL_DollarGestureEvent()
-        assert isinstance(event, events.SDL_DollarGestureEvent)
-
-    def test_SDL_DropEvent(self):
-        event = events.SDL_DropEvent()
-        assert isinstance(event, events.SDL_DropEvent)
-
-    def test_SDL_SensorEvent(self):
-        event = events.SDL_SensorEvent()
-        assert isinstance(event, events.SDL_SensorEvent)
-
-    def test_SDL_QuitEvent(self):
-        event = events.SDL_QuitEvent()
-        assert isinstance(event, events.SDL_QuitEvent)
-
-    def test_SDL_UserEvent(self):
-        event = events.SDL_UserEvent()
-        assert isinstance(event, events.SDL_UserEvent)
-
-    def test_SDL_SysWMEvent(self):
-        event = events.SDL_SysWMEvent()
-        assert isinstance(event, events.SDL_SysWMEvent)
-
-    def test_SDL_Event(self):
-        event = events.SDL_Event()
-        assert isinstance(event, events.SDL_Event)
 
     def test_SDL_AddDelEventWatch(self):
         eventwatch = []

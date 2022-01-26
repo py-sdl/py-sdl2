@@ -2,84 +2,68 @@ import sys
 import pytest
 from sdl2 import ext as sdl2ext
 
-class TestSDL2ExtUISystem(object):
+# NOTE: Deprecated, so I'm not writing tests for it
+
+
+class TestExtUIFactory(object):
     __tags__ = ["sdl", "sdl2ext"]
 
-    @classmethod
-    def setup_class(cls):
-        try:
-            sdl2ext.init()
-        except sdl2ext.SDLError:
-            raise pytest.skip('Video subsystem not supported')
-
-    @classmethod
-    def teardown_class(cls):
-        sdl2ext.quit()
-
     @pytest.mark.skip("not implemented")
-    def test_UIFactory(self):
+    def test_init(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIFactory_create_button(self):
+    def test_create_button(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIFactory_create_checkbutton(self):
+    def test_create_checkbutton(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIFactory_create_text_entry(self):
+    def test_create_text_entry(self):
+        pass
+
+
+class TestExtUIProcessor(object):
+    __tags__ = ["sdl", "sdl2ext"]
+
+    @pytest.mark.skip("not implemented")
+    def test_init(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_Button(self):
+    def test_activate(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_CheckButton(self):
+    def test_deactivate(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_TextEntry(self):
+    def test_dispatch(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIProcessor(self):
+    def test_mousedown(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIProcessor_activate(self):
+    def test_mouseup(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIProcessor_deactivate(self):
+    def test_mousemotion(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIProcessor_dispatch(self):
+    def test_passevent(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIProcessor_mousedown(self):
+    def test_process(self):
         pass
 
     @pytest.mark.skip("not implemented")
-    def test_UIProcessor_mouseup(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_UIProcessor_mousemotion(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_UIProcessor_passevent(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_UIProcessor_process(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_UIProcessor_textinput(self):
+    def test_textinput(self):
         pass

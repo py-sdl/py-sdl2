@@ -1,5 +1,6 @@
 import sys
 import pytest
+
 try:
     import multiprocessing
     _HASMP = True
@@ -13,10 +14,10 @@ def mp_do_nothing(sender, *args):
     pass
 
 
-class TestSDL2ExtEvents(object):
+class TestExtEventHandler(object):
     __tags__ = ["sdl2ext"]
 
-    def test_EventHandler(self):
+    def test_init(self):
         with pytest.raises(TypeError):
             events.EventHandler()
         assert isinstance(events.EventHandler(None), events.EventHandler)
@@ -30,7 +31,7 @@ class TestSDL2ExtEvents(object):
         assert len(ev) == 0
         assert len(ev.callbacks) == 0
 
-    def test_EventHandler_add__iadd__(self):
+    def test_add__iadd__(self):
         ev = events.EventHandler(None)
 
         def doadd(ev, cb):
@@ -67,7 +68,7 @@ class TestSDL2ExtEvents(object):
             ev.add(callback)
         assert len(ev) == 10
 
-    def test_EventHandler_remove__isub__(self):
+    def test_remove__isub__(self):
         ev = events.EventHandler(None)
 
         def doremove(ev, cb):
@@ -97,7 +98,7 @@ class TestSDL2ExtEvents(object):
             ev -= callback
         assert len(ev) == 2
 
-    def test_EventHandler__call__(self):
+    def test__call__(self):
         ev = events.EventHandler("Test")
         testsum = []
 
@@ -116,8 +117,12 @@ class TestSDL2ExtEvents(object):
         for v in results:
             assert v is None
 
-    @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
-    def test_MPEventHandler(self):
+
+@pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
+class TestExtMPEventHandler(object):
+    __tags__ = ["sdl2ext"]
+
+    def test_init(self):
         with pytest.raises(TypeError):
             events.MPEventHandler()
         assert isinstance(events.MPEventHandler(None), events.MPEventHandler)
@@ -131,8 +136,7 @@ class TestSDL2ExtEvents(object):
         assert len(ev) == 0
         assert len(ev.callbacks) == 0
 
-    @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
-    def test_MPEventHandler_add__iadd__(self):
+    def test_add__iadd__(self):
         ev = events.MPEventHandler(None)
 
         def doadd(ev, cb):
@@ -169,8 +173,7 @@ class TestSDL2ExtEvents(object):
             ev.add(callback)
         assert len(ev) == 10
 
-    @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
-    def test_MPEventHandler_remove__isub__(self):
+    def test_remove__isub__(self):
         ev = events.MPEventHandler(None)
 
         def doremove(ev, cb):
@@ -203,7 +206,7 @@ class TestSDL2ExtEvents(object):
     @pytest.mark.skipif(not _HASMP, reason="multiprocessing is not supported")
     @pytest.mark.skipif(sys.platform == "win32",
         reason="relative import will create a fork bomb")
-    def test_MPEventHandler__call__(self):
+    def test__call__(self):
         ev = events.MPEventHandler("Test")
 
         for x in range(10):

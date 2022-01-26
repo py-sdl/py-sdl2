@@ -13,7 +13,7 @@ to_ctypes = lambda seq, dtype: (dtype * len(seq))(*seq)
 class TestSDLPoint(object):
     __tags__ = ["sdl"]
 
-    def test_SDL_Point(self):
+    def test_init(self):
         pt = rect.SDL_Point()
         assert (pt.x, pt.y) == (0, 0)
         for i in range(0, 100):
@@ -22,7 +22,7 @@ class TestSDLPoint(object):
             pt = rect.SDL_Point(x, y)
             assert (pt.x, pt.y) == (x, y)
 
-    def test_SDL_Point_xy(self):
+    def test_xy(self):
         pt = rect.SDL_Point()
         for i in range(0, 50):
             x = random.randint(-1000, 1000)
@@ -43,13 +43,13 @@ class TestSDLPoint(object):
         with pytest.raises(TypeError):
             pt.y = None
 
-    def test_SDL_Point__repr__(self):
+    def test___repr__(self):
         pt = rect.SDL_Point(10, 12)
         pt2 = eval("rect.%s" % repr(pt))
         assert pt == pt2
         assert (pt.x, pt.y) == (pt2.x, pt2.y)
 
-    def test_SDL_Point__copy__(self):
+    def test___copy__(self):
         pt = rect.SDL_Point()
         pt2 = copy.copy(pt)
         assert pt == pt2
@@ -60,7 +60,7 @@ class TestSDLPoint(object):
         assert pt != pt2
         assert pt3 == pt2
 
-    def test_SDL_Point__eq__(self):
+    def test___eq__(self):
         assert rect.SDL_Point() == rect.SDL_Point()
         coords = [(0, 0), (10, 0), (0, 10), (12, 10), (7, 10)]
         for x1, y1 in coords:
@@ -68,7 +68,7 @@ class TestSDLPoint(object):
                 equal = rect.SDL_FPoint(x1, y1) == rect.SDL_FPoint(x2, y2)
                 assert equal if (x1 == x2 and y1 == y2) else not equal
 
-    def test_SDL_Point__ne__(self):
+    def test___ne__(self):
         assert not rect.SDL_Point() != rect.SDL_Point()
         coords = [(0, 0), (10, 0), (0, 10), (12, 10), (7, 10)]
         for x1, y1 in coords:
@@ -82,7 +82,7 @@ class TestSDLPoint(object):
 class TestSDLFPoint(object):
     __tags__ = ["sdl"]
 
-    def test_SDL_FPoint(self):
+    def test_init(self):
         pt = rect.SDL_FPoint()
         assert (pt.x, pt.y) == (0, 0)
         for i in range(0, 100):
@@ -91,7 +91,7 @@ class TestSDLFPoint(object):
             pt = rect.SDL_FPoint(x, y)
             assert (pt.x, pt.y) == pytest.approx((x, y))
 
-    def test_SDL_FPoint_xy(self):
+    def test_xy(self):
         pt = rect.SDL_FPoint()
         for i in range(0, 50):
             x = random.uniform(-1000, 1000)
@@ -108,13 +108,13 @@ class TestSDLFPoint(object):
         with pytest.raises(TypeError):
             pt.y = None
 
-    def test_SDL_FPoint__repr__(self):
+    def test___repr__(self):
         pt = rect.SDL_FPoint(3.24, 12.8)
         pt2 = eval("rect.%s" % repr(pt))
         assert pt == pt2
         assert (pt.x, pt.y) == (pt2.x, pt2.y)
 
-    def test_SDL_FPoint__copy__(self):
+    def test___copy__(self):
         pt = rect.SDL_FPoint()
         pt2 = copy.copy(pt)
         assert pt == pt2
@@ -125,7 +125,7 @@ class TestSDLFPoint(object):
         assert pt != pt2
         assert pt3 == pt2
 
-    def test_SDL_FPoint__eq__(self):
+    def test___eq__(self):
         assert rect.SDL_FPoint() == rect.SDL_FPoint()
         coords = [(0, 0.5), (10, 0.5), (0, 10.5), (12, 10.5), (7, 10.5)]
         for x1, y1 in coords:
@@ -133,7 +133,7 @@ class TestSDLFPoint(object):
                 equal = rect.SDL_FPoint(x1, y1) == rect.SDL_FPoint(x2, y2)
                 assert equal if (x1 == x2 and y1 == y2) else not equal
 
-    def test_SDL_FPoint__ne__(self):
+    def test___ne__(self):
         assert not rect.SDL_FPoint() != rect.SDL_FPoint()
         coords = [(0, 0.5), (10, 0.5), (0, 10.5), (12, 10.5), (7, 10.5)]
         for x1, y1 in coords:
@@ -145,7 +145,7 @@ class TestSDLFPoint(object):
 class TestSDLRect(object):
     __tags__ = ["sdl"]
 
-    def test_SDL_Rect(self):
+    def test_init(self):
         rt = rect.SDL_Rect()
         assert (rt.x, rt.y, rt.w, rt.h) == (0, 0, 0, 0)
         for i in range(0, 50):
@@ -156,7 +156,7 @@ class TestSDLRect(object):
             rt = rect.SDL_Rect(x, y, w, h)
             assert (rt.x, rt.y, rt.w, rt.h) == (x, y, w, h)
 
-    def test_SDL_Rect_xywh(self):
+    def test_xywh(self):
         rt = rect.SDL_Rect()
         for i in range(0, 50):
             x = random.randint(-1000, 1000)
@@ -168,38 +168,25 @@ class TestSDLRect(object):
             rt.w = w
             rt.h = h
             assert (rt.x, rt.y, rt.w, rt.h) == (x, y, w, h)
-        with pytest.raises(TypeError):
-            rt.x = 10.4
-        with pytest.raises(TypeError):
-            rt.y = 10.4
-        with pytest.raises(TypeError):
-            rt.w = 10.4
-        with pytest.raises(TypeError):
-            rt.h = 10.4
-        with pytest.raises(TypeError):
-            rt.x = "point"
-        with pytest.raises(TypeError):
-            rt.y = "point"
-        with pytest.raises(TypeError):
-            rt.w = "point"
-        with pytest.raises(TypeError):
-            rt.h = "point"
-        with pytest.raises(TypeError):
-            rt.x = None
-        with pytest.raises(TypeError):
-            rt.y = None
-        with pytest.raises(TypeError):
-            rt.w = None
-        with pytest.raises(TypeError):
-            rt.h = None
 
-    def test_SDL_Rect__repr__(self):
+        bad_inputs = [10.4, "point", None]
+        for val in bad_inputs:  
+            with pytest.raises(TypeError):
+                rt.x = val
+            with pytest.raises(TypeError):
+                rt.y = val
+            with pytest.raises(TypeError):
+                rt.w = val
+            with pytest.raises(TypeError):
+                rt.h = val
+
+    def test___repr__(self):
         rt = rect.SDL_Rect(1, 2, 3, 4)
         rt2 = eval("rect.%s" % repr(rt))
         assert (rt.x, rt.y, rt.w, rt.h) == (rt2.x, rt2.y, rt2.w, rt2.h)
         assert rt == rt2
 
-    def test_SDL_Rect__copy__(self):
+    def test___copy__(self):
         rt = rect.SDL_Rect()
         rt2 = copy.copy(rt)
         assert rt == rt2
@@ -212,7 +199,7 @@ class TestSDLRect(object):
         assert rt != rt2
         assert rt3 == rt2
 
-    def test_SDL_Rect__eq__(self):
+    def test___eq__(self):
         sdlr = rect.SDL_Rect
         assert sdlr() == sdlr()
         rects = [
@@ -225,7 +212,7 @@ class TestSDLRect(object):
                 equal = sdlr(x1, y1, w1, h1) == sdlr(x2, y2, w2, h2)
                 assert equal if same else not equal
 
-    def test_SDL_Rect__ne__(self):
+    def test___ne__(self):
         sdlr = rect.SDL_Rect
         assert sdlr() == sdlr()
         rects = [
@@ -243,7 +230,7 @@ class TestSDLRect(object):
 class TestSDLFRect(object):
     __tags__ = ["sdl"]
 
-    def test_SDL_FRect(self):
+    def test_init(self):
         rt = rect.SDL_FRect()
         assert (rt.x, rt.y, rt.w, rt.h) == (0, 0, 0, 0)
         for i in range(0, 50):
@@ -254,7 +241,7 @@ class TestSDLFRect(object):
             rt = rect.SDL_FRect(x, y, w, h)
             assert (rt.x, rt.y, rt.w, rt.h) == pytest.approx((x, y, w, h))
 
-    def test_SDL_FRect_xywh(self):
+    def test_xywh(self):
         rt = rect.SDL_FRect()
         for i in range(0, 50):
             x = random.uniform(-1000, 1000)
@@ -266,30 +253,25 @@ class TestSDLFRect(object):
             rt.w = w
             rt.h = h
             assert (rt.x, rt.y, rt.w, rt.h) == pytest.approx((x, y, w, h))
-        with pytest.raises(TypeError):
-            rt.x = "point"
-        with pytest.raises(TypeError):
-            rt.y = "point"
-        with pytest.raises(TypeError):
-            rt.w = "point"
-        with pytest.raises(TypeError):
-            rt.h = "point"
-        with pytest.raises(TypeError):
-            rt.x = None
-        with pytest.raises(TypeError):
-            rt.y = None
-        with pytest.raises(TypeError):
-            rt.w = None
-        with pytest.raises(TypeError):
-            rt.h = None
 
-    def test_SDL_FRect__repr__(self):
+        bad_inputs = ["point", None]
+        for val in bad_inputs:  
+            with pytest.raises(TypeError):
+                rt.x = val
+            with pytest.raises(TypeError):
+                rt.y = val
+            with pytest.raises(TypeError):
+                rt.w = val
+            with pytest.raises(TypeError):
+                rt.h = val
+
+    def test___repr__(self):
         rt = rect.SDL_FRect(1.5, 2.2, 3.8, 4.9)
         rt2 = eval("rect.%s" % repr(rt))
         assert (rt.x, rt.y, rt.w, rt.h) == (rt2.x, rt2.y, rt2.w, rt2.h)
         assert rt == rt2
 
-    def test_SDL_FRect__copy__(self):
+    def test___copy__(self):
         rt = rect.SDL_FRect()
         rt2 = copy.copy(rt)
         assert rt == rt2
@@ -302,7 +284,7 @@ class TestSDLFRect(object):
         assert rt != rt2
         assert rt3 == rt2
 
-    def test_SDL_FRect__eq__(self):
+    def test___eq__(self):
         sdlr = rect.SDL_FRect
         assert sdlr() == sdlr()
         rects = [
@@ -315,7 +297,7 @@ class TestSDLFRect(object):
                 equal = sdlr(x1, y1, w1, h1) == sdlr(x2, y2, w2, h2)
                 assert equal if same else not equal
 
-    def test_SDL_FRect__ne__(self):
+    def test___ne__(self):
         sdlr = rect.SDL_FRect
         assert sdlr() == sdlr()
         rects = [

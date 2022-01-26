@@ -2,38 +2,27 @@ import pytest
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
 from sdl2 import vulkan
 
-class TestSDLVulkan(object):
-    __tags__ = ["sdl"]
 
-    @classmethod
-    def setup_class(cls):
-        if SDL_Init(SDL_INIT_VIDEO) != 0:
-            raise pytest.skip('Video subsystem not supported')
+@pytest.mark.skip("not implemented")
+def test_SDL_Vulkan_LoadLibrary(with_sdl):
+    pass
 
-    @classmethod
-    def teardown_class(cls):
-        SDL_Quit()
+@pytest.mark.skip("not implemented")
+def test_SDL_Vulkan_GetVkGetInstanceProcAddr(with_sdl):
+    pass
 
-    @pytest.mark.skip("not implemented")
-    def test_SDL_Vulkan_LoadLibrary(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_Vulkan_UnloadLibrary(with_sdl):
+    pass
 
-    @pytest.mark.skip("not implemented")
-    def test_SDL_Vulkan_GetVkGetInstanceProcAddr(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_Vulkan_GetInstanceExtensions(with_sdl):
+    pass
 
-    @pytest.mark.skip("not implemented")
-    def test_SDL_Vulkan_UnloadLibrary(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_Vulkan_CreateSurface(with_sdl):
+    pass
 
-    @pytest.mark.skip("not implemented")
-    def test_SDL_Vulkan_GetInstanceExtensions(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_SDL_Vulkan_CreateSurface(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_SDL_Vulkan_GetDrawableSize(self):
-        pass
+@pytest.mark.skip("not implemented")
+def test_SDL_Vulkan_GetDrawableSize(with_sdl):
+    pass
