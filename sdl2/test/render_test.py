@@ -540,8 +540,8 @@ def test_SDL_RenderGetSetLogicalSize(sw_renderer):
     assert view[2][2] == BLACK_RGBA
     del view
 
-def test_SDL_RenderGetSetViewport(with_renderer):
-    renderer, win = with_renderer
+def test_SDL_RenderGetSetViewport(sw_renderer):
+    renderer, sf = sw_renderer
     rects = (
         rect.SDL_Rect(1, 1, 1, 1),
         rect.SDL_Rect(0, 0, 10, 10),

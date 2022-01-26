@@ -25,9 +25,9 @@ def test_SDL_ClipboardText(window):
     ret = clipboard.SDL_GetClipboardText()
     original_contents = ret
     assert SDL_GetError() == b""
-    assert ret == None or type(ret) in (str, bytes)
+    assert type(ret) in (str, bytes)
     # Test whether HasClipboardText is accurate
-    expected = SDL_FALSE if ret == None else SDL_TRUE
+    expected = SDL_FALSE if len(ret) == 0 else SDL_TRUE
     assert clipboard.SDL_HasClipboardText() == expected
     # Set some new clipboard test and test for it
     ret = clipboard.SDL_SetClipboardText(b"test")

@@ -5,6 +5,18 @@ from sdl2 import ext as sdl2ext
 from sdl2 import surface, video
 from .conftest import SKIP_ANNOYING
 
+# Some tests don't work properly with some video drivers, so check the name
+DRIVER_DUMMY = False
+DRIVER_X11 = False
+try:
+    sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+    driver_name = video.SDL_GetCurrentVideoDriver()
+    sdl2.SDL_Quit()
+    DRIVER_DUMMY = driver_name == b"dummy"
+    DRIVER_X11 = driver_name == b"x11"
+except:
+    pass
+
 
 class TestExtWindow(object):
     __tags__ = ["sdl", "sdl2ext"]
@@ -43,7 +55,8 @@ class TestExtWindow(object):
         window.show()
         assert get_flags(window.window) & max_flag != max_flag
         window.maximize()
-        assert get_flags(window.window) & max_flag == max_flag
+        if not DRIVER_DUMMY:
+            assert get_flags(window.window) & max_flag == max_flag
         window.close()
 
     @pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
@@ -54,7 +67,8 @@ class TestExtWindow(object):
         window.show()
         assert get_flags(window.window) & min_flag != min_flag
         window.minimize()
-        assert get_flags(window.window) & min_flag == min_flag
+        if not (DRIVER_DUMMY or DRIVER_X11):
+            assert get_flags(window.window) & min_flag == min_flag
         window.restore()
         assert get_flags(window.window) & min_flag != min_flag
         window.close()
