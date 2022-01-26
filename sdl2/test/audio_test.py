@@ -202,12 +202,16 @@ def test_SDL_GetCurrentAudioDriver(with_sdl_audio):
     assert success >= 1
 
 def test_SDL_OpenCloseAudio(with_sdl_audio):
-    fmt = audio.AUDIO_F32 if sys.platform == "darwin" else audio.AUDIO_U16SYS
+    fmt = audio.AUDIO_F32 if sys.platform == "darwin" else audio.AUDIO_U16
+    fmt_variants = {
+        audio.AUDIO_F32: [audio.AUDIO_F32LSB, audio.AUDIO_F32MSB],
+        audio.AUDIO_U16: [audio.AUDIO_U16LSB, audio.AUDIO_U16MSB],
+    }
     reqspec = audio.SDL_AudioSpec(44100, fmt, 2, 1024)
     spec = audio.SDL_AudioSpec(0, 0, 0, 0)
     ret = audio.SDL_OpenAudio(reqspec, ctypes.byref(spec))
     assert ret == 0
-    assert spec.format == reqspec.format
+    assert spec.format in fmt_variants[fmt]
     assert spec.freq == reqspec.freq
     assert spec.channels == reqspec.channels
     audio.SDL_CloseAudio()
@@ -291,7 +295,7 @@ def test_SDL_GetAudioDeviceSpec(with_sdl_audio):
 
 def test_SDL_OpenCloseAudioDevice(with_sdl_audio):
     #TODO: Add tests for callback
-    fmt = audio.AUDIO_F32 if sys.platform == "darwin" else audio.AUDIO_U16SYS
+    fmt = audio.AUDIO_F32 if sys.platform == "darwin" else audio.AUDIO_U16
     reqspec = audio.SDL_AudioSpec(44100, fmt, 2, 1024)
     outnum = audio.SDL_GetNumAudioDevices(0)
     for x in range(outnum):
