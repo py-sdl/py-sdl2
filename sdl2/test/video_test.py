@@ -7,9 +7,7 @@ import pytest
 import sdl2
 from sdl2.stdinc import SDL_FALSE, SDL_TRUE, Uint16
 from sdl2 import video, rect, pixels, surface, SDL_GetError
-
-# TODO: Have optional environment variable to toggle annoying video tests
-# (e.g. fullscreen, window maximize/minimize, flash window)
+from .conftest import SKIP_ANNOYING
 
 # Some tests don't work properly with some video drivers, so check the name
 DRIVER_DUMMY = False
@@ -62,7 +60,8 @@ def window(with_sdl):
 
 @pytest.fixture
 def decorated_window(with_sdl):
-    w = video.SDL_CreateWindow(b"Test", 10, 40, 12, 13, 0)
+    flag = video.SDL_WINDOW_RESIZABLE
+    w = video.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
     assert SDL_GetError() == b""
     assert isinstance(w.contents, video.SDL_Window)
     yield w
@@ -572,9 +571,8 @@ def test_SDL_RaiseWindow(window):
     # NOTE: Doesn't set any flags, so can't test this super well
     video.SDL_RaiseWindow(window)
 
-@pytest.mark.skip("Doesn't set the maximized flag for some reason")
+@pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
 def test_SDL_MaximizeWindow(decorated_window):
-    # NOTE: May need to pump events for this to take effect?
     shown_flag = video.SDL_WINDOW_SHOWN
     max_flag = video.SDL_WINDOW_MAXIMIZED
     window = decorated_window
@@ -585,6 +583,7 @@ def test_SDL_MaximizeWindow(decorated_window):
     if not DRIVER_DUMMY:
         assert video.SDL_GetWindowFlags(window) & max_flag == max_flag
 
+@pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
 def test_SDL_MinimizeRestoreWindow(decorated_window):
     shown_flag = video.SDL_WINDOW_SHOWN
     min_flag = video.SDL_WINDOW_MINIMIZED

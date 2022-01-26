@@ -1,9 +1,13 @@
 # pytest configuration file
+import os
 import gc
 import pytest
 import sdl2
 from sdl2 import ext as sdl2ext
 
+# A flag to skip annoying audiovisual tests (e.g. window minimize).
+# Defaults to True unless an environment variable is explicitly set.
+SKIP_ANNOYING = os.getenv("PYSDL2_ALL_TESTS", "0") == "0"
 
 @pytest.fixture(scope="module")
 def with_sdl():
