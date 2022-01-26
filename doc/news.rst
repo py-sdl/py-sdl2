@@ -10,6 +10,7 @@ Released on XXXX-XX-XX.
 New Features:
 
 * Updated to wrap new functions and constants in SDL2 2.0.20 (PR #214)
+* Updated to wrap new functions and constants in SDL2_ttf 2.0.18 (PR #216)
 
 
 0.9.10
