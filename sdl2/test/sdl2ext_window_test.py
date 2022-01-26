@@ -1,5 +1,6 @@
 import sys
 import pytest
+import sdl2
 from sdl2 import SDL_WINDOW_SHOWN
 from sdl2 import ext as sdl2ext
 from sdl2 import surface, video

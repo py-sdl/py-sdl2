@@ -3,7 +3,7 @@ import pytest
 import sdl2
 from sdl2 import SDL_GetError
 from sdl2 import clipboard
-from sdl2.stdinc import SDL_TRUE
+from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from .conftest import SKIP_ANNOYING
 
 @pytest.fixture
@@ -15,21 +15,18 @@ def window(with_sdl):
     yield w
     sdl2.SDL_DestroyWindow(w)
 
-def is_win_or_mac():
-    return sys.platform in ("win32", "cygwin", "darwin")
-
 
 @pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
 def test_SDL_ClipboardText(window):
     # Test retrieving text from the clipboard
     ret = clipboard.SDL_GetClipboardText()
     original_contents = ret
-    assert SDL_GetError() == b""
     assert type(ret) in (str, bytes)
     # Test whether HasClipboardText is accurate
     expected = SDL_FALSE if len(ret) == 0 else SDL_TRUE
     assert clipboard.SDL_HasClipboardText() == expected
     # Set some new clipboard test and test for it
+
     ret = clipboard.SDL_SetClipboardText(b"test")
     assert SDL_GetError() == b""
     assert ret == 0
