@@ -7,22 +7,23 @@ from sdl2.ext import array as sdlextarray
 
 singlebyteseq = [x for x in range(0x100)]
 doublebyteseq = [x for x in range(0x10000)]
-quadbyteseq = [0x00000000,
-               0x000000FF,
-               0x0000FF00,
-               0x0000FFFF,
-               0x00FF0000,
-               0x00FF00FF,
-               0x00FFFF00,
-               0x00FFFFFF,
-               0xFF000000,
-               0xFF0000FF,
-               0xFF00FF00,
-               0xFFFF0000,
-               0xFFFF00FF,
-               0xFFFFFF00,
-               0xFFFFFFFF
-               ]
+quadbyteseq = [
+    0x00000000,
+    0x000000FF,
+    0x0000FF00,
+    0x0000FFFF,
+    0x00FF0000,
+    0x00FF00FF,
+    0x00FFFF00,
+    0x00FFFFFF,
+    0xFF000000,
+    0xFF0000FF,
+    0xFF00FF00,
+    0xFFFF0000,
+    0xFFFF00FF,
+    0xFFFFFF00,
+    0xFFFFFFFF,
+]
 
 singlebytebuf = array.array("B", singlebyteseq)
 doublebytebuf = array.array("H", doublebyteseq)
@@ -32,13 +33,11 @@ USHORT_SIZE = struct.calcsize("H")
 UINT_SIZE = struct.calcsize("I")
 UBYTE_SIZE = struct.calcsize("B")
 
-
 def create_16b(seq, offset):
     if sys.byteorder == 'little':
         return (seq[offset] | seq[offset + 1] << 8)
     else:
         return (seq[offset] << 8 | seq[offset + 1])
-
 
 def create_32b(seq, size, offset):
     if sys.byteorder == 'little':
@@ -57,7 +56,6 @@ def create_32b(seq, size, offset):
                     seq[offset + 3])
         elif size == 2:
             return (seq[offset] << 16 | seq[offset + 1])
-
 
 def create_64b(seq, size, offset):
     if sys.byteorder == 'little':
@@ -96,22 +94,17 @@ def create_64b(seq, size, offset):
         elif size == 4:
             return (seq[offset] << 32 | seq[offset])
 
-
 def lobyte16(val):
     return val & 0x00FF
-
 
 def hibyte16(val):
     return val >> 8 & 0x00FF
 
-
 def lobytes32(val):
     return val & 0x0000FFFF
 
-
 def hibytes32(val):
     return val >> 16 & 0x0000FFFF
-
 
 def ltrbyte32(val, pos):
     if sys.byteorder == 'little':
@@ -138,22 +131,25 @@ def ltrbyte32(val, pos):
             raise IndexError("invalid position")
 
 
-class TestSDL2ExtArray(object):
+def test_to_ctypes():
+    for seq, dtype in (
+        (singlebyteseq, ctypes.c_ubyte),
+        (singlebytebuf, ctypes.c_ubyte),
+        (doublebyteseq, ctypes.c_ushort),
+        (doublebytebuf, ctypes.c_ushort),
+        (quadbyteseq, ctypes.c_uint),
+        (quadbytebuf, ctypes.c_uint),
+    ):
+        bytebuf, size = sdlextarray.to_ctypes(seq, dtype)
+        assert size == len(seq)
+        for index, x in enumerate(bytebuf):
+            assert x == seq[index]
+
+
+class TestExtCTypesView(object):
     __tags__ = ["sdl2ext"]
 
-    def test_to_ctypes(self):
-        for seq, dtype in ((singlebyteseq, ctypes.c_ubyte),
-                           (singlebytebuf, ctypes.c_ubyte),
-                           (doublebyteseq, ctypes.c_ushort),
-                           (doublebytebuf, ctypes.c_ushort),
-                           (quadbyteseq, ctypes.c_uint),
-                           (quadbytebuf, ctypes.c_uint)):
-            bytebuf, size = sdlextarray.to_ctypes(seq, dtype)
-            assert size == len(seq)
-            for index, x in enumerate(bytebuf):
-                assert x == seq[index]
-
-    def test_CTypesView__singlebytes(self):
+    def test__singlebytes(self):
         buf1 = sdlextarray.CTypesView(singlebyteseq, docopy=True)
         buf2 = sdlextarray.CTypesView(singlebytebuf, docopy=False)
         for singlebytes, shared in ((buf1, False), (buf2, True)):
@@ -181,7 +177,7 @@ class TestSDL2ExtArray(object):
                 assert val == seqval
                 offset += 8
 
-    def test_CTypesView__doublebytes(self):
+    def test_doublebytes(self):
         buf1 = sdlextarray.CTypesView(doublebyteseq, USHORT_SIZE, docopy=True)
         buf2 = sdlextarray.CTypesView(doublebytebuf, USHORT_SIZE, docopy=False)
         for singlebytes, shared in ((buf1, False), (buf2, True)):
@@ -216,7 +212,7 @@ class TestSDL2ExtArray(object):
                 assert val == seqval
                 offset += 4
 
-    def test_CTypesView__quadbytes(self):
+    def test_quadbytes(self):
         buf1 = sdlextarray.CTypesView(quadbyteseq, UINT_SIZE, docopy=True)
         buf2 = sdlextarray.CTypesView(quadbytebuf, UINT_SIZE, docopy=False)
         for singlebytes, shared in ((buf1, False), (buf2, True)):
@@ -255,25 +251,29 @@ class TestSDL2ExtArray(object):
                 assert val == seqval
                 offset += 2
 
-    def test_CTypesView__repr__(self):
-        seqs = ((singlebyteseq, UBYTE_SIZE, 1, False),
-                (doublebyteseq, USHORT_SIZE, 2, False),
-                (quadbyteseq, UINT_SIZE, 4, False),
-                (singlebytebuf, UBYTE_SIZE, 1, True),
-                (doublebytebuf, USHORT_SIZE, 2, True),
-                (quadbytebuf, UINT_SIZE, 4, True),
-                )
+    def test___repr__(self):
+        seqs = (
+            (singlebyteseq, UBYTE_SIZE, 1, False),
+            (doublebyteseq, USHORT_SIZE, 2, False),
+            (quadbyteseq, UINT_SIZE, 4, False),
+            (singlebytebuf, UBYTE_SIZE, 1, True),
+            (doublebytebuf, USHORT_SIZE, 2, True),
+            (quadbytebuf, UINT_SIZE, 4, True),
+        )
         for seq, size, factor, shared in seqs:
             buf = sdlextarray.CTypesView(seq, size, not shared)
             otype = type(seq).__name__
             if not shared:
                 otype = 'array'
-
             text = "CTypesView(type=%s, bytesize=%d, shared=%s)" % \
                 (otype, len(seq) * factor, shared)
             assert text == repr(buf)
 
-    def test_MemoryView(self):
+
+class TestExtMemoryView(object):
+    __tags__ = ["sdl2ext"]
+
+    def test_init(self):
         with pytest.raises(TypeError):
             sdlextarray.MemoryView(5, 1, (1,))
         with pytest.raises(TypeError):
@@ -306,7 +306,7 @@ class TestSDL2ExtArray(object):
         with pytest.raises(IndexError):
             view[10]
 
-    def test_MemoryView_ndim_strides(self):
+    def test_ndim_strides(self):
         source = "Example buffer"
         view = sdlextarray.MemoryView(source, 1, (len(source),))
         assert view.ndim == 1
@@ -321,54 +321,55 @@ class TestSDL2ExtArray(object):
         assert view.ndim == 3
         assert view.strides == (2, 2, 2)
 
-    def test_MemoryView_itemsize(self):
+    def test_itemsize(self):
         source = "Example buffer"
         view = sdlextarray.MemoryView(source, 1, (len(source),))
         assert view.itemsize == 1
         view = sdlextarray.MemoryView(source, 7, (1, 7))
         assert view.itemsize == 7
 
-    def test_MemoryView_size(self):
+    def test_size(self):
         source = "Example buffer"
         view = sdlextarray.MemoryView(source, 1, (len(source),))
         assert view.size == len(source)
         view = sdlextarray.MemoryView(source, 7, (1, 7))
         assert view.size == len(source)
 
-    def test_MemoryView_source(self):
+    def test_source(self):
         source = "Example buffer"
         view = sdlextarray.MemoryView(source, 1, (len(source),))
         assert view.source == source
 
-    def test_to_tuple(self):
-        ar = (ctypes.c_int * 20)()
-        for i in range(20):
-            ar[i] = i
-        vtuple = sdlextarray.to_tuple(ar)
-        assert isinstance(vtuple, tuple)
-        for index, value in enumerate(vtuple):
-            assert value == ar[index]
 
-    def test_to_list(self):
-        ar = (ctypes.c_int * 20)()
-        for i in range(20):
-            ar[i] = i
-        vlist = sdlextarray.to_list(ar)
-        assert isinstance(vlist, list)
-        for index, value in enumerate(vlist):
-            assert value == ar[index]
+def test_to_tuple():
+    ar = (ctypes.c_int * 20)()
+    for i in range(20):
+        ar[i] = i
+    vtuple = sdlextarray.to_tuple(ar)
+    assert isinstance(vtuple, tuple)
+    for index, value in enumerate(vtuple):
+        assert value == ar[index]
 
-    def test_create_array(self):
-        barr = bytes(bytearray(singlebyteseq))
-        for i in (1, 2, 4, 8):
-            parr = sdlextarray.create_array(barr, i)
-            assert isinstance(parr, array.array)
-            if i == 1:
-                assert parr[0] == 0x0
-            elif i == 2:
-                assert parr[0] == 0x0100
-            elif i == 4:
-                assert parr[0] == 0x03020100
-        for i in (0, 3, 5, 6, 7, 9, 10, 12, "test", self):
-            with pytest.raises(TypeError):
-                sdlextarray.create_array(barr, i)
+def test_to_list():
+    ar = (ctypes.c_int * 20)()
+    for i in range(20):
+        ar[i] = i
+    vlist = sdlextarray.to_list(ar)
+    assert isinstance(vlist, list)
+    for index, value in enumerate(vlist):
+        assert value == ar[index]
+
+def test_create_array():
+    barr = bytes(bytearray(singlebyteseq))
+    for i in (1, 2, 4, 8):
+        parr = sdlextarray.create_array(barr, i)
+        assert isinstance(parr, array.array)
+        if i == 1:
+            assert parr[0] == 0x0
+        elif i == 2:
+            assert parr[0] == 0x0100
+        elif i == 4:
+            assert parr[0] == 0x03020100
+    for i in (0, 3, 5, 6, 7, 9, 10, 12, "test"):
+        with pytest.raises(TypeError):
+            sdlextarray.create_array(barr, i)

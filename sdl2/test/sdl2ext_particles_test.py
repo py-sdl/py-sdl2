@@ -3,10 +3,10 @@ import pytest
 from sdl2.ext import particles
 
 
-class TestSDL2ExtParticles(object):
+class TestExtParticle(object):
     __tags__ = ["sdl2ext"]
 
-    def test_Particle(self):
+    def test_init(self):
         p = particles.Particle(0, 0, 0)
         assert isinstance(p, particles.Particle)
         assert p.x == p.y == p.life == 0
@@ -16,7 +16,7 @@ class TestSDL2ExtParticles(object):
         assert p.y == 2
         assert p.life == 3
 
-    def test_Particle_xy_position(self):
+    def test_xy_position(self):
         for x in range(-100, 100):
             for y in range(-100, 100):
                 p = particles.Particle(x, y, 1)
@@ -36,12 +36,16 @@ class TestSDL2ExtParticles(object):
                 assert p.x == x
                 assert p.y == y
 
-    def test_Particle_life(self):
+    def test_life(self):
         for life in range(-100, 100):
             p = particles.Particle(0, 0, life)
             assert p.life == life
 
-    def test_ParticleEngine(self):
+
+class TestExtParticleEngine(object):
+    __tags__ = ["sdl2ext"]
+
+    def test_init(self):
         engine = particles.ParticleEngine()
         assert isinstance(engine, particles.ParticleEngine)
         assert particles.Particle in engine.componenttypes
@@ -49,7 +53,7 @@ class TestSDL2ExtParticles(object):
         assert engine.deletefunc is None
         assert engine.updatefunc is None
 
-    def test_ParticleEngine_createfunc(self):
+    def test_createfunc(self):
         def func(w, c):
             pass
         engine = particles.ParticleEngine()
@@ -66,7 +70,7 @@ class TestSDL2ExtParticles(object):
         with pytest.raises(TypeError):
             setf(engine, 1234)
 
-    def test_ParticleEngine_deletefunc(self):
+    def test_deletefunc(self):
         def func(w, c):
             pass
         engine = particles.ParticleEngine()
@@ -83,7 +87,7 @@ class TestSDL2ExtParticles(object):
         with pytest.raises(TypeError):
             setf(engine, 1234)
 
-    def test_ParticleEngine_updatefunc(self):
+    def test_updatefunc(self):
         def func(w, c):
             pass
         engine = particles.ParticleEngine()
@@ -100,7 +104,7 @@ class TestSDL2ExtParticles(object):
         with pytest.raises(TypeError):
             setf(engine, 1234)
 
-    def test_ParticleEngine_process(self):
+    def test_process(self):
         def cfunc(w, c):
             assert len(c) == w["runs"]
             for p in c:
