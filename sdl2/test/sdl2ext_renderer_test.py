@@ -9,6 +9,7 @@ from sdl2.rect import SDL_Point
 from sdl2.render import SDL_Renderer, SDL_Texture
 from sdl2.surface import SDL_CreateRGBSurface, SDL_FreeSurface
 
+# NOTE: These tests still have some legacy cruft to clean
 
 def check_pixels(view, w, h, sprite, c1, c2, cx=0, cy=0):
     msg = "color mismatch at %d,%d: %d not in %s"
@@ -128,45 +129,8 @@ class TestExtRenderer(object):
             renderer.destroy()
 
         window.close()
-
-    def test_Texture(self):
-        # Create renderer and test surface
-        rendertarget = SDL_CreateRGBSurface(0, 100, 100, 32, 0, 0, 0, 0)
-        renderer = sdl2ext.Renderer(rendertarget.contents)
-        sf = SDL_CreateRGBSurface(
-            0, 16, 16, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
-        )
-
-        # Test creation with surface pointer
-        tx = sdl2ext.Texture(renderer, sf)
-        assert isinstance(tx.tx.contents, SDL_Texture)
-
-        # Test destruction and associated behaviour
-        tx.destroy()
-        with pytest.raises(RuntimeError):
-            sdl_tx = tx.tx
-
-        # Test creation with surface contents
-        tx = sdl2ext.Texture(renderer, sf.contents)
-        assert isinstance(tx.tx.contents, SDL_Texture)
         
-        # Test texture size
-        assert tx.size == (16, 16)
-
-        # Test exception on bad input
-        with pytest.raises(TypeError):
-            sdl2ext.Texture(sf, sf)
-        with pytest.raises(TypeError):
-            sdl2ext.Texture(renderer, renderer)
-
-        # Test exception when accessing Texture with destroyed Renderer
-        renderer.destroy()
-        with pytest.raises(RuntimeError):
-            sdl_tx = tx.tx
-        tx.destroy()  # Ensure texture destruction method doesn't error
-        SDL_FreeSurface(sf)
-        
-    def test_color(self):
+    def test_color(self, with_sdl):
         sf = SDL_CreateRGBSurface(
             0, 10, 10, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
         )
@@ -189,10 +153,14 @@ class TestExtRenderer(object):
         SDL_FreeSurface(sf)
 
     @pytest.mark.skip("not implemented")
-    def test_Renderer_blendmode(self):
+    def test_blendmode(self, with_sdl):
         pass
 
-    def test_clear(self):
+    @pytest.mark.skip("not implemented")
+    def test_scale(self, with_sdl):
+        pass
+
+    def test_clear(self, with_sdl):
         sf = SDL_CreateRGBSurface(0, 10, 10, 32,
                                   0xFF000000,
                                   0x00FF0000,
@@ -215,7 +183,7 @@ class TestExtRenderer(object):
         renderer.destroy()
         SDL_FreeSurface(sf)
 
-    def test_copy(self):
+    def test_copy(self, with_sdl):
         # Initialize target surface and renderer
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         renderer = sdl2ext.Renderer(surface)
@@ -279,7 +247,7 @@ class TestExtRenderer(object):
 
         del view
 
-    def test_draw_line(self):
+    def test_draw_line(self, with_sdl):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
         renderer = sdl2ext.Renderer(surface)
@@ -289,7 +257,7 @@ class TestExtRenderer(object):
                          [((20, 10), (20, 86))], 0x0000FF, (0x0,))
         del view
 
-    def test_draw_point(self):
+    def test_draw_point(self, with_sdl):
         # Initialize target surface and renderer
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
@@ -325,8 +293,7 @@ class TestExtRenderer(object):
         with pytest.raises(ValueError):
             renderer.draw_point([(0, 0), (1, 2, 3)], 0x0000FF)
         
-
-    def test_draw_rect(self):
+    def test_draw_rect(self, with_sdl):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
         renderer = sdl2ext.Renderer(surface)
@@ -352,7 +319,7 @@ class TestExtRenderer(object):
             ((27, 15), (27, 24))], 0x0000FF, (0x0,))
         del view
 
-    def test_fill(self):
+    def test_fill(self, with_sdl):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
         renderer = sdl2ext.Renderer(surface)
@@ -371,3 +338,57 @@ class TestExtRenderer(object):
         check_areas(view, 128, 128, [(5, 5, 10, 10), (20, 15, 8, 10)],
                          0x0000FF, (0x0,))
         del view
+
+
+class TestExtTexture(object):
+    __tags__ = ["sdl", "sdl2ext"]
+
+    def test_init_destroy(self):
+        # Create renderer and test surface
+        rendertarget = SDL_CreateRGBSurface(0, 100, 100, 32, 0, 0, 0, 0)
+        renderer = sdl2ext.Renderer(rendertarget.contents)
+        sf = SDL_CreateRGBSurface(
+            0, 16, 16, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+        )
+
+        # Test creation with surface pointer
+        tx = sdl2ext.Texture(renderer, sf)
+        assert isinstance(tx.tx.contents, SDL_Texture)
+
+        # Test destruction and associated behaviour
+        tx.destroy()
+        with pytest.raises(RuntimeError):
+            sdl_tx = tx.tx
+
+        # Test creation with surface contents
+        tx = sdl2ext.Texture(renderer, sf.contents)
+        assert isinstance(tx.tx.contents, SDL_Texture)
+        
+        # Test texture size
+        assert tx.size == (16, 16)
+
+        # Test exception on bad input
+        with pytest.raises(TypeError):
+            sdl2ext.Texture(sf, sf)
+        with pytest.raises(TypeError):
+            sdl2ext.Texture(renderer, renderer)
+
+        # Test exception when accessing Texture with destroyed Renderer
+        renderer.destroy()
+        with pytest.raises(RuntimeError):
+            sdl_tx = tx.tx
+        tx.destroy()  # Ensure texture destruction method doesn't error
+        SDL_FreeSurface(sf)
+
+    @pytest.mark.skip("not implemented")
+    def test_size(self, with_sdl):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_scale_mode(self, with_sdl):
+        pass
+
+
+@pytest.mark.skip("not implemented")
+def test_set_texture_scale_quality(with_sdl):
+    pass
