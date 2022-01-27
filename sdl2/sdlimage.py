@@ -1,5 +1,5 @@
 import os
-from ctypes import POINTER, c_int, c_char_p
+from ctypes import POINTER, Structure, c_int, c_char_p
 from ctypes import POINTER as _P
 from .dll import DLL, SDLFunc, AttributeDict
 from .version import SDL_version, SDL_VERSIONNUM
@@ -62,6 +62,15 @@ IMG_INIT_PNG = 0x00000002
 IMG_INIT_TIF = 0x00000004
 IMG_INIT_WEBP = 0x00000008
 
+class IMG_Animation(Structure):
+    _fields_ = [
+        ("w", c_int),
+        ("h", c_int),
+        ("count", c_int),
+        ("frames", POINTER(SDL_Surface)), # NOTE: C struct has double-pointer, need to test
+        ("delays", POINTER(c_int)),
+    ]
+
 
 # Raw ctypes function definitions
 
@@ -113,6 +122,11 @@ _funcdefs = [
     SDLFunc("IMG_SaveJPG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int, c_int], c_int, added='2.0.2'),
     SDLFunc("IMG_SavePNG", [_P(SDL_Surface), c_char_p], c_int),
     SDLFunc("IMG_SavePNG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int], c_int),
+    SDLFunc("IMG_LoadAnimation", [c_char_p], _P(IMG_Animation), added='2.0.6'),
+    SDLFunc("IMG_LoadAnimation_RW", [_P(SDL_RWops), c_int], _P(IMG_Animation), added='2.0.6'),
+    SDLFunc("IMG_LoadAnimationTyped_RW", [_P(SDL_RWops), c_int, c_char_p], _P(IMG_Animation), added='2.0.6'),
+    SDLFunc("IMG_FreeAnimation", [_P(IMG_Animation)], added='2.0.6'),
+    SDLFunc("IMG_LoadGIFAnimation_RW", [_P(SDL_RWops)], _P(IMG_Animation), added='2.0.6'),
 ]
 _ctypes = AttributeDict()
 for f in _funcdefs:
@@ -938,6 +952,22 @@ def IMG_SaveJPG_RW(surface, dst, freedst, quality):
     """
     # NOTE: Not available in official macOS binaries
     return _ctypes["IMG_SaveJPG_RW"](surface, dst, freedst, quality)
+
+
+def IMG_LoadAnimation(file):
+    return _funcs["IMG_LoadAnimation"](file)
+
+def IMG_LoadAnimation_RW(src, freesrc):
+    return _funcs["IMG_LoadAnimation_RW"](src, freesrc)
+
+def IMG_LoadAnimationTyped_RW(src, freesrc, type):
+    return _funcs["IMG_LoadAnimationTyped_RW"](src, freesrc, type)
+
+def IMG_FreeAnimation(anim):
+    return _funcs["IMG_FreeAnimation"](anim)
+
+def IMG_LoadAnimationGIF_RW(src):
+    return _funcs["IMG_LoadAnimationGIF_RW"](src)
 
 
 IMG_SetError = SDL_SetError
