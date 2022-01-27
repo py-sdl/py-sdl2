@@ -8,6 +8,9 @@ that adds support for loading a wide range of different common (and uncommon)
 image formats for easy use with SDL2. In addition, SDL2_image includes functions
 for saving :obj:`SDL_Surface` objects to PNG and/or JPEG images.
 
+For a list of supported image formats, see the :func:`IMG_LoadTyped_RW`
+documentation.
+
 .. contents:: Table Of Contents
    :depth: 1
    :local:
@@ -80,6 +83,8 @@ are optional when building SDL2_image.
 
 .. autofunction:: IMG_isSVG
 
+.. autofunction:: IMG_isQOI
+
 .. autofunction:: IMG_isTIF
 
 .. autofunction:: IMG_isXCF
@@ -129,6 +134,8 @@ Format-specific image loading functions
 .. autofunction:: IMG_LoadPNM_RW
 
 .. autofunction:: IMG_LoadSVG_RW
+
+.. autofunction:: IMG_LoadQOI_RW
 
 .. autofunction:: IMG_LoadTGA_RW
 

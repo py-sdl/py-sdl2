@@ -85,6 +85,7 @@ _funcdefs = [
     SDLFunc("IMG_isPNG", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isPNM", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isSVG", [_P(SDL_RWops)], c_int, added='2.0.2'),
+    SDLFunc("IMG_isQOI", [_P(SDL_RWops)], c_int, added='2.0.6'),
     SDLFunc("IMG_isTIF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXCF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXPM", [_P(SDL_RWops)], c_int),
@@ -100,6 +101,7 @@ _funcdefs = [
     SDLFunc("IMG_LoadPNG_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadPNM_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadSVG_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.0.2'),
+    SDLFunc("IMG_LoadQOI_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.0.6'),
     SDLFunc("IMG_LoadTGA_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadTIF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadXCF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
@@ -216,8 +218,10 @@ def IMG_LoadTyped_RW(src, freesrc, type):
     b"XPM"         X11 Pixmap
     b"XV"          XV Thumbnail
     b"WEBP"        WebP
+    b"QOI"         Quite OK Image
     =============  ===========================
 
+    Note that support for the QOI format requires SDL_image 2.0.6 or newer.
     See :func:`IMG_Load` for more information.
 
     Args:
@@ -478,7 +482,7 @@ def IMG_isPNM(src):
 def IMG_isSVG(src):
     """Tests whether a file object contains an SVG image.
 
-    .. note:: This function is only available in SDL_image 2.0.2 or later.
+    `Note: Added in SDL_image 2.0.2`
 
     Args:
         src (:obj:`SDL_RWops`): The file object to check.
@@ -488,6 +492,20 @@ def IMG_isSVG(src):
 
     """
     return _ctypes["IMG_isSVG"](src)
+
+def IMG_isQOI(src):
+    """Tests whether a file object contains a QOI image.
+
+    `Note: Added in SDL_image 2.0.6`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object to check.
+
+    Returns:
+        int: 1 if QOI is supported and file is a valid QOI, otherwise 0.
+
+    """
+    return _funcs["IMG_isQOI"](src)
 
 def IMG_isTIF(src):
     """Tests whether a file object contains a TIFF image.
@@ -690,9 +708,9 @@ def IMG_LoadPNM_RW(src):
 def IMG_LoadSVG_RW(src):
     """Loads an SVG image from an SDL file object.
 
-    .. note:: This function is only available in SDL_image 2.0.2 or later.
-
     Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.0.2`
 
     Args:
         src (:obj:`SDL_RWops`): The file object from which to load the SVG.
@@ -703,6 +721,23 @@ def IMG_LoadSVG_RW(src):
 
     """
     return _ctypes["IMG_LoadSVG_RW"](src)
+
+def IMG_LoadQOI_RW(src):
+    """Loads a QOI image from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.0.6`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the QOI.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _funcs["IMG_LoadQOI_RW"](src)
 
 def IMG_LoadTGA_RW(src):
     """Loads a TGA (TrueVision Targa) image from an SDL file object.

@@ -33,7 +33,12 @@ formats = ["bmp",
            "xcf",
            "xpm",
            #"xv",
+           #"qoi", # TODO: add one
            ]
+
+# QOI unsupported on SDL2_image < 2.0.6
+#if sdlimage.dll.version < 2006:
+#    formats.remove("qoi")
 
 # SVG unsupported on SDL2_image < 2.0.2 as well as in Conda's current (2.0.5)
 # Windows binaries
@@ -275,6 +280,14 @@ def test_IMG_LoadSVG_RW(with_sdl_image):
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
+@pytest.mark.skipif(sdlimage.dll.version < 2006, reason="Added in 2.0.6")
+def test_IMG_LoadSVG_RW(with_sdl_image):
+    fp = open(_get_image_path("qoi"), "rb")
+    sf = sdlimage.IMG_LoadQOI_RW(rwops.rw_from_object(fp))
+    fp.close()
+    _verify_img_load(sf)
+    surface.SDL_FreeSurface(sf)
+
 def test_IMG_LoadTGA_RW(with_sdl_image):
     fp = open(_get_image_path("tga"), "rb")
     sf = sdlimage.IMG_LoadTGA_RW(rwops.rw_from_object(fp))
@@ -421,6 +434,17 @@ def test_IMG_isSVG(with_sdl_image):
                 assert sdlimage.IMG_isSVG(imgrw)
             else:
                 assert not sdlimage.IMG_isSVG(imgrw)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2006, reason="Added in 2.0.2")
+def test_IMG_isQOI(with_sdl_image):
+    for fmt in formats:
+        fpath = _get_image_path(fmt)
+        with open(fpath, "rb") as fp:
+            imgrw = rwops.rw_from_object(fp)
+            if fmt == "qoi":
+                assert sdlimage.IMG_isQOI(imgrw)
+            else:
+                assert not sdlimage.IMG_isQOI(imgrw)
 
 def test_IMG_isTIF(with_sdl_image):
     for fmt in formats:
