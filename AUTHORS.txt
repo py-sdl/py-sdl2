@@ -41,6 +41,7 @@ Thanks to everyone else for their assistance, support, fixes and improvements:
 * Rob Rolls
 * Robert Winkler
 * Roger Flores
+* Simon McVittie
 * smea lum
 * stillinbeta
 * Sven Eckelmann
