@@ -67,6 +67,9 @@ Initialization functions
 
 .. autofunction:: TTF_Linked_Version
 
+.. autofunction:: TTF_GetFreeTypeVersion
+
+.. autofunction:: TTF_GetHarfBuzzVersion
 
 
 Font loading functions
@@ -80,17 +83,26 @@ Font loading functions
 
 .. autofunction:: TTF_OpenFontIndexRW
 
+.. autofunction:: TTF_OpenFontDPI
+
+.. autofunction:: TTF_OpenFontIndexDPI
+
+.. autofunction:: TTF_OpenFontDPIRW
+
+.. autofunction:: TTF_OpenFontIndexDPIRW
+
 .. autofunction:: TTF_CloseFont
 
 
 Font attribute functions
 ------------------------
 
-.. autofunction:: TTF_SetFontStyle
+Sizing functions
+^^^^^^^^^^^^^^^^
 
-.. autofunction:: TTF_GetFontStyle
+.. autofunction:: TTF_SetFontSize
 
-.. autofunction:: TTF_SetFontHinting
+.. autofunction:: TTF_SetFontSizeDPI
 
 .. autofunction:: TTF_FontHeight
 
@@ -100,9 +112,12 @@ Font attribute functions
 
 .. autofunction:: TTF_FontLineSkip
 
-.. autofunction:: TTF_GetFontKerning
+Style functions
+^^^^^^^^^^^^^^^
 
-.. autofunction:: TTF_SetFontKerning
+.. autofunction:: TTF_SetFontStyle
+
+.. autofunction:: TTF_GetFontStyle
 
 .. autofunction:: TTF_FontFaceIsFixedWidth
 
@@ -110,11 +125,38 @@ Font attribute functions
 
 .. autofunction:: TTF_FontFaceStyleName
 
+
+Glyph information functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. autofunction:: TTF_GlyphIsProvided
+
+.. autofunction:: TTF_GlyphIsProvided32
 
 .. autofunction:: TTF_GlyphMetrics
 
+.. autofunction:: TTF_GlyphMetrics32
+
+
+Kerning functions
+^^^^^^^^^^^^^^^^^
+.. autofunction:: TTF_GetFontKerning
+
+.. autofunction:: TTF_SetFontKerning
+
 .. autofunction:: TTF_GetFontKerningSizeGlyphs
+
+.. autofunction:: TTF_GetFontKerningSizeGlyphs32
+
+
+Render settings functions
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: TTF_SetFontHinting
+
+.. autofunction:: TTF_SetFontSDF
+
+.. autofunction:: TTF_GetFontSDF
 
 
 Text rendering functions
@@ -122,6 +164,12 @@ Text rendering functions
 
 Size calculation functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: TTF_MeasureText
+
+.. autofunction:: TTF_MeasureUTF8
+
+.. autofunction:: TTF_MeasureUNICODE
 
 .. autofunction:: TTF_SizeText
 
@@ -141,6 +189,14 @@ Solid rendering functions
 
 .. autofunction:: TTF_RenderGlyph_Solid
 
+.. autofunction:: TTF_RenderGlyph32_Solid
+
+.. autofunction:: TTF_RenderText_Solid_Wrapped
+
+.. autofunction:: TTF_RenderUTF8_Solid_Wrapped
+
+.. autofunction:: TTF_RenderUNICODE_Solid_Wrapped
+
 
 Shaded rendering functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -152,6 +208,14 @@ Shaded rendering functions
 .. autofunction:: TTF_RenderUNICODE_Shaded
 
 .. autofunction:: TTF_RenderGlyph_Shaded
+
+.. autofunction:: TTF_RenderGlyph32_Shaded
+
+.. autofunction:: TTF_RenderText_Shaded_Wrapped
+
+.. autofunction:: TTF_RenderUTF8_Shaded_Wrapped
+
+.. autofunction:: TTF_RenderUNICODE_Shaded_Wrapped
 
 
 Blended rendering functions
@@ -165,11 +229,21 @@ Blended rendering functions
 
 .. autofunction:: TTF_RenderGlyph_Blended
 
+.. autofunction:: TTF_RenderGlyph32_Blended
+
 .. autofunction:: TTF_RenderText_Blended_Wrapped
 
 .. autofunction:: TTF_RenderUTF8_Blended_Wrapped
 
 .. autofunction:: TTF_RenderUNICODE_Blended_Wrapped
+
+
+Renderer configuration functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: TTF_SetDirection
+
+.. autofunction:: TTF_SetScript
 
 
 Data types
@@ -257,3 +331,41 @@ Module constants
     Used to indicate set hinting type to none.
     No hinting is used, so the font may become very blurry or messy at
     smaller sizes.
+
+.. data:: TTF_HINTING_LIGHT_SUBPIXEL
+
+    Used to indicate set hinting type to light subpixel.
+    This produces better results for small text sizes: glyph are rendered at
+    subpixel positions, so they look blurrier but are uniformly positioned.
+    This mode is slower than others since glyphs are rendered on the fly.
+
+
+HarfBuzz functions and constants
+--------------------------------
+
+As of version 2.0.18, SDL2_ttf makes use of the HarfBuzz library for advanced
+text rendering and shaping unless explicitly compiled without it. As a
+consequence, some specific SDL2_ttf functions require HarfBuzz constants and
+macros for input.
+
+To make these easier to use, the ``sdlttf`` module defines and implements the
+constants and macro functions necessary to make full use of the SDL2_ttf
+library.
+
+.. autofunction:: HB_TAG
+
+.. data:: HB_DIRECTION_LTR
+
+    A constant indicating left-to-right text rendering.
+
+.. data:: HB_DIRECTION_RTL
+
+    A constant indicating right-to-left text rendering.
+
+.. data:: HB_DIRECTION_TTB
+
+    A constant indicating top-to-bottom text rendering.
+
+.. data:: HB_DIRECTION_BTT
+
+    A constant indicating bottom-to-top text rendering.
