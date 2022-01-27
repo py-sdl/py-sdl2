@@ -1584,10 +1584,13 @@ TTF_RenderUNICODE = TTF_RenderUNICODE_Shaded
 
 
 def TTF_SetDirection(direction):
-    """Sets the global text direction to use when rendering.
+    """Sets the global text direction to use for rendering.
 
-    This function passes the direction to the underlying HarfBuzz library,
-    meaning that the direction must be one of the following HarfBuzz constants:
+    This function lets you manually specify the direction in which SDL_ttf
+    should render text, and can be set or changed at any time.
+
+    The direction value is passed to the underlying HarfBuzz library, meaning
+    that the direction must be one of the following HarfBuzz constants:
 
     =============== ====================
     Text Direction  Constant
@@ -1598,9 +1601,8 @@ def TTF_SetDirection(direction):
     Bottom-to-top   ``HB_DIRECTION_BTT``
     =============== ====================
 
-    If not specified, the TTF library defaults to left-to-right text
-    rendering. For convenience, these constants are provided by the
-    ``sdl2.sdlttf`` module. The direction can be set at any time.
+    For convenience, these constants are provided by the ``sdl2.sdlttf`` module.
+    If not specified, SDL_ttf defaults to left-to-right text rendering.
 
     `Note: Added in SDL_ttf 2.0.18`
 
@@ -1615,21 +1617,21 @@ def TTF_SetDirection(direction):
     return _funcs["TTF_SetDirection"](direction)
 
 def TTF_SetScript(script):
-    """Sets the global script style (e.g. arabic) to use for rendering text.
+    """Sets the global script (e.g. Arabic) to use for rendering text.
 
-    Setting the script style gives extra information to the text rendering
-    library about how to best shape words and characters. This can produce
-    better results when rendering with non-Latin fonts.
+    Setting the script gives the text renderer extra information about how
+    to best shape words and characters for a given language. This can produce
+    better results when rendering with non-Latin languages and fonts.
 
-    The script is passed to the underlying HarfBuzz library, meaning that the
-    it needs to be specified in HarfBuzz ``hb_script_t`` format. To make this
+    The script value is passed to the underlying HarfBuzz library, meaning that
+    it needs to be specified as a HarfBuzz script constant. To make this
     convenient, the ``sdl2.sdlttf`` module implements HarfBuzz's :func:`HB_TAG`
-    macro for converting ISO 15924 character codes to HarfBuzz script::
+    macro for converting ISO 15924 character codes to HarfBuzz scripts::
 
         arabic_script = HB_TAG('A', 'r', 'a', 'b')
         TTF_SetScript(arabic_script)
 
-    If no script has been set, the TTF library defaults to unknown ('Zzzz')
+    If no script has been set, the TTF library defaults to the unknown ('Zzzz')
     script.
 
     `Note: Added in SDL_ttf 2.0.18`
