@@ -18,6 +18,7 @@ __all__ = [
     "SDL_JoyButtonEvent", "SDL_JoyDeviceEvent", "SDL_ControllerAxisEvent",
     "SDL_ControllerButtonEvent", "SDL_ControllerDeviceEvent",
     "SDL_ControllerTouchpadEvent", "SDL_ControllerSensorEvent",
+    "SDL_AudioDeviceEvent",
     "SDL_TouchFingerEvent", "SDL_MultiGestureEvent", "SDL_DollarGestureEvent",
     "SDL_DropEvent", "SDL_QuitEvent", "SDL_OSEvent", "SDL_UserEvent", 
     "SDL_SysWMmsg", "SDL_SysWMEvent", "SDL_SensorEvent", "SDL_Event",

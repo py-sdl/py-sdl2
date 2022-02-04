@@ -17,6 +17,9 @@ Fixed Bugs:
 * Fixed namespace export for :func:`~sdl2.SDL_RenderSetVSync` (issue #219)
 * Re-added direction field for :obj:`~sdl2.SDL_MouseWheelEvent` events, which
   was accidentally removed in PySDL2 0.9.10 (issue #217)
+* Fixed namespace export for ``AUDIO_F32MSB`` and
+  :obj:`~sdl2.SDL_AudioDeviceEvent`.
+
 
 0.9.11
 ------
