@@ -67,7 +67,7 @@ __all__ = [
     "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
     "SDL_GetRendererOutputSize", "SDL_RenderGetIntegerScale",
     "SDL_RenderSetIntegerScale", "SDL_RenderGetMetalLayer",
-    "SDL_RenderGetMetalCommandEncoder"
+    "SDL_RenderGetMetalCommandEncoder", "SDL_RenderSetVSync"
 ]
 
 

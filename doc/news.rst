@@ -14,7 +14,7 @@ Fixed Bugs:
   current byte position unexpectedly.
 * Fixed the type of the datasize argument for :func:`~sdl2.SDL_LoadFile`
   to be a pointer to a `c_size_t` (was previously just `c_size_t`).
-
+* Fixed namespace export for :func:`~sdl2.SDL_RenderSetVSync` (issue #219)
 
 0.9.11
 ------
