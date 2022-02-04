@@ -15,6 +15,8 @@ Fixed Bugs:
 * Fixed the type of the datasize argument for :func:`~sdl2.SDL_LoadFile`
   to be a pointer to a `c_size_t` (was previously just `c_size_t`).
 * Fixed namespace export for :func:`~sdl2.SDL_RenderSetVSync` (issue #219)
+* Re-added direction field for :obj:`~sdl2.SDL_MouseWheelEvent` events, which
+  was accidentally removed in PySDL2 0.9.10 (issue #217)
 
 0.9.11
 ------

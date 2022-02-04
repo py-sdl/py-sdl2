@@ -220,7 +220,8 @@ _mousewheel_fields = [
     ("windowID", Uint32),
     ("which", Uint32),
     ("x", Sint32),
-    ("y", Sint32)
+    ("y", Sint32),
+    ("direction", Uint32),
 ]
 if sdl_version >= 2018:
     _mousewheel_fields += [
