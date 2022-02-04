@@ -65,7 +65,7 @@ SDL_FreeRW = _bind("SDL_FreeRW", [POINTER(SDL_RWops)])
 SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t), c_int], c_void_p, added='2.0.6')
 # SDL_LoadFile was a macro in SDL <= 2.0.9, added as a function in 2.0.10
 if version >= 2010:
-    SDL_LoadFile = _bind("SDL_LoadFile", [c_char_p, c_size_t], c_void_p)
+    SDL_LoadFile = _bind("SDL_LoadFile", [c_char_p, POINTER(c_size_t)], c_void_p)
 else:
     SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, "rb"), ds, 1)
 
@@ -181,7 +181,7 @@ def rw_from_object(obj):
             else:
                 cur = obj.seek(0, RW_SEEK_CUR)
                 length = obj.seek(0, RW_SEEK_END)
-                obj.seek(cur, RW_SEEK_CUR)
+                obj.seek(cur, RW_SEEK_SET)
                 return length
         except Exception:
             #print(e)

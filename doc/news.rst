@@ -2,6 +2,20 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.12
+------
+
+Released on 2022-XX-XX.
+
+Fixed Bugs:
+
+* Fixed a bug in :func:`~sdl2.rw_from_object` where calling 
+  :func:`~sdl2.SDL_RWsize` on the resulting object would change the RWops'
+  current byte position unexpectedly.
+* Fixed the type of the datasize argument for :func:`~sdl2.SDL_LoadFile`
+  to be a pointer to a `c_size_t` (was previously just `c_size_t`).
+
+
 0.9.11
 ------
 
