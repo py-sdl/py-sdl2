@@ -1,9 +1,7 @@
 import sys
 import pytest
 import sdl2
-from sdl2 import SDL_GetError
-from sdl2 import clipboard
-from sdl2.stdinc import SDL_TRUE, SDL_FALSE
+from sdl2 import SDL_GetError, SDL_TRUE, SDL_FALSE
 from .conftest import SKIP_ANNOYING
 
 @pytest.fixture
@@ -19,18 +17,18 @@ def window(with_sdl):
 @pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
 def test_SDL_ClipboardText(window):
     # Test retrieving text from the clipboard
-    ret = clipboard.SDL_GetClipboardText()
+    ret = sdl2.SDL_GetClipboardText()
     original_contents = ret
     assert type(ret) in (str, bytes)
     # Test whether HasClipboardText is accurate
     expected = SDL_FALSE if len(ret) == 0 else SDL_TRUE
-    assert clipboard.SDL_HasClipboardText() == expected
+    assert sdl2.SDL_HasClipboardText() == expected
     # Set some new clipboard test and test for it
     sdl2.SDL_ClearError()
-    ret = clipboard.SDL_SetClipboardText(b"test")
+    ret = sdl2.SDL_SetClipboardText(b"test")
     assert SDL_GetError() == b""
     assert ret == 0
-    assert clipboard.SDL_HasClipboardText() == SDL_TRUE
-    assert clipboard.SDL_GetClipboardText() == b"test"
+    assert sdl2.SDL_HasClipboardText() == SDL_TRUE
+    assert sdl2.SDL_GetClipboardText() == b"test"
     # Reset original contents
-    clipboard.SDL_SetClipboardText(original_contents)
+    sdl2.SDL_SetClipboardText(original_contents)

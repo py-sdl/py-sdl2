@@ -1,6 +1,6 @@
 import sys
 import pytest
-from sdl2 import mouse
+import sdl2
 
 # NOTE: Will need to use a window fixture to test most of these. Will also want
 # to mark most as "SKIP_ANNOYING".

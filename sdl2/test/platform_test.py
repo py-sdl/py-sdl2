@@ -1,10 +1,10 @@
 import sys
 import pytest
-from sdl2 import platform
+import sdl2
 
 
 def test_SDL_GetPlatform():
-    retval = platform.SDL_GetPlatform()
+    retval = sdl2.SDL_GetPlatform()
     if sys.platform in ("win32", "cygwin"):
         assert retval == b"Windows"
     elif sys.platform.startswith("linux"):

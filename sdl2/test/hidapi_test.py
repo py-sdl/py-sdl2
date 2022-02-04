@@ -3,7 +3,6 @@ import pytest
 import sdl2
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2.error import SDL_GetError, SDL_ClearError
-from sdl2 import hidapi
 
 # Make sure hidapi subsystem is available and works before running tests
 skipmsg = 'HIDAPI requires SDL 2.0.18 or newer'
@@ -13,10 +12,10 @@ pytestmark = pytest.mark.skipif(sdl2.dll.version < 2018, reason=skipmsg)
 @pytest.fixture
 def hidapi_setup():
     SDL_ClearError()
-    ret = hidapi.SDL_hid_init()
+    ret = sdl2.SDL_hid_init()
     assert ret == 0
     yield ret  # Run the test
-    ret = hidapi.SDL_hid_exit()
+    ret = sdl2.SDL_hid_exit()
     assert ret == 0
 
 
@@ -25,26 +24,26 @@ def hidapi_setup():
 def test_SDL_hid_init_exit():
     SDL_ClearError()
     # Initialize the library
-    ret = hidapi.SDL_hid_init()
+    ret = sdl2.SDL_hid_init()
     assert SDL_GetError() == b""
     assert ret == 0
     # Exit the library
-    ret = hidapi.SDL_hid_exit()
+    ret = sdl2.SDL_hid_exit()
     assert SDL_GetError() == b""
     assert ret == 0
 
 
 def test_SDL_hid_device_change_count(hidapi_setup):
     # Check for HID device changes
-    ret = hidapi.SDL_hid_device_change_count()
+    ret = sdl2.SDL_hid_device_change_count()
     assert ret >= 0
 
 
 def test_SDL_hid_enumerate(hidapi_setup):
-    devices = hidapi.SDL_hid_enumerate(0, 0)
+    devices = sdl2.SDL_hid_enumerate(0, 0)
     assert SDL_GetError() == b""
     if devices != None:
-        hidapi.SDL_hid_free_enumeration(devices)
+        sdl2.SDL_hid_free_enumeration(devices)
         assert SDL_GetError() == b""
 
 

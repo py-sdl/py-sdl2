@@ -9,7 +9,7 @@ import itertools
 from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
 from sdl2.rect import SDL_FPoint
 from sdl2.pixels import SDL_Color
-from sdl2 import render, video, surface, pixels, blendmode, rect
+from sdl2 import video, surface, pixels, blendmode, rect
 from sdl2.ext.compat import byteify, stringify
 from sdl2.ext.pixelaccess import PixelView
 
@@ -26,9 +26,9 @@ def _create_window(pos, size, flags=video.SDL_WINDOW_HIDDEN):
     return window
 
 def _get_renderflags():
-    flags = render.SDL_RENDERER_ACCELERATED
+    flags = sdl2.SDL_RENDERER_ACCELERATED
     if video.SDL_GetCurrentVideoDriver() == b"dummy":
-        flags = render.SDL_RENDERER_SOFTWARE
+        flags = sdl2.SDL_RENDERER_SOFTWARE
     return flags
 
 @pytest.fixture
@@ -47,11 +47,11 @@ def testsurf(with_sdl):
 
 @pytest.fixture
 def sw_renderer(testsurf):
-    renderer = render.SDL_CreateSoftwareRenderer(testsurf)
+    renderer = sdl2.SDL_CreateSoftwareRenderer(testsurf)
     assert SDL_GetError() == b""
-    assert isinstance(renderer.contents, render.SDL_Renderer)
+    assert isinstance(renderer.contents, sdl2.SDL_Renderer)
     yield (renderer, testsurf)
-    render.SDL_DestroyRenderer(renderer)
+    sdl2.SDL_DestroyRenderer(renderer)
 
 @pytest.fixture
 def with_renderer(with_sdl):
@@ -61,38 +61,38 @@ def with_renderer(with_sdl):
         b"Test", 30, 30, 100, 100, video.SDL_WINDOW_HIDDEN
     )
     assert SDL_GetError() == b""
-    renderer = render.SDL_CreateRenderer(window, -1, flags)
+    renderer = sdl2.SDL_CreateRenderer(window, -1, flags)
     assert SDL_GetError() == b""
     yield (renderer, window)
-    render.SDL_DestroyRenderer(renderer)
+    sdl2.SDL_DestroyRenderer(renderer)
     video.SDL_DestroyWindow(window)
 
 @pytest.fixture
 def texture(with_renderer):
     renderer, win = with_renderer
     fmt = pixels.SDL_PIXELFORMAT_ARGB8888
-    access = render.SDL_TEXTUREACCESS_STREAMING
-    tx = render.SDL_CreateTexture(renderer, fmt, access, 16, 16)
+    access = sdl2.SDL_TEXTUREACCESS_STREAMING
+    tx = sdl2.SDL_CreateTexture(renderer, fmt, access, 16, 16)
     assert SDL_GetError() == b""
-    assert isinstance(tx.contents, render.SDL_Texture)
+    assert isinstance(tx.contents, sdl2.SDL_Texture)
     yield tx
-    render.SDL_DestroyTexture(tx)
+    sdl2.SDL_DestroyTexture(tx)
 
 
 # Test structs and classes
 
 def test_SDL_RendererInfo():
     # Tested extensively in SDL_GetRenderDriverInfo
-    info = render.SDL_RendererInfo()
-    assert isinstance(info, render.SDL_RendererInfo)
+    info = sdl2.SDL_RendererInfo()
+    assert isinstance(info, sdl2.SDL_RendererInfo)
 
 def test_SDL_Renderer():
-    val = render.SDL_Renderer()
-    assert isinstance(val, render.SDL_Renderer)
+    val = sdl2.SDL_Renderer()
+    assert isinstance(val, sdl2.SDL_Renderer)
 
 def test_SDL_Texture():
-    val = render.SDL_Texture()
-    assert isinstance(val, render.SDL_Texture)
+    val = sdl2.SDL_Texture()
+    assert isinstance(val, sdl2.SDL_Texture)
 
 
 class TestSDLVertex(object):
@@ -100,7 +100,7 @@ class TestSDLVertex(object):
 
     def test_init(self):
         # Test creating an SDL vertex without any args
-        vtx = render.SDL_Vertex()
+        vtx = sdl2.SDL_Vertex()
         assert type(vtx.position) == rect.SDL_FPoint
         assert type(vtx.color) == pixels.SDL_Color
         assert type(vtx.tex_coord) == rect.SDL_FPoint
@@ -108,12 +108,12 @@ class TestSDLVertex(object):
         # Test creating a vertex with a custom position and color
         pos = rect.SDL_FPoint(20, 30)
         col = pixels.SDL_Color(255, 0, 0, 255)
-        vtx2 = render.SDL_Vertex(pos, col)
+        vtx2 = sdl2.SDL_Vertex(pos, col)
         assert vtx2.position.x == 20 and vtx2.position.y == 30
         assert vtx2.color.r == 255 and vtx2.color.g == 0
 
         # Test creating an SDL vertex using Python types
-        vtx3 = render.SDL_Vertex([15, 25], [128, 127, 126], [5, 5])
+        vtx3 = sdl2.SDL_Vertex([15, 25], [128, 127, 126], [5, 5])
         assert vtx3.position.x == 15 and vtx3.position.y == 25
         assert vtx3.color.r == 128 and vtx3.color.g == 127
         assert vtx3.color.a == 255
@@ -121,16 +121,16 @@ class TestSDLVertex(object):
 
         # Test exceptions on bad input
         with pytest.raises(ValueError):
-            render.SDL_Vertex(10)
+            sdl2.SDL_Vertex(10)
         with pytest.raises(ValueError):
-            render.SDL_Vertex(color="red")
+            sdl2.SDL_Vertex(color="red")
 
     def test_repr(self):
-        vtx = render.SDL_Vertex([1.5, 4], [0, 0, 0, 255])
+        vtx = sdl2.SDL_Vertex([1.5, 4], [0, 0, 0, 255])
         assert repr(vtx) == "SDL_Vertex(x=1.5, y=4.0, color=[0, 0, 0, 255])"
 
     def test_copy(self):
-        vtx = render.SDL_Vertex([15, 25], [128, 127, 126], [5, 5])
+        vtx = sdl2.SDL_Vertex([15, 25], [128, 127, 126], [5, 5])
         vtx2 = copy.copy(vtx)
         assert vtx.position == vtx2.position
         assert vtx.color == vtx2.color
@@ -147,18 +147,18 @@ class TestSDLVertex(object):
 # Test SDL2 renderer bindings
 
 def test_SDL_GetNumRenderDrivers(with_sdl):
-    val = render.SDL_GetNumRenderDrivers()
+    val = sdl2.SDL_GetNumRenderDrivers()
     assert val >= 1
 
 def test_SDL_GetRenderDriverInfo(with_sdl):
     renderers = []
     errs = []
     pxformats = {}
-    drivers = render.SDL_GetNumRenderDrivers()
+    drivers = sdl2.SDL_GetNumRenderDrivers()
     for x in range(drivers):
         sdl2.SDL_ClearError()
-        info = render.SDL_RendererInfo()
-        ret = render.SDL_GetRenderDriverInfo(x, info)
+        info = sdl2.SDL_RendererInfo()
+        ret = sdl2.SDL_GetRenderDriverInfo(x, info)
         if ret != 0:
             err = stringify(sdl2.SDL_GetError())
             errs.append("Renderer {0} error: {1}".format(x, err))
@@ -180,11 +180,11 @@ def test_SDL_GetRenderDriverInfo(with_sdl):
 
 def test_SDL_CreateWindowAndRenderer(with_sdl):
     window = POINTER(video.SDL_Window)()
-    renderer = POINTER(render.SDL_Renderer)()
-    ret = render.SDL_CreateWindowAndRenderer(
+    renderer = POINTER(sdl2.SDL_Renderer)()
+    ret = sdl2.SDL_CreateWindowAndRenderer(
         10, 10, video.SDL_WINDOW_HIDDEN, byref(window), byref(renderer)
     )
-    render.SDL_DestroyRenderer(renderer)
+    sdl2.SDL_DestroyRenderer(renderer)
     video.SDL_DestroyWindow(window)
     assert SDL_GetError() == b""
     assert ret == 0
@@ -192,13 +192,13 @@ def test_SDL_CreateWindowAndRenderer(with_sdl):
 def test_SDL_CreateDestroyRenderer(with_sdl):
     flags = _get_renderflags()
     errs = {}
-    rcount = render.SDL_GetNumRenderDrivers()
+    rcount = sdl2.SDL_GetNumRenderDrivers()
     for i in range(rcount):
         window = _create_window((30, 30), (100, 100))
-        renderer = render.SDL_CreateRenderer(window, i, flags)
+        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
-            assert isinstance(renderer.contents, render.SDL_Renderer)
-            render.SDL_DestroyRenderer(renderer)
+            assert isinstance(renderer.contents, sdl2.SDL_Renderer)
+            sdl2.SDL_DestroyRenderer(renderer)
         else:
             name = "Renderer {0}".format(i)
             errs[name] = stringify(sdl2.SDL_GetError())
@@ -209,26 +209,26 @@ def test_SDL_CreateSoftwareRenderer(with_sdl):
     sf = surface.SDL_CreateRGBSurface(
         0, 100, 100, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
     )
-    renderer = render.SDL_CreateSoftwareRenderer(sf)
+    renderer = sdl2.SDL_CreateSoftwareRenderer(sf)
     assert SDL_GetError() == b""
-    assert isinstance(renderer.contents, render.SDL_Renderer)
-    render.SDL_DestroyRenderer(renderer)
+    assert isinstance(renderer.contents, sdl2.SDL_Renderer)
+    sdl2.SDL_DestroyRenderer(renderer)
     surface.SDL_FreeSurface(sf)
 
 def test_SDL_GetRenderer(with_sdl):
     flags = _get_renderflags()
     usable = 0
-    rcount = render.SDL_GetNumRenderDrivers()
+    rcount = sdl2.SDL_GetNumRenderDrivers()
     for i in range(rcount):
         window = _create_window((30, 30), (100, 100))
-        renderer = render.SDL_CreateRenderer(window, i, flags)
+        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
             usable += 1
-            ren = render.SDL_GetRenderer(window)
+            ren = sdl2.SDL_GetRenderer(window)
             assert SDL_GetError() == b""
-            assert isinstance(ren.contents, render.SDL_Renderer)
-            render.SDL_DestroyRenderer(renderer)
-            assert not render.SDL_GetRenderer(window)
+            assert isinstance(ren.contents, sdl2.SDL_Renderer)
+            sdl2.SDL_DestroyRenderer(renderer)
+            assert not sdl2.SDL_GetRenderer(window)
         video.SDL_DestroyWindow(window)
     assert usable > 0
 
@@ -237,19 +237,19 @@ def test_SDL_GetRendererInfo(with_sdl):
     max_sizes = {}
     errs = []
     flags = _get_renderflags()
-    rcount = render.SDL_GetNumRenderDrivers()
+    rcount = sdl2.SDL_GetNumRenderDrivers()
     for i in range(rcount):
         sdl2.SDL_ClearError()
         window = _create_window((30, 30), (100, 100))
-        renderer = render.SDL_CreateRenderer(window, i, flags)
+        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if not (renderer and renderer.contents):
             err = stringify(sdl2.SDL_GetError())
             errs.append("Unable to create renderer {0}: {1}".format(i, err))
             video.SDL_DestroyWindow(window)
             continue
-        assert isinstance(renderer.contents, render.SDL_Renderer)
-        info = render.SDL_RendererInfo()
-        ret = render.SDL_GetRendererInfo(renderer, byref(info))
+        assert isinstance(renderer.contents, sdl2.SDL_Renderer)
+        info = sdl2.SDL_RendererInfo()
+        ret = sdl2.SDL_GetRendererInfo(renderer, byref(info))
         if ret == 0:
             rname = stringify(info.name)
             max_size = (info.max_texture_width, info.max_texture_height)
@@ -258,7 +258,7 @@ def test_SDL_GetRendererInfo(with_sdl):
         else:
             err = stringify(sdl2.SDL_GetError())
             errs.append("Renderer {0} error: {1}".format(i, err))
-        render.SDL_DestroyRenderer(renderer)
+        sdl2.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
     assert len(renderers)
     assert "software" in renderers
@@ -282,31 +282,31 @@ def test_SDL_CreateDestroyTexture(with_renderer):
         pixels.SDL_PIXELFORMAT_YUY2,
     )
     access = (
-        render.SDL_TEXTUREACCESS_STATIC,
-        render.SDL_TEXTUREACCESS_STREAMING,
-        render.SDL_TEXTUREACCESS_TARGET,
+        sdl2.SDL_TEXTUREACCESS_STATIC,
+        sdl2.SDL_TEXTUREACCESS_STREAMING,
+        sdl2.SDL_TEXTUREACCESS_TARGET,
     )
     sizes = [(4, 4), (7, 7), (64, 32), (256, 256), (512, 512)]
     for fmt in formats:
         for acc in access:
             for w, h in sizes:
-                tx = render.SDL_CreateTexture(renderer, fmt, acc, w, h)
+                tx = sdl2.SDL_CreateTexture(renderer, fmt, acc, w, h)
                 assert SDL_GetError() == b""
-                assert isinstance(tx.contents, render.SDL_Texture)
-                render.SDL_DestroyTexture(tx)
+                assert isinstance(tx.contents, sdl2.SDL_Texture)
+                sdl2.SDL_DestroyTexture(tx)
     # Test SDL error on bad input
-    render.SDL_CreateTexture(
+    sdl2.SDL_CreateTexture(
         renderer, pixels.SDL_PIXELFORMAT_RGB555, 1, -8, 8
     )
     assert len(SDL_GetError()) > 0
 
 def test_SDL_CreateTextureFromSurface(with_renderer, testsurf):
     renderer, win = with_renderer
-    tx = render.SDL_CreateTextureFromSurface(renderer, testsurf)
+    tx = sdl2.SDL_CreateTextureFromSurface(renderer, testsurf)
     if sdl2.dll.version != 2008: # Weird non-fatal colorkey error on 2.0.8
         assert SDL_GetError() == b"" 
-    assert isinstance(tx.contents, render.SDL_Texture)
-    render.SDL_DestroyTexture(tx)
+    assert isinstance(tx.contents, sdl2.SDL_Texture)
+    sdl2.SDL_DestroyTexture(tx)
 
 def test_SDL_QueryTexture(with_renderer):
     renderer, win = with_renderer
@@ -319,18 +319,18 @@ def test_SDL_QueryTexture(with_renderer):
         pixels.SDL_PIXELFORMAT_YUY2,
     )
     access = (
-        render.SDL_TEXTUREACCESS_STATIC,
-        render.SDL_TEXTUREACCESS_STREAMING,
-        render.SDL_TEXTUREACCESS_TARGET,
+        sdl2.SDL_TEXTUREACCESS_STATIC,
+        sdl2.SDL_TEXTUREACCESS_STREAMING,
+        sdl2.SDL_TEXTUREACCESS_TARGET,
     )
     sizes = [(4, 4), (7, 7), (64, 32), (256, 256), (512, 512)]
     for fmt in formats:
         for acc in access:
             for w, h in sizes:
-                tx = render.SDL_CreateTexture(renderer, fmt, acc, w, h)
-                assert isinstance(tx.contents, render.SDL_Texture)
+                tx = sdl2.SDL_CreateTexture(renderer, fmt, acc, w, h)
+                assert isinstance(tx.contents, sdl2.SDL_Texture)
                 txf, txa, txw, txh = Uint32(0), c_int(0), c_int(0), c_int(0)
-                ret = render.SDL_QueryTexture(
+                ret = sdl2.SDL_QueryTexture(
                     tx, byref(txf), byref(txa), byref(txw), byref(txh)
                 )
                 assert SDL_GetError() == b""
@@ -339,7 +339,7 @@ def test_SDL_QueryTexture(with_renderer):
                 assert txa.value == acc
                 assert txw.value == w
                 assert txh.value == h
-                render.SDL_DestroyTexture(tx)
+                sdl2.SDL_DestroyTexture(tx)
 
 def test_SDL_GetSetTextureColorMod(texture):
     colors = [
@@ -353,11 +353,11 @@ def test_SDL_GetSetTextureColorMod(texture):
         (0, 0, 0),
     ]
     for r, g, b in colors:
-        ret = render.SDL_SetTextureColorMod(texture, r, g, b)
+        ret = sdl2.SDL_SetTextureColorMod(texture, r, g, b)
         assert SDL_GetError() == b""
         assert ret == 0
         tr, tg, tb = Uint8(0), Uint8(0), Uint8(0)
-        ret = render.SDL_GetTextureColorMod(
+        ret = sdl2.SDL_GetTextureColorMod(
             texture, byref(tr), byref(tg), byref(tb)
         )
         assert SDL_GetError() == b""
@@ -366,11 +366,11 @@ def test_SDL_GetSetTextureColorMod(texture):
 
 def test_SDL_GetSetTextureAlphaMod(texture):
     for alpha in range(0, 255, 7):
-        ret = render.SDL_SetTextureAlphaMod(texture, alpha)
+        ret = sdl2.SDL_SetTextureAlphaMod(texture, alpha)
         assert SDL_GetError() == b""
         assert ret == 0
         talpha = Uint8(0)
-        ret = render.SDL_GetTextureAlphaMod(texture, byref(talpha))
+        ret = sdl2.SDL_GetTextureAlphaMod(texture, byref(talpha))
         assert SDL_GetError() == b""
         assert ret == 0
         assert talpha.value == alpha
@@ -383,11 +383,11 @@ def test_SDL_GetSetTextureBlendMode(texture):
         blendmode.SDL_BLENDMODE_MOD,
     )
     for mode in modes:
-        ret = render.SDL_SetTextureBlendMode(texture, mode)
+        ret = sdl2.SDL_SetTextureBlendMode(texture, mode)
         assert SDL_GetError() == b""
         assert ret == 0
         tmode = blendmode.SDL_BlendMode()
-        ret = render.SDL_GetTextureBlendMode(texture, byref(tmode))
+        ret = sdl2.SDL_GetTextureBlendMode(texture, byref(tmode))
         assert SDL_GetError() == b""
         assert ret == 0
         assert tmode.value == mode
@@ -395,16 +395,16 @@ def test_SDL_GetSetTextureBlendMode(texture):
 @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
 def test_SDL_GetSetTextureScaleMode(texture):
     modes = (
-        render.SDL_ScaleModeNearest,
-        render.SDL_ScaleModeLinear,
-        render.SDL_ScaleModeBest,
+        sdl2.SDL_ScaleModeNearest,
+        sdl2.SDL_ScaleModeLinear,
+        sdl2.SDL_ScaleModeBest,
     )
     for mode in modes:
-        ret = render.SDL_SetTextureScaleMode(texture, mode)
+        ret = sdl2.SDL_SetTextureScaleMode(texture, mode)
         assert SDL_GetError() == b""
         assert ret == 0
-        tmode = render.SDL_ScaleMode()
-        ret = render.SDL_GetTextureScaleMode(texture, byref(tmode))
+        tmode = sdl2.SDL_ScaleMode()
+        ret = sdl2.SDL_GetTextureScaleMode(texture, byref(tmode))
         assert SDL_GetError() == b""
         assert ret == 0
         assert tmode.value == mode
@@ -414,11 +414,11 @@ def test_SDL_GetSetTextureUserData(texture):
     # Create some user data and add it to the texture
     dat_raw = ctypes.c_char_p(b"hello!")
     dat = ctypes.cast(dat_raw, ctypes.c_void_p)
-    ret = render.SDL_SetTextureUserData(texture, dat)
+    ret = sdl2.SDL_SetTextureUserData(texture, dat)
     assert SDL_GetError() == b""
     assert ret == 0
     # Try retrieving the user data
-    dat_ptr = render.SDL_GetTextureUserData(texture)
+    dat_ptr = sdl2.SDL_GetTextureUserData(texture)
     assert SDL_GetError() == b""
     assert dat_ptr != None
     dat_out = ctypes.cast(dat_ptr, ctypes.c_char_p)
@@ -449,17 +449,17 @@ def test_SDL_LockTextureToSurface(texture):
 def test_SDL_RenderTargetSupported(with_sdl):
     flags = _get_renderflags()
     usable = 0
-    rcount = render.SDL_GetNumRenderDrivers()
+    rcount = sdl2.SDL_GetNumRenderDrivers()
     for i in range(rcount):
         window = _create_window((30, 30), (100, 100))
-        renderer = render.SDL_CreateRenderer(window, i, flags)
+        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
             usable += 1
-            assert isinstance(renderer.contents, render.SDL_Renderer)
-            val = render.SDL_RenderTargetSupported(renderer)
+            assert isinstance(renderer.contents, sdl2.SDL_Renderer)
+            val = sdl2.SDL_RenderTargetSupported(renderer)
             assert SDL_GetError() == b""
             assert val in (SDL_TRUE, SDL_FALSE)
-            render.SDL_DestroyRenderer(renderer)
+            sdl2.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
     assert usable > 0
 
@@ -468,16 +468,16 @@ def test_SDL_GetSetRenderTarget(with_sdl):
     flags = _get_renderflags()
     usable = 0
     supports_targets = []
-    rcount = render.SDL_GetNumRenderDrivers()
+    rcount = sdl2.SDL_GetNumRenderDrivers()
     for i in range(rcount):
         window = _create_window((30, 30), (100, 100))
-        renderer = render.SDL_CreateRenderer(window, i, flags)
+        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
             usable += 1
-            assert isinstance(renderer.contents, render.SDL_Renderer)
-            if render.SDL_RenderTargetSupported(renderer) == SDL_TRUE:
+            assert isinstance(renderer.contents, sdl2.SDL_Renderer)
+            if sdl2.SDL_RenderTargetSupported(renderer) == SDL_TRUE:
                 supports_targets.append(i)
-            render.SDL_DestroyRenderer(renderer)
+            sdl2.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
     assert usable > 0
     if len(supports_targets) == 0:
@@ -487,24 +487,24 @@ def test_SDL_GetSetRenderTarget(with_sdl):
     pixfmt = pixels.SDL_PIXELFORMAT_ARGB8888
     for i in supports_targets:
         window = _create_window((30, 30), (100, 100))
-        renderer = render.SDL_CreateRenderer(window, i, flags)
+        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         # Try setting a texture as the render target
-        tex = render.SDL_CreateTexture(
-            renderer, pixfmt, render.SDL_TEXTUREACCESS_TARGET, 10, 10
+        tex = sdl2.SDL_CreateTexture(
+            renderer, pixfmt, sdl2.SDL_TEXTUREACCESS_TARGET, 10, 10
         )
-        ret = render.SDL_SetRenderTarget(renderer, tex)
+        ret = sdl2.SDL_SetRenderTarget(renderer, tex)
         assert SDL_GetError() == b""
         assert ret == 0
-        tgt = render.SDL_GetRenderTarget(renderer)
+        tgt = sdl2.SDL_GetRenderTarget(renderer)
         assert SDL_GetError() == b""
-        assert isinstance(tgt.contents, render.SDL_Texture)
+        assert isinstance(tgt.contents, sdl2.SDL_Texture)
         # Try setting NULL as the render target (resets target to window)
-        ret = render.SDL_SetRenderTarget(renderer, None)
+        ret = sdl2.SDL_SetRenderTarget(renderer, None)
         assert ret == 0
-        assert not render.SDL_GetRenderTarget(renderer)
+        assert not sdl2.SDL_GetRenderTarget(renderer)
         # Clean up before the next renderer
-        render.SDL_DestroyTexture(tex)
-        render.SDL_DestroyRenderer(renderer)
+        sdl2.SDL_DestroyTexture(tex)
+        sdl2.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
 
 def test_SDL_RenderGetSetLogicalSize(sw_renderer):
@@ -513,17 +513,17 @@ def test_SDL_RenderGetSetLogicalSize(sw_renderer):
     GREEN_RGBA = 0x00FF00FF
 
     # Try setting the logical size to 1/10 of normal
-    ret = render.SDL_RenderSetLogicalSize(renderer, 10, 10)
+    ret = sdl2.SDL_RenderSetLogicalSize(renderer, 10, 10)
     assert SDL_GetError() == b""
     assert ret == 0
     lw, lh = c_int(0), c_int(0)
-    render.SDL_RenderGetLogicalSize(renderer, byref(lw), byref(lh))
+    sdl2.SDL_RenderGetLogicalSize(renderer, byref(lw), byref(lh))
     assert [lw.value, lh.value] == [10, 10]
 
     # Try drawing a single pixel to the renderer and see if fills 10x10
-    ret = render.SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255)
+    ret = sdl2.SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255)
     assert ret == 0
-    render.SDL_RenderDrawPoint(renderer, 1, 1)
+    sdl2.SDL_RenderDrawPoint(renderer, 1, 1)
     view = PixelView(sf)
     assert view[1][1] == BLACK_RGBA
     assert view[10][10] == GREEN_RGBA
@@ -532,9 +532,9 @@ def test_SDL_RenderGetSetLogicalSize(sw_renderer):
     assert view[20][20] == BLACK_RGBA
 
     # Reset the logical size back to its original values and try drawing again
-    ret = render.SDL_RenderSetLogicalSize(renderer, 0, 0)
+    ret = sdl2.SDL_RenderSetLogicalSize(renderer, 0, 0)
     assert ret == 0
-    render.SDL_RenderDrawPoint(renderer, 1, 1)
+    sdl2.SDL_RenderDrawPoint(renderer, 1, 1)
     assert view[1][1] == GREEN_RGBA
     assert view[0][0] == BLACK_RGBA
     assert view[2][2] == BLACK_RGBA
@@ -552,18 +552,18 @@ def test_SDL_RenderGetSetViewport(sw_renderer):
         rect.SDL_Rect(0, -10, 10, 10),
     )
     # First, try setting viewport to whole window
-    ret = render.SDL_RenderSetViewport(renderer, None)
+    ret = sdl2.SDL_RenderSetViewport(renderer, None)
     assert SDL_GetError() == b""
     assert ret == 0
     vport = rect.SDL_Rect()
-    render.SDL_RenderGetViewport(renderer, byref(vport))
+    sdl2.SDL_RenderGetViewport(renderer, byref(vport))
     assert vport == rect.SDL_Rect(0, 0, 100, 100)
     # Then, try setting it to different sizes
     for r in rects:
-        ret = render.SDL_RenderSetViewport(renderer, r)
+        ret = sdl2.SDL_RenderSetViewport(renderer, r)
         assert SDL_GetError() == b""
         assert ret == 0
-        render.SDL_RenderGetViewport(renderer, byref(vport))
+        sdl2.SDL_RenderGetViewport(renderer, byref(vport))
         assert vport == r
 
 @pytest.mark.skip("not implemented")
@@ -584,33 +584,33 @@ def test_SDL_RenderWindowToLogical(with_renderer):
     wx, wy = (c_int(0), c_int(0))  # window coords
     lx, ly = (c_float(0), c_float(0))  # renderer coords
     # Test without resizing
-    render.SDL_RenderWindowToLogical(renderer, 50, 50, byref(lx), byref(ly))
+    sdl2.SDL_RenderWindowToLogical(renderer, 50, 50, byref(lx), byref(ly))
     assert lx.value == 50
     assert ly.value == 50
-    render.SDL_RenderLogicalToWindow(renderer, 50, 50, byref(wx), byref(wy))
+    sdl2.SDL_RenderLogicalToWindow(renderer, 50, 50, byref(wx), byref(wy))
     assert wx.value == 50
     assert wy.value == 50
     # Set custom scaling on the renderer
-    ret = render.SDL_RenderSetScale(renderer, 2.0, 0.5)
+    ret = sdl2.SDL_RenderSetScale(renderer, 2.0, 0.5)
     assert SDL_GetError() == b""
     assert ret == 0
     # Test again after resizing
-    render.SDL_RenderWindowToLogical(renderer, 50, 50, byref(lx), byref(ly))
+    sdl2.SDL_RenderWindowToLogical(renderer, 50, 50, byref(lx), byref(ly))
     assert lx.value == 25
     assert ly.value == 100
-    render.SDL_RenderLogicalToWindow(renderer, 50, 50, byref(wx), byref(wy))
+    sdl2.SDL_RenderLogicalToWindow(renderer, 50, 50, byref(wx), byref(wy))
     assert wx.value == 100
     assert wy.value == 25
 
 def test_SDL_RenderGetSetIntegerScale(with_renderer):
     renderer, win = with_renderer
-    assert render.SDL_RenderGetIntegerScale(renderer) == SDL_FALSE
-    assert render.SDL_RenderSetIntegerScale(renderer, SDL_FALSE) == 0
-    assert render.SDL_RenderGetIntegerScale(renderer) == SDL_FALSE
-    assert render.SDL_RenderSetIntegerScale(renderer, SDL_TRUE) == 0
-    assert render.SDL_RenderGetIntegerScale(renderer) == SDL_TRUE
-    assert render.SDL_RenderSetIntegerScale(renderer, SDL_FALSE) == 0
-    assert render.SDL_RenderGetIntegerScale(renderer) == SDL_FALSE
+    assert sdl2.SDL_RenderGetIntegerScale(renderer) == SDL_FALSE
+    assert sdl2.SDL_RenderSetIntegerScale(renderer, SDL_FALSE) == 0
+    assert sdl2.SDL_RenderGetIntegerScale(renderer) == SDL_FALSE
+    assert sdl2.SDL_RenderSetIntegerScale(renderer, SDL_TRUE) == 0
+    assert sdl2.SDL_RenderGetIntegerScale(renderer) == SDL_TRUE
+    assert sdl2.SDL_RenderSetIntegerScale(renderer, SDL_FALSE) == 0
+    assert sdl2.SDL_RenderGetIntegerScale(renderer) == SDL_FALSE
 
 def test_SDL_GetSetRenderDrawColor(with_renderer):
     renderer, win = with_renderer
@@ -624,11 +624,11 @@ def test_SDL_GetSetRenderDrawColor(with_renderer):
         (0, 0, 0, 0),
     )
     for r, g, b, a in colors:
-        ret = render.SDL_SetRenderDrawColor(renderer, r, g, b, a)
+        ret = sdl2.SDL_SetRenderDrawColor(renderer, r, g, b, a)
         assert SDL_GetError() == b""
         assert ret == 0
         rr, rg, rb, ra = Uint8(0), Uint8(0), Uint8(0), Uint8(0)
-        ret = render.SDL_GetRenderDrawColor(
+        ret = sdl2.SDL_GetRenderDrawColor(
             renderer, byref(rr), byref(rg), byref(rb), byref(ra)
         )
         assert ret == 0
@@ -643,11 +643,11 @@ def test_SDL_GetSetRenderDrawBlendMode(with_renderer):
         blendmode.SDL_BLENDMODE_MOD,
     ]
     for mode in modes:
-        ret = render.SDL_SetRenderDrawBlendMode(renderer, mode)
+        ret = sdl2.SDL_SetRenderDrawBlendMode(renderer, mode)
         assert SDL_GetError() == b""
         assert ret == 0
         bmode = blendmode.SDL_BlendMode()
-        ret = render.SDL_GetRenderDrawBlendMode(renderer, byref(bmode))
+        ret = sdl2.SDL_GetRenderDrawBlendMode(renderer, byref(bmode))
         assert ret == 0
         assert bmode.value == mode
 
@@ -657,9 +657,9 @@ def test_SDL_RenderClear(sw_renderer):
     view = PixelView(sf)
     assert view[0][0] == 0x000000FF
     # Set renderer draw color to white and then clear the renderer
-    ret = render.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
+    ret = sdl2.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
     assert ret == 0
-    ret = render.SDL_RenderClear(renderer)
+    ret = sdl2.SDL_RenderClear(renderer)
     assert ret == 0
     # Check whether the target surface is now white
     assert view[0][0] == 0xFFFFFFFF
@@ -673,12 +673,12 @@ def test_SDL_RenderDrawPoint(sw_renderer):
     )
     r, g, b, a = 0xAA, 0xBB, 0xCC, 0xDD
     color = pixels.SDL_MapRGBA(sf.contents.format, r, g, b, a)
-    ret = render.SDL_SetRenderDrawColor(renderer, r, g, b, a)
+    ret = sdl2.SDL_SetRenderDrawColor(renderer, r, g, b, a)
     assert ret == 0
     for x, y in points:
-        ret = render.SDL_RenderDrawPoint(renderer, x, y)
+        ret = sdl2.SDL_RenderDrawPoint(renderer, x, y)
         assert ret == 0
-    render.SDL_RenderPresent(renderer)
+    sdl2.SDL_RenderPresent(renderer)
     # Check whether the points were actually drawn
     view = PixelView(sf)
     for x, y in points:
@@ -780,13 +780,13 @@ def test_SDL_RenderGeometry(sw_renderer):
     # Create vertices for rendering
     RED = (255, 0, 0, 255)
     vertices = [
-        render.SDL_Vertex((0, 0), RED),
-        render.SDL_Vertex((0, 50), RED),
-        render.SDL_Vertex((50, 50), RED)
+        sdl2.SDL_Vertex((0, 0), RED),
+        sdl2.SDL_Vertex((0, 50), RED),
+        sdl2.SDL_Vertex((50, 50), RED)
     ]
     # Try rendering the vertices
-    vtx = (render.SDL_Vertex * len(vertices))(*vertices)
-    ret = render.SDL_RenderGeometry(
+    vtx = (sdl2.SDL_Vertex * len(vertices))(*vertices)
+    ret = sdl2.SDL_RenderGeometry(
         renderer, None, vtx, len(vertices), None, 0
     )
     assert SDL_GetError() == b""
@@ -808,7 +808,7 @@ def test_SDL_RenderGeometryRaw(sw_renderer):
     col = (SDL_Color * len(colors))(*colors)
     uv = (c_float * len(tex_coords))(*tex_coords)
     # Try rendering the vertices
-    ret = render.SDL_RenderGeometryRaw(
+    ret = sdl2.SDL_RenderGeometryRaw(
         renderer, None,
         xy, xy_size,
         col, col_size,
@@ -864,7 +864,7 @@ def test_SDL_RendererGetMetalCommandEncoder(with_renderer):
 def test_SDL_RenderSetVSync(with_renderer):
     renderer, win = with_renderer
     # Not super thorough, but hard to test more extensively
-    ret = render.SDL_RenderSetVSync(renderer, 1)
+    ret = sdl2.SDL_RenderSetVSync(renderer, 1)
     assert ret <= 0
-    ret = render.SDL_RenderSetVSync(renderer, 0)
+    ret = sdl2.SDL_RenderSetVSync(renderer, 0)
     assert ret <= 0

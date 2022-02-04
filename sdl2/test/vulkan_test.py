@@ -1,6 +1,6 @@
 import pytest
+import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
-from sdl2 import vulkan
 
 
 @pytest.mark.skip("not implemented")
