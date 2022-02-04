@@ -28,6 +28,16 @@ __all__ = [
     "rw_from_object"
 ]
 
+def _ptr2obj(ptr):
+    """If a pointer, returns its contents. Otherwise, returns the passed object.
+    """
+    if isinstance(ptr, _Pointer):
+        return ptr.contents
+    return ptr
+
+
+# Constants, enums, and macros
+
 SDL_RWOPS_UNKNOWN = 0
 SDL_RWOPS_WINFILE = 1
 SDL_RWOPS_STDFILE = 2
@@ -35,10 +45,17 @@ SDL_RWOPS_JNIFILE = 3
 SDL_RWOPS_MEMORY = 4
 SDL_RWOPS_MEMORY_RO = 5
 
-class SDL_RWops(Structure):
-    pass
+RW_SEEK_SET = 0
+RW_SEEK_CUR = 1
+RW_SEEK_END = 2
+
+
+# Structure, opaque type, and callback definitions
 
 class _hidden(Union):
+    pass
+
+class SDL_RWops(Structure):
     pass
 
 _sdlsize = CFUNCTYPE(Sint64, POINTER(SDL_RWops))
@@ -55,6 +72,9 @@ SDL_RWops._fields_ = [("size", _sdlsize),
                       ("hidden", _hidden)
                       ]
 
+
+# Raw ctypes function definitions
+
 SDL_RWFromFile = _bind("SDL_RWFromFile", [c_char_p, c_char_p], POINTER(SDL_RWops))
 SDL_RWFromFP = _bind("SDL_RWFromFP", [c_void_p, SDL_bool], POINTER(SDL_RWops))
 SDL_RWFromMem = _bind("SDL_RWFromMem", [c_void_p, c_int], POINTER(SDL_RWops))
@@ -68,17 +88,6 @@ if version >= 2010:
     SDL_LoadFile = _bind("SDL_LoadFile", [c_char_p, POINTER(c_size_t)], c_void_p)
 else:
     SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, b"rb"), ds, 1)
-
-RW_SEEK_SET = 0
-RW_SEEK_CUR = 1
-RW_SEEK_END = 2
-
-def _ptr2obj(ptr):
-    """If a pointer, returns its contents. Otherwise, returns the passed object.
-    """
-    if isinstance(ptr, _Pointer):
-        return ptr.contents
-    return ptr
 
 # The following set of functions were macros in SDL <= 2.0.9 but became full
 # functions in SDL 2.0.10. Lambda functions are to mimic macro behaviour with
@@ -114,6 +123,9 @@ SDL_WriteLE32 = _bind("SDL_WriteLE32", [POINTER(SDL_RWops), Uint32], c_size_t)
 SDL_WriteBE32 = _bind("SDL_WriteBE32", [POINTER(SDL_RWops), Uint32], c_size_t)
 SDL_WriteLE64 = _bind("SDL_WriteLE64", [POINTER(SDL_RWops), Uint64], c_size_t)
 SDL_WriteBE64 = _bind("SDL_WriteBE64", [POINTER(SDL_RWops), Uint64], c_size_t)
+
+
+# Additional Python functions (move to ext?)
 
 if sys.version_info[0] >= 3:
     try:
@@ -161,6 +173,7 @@ def rw_from_object(obj):
 
     The returned SDL_RWops is a pure Python object and must not be freed via
     free_rw().
+
     """
     if not hasattr(obj, "read"):
         raise TypeError("obj must have a read(len) -> data method")

@@ -38,12 +38,9 @@ def test_buf():
     yield buf
 
 
-# TODO: Split tests for base SDL bindings and rw_from_object objects
-
 def test_SDL_RWops():
     rw = sdl2.SDL_RWops()
     assert isinstance(rw, sdl2.SDL_RWops)
-
 
 def test_SDL_RWFromFile(testfile_path):
     rw = sdl2.SDL_RWFromFile(testfile_path, b"r")
@@ -167,6 +164,7 @@ def test_SDL_LoadFile_RW(testfile_path):
     data = ctypes.string_at(data_p, datasize.value)
     assert data[:19] == b"This is a test file"
 
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
 def test_SDL_LoadFile(testfile_path):
     datasize = ctypes.c_size_t(0)
     data_p = sdl2.SDL_LoadFile(testfile_path, ctypes.byref(datasize))
