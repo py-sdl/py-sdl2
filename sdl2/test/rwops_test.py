@@ -156,6 +156,7 @@ def test_SDL_AllocFreeRW():
     sdl2.SDL_FreeRW(rw)
     assert sdl2.SDL_GetError() == b""
 
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
 def test_SDL_LoadFile_RW(testfile_path):
     rw = sdl2.SDL_RWFromFile(testfile_path, b"r")
     assert isinstance(rw.contents, sdl2.SDL_RWops)

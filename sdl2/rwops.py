@@ -67,7 +67,7 @@ SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t
 if version >= 2010:
     SDL_LoadFile = _bind("SDL_LoadFile", [c_char_p, POINTER(c_size_t)], c_void_p)
 else:
-    SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, "rb"), ds, 1)
+    SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, b"rb"), ds, 1)
 
 RW_SEEK_SET = 0
 RW_SEEK_CUR = 1

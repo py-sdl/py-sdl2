@@ -19,6 +19,8 @@ Fixed Bugs:
   was accidentally removed in PySDL2 0.9.10 (issue #217)
 * Fixed namespace export for ``AUDIO_F32MSB`` and
   :obj:`~sdl2.SDL_AudioDeviceEvent`.
+* Fixed :func:`~sdl2.SDL_LoadFile` with Python 3 and old versions of SDL2 (2.0.9
+  and older).
 
 
 0.9.11
