@@ -342,7 +342,7 @@ class FontTTF(object):
         line_h = self._parse_line_height(line_h, default_skip)
         height = line_h * (len(lines) - 1) + font_height
         if width == None:
-            width = max([line.contents.w for line in rendered])
+            width = max([line.contents.w for line in rendered if line])
 
         # Create background surface for the text and render lines to it
         sf = _create_surface((width, height), bg_col, errname="background")

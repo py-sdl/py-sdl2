@@ -158,6 +158,14 @@ class TestBitmapFont(object):
         assert text.h == 64
         surface.SDL_FreeSurface(text)
 
+        # Test strings with empty lines
+        msg = "hello\n\nthere!\n"
+        text = font.render_text(msg)
+        assert isinstance(text, surface.SDL_Surface)
+        assert text.w == 32 * 6
+        assert text.h == 32 * 4
+        surface.SDL_FreeSurface(text)
+
         # Test exception for missing glyph
         with pytest.raises(ValueError):
             font.render_text("this_should_fail")
@@ -336,6 +344,14 @@ class TestFontTTF(object):
         assert SDL_GetError() == b""
         assert isinstance(text2, surface.SDL_Surface)
         assert text2.h > text.h
+
+        # Test strings with empty lines
+        msg = "hello\n\nthere!\n"
+        text3 = font.render_text(msg)
+        assert SDL_GetError() == b""
+        assert isinstance(text3, surface.SDL_Surface)
+        assert text3.h > text2.h
+        surface.SDL_FreeSurface(text3)
 
         # Test custom line height
         msg = "hello\nthere!"
