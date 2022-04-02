@@ -1,7 +1,7 @@
 import os
 from ctypes import POINTER, c_int, c_char_p
 from ctypes import POINTER as _P
-from .dll import DLL, SDLFunc
+from .dll import DLL, SDLFunc, AttributeDict
 from .version import SDL_version, SDL_VERSIONNUM
 from .surface import SDL_Surface
 from .rwops import SDL_RWops
@@ -123,9 +123,9 @@ _funcdefs = [
     SDLFunc("IMG_SavePNG", [_P(SDL_Surface), c_char_p], c_int),
     SDLFunc("IMG_SavePNG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int], c_int),
 ]
-_funcs = {}
+_ctypes = AttributeDict()
 for f in _funcdefs:
-    _funcs[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
 
 
 # Python wrapper functions
@@ -138,7 +138,7 @@ def IMG_Linked_Version():
         version of the SDL2_image library currently in use.
 
     """
-    return _funcs["IMG_Linked_Version"]()
+    return _ctypes.IMG_Linked_Version()
 
 def IMG_Init(flags):
     """Initializes the SDL2_image library.
@@ -185,7 +185,7 @@ def IMG_Init(flags):
         int: A bitmask of all the currently initialized image loaders.
 
     """
-    return _funcs["IMG_Init"](flags)
+    return _ctypes["IMG_Init"](flags)
 
 def IMG_Quit():
     """De-initializes the SDL2_image library.
@@ -199,7 +199,7 @@ def IMG_Quit():
     :func:`IMG_Init` was called.
 
     """
-    return _funcs["IMG_Quit"]()
+    return _ctypes["IMG_Quit"]()
 
 def IMG_LoadTyped_RW(src, freesrc, type):
     """Loads an image file from an SDL2 file object as a specific format.
@@ -242,7 +242,7 @@ def IMG_LoadTyped_RW(src, freesrc, type):
         image, or a null pointer if there was an error.
 
     """
-    return _funcs["IMG_LoadTyped_RW"](src, freesrc, type)
+    return _ctypes["IMG_LoadTyped_RW"](src, freesrc, type)
 
 def IMG_Load(file):
     """Loads an image file to a new surface.
@@ -277,7 +277,7 @@ def IMG_Load(file):
         image, or a null pointer if there was an error.
 
     """
-    return _funcs["IMG_Load"](file)
+    return _ctypes["IMG_Load"](file)
 
 def IMG_Load_RW(src, freesrc):
     """Loads an image file from an SDL2 file object to a new surface.
@@ -295,7 +295,7 @@ def IMG_Load_RW(src, freesrc):
         image, or a null pointer if there was an error.
 
     """
-    return _funcs["IMG_Load_RW"](src, freesrc)
+    return _ctypes["IMG_Load_RW"](src, freesrc)
 
 def IMG_LoadTexture(renderer, file):
     """Loads an image file to a new texture using a given renderer.
@@ -327,7 +327,7 @@ def IMG_LoadTexture(renderer, file):
         the image, or a null pointer if there was an error.
 
     """
-    return _funcs["IMG_LoadTexture"](renderer, file)
+    return _ctypes["IMG_LoadTexture"](renderer, file)
 
 def IMG_LoadTexture_RW(renderer, src, freesrc):
     """Loads an image from a file object to a texture using a given renderer.
@@ -347,7 +347,7 @@ def IMG_LoadTexture_RW(renderer, src, freesrc):
         the image, or a null pointer if there was an error.
 
     """
-    return _funcs["IMG_LoadTexture_RW"](renderer, src, freesrc)
+    return _ctypes["IMG_LoadTexture_RW"](renderer, src, freesrc)
 
 def IMG_LoadTextureTyped_RW(renderer, src, freesrc, type):
     """Loads an image file from a file object to a texture as a specific format.
@@ -372,7 +372,7 @@ def IMG_LoadTextureTyped_RW(renderer, src, freesrc, type):
         the image, or a null pointer if there was an error.
 
     """
-    return _funcs["IMG_LoadTextureTyped_RW"](renderer, src, freesrc, type)
+    return _ctypes["IMG_LoadTextureTyped_RW"](renderer, src, freesrc, type)
 
 
 def IMG_isICO(src):
@@ -387,7 +387,7 @@ def IMG_isICO(src):
         int: 1 if BMPs are supported and file is a valid ICO, otherwise 0.
 
     """
-    return _funcs["IMG_isICO"](src)
+    return _ctypes["IMG_isICO"](src)
 
 def IMG_isCUR(src):
     """Tests whether a file object contains a CUR (Windows cursor) image.
@@ -399,7 +399,7 @@ def IMG_isCUR(src):
         int: 1 if BMPs are supported and file is a valid CUR, otherwise 0.
 
     """
-    return _funcs["IMG_isCUR"](src)
+    return _ctypes["IMG_isCUR"](src)
 
 def IMG_isBMP(src):
     """Tests whether a file object contains a BMP (Windows bitmap) image.
@@ -411,7 +411,7 @@ def IMG_isBMP(src):
         int: 1 if BMPs are supported and file is a valid BMP, otherwise 0.
 
     """
-    return _funcs["IMG_isBMP"](src)
+    return _ctypes["IMG_isBMP"](src)
 
 def IMG_isGIF(src):
     """Tests whether a file object contains a GIF image.
@@ -423,7 +423,7 @@ def IMG_isGIF(src):
         int: 1 if GIFs are supported and file is a valid GIF, otherwise 0.
 
     """
-    return _funcs["IMG_isGIF"](src)
+    return _ctypes["IMG_isGIF"](src)
 
 def IMG_isJPG(src):
     """Tests whether a file object contains a JPEG image.
@@ -435,7 +435,7 @@ def IMG_isJPG(src):
         int: 1 if JPEGs are supported and file is a valid JPEG, otherwise 0.
 
     """
-    return _funcs["IMG_isJPG"](src)
+    return _ctypes["IMG_isJPG"](src)
 
 def IMG_isLBM(src):
     """Tests whether a file object contains an LBM (Interleaved Bitmap) image.
@@ -447,7 +447,7 @@ def IMG_isLBM(src):
         int: 1 if LBMs are supported and file is a valid LBM, otherwise 0.
 
     """
-    return _funcs["IMG_isLBM"](src)
+    return _ctypes["IMG_isLBM"](src)
 
 def IMG_isPCX(src):
     """Tests whether a file object contains a PCX (IBM PC Paintbrush) image.
@@ -459,7 +459,7 @@ def IMG_isPCX(src):
         int: 1 if PCXs are supported and file is a valid PCX, otherwise 0.
 
     """
-    return _funcs["IMG_isPCX"](src)
+    return _ctypes["IMG_isPCX"](src)
 
 def IMG_isPNG(src):
     """Tests whether a file object contains a PNG image.
@@ -471,7 +471,7 @@ def IMG_isPNG(src):
         int: 1 if PNGs are supported and file is a valid PNG, otherwise 0.
 
     """
-    return _funcs["IMG_isPNG"](src)
+    return _ctypes["IMG_isPNG"](src)
 
 def IMG_isPNM(src):
     """Tests whether a file object contains a PNM (Portable Anymap) image.
@@ -483,7 +483,7 @@ def IMG_isPNM(src):
         int: 1 if PNMs are supported and file is a valid PNM, otherwise 0.
 
     """
-    return _funcs["IMG_isPNM"](src)
+    return _ctypes["IMG_isPNM"](src)
 
 def IMG_isSVG(src):
     """Tests whether a file object contains an SVG image.
@@ -497,7 +497,7 @@ def IMG_isSVG(src):
         int: 1 if SVGs are supported and file is a valid SVG, otherwise 0.
 
     """
-    return _funcs["IMG_isSVG"](src)
+    return _ctypes["IMG_isSVG"](src)
 
 def IMG_isTIF(src):
     """Tests whether a file object contains a TIFF image.
@@ -509,7 +509,7 @@ def IMG_isTIF(src):
         int: 1 if TIFFs are supported and file is a valid TIFF, otherwise 0.
 
     """
-    return _funcs["IMG_isTIF"](src)
+    return _ctypes["IMG_isTIF"](src)
 
 def IMG_isXCF(src):
     """Tests whether a file object contains an XCF (native GIMP format) image.
@@ -523,7 +523,7 @@ def IMG_isXCF(src):
         int: 1 if XCFs are supported and file is a valid XCF, otherwise 0.
 
     """
-    return _funcs["IMG_isXCF"](src)
+    return _ctypes["IMG_isXCF"](src)
 
 def IMG_isXPM(src):
     """Tests whether a file object contains an XPM (X11 Pixmap) image.
@@ -535,7 +535,7 @@ def IMG_isXPM(src):
         int: 1 if XPMs are supported and file is a valid XPM, otherwise 0.
 
     """
-    return _funcs["IMG_isXPM"](src)
+    return _ctypes["IMG_isXPM"](src)
 
 def IMG_isXV(src):
     """Tests whether a file object contains an XV (XV Visual Schnauzer) image.
@@ -547,7 +547,7 @@ def IMG_isXV(src):
         int: 1 if XVs are supported and file is a valid XV, otherwise 0.
 
     """
-    return _funcs["IMG_isXV"](src)
+    return _ctypes["IMG_isXV"](src)
 
 def IMG_isWEBP(src):
     """Tests whether a file object contains a WebP image.
@@ -559,7 +559,7 @@ def IMG_isWEBP(src):
         int: 1 if WebPs are supported and file is a valid WebP, otherwise 0.
 
     """
-    return _funcs["IMG_isWEBP"](src)
+    return _ctypes["IMG_isWEBP"](src)
 
 
 def IMG_LoadICO_RW(src):
@@ -575,7 +575,7 @@ def IMG_LoadICO_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadICO_RW"](src)
+    return _ctypes["IMG_LoadICO_RW"](src)
 
 def IMG_LoadCUR_RW(src):
     """Loads a CUR (Windows cursor) image from an SDL file object.
@@ -590,7 +590,7 @@ def IMG_LoadCUR_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadCUR_RW"](src)
+    return _ctypes["IMG_LoadCUR_RW"](src)
 
 def IMG_LoadBMP_RW(src):
     """Loads a BMP (Windows bitmap) image from an SDL file object.
@@ -605,7 +605,7 @@ def IMG_LoadBMP_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadBMP_RW"](src)
+    return _ctypes["IMG_LoadBMP_RW"](src)
 
 def IMG_LoadGIF_RW(src):
     """Loads a GIF (Graphics Interchange Format) image from an SDL file object.
@@ -620,7 +620,7 @@ def IMG_LoadGIF_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadGIF_RW"](src)
+    return _ctypes["IMG_LoadGIF_RW"](src)
 
 def IMG_LoadJPG_RW(src):
     """Loads a JPEG image from an SDL file object.
@@ -635,7 +635,7 @@ def IMG_LoadJPG_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadJPG_RW"](src)
+    return _ctypes["IMG_LoadJPG_RW"](src)
 
 def IMG_LoadLBM_RW(src):
     """Loads an LBM (Interleaved Bitmap) image from an SDL file object.
@@ -650,7 +650,7 @@ def IMG_LoadLBM_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadLBM_RW"](src)
+    return _ctypes["IMG_LoadLBM_RW"](src)
 
 def IMG_LoadPCX_RW(src):
     """Loads a PCX (IBM PC Paintbrush) image from an SDL file object.
@@ -665,7 +665,7 @@ def IMG_LoadPCX_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadPCX_RW"](src)
+    return _ctypes["IMG_LoadPCX_RW"](src)
 
 def IMG_LoadPNG_RW(src):
     """Loads a PNG image from an SDL file object.
@@ -680,7 +680,7 @@ def IMG_LoadPNG_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadPNG_RW"](src)
+    return _ctypes["IMG_LoadPNG_RW"](src)
 
 def IMG_LoadPNM_RW(src):
     """Loads a PNM (Portable Anymap) image from an SDL file object.
@@ -695,7 +695,7 @@ def IMG_LoadPNM_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadPNM_RW"](src)
+    return _ctypes["IMG_LoadPNM_RW"](src)
 
 def IMG_LoadSVG_RW(src):
     """Loads an SVG image from an SDL file object.
@@ -712,7 +712,7 @@ def IMG_LoadSVG_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadSVG_RW"](src)
+    return _ctypes["IMG_LoadSVG_RW"](src)
 
 def IMG_LoadTGA_RW(src):
     """Loads a TGA (TrueVision Targa) image from an SDL file object.
@@ -727,7 +727,7 @@ def IMG_LoadTGA_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadTGA_RW"](src)
+    return _ctypes["IMG_LoadTGA_RW"](src)
 
 def IMG_LoadTIF_RW(src):
     """Loads a TIFF (Tagged Image File Format) image from an SDL file object.
@@ -742,7 +742,7 @@ def IMG_LoadTIF_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadTIF_RW"](src)
+    return _ctypes["IMG_LoadTIF_RW"](src)
 
 def IMG_LoadXCF_RW(src):
     """Loads an TIFF (native GIMP format) image from an SDL file object.
@@ -757,7 +757,7 @@ def IMG_LoadXCF_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadXCF_RW"](src)
+    return _ctypes["IMG_LoadXCF_RW"](src)
 
 def IMG_LoadXPM_RW(src):
     """Loads an XPM (X11 Pixmap) image from an SDL file object.
@@ -772,7 +772,7 @@ def IMG_LoadXPM_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadXPM_RW"](src)
+    return _ctypes["IMG_LoadXPM_RW"](src)
 
 def IMG_LoadXV_RW(src):
     """Loads an XV thumbnail (XV Visual Schnauzer) from an SDL file object.
@@ -787,7 +787,7 @@ def IMG_LoadXV_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadXV_RW"](src)
+    return _ctypes["IMG_LoadXV_RW"](src)
 
 def IMG_LoadWEBP_RW(src):
     """Loads a WebP image from an SDL file object.
@@ -802,7 +802,7 @@ def IMG_LoadWEBP_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadWEBP_RW"](src)
+    return _ctypes["IMG_LoadWEBP_RW"](src)
 
 
 def IMG_ReadXPMFromArray(xpm):
@@ -825,7 +825,7 @@ def IMG_ReadXPMFromArray(xpm):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_ReadXPMFromArray"](xpm)
+    return _ctypes["IMG_ReadXPMFromArray"](xpm)
 
 
 def IMG_SavePNG(surface, file):
@@ -846,7 +846,7 @@ def IMG_SavePNG(surface, file):
         :func:`IMG_GetError` for more information.
 
     """
-    return _funcs["IMG_SavePNG"](surface, file)
+    return _ctypes["IMG_SavePNG"](surface, file)
 
 def IMG_SavePNG_RW(surface, dst, freedst):
     """Saves an SDL surface to a file object containing a PNG.
@@ -864,7 +864,7 @@ def IMG_SavePNG_RW(surface, dst, freedst):
         :func:`IMG_GetError` for more information.
 
     """
-    return _funcs["IMG_SavePNG_RW"](surface, dst, freedst)
+    return _ctypes["IMG_SavePNG_RW"](surface, dst, freedst)
 
 def IMG_SaveJPG(surface, file, quality):
     """Saves an SDL surface to a JPEG file at a given quality.
@@ -890,7 +890,7 @@ def IMG_SaveJPG(surface, file, quality):
 
     """
     # NOTE: Not available in official macOS binaries
-    return _funcs["IMG_SaveJPG"](surface, file, quality)
+    return _ctypes["IMG_SaveJPG"](surface, file, quality)
 
 def IMG_SaveJPG_RW(surface, dst, freedst, quality):
     """Saves an SDL surface to a file object containing a JPEG.
@@ -912,7 +912,7 @@ def IMG_SaveJPG_RW(surface, dst, freedst, quality):
 
     """
     # NOTE: Not available in official macOS binaries
-    return _funcs["IMG_SaveJPG_RW"](surface, dst, freedst, quality)
+    return _ctypes["IMG_SaveJPG_RW"](surface, dst, freedst, quality)
 
 
 IMG_SetError = SDL_SetError

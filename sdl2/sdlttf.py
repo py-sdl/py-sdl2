@@ -1,7 +1,7 @@
 import os
 from ctypes import c_int, c_uint, c_long, c_char_p, c_void_p
 from ctypes import POINTER as _P
-from .dll import DLL, SDLFunc
+from .dll import DLL, SDLFunc, AttributeDict
 from .version import SDL_version, SDL_VERSIONNUM
 from .rwops import SDL_RWops
 from .stdinc import Uint16, Uint32, SDL_bool
@@ -205,9 +205,9 @@ _funcdefs = [
     SDLFunc("TTF_SetFontSDF", [_P(TTF_Font), SDL_bool], c_int, added='2.0.18'),
     SDLFunc("TTF_GetFontSDF", [_P(TTF_Font)], SDL_bool, added='2.0.18'),
 ]
-_funcs = {}
+_ctypes = AttributeDict()
 for f in _funcdefs:
-    _funcs[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
     __all__.append(f.name)
 
 
@@ -221,7 +221,7 @@ def TTF_Linked_Version():
         version of the SDL2_ttf library currently in use.
 
     """
-    return _funcs["TTF_Linked_Version"]()
+    return _ctypes.TTF_Linked_Version()
 
 def TTF_GetFreeTypeVersion(major, minor, patch):
     """Gets the version of the FreeType library currently linked by SDL2_ttf.
@@ -241,7 +241,7 @@ def TTF_GetFreeTypeVersion(major, minor, patch):
             the patch level of the linked FreeType library.
 
     """
-    return _funcs["TTF_GetFreeTypeVersion"](major, minor, patch)
+    return _ctypes["TTF_GetFreeTypeVersion"](major, minor, patch)
 
 def TTF_GetHarfBuzzVersion(major, minor, patch):
     """Gets the version of the HarfBuzz library currently linked by SDL2_ttf.
@@ -261,7 +261,7 @@ def TTF_GetHarfBuzzVersion(major, minor, patch):
             the patch level of the linked HarfBuzz library.
 
     """
-    return _funcs["TTF_GetHarfBuzzVersion"](major, minor, patch)
+    return _ctypes["TTF_GetHarfBuzzVersion"](major, minor, patch)
 
 def TTF_ByteSwappedUNICODE(swapped):
     """Tells the library whether UCS-2 unicode text is generally byteswapped.
@@ -278,7 +278,7 @@ def TTF_ByteSwappedUNICODE(swapped):
             UCS-2 data will be byte-swapped relative to native CPU endianness.
 
     """
-    return _funcs["TTF_ByteSwappedUNICODE"](swapped)
+    return _ctypes["TTF_ByteSwappedUNICODE"](swapped)
 
 def TTF_Init():
     """Initializes the TTF engine.
@@ -291,7 +291,7 @@ def TTF_Init():
         int: 0 if successful, or -1 on error.
 
     """
-    return _funcs["TTF_Init"]()
+    return _ctypes["TTF_Init"]()
 
 
 def TTF_OpenFont(file, ptsize):
@@ -310,7 +310,7 @@ def TTF_OpenFont(file, ptsize):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFont"](file, ptsize)
+    return _ctypes["TTF_OpenFont"](file, ptsize)
 
 def TTF_OpenFontIndex(file, ptsize, index):
     """Opens a specific font face by index from a file at a given size.
@@ -330,7 +330,7 @@ def TTF_OpenFontIndex(file, ptsize, index):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFontIndex"](file, ptsize, index)
+    return _ctypes["TTF_OpenFontIndex"](file, ptsize, index)
 
 def TTF_OpenFontRW(src, freesrc, ptsize):
     """Opens a font from a file object at a given size.
@@ -356,7 +356,7 @@ def TTF_OpenFontRW(src, freesrc, ptsize):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFontRW"](src, freesrc, ptsize)
+    return _ctypes["TTF_OpenFontRW"](src, freesrc, ptsize)
 
 def TTF_OpenFontIndexRW(src, freesrc, ptsize, index):
     """Opens a specific font face by index from a file object at a given size.
@@ -378,7 +378,7 @@ def TTF_OpenFontIndexRW(src, freesrc, ptsize, index):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFontIndexRW"](src, freesrc, ptsize, index)
+    return _ctypes["TTF_OpenFontIndexRW"](src, freesrc, ptsize, index)
 
 def TTF_OpenFontDPI(file, ptsize, hdpi, vdpi):
     """Opens a font file at a given size and DPI.
@@ -402,7 +402,7 @@ def TTF_OpenFontDPI(file, ptsize, hdpi, vdpi):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFontDPI"](file, ptsize, hdpi, vdpi)
+    return _ctypes["TTF_OpenFontDPI"](file, ptsize, hdpi, vdpi)
 
 def TTF_OpenFontIndexDPI(file, ptsize, index, hdpi, vdpi):
     """Opens a specific font face by index from a file at a given size and DPI.
@@ -426,7 +426,7 @@ def TTF_OpenFontIndexDPI(file, ptsize, index, hdpi, vdpi):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFontIndexDPI"](file, ptsize, index, hdpi, vdpi)
+    return _ctypes["TTF_OpenFontIndexDPI"](file, ptsize, index, hdpi, vdpi)
 
 def TTF_OpenFontDPIRW(src, freesrc, ptsize, hdpi, vdpi):
     """Opens a font from a file object at a given size and DPI.
@@ -450,7 +450,7 @@ def TTF_OpenFontDPIRW(src, freesrc, ptsize, hdpi, vdpi):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFontDPIRW"](src, freesrc, ptsize, hdpi, vdpi)
+    return _ctypes["TTF_OpenFontDPIRW"](src, freesrc, ptsize, hdpi, vdpi)
 
 def TTF_OpenFontIndexDPIRW(src, freesrc, ptsize, index, hdpi, vdpi):
     """Opens a font face by index from a file object at a given size and DPI.
@@ -476,7 +476,7 @@ def TTF_OpenFontIndexDPIRW(src, freesrc, ptsize, index, hdpi, vdpi):
         pointer if there was an error.
 
     """
-    return _funcs["TTF_OpenFontIndexDPIRW"](src, freesrc, ptsize, index, hdpi, vdpi)
+    return _ctypes["TTF_OpenFontIndexDPIRW"](src, freesrc, ptsize, index, hdpi, vdpi)
 
 def TTF_SetFontSize(font, ptsize):
     """Changes the size of a TTF font object dynamically.
@@ -493,7 +493,7 @@ def TTF_SetFontSize(font, ptsize):
         int: 0 on success, or -1 on error.
 
     """
-    return _funcs["TTF_SetFontSize"](font, ptsize)
+    return _ctypes["TTF_SetFontSize"](font, ptsize)
 
 def TTF_SetFontSizeDPI(font, ptsize, hdpi, vdpi):
     """Changes the size and DPI of a TTF font object dynamically.
@@ -514,7 +514,7 @@ def TTF_SetFontSizeDPI(font, ptsize, hdpi, vdpi):
         int: 0 on success, or -1 on error.
 
     """
-    return _funcs["TTF_SetFontSizeDPI"](font, ptsize, hdpi, vdpi)
+    return _ctypes["TTF_SetFontSizeDPI"](font, ptsize, hdpi, vdpi)
 
 
 def TTF_GetFontStyle(font):
@@ -536,7 +536,7 @@ def TTF_GetFontStyle(font):
         :func:`TTF_SetFontStyle`).
 
     """
-    return _funcs["TTF_GetFontStyle"](font)
+    return _ctypes["TTF_GetFontStyle"](font)
 
 def TTF_SetFontStyle(font, style):
     """Sets the rendering style for a given font.
@@ -569,7 +569,7 @@ def TTF_SetFontStyle(font, style):
         style (int): A bitmask specifying the style(s) to use for the font.
 
     """
-    return _funcs["TTF_SetFontStyle"](font, style)
+    return _ctypes["TTF_SetFontStyle"](font, style)
 
 def TTF_GetFontOutline(font):
     """Retrieves the current outline thickness of a given font.
@@ -582,7 +582,7 @@ def TTF_GetFontOutline(font):
         int: The outline thickness (in pixels) of the font.
 
     """
-    return _funcs["TTF_GetFontOutline"](font)
+    return _ctypes["TTF_GetFontOutline"](font)
 
 def TTF_SetFontOutline(font, outline):
     """Sets the outline thickness of a given font.
@@ -595,7 +595,7 @@ def TTF_SetFontOutline(font, outline):
         outline (int): The new outline thickness (in pixels) for the font.
 
     """
-    return _funcs["TTF_SetFontOutline"](font, outline)
+    return _ctypes["TTF_SetFontOutline"](font, outline)
 
 def TTF_GetFontHinting(font):
     """Retrieves the current hinting style of a given font.
@@ -611,7 +611,7 @@ def TTF_GetFontHinting(font):
         int: A constant indicating the hinting style of the font.
 
     """
-    return _funcs["TTF_GetFontHinting"](font)
+    return _ctypes["TTF_GetFontHinting"](font)
 
 def TTF_SetFontHinting(font, hinting):
     """Sets the rendering hinting mode for a given font.
@@ -639,7 +639,7 @@ def TTF_SetFontHinting(font, hinting):
             rendering text.
 
     """
-    return _funcs["TTF_SetFontHinting"](font, hinting)
+    return _ctypes["TTF_SetFontHinting"](font, hinting)
 
 
 def TTF_FontHeight(font):
@@ -657,7 +657,7 @@ def TTF_FontHeight(font):
         int: The maximum height (in pixels) of all glyphs in the font.
 
     """
-    return _funcs["TTF_FontHeight"](font)
+    return _ctypes["TTF_FontHeight"](font)
 
 def TTF_FontAscent(font):
     """Gets the maximum pixel ascent of all glyphs in a given font.
@@ -674,7 +674,7 @@ def TTF_FontAscent(font):
         int: The maximum ascent (in pixels) of all glyphs in the font.
 
     """
-    return _funcs["TTF_FontAscent"](font)
+    return _ctypes["TTF_FontAscent"](font)
 
 def TTF_FontDescent(font):
     """Gets the maximum pixel descent of all glyphs in a given font.
@@ -692,7 +692,7 @@ def TTF_FontDescent(font):
         int: The maximum descent (in pixels) of all glyphs in the font.
 
     """
-    return _funcs["TTF_FontDescent"](font)
+    return _ctypes["TTF_FontDescent"](font)
 
 def TTF_FontLineSkip(font):
     """Gets the recommended spacing between lines for a given font.
@@ -707,7 +707,7 @@ def TTF_FontLineSkip(font):
         int: The recommended line skip height (in pixels) for the font.
 
     """
-    return _funcs["TTF_FontLineSkip"](font)
+    return _ctypes["TTF_FontLineSkip"](font)
 
 def TTF_GetFontKerning(font):
     """Checks whether or not kerning is enabled for a given font.
@@ -720,7 +720,7 @@ def TTF_GetFontKerning(font):
         int: Non-zero if kerning is enabled for the font, otherwise 0.
 
     """
-    return _funcs["TTF_GetFontKerning"](font)
+    return _ctypes["TTF_GetFontKerning"](font)
 
 def TTF_SetFontKerning(font, allowed):
     """Enables or disables kerning for a given font.
@@ -733,7 +733,7 @@ def TTF_SetFontKerning(font, allowed):
         allowed (int): 0 to disable kerning, or non-zero to enable it.
 
     """
-    return _funcs["TTF_SetFontKerning"](font, allowed)
+    return _ctypes["TTF_SetFontKerning"](font, allowed)
 
 def TTF_FontFaces(font):
     """Gets the number of faces ("sub-fonts") available in a given font.
@@ -749,7 +749,7 @@ def TTF_FontFaces(font):
         int: The number of faces in the font.
 
     """
-    return _funcs["TTF_FontFaces"](font)
+    return _ctypes["TTF_FontFaces"](font)
 
 def TTF_FontFaceIsFixedWidth(font):
     """Checks if the current face of a given font is fixed width.
@@ -767,7 +767,7 @@ def TTF_FontFaceIsFixedWidth(font):
         int: A positive integer if the font is fixed-width, otherwise 0.
    
    """
-    return _funcs["TTF_FontFaceIsFixedWidth"](font)
+    return _ctypes["TTF_FontFaceIsFixedWidth"](font)
 
 def TTF_FontFaceFamilyName(font):
     """Gets the current family name (e.g. Helvetica) from a given font.
@@ -781,7 +781,7 @@ def TTF_FontFaceFamilyName(font):
         available.
 
     """
-    return _funcs["TTF_FontFaceFamilyName"](font)
+    return _ctypes["TTF_FontFaceFamilyName"](font)
 
 def TTF_FontFaceStyleName(font):
     """Gets the current style name (e.g. Bold) from a given font.
@@ -795,7 +795,7 @@ def TTF_FontFaceStyleName(font):
         available.
 
     """
-    return _funcs["TTF_FontFaceStyleName"](font)
+    return _ctypes["TTF_FontFaceStyleName"](font)
 
 def TTF_GlyphIsProvided(font, ch):
     """Checks whether a character is provided by a given font.
@@ -814,7 +814,7 @@ def TTF_GlyphIsProvided(font, ch):
         otherwise 0.
 
     """
-    return _funcs["TTF_GlyphIsProvided"](font, ch)
+    return _ctypes["TTF_GlyphIsProvided"](font, ch)
 
 def TTF_GlyphIsProvided32(font, ch):
     """Checks whether a character is provided by a given font.
@@ -825,7 +825,7 @@ def TTF_GlyphIsProvided32(font, ch):
     `Note: Added in SDL_ttf 2.0.18`
 
     """
-    return _funcs["TTF_GlyphIsProvided32"](font, ch)
+    return _ctypes["TTF_GlyphIsProvided32"](font, ch)
 
 def TTF_GlyphMetrics(font, ch, minx, maxx, miny, maxy, advance):
     """Gets the glyph metrics for a character with a given font.
@@ -864,7 +864,7 @@ def TTF_GlyphMetrics(font, ch, minx, maxx, miny, maxy, advance):
         the font). 
 
     """
-    return _funcs["TTF_GlyphMetrics"](font, ch, minx, maxx, miny, maxy, advance)
+    return _ctypes["TTF_GlyphMetrics"](font, ch, minx, maxx, miny, maxy, advance)
 
 def TTF_GlyphMetrics32(font, ch, minx, maxx, miny, maxy, advance):
     """Gets the glyph metrics for a character with a given font.
@@ -875,7 +875,7 @@ def TTF_GlyphMetrics32(font, ch, minx, maxx, miny, maxy, advance):
     `Note: Added in SDL_ttf 2.0.18`
 
     """
-    return _funcs["TTF_GlyphMetrics32"](font, ch, minx, maxx, miny, maxy, advance)
+    return _ctypes["TTF_GlyphMetrics32"](font, ch, minx, maxx, miny, maxy, advance)
 
 
 def TTF_SizeText(font, text, w, h):
@@ -908,7 +908,7 @@ def TTF_SizeText(font, text, w, h):
         the font).
 
     """
-    return _funcs["TTF_SizeText"](font, text, w, h)
+    return _ctypes["TTF_SizeText"](font, text, w, h)
 
 def TTF_SizeUTF8(font, text, w, h):
     """Calculates the size of a UTF8-encoded string rendered with a given font.
@@ -929,7 +929,7 @@ def TTF_SizeUTF8(font, text, w, h):
         the font).
 
     """
-    return _funcs["TTF_SizeUTF8"](font, text, w, h)
+    return _ctypes["TTF_SizeUTF8"](font, text, w, h)
 
 def TTF_SizeUNICODE(font, text, w, h):
     """Calculates the size of a UCS-2 encoded string rendered with a given font.
@@ -951,7 +951,7 @@ def TTF_SizeUNICODE(font, text, w, h):
         the font).
 
     """
-    return _funcs["TTF_SizeUNICODE"](font, text, w, h)
+    return _ctypes["TTF_SizeUNICODE"](font, text, w, h)
 
 def TTF_MeasureText(font, text, measure_width, extent, count):
     """Gets the number of characters that can fit within a given width.
@@ -981,7 +981,7 @@ def TTF_MeasureText(font, text, measure_width, extent, count):
         the font).
 
     """
-    return _funcs["TTF_MeasureText"](font, text, measure_width, extent, count)
+    return _ctypes["TTF_MeasureText"](font, text, measure_width, extent, count)
 
 def TTF_MeasureUTF8(font, text, measure_width, extent, count):
     """Gets the number of characters that can fit within a given width.
@@ -1008,7 +1008,7 @@ def TTF_MeasureUTF8(font, text, measure_width, extent, count):
         the font).
 
     """
-    return _funcs["TTF_MeasureUTF8"](font, text, measure_width, extent, count)
+    return _ctypes["TTF_MeasureUTF8"](font, text, measure_width, extent, count)
 
 def TTF_MeasureUNICODE(font, text, measure_width, extent, count):
     """Gets the number of characters that can fit within a given width.
@@ -1038,7 +1038,7 @@ def TTF_MeasureUNICODE(font, text, measure_width, extent, count):
         the font).
 
     """
-    return _funcs["TTF_MeasureUNICODE"](font, text, measure_width, extent, count)
+    return _ctypes["TTF_MeasureUNICODE"](font, text, measure_width, extent, count)
 
 
 def TTF_RenderText_Solid(font, text, fg):
@@ -1074,7 +1074,7 @@ def TTF_RenderText_Solid(font, text, fg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderText_Solid"](font, text, fg)
+    return _ctypes["TTF_RenderText_Solid"](font, text, fg)
 
 def TTF_RenderUTF8_Solid(font, text, fg):
     """Renders a UTF8-encoded string to a non-antialiased 8-bit surface.
@@ -1092,7 +1092,7 @@ def TTF_RenderUTF8_Solid(font, text, fg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUTF8_Solid"](font, text, fg)
+    return _ctypes["TTF_RenderUTF8_Solid"](font, text, fg)
 
 def TTF_RenderUNICODE_Solid(font, text, fg):
     """Renders a UCS-2 encoded string to a non-antialiased 8-bit surface.
@@ -1135,7 +1135,7 @@ def TTF_RenderUNICODE_Solid(font, text, fg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUNICODE_Solid"](font, text, fg)
+    return _ctypes["TTF_RenderUNICODE_Solid"](font, text, fg)
 
 def TTF_RenderText_Solid_Wrapped(font, text, fg, wrapLength):
     """Renders an ASCII-encoded string to a non-antialiased 8-bit surface.
@@ -1157,7 +1157,7 @@ def TTF_RenderText_Solid_Wrapped(font, text, fg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderText_Solid_Wrapped"](font, text, fg, wrapLength)
+    return _ctypes["TTF_RenderText_Solid_Wrapped"](font, text, fg, wrapLength)
 
 def TTF_RenderUTF8_Solid_Wrapped(font, text, fg, wrapLength):
     """Renders a UTF8-encoded string to a non-antialiased 8-bit surface.
@@ -1179,7 +1179,7 @@ def TTF_RenderUTF8_Solid_Wrapped(font, text, fg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUTF8_Solid_Wrapped"](font, text, fg, wrapLength)
+    return _ctypes["TTF_RenderUTF8_Solid_Wrapped"](font, text, fg, wrapLength)
 
 def TTF_RenderUNICODE_Solid_Wrapped(font, text, fg, wrapLength):
     """Renders a UCS-2 encoded string to a non-antialiased 8-bit surface.
@@ -1202,7 +1202,7 @@ def TTF_RenderUNICODE_Solid_Wrapped(font, text, fg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUNICODE_Solid_Wrapped"](font, text, fg, wrapLength)
+    return _ctypes["TTF_RenderUNICODE_Solid_Wrapped"](font, text, fg, wrapLength)
 
 def TTF_RenderGlyph_Solid(font, ch, fg):
     """Renders a unicode character to a non-antialiased 8-bit surface.
@@ -1225,7 +1225,7 @@ def TTF_RenderGlyph_Solid(font, ch, fg):
         rendered glyph, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderGlyph_Solid"](font, ch, fg)
+    return _ctypes["TTF_RenderGlyph_Solid"](font, ch, fg)
 
 def TTF_RenderGlyph32_Solid(font, ch, fg):
     """Renders a unicode character to a non-antialiased 8-bit surface.
@@ -1236,7 +1236,7 @@ def TTF_RenderGlyph32_Solid(font, ch, fg):
     `Note: Added in SDL_ttf 2.0.18`
 
     """
-    return _funcs["TTF_RenderGlyph32_Solid"](font, ch, fg)
+    return _ctypes["TTF_RenderGlyph32_Solid"](font, ch, fg)
 
 
 def TTF_RenderText_Shaded(font, text, fg, bg):
@@ -1271,7 +1271,7 @@ def TTF_RenderText_Shaded(font, text, fg, bg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderText_Shaded"](font, text, fg, bg)
+    return _ctypes["TTF_RenderText_Shaded"](font, text, fg, bg)
 
 def TTF_RenderUTF8_Shaded(font, text, fg, bg):
     """Renders a UTF8-encoded string to a solid antialiased 8-bit surface.
@@ -1291,7 +1291,7 @@ def TTF_RenderUTF8_Shaded(font, text, fg, bg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUTF8_Shaded"](font, text, fg, bg)
+    return _ctypes["TTF_RenderUTF8_Shaded"](font, text, fg, bg)
 
 def TTF_RenderUNICODE_Shaded(font, text, fg, bg):
     """Renders a UCS-2 encoded string to a solid antialiased 8-bit surface.
@@ -1313,7 +1313,7 @@ def TTF_RenderUNICODE_Shaded(font, text, fg, bg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUNICODE_Shaded"](font, text, fg, bg)
+    return _ctypes["TTF_RenderUNICODE_Shaded"](font, text, fg, bg)
 
 def TTF_RenderText_Shaded_Wrapped(font, text, fg, bg, wrapLength):
     """Renders an ASCII-encoded string to a solid antialiased 8-bit surface.
@@ -1338,7 +1338,7 @@ def TTF_RenderText_Shaded_Wrapped(font, text, fg, bg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderText_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
+    return _ctypes["TTF_RenderText_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
 
 def TTF_RenderUTF8_Shaded_Wrapped(font, text, fg, bg, wrapLength):
     """Renders a UTF8-encoded string to a solid antialiased 8-bit surface.
@@ -1364,7 +1364,7 @@ def TTF_RenderUTF8_Shaded_Wrapped(font, text, fg, bg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUTF8_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
+    return _ctypes["TTF_RenderUTF8_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
 
 def TTF_RenderUNICODE_Shaded_Wrapped(font, text, fg, bg, wrapLength):
     """Renders a UCS-2 encoded string to a solid antialiased 8-bit surface.
@@ -1389,7 +1389,7 @@ def TTF_RenderUNICODE_Shaded_Wrapped(font, text, fg, bg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUNICODE_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
+    return _ctypes["TTF_RenderUNICODE_Shaded_Wrapped"](font, text, fg, bg, wrapLength)
 
 def TTF_RenderGlyph_Shaded(font, ch, fg, bg):
     """Renders a unicode character to an 8-bit surface using a given font.
@@ -1410,7 +1410,7 @@ def TTF_RenderGlyph_Shaded(font, ch, fg, bg):
         rendered glyph, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderGlyph_Shaded"](font, ch, fg, bg)
+    return _ctypes["TTF_RenderGlyph_Shaded"](font, ch, fg, bg)
 
 def TTF_RenderGlyph32_Shaded(font, ch, fg, bg):
     """Renders a unicode character to an 8-bit surface using a given font.
@@ -1421,7 +1421,7 @@ def TTF_RenderGlyph32_Shaded(font, ch, fg, bg):
     `Note: Added in SDL_ttf 2.0.18`
 
     """
-    return _funcs["TTF_RenderGlyph32_Shaded"](font, ch, fg, bg)
+    return _ctypes["TTF_RenderGlyph32_Shaded"](font, ch, fg, bg)
 
 
 def TTF_RenderText_Blended(font, text, fg):
@@ -1450,7 +1450,7 @@ def TTF_RenderText_Blended(font, text, fg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderText_Blended"](font, text, fg)
+    return _ctypes["TTF_RenderText_Blended"](font, text, fg)
 
 def TTF_RenderUTF8_Blended(font, text, fg):
     """Renders a UTF8-encoded string to an antialiased 32-bit surface.
@@ -1467,7 +1467,7 @@ def TTF_RenderUTF8_Blended(font, text, fg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUTF8_Blended"](font, text, fg)
+    return _ctypes["TTF_RenderUTF8_Blended"](font, text, fg)
 
 def TTF_RenderUNICODE_Blended(font, text, fg):
     """Renders a UCS-2 encoded string to an antialiased 32-bit surface.
@@ -1486,7 +1486,7 @@ def TTF_RenderUNICODE_Blended(font, text, fg):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUNICODE_Blended"](font, text, fg)
+    return _ctypes["TTF_RenderUNICODE_Blended"](font, text, fg)
 
 def TTF_RenderText_Blended_Wrapped(font, text, fg, wrapLength):
     """Renders an ASCII-encoded string to an antialiased 32-bit surface.
@@ -1506,7 +1506,7 @@ def TTF_RenderText_Blended_Wrapped(font, text, fg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderText_Blended_Wrapped"](font, text, fg, wrapLength)
+    return _ctypes["TTF_RenderText_Blended_Wrapped"](font, text, fg, wrapLength)
 
 def TTF_RenderUTF8_Blended_Wrapped(font, text, fg, wrapLength):
     """Renders a UTF8-encoded string to an antialiased 32-bit surface.
@@ -1526,7 +1526,7 @@ def TTF_RenderUTF8_Blended_Wrapped(font, text, fg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUTF8_Blended_Wrapped"](font, text, fg, wrapLength)
+    return _ctypes["TTF_RenderUTF8_Blended_Wrapped"](font, text, fg, wrapLength)
 
 def TTF_RenderUNICODE_Blended_Wrapped(font, text, fg, wrapLength):
     """Renders a UCS-2 encoded string to an antialiased 32-bit surface.
@@ -1547,7 +1547,7 @@ def TTF_RenderUNICODE_Blended_Wrapped(font, text, fg, wrapLength):
         rendered text, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderUNICODE_Blended_Wrapped"](font, text, fg, wrapLength)
+    return _ctypes["TTF_RenderUNICODE_Blended_Wrapped"](font, text, fg, wrapLength)
 
 def TTF_RenderGlyph_Blended(font, ch, fg):
     """Renders a unicode character to an antialiased 32-bit surface.
@@ -1565,7 +1565,7 @@ def TTF_RenderGlyph_Blended(font, ch, fg):
         rendered glyph, or a null pointer if there was an error.
 
     """
-    return _funcs["TTF_RenderGlyph_Blended"](font, ch, fg)
+    return _ctypes["TTF_RenderGlyph_Blended"](font, ch, fg)
 
 def TTF_RenderGlyph32_Blended(font, ch, fg):
     """Renders a unicode character to an antialiased 32-bit surface.
@@ -1576,7 +1576,7 @@ def TTF_RenderGlyph32_Blended(font, ch, fg):
     `Note: Added in SDL_ttf 2.0.18`
 
     """
-    return _funcs["TTF_RenderGlyph32_Blended"](font, ch, fg)
+    return _ctypes["TTF_RenderGlyph32_Blended"](font, ch, fg)
 
 TTF_RenderText = TTF_RenderText_Shaded
 TTF_RenderUTF8 = TTF_RenderUTF8_Shaded
@@ -1614,7 +1614,7 @@ def TTF_SetDirection(direction):
         int: 0 on success, or -1 if HarfBuzz not available.
 
     """
-    return _funcs["TTF_SetDirection"](direction)
+    return _ctypes["TTF_SetDirection"](direction)
 
 def TTF_SetScript(script):
     """Sets the global script (e.g. Arabic) to use for rendering text.
@@ -1644,7 +1644,7 @@ def TTF_SetScript(script):
         int: 0 on success, or -1 if HarfBuzz not available.
 
     """
-    return _funcs["TTF_SetScript"](script)
+    return _ctypes["TTF_SetScript"](script)
 
 def TTF_CloseFont(font):
     """Closes and frees the memory associated with a given font.
@@ -1656,7 +1656,7 @@ def TTF_CloseFont(font):
         font (:obj:`TTF_Font`): The font to close.
 
     """
-    return _funcs["TTF_CloseFont"](font)
+    return _ctypes["TTF_CloseFont"](font)
 
 def TTF_Quit():
     """De-initializes the TTF engine.
@@ -1670,7 +1670,7 @@ def TTF_Quit():
        called an equal number of times to properly de-initialize the library.
 
     """
-    return _funcs["TTF_Quit"]()
+    return _ctypes["TTF_Quit"]()
 
 def TTF_WasInit():
     """Checks if the TTF engine is initialized.
@@ -1684,11 +1684,11 @@ def TTF_WasInit():
         corresponding :func:`TTF_Quit`.
 
     """
-    return _funcs["TTF_WasInit"]()
+    return _ctypes["TTF_WasInit"]()
 
 def TTF_GetFontKerningSize(font, prev_index, index):
     # NOTE: Deprecated in SDL_ttf
-    return _funcs["TTF_GetFontKerningSize"](font, prev_index, index)
+    return _ctypes["TTF_GetFontKerningSize"](font, prev_index, index)
 
 def TTF_GetFontKerningSizeGlyphs(font, previous_ch, ch):
     """Gets the kerning size of two glyphs (by FreeType index) for a given font.
@@ -1709,7 +1709,7 @@ def TTF_GetFontKerningSizeGlyphs(font, previous_ch, ch):
         int: The kerning size of the two glyphs in the current font.
 
     """
-    return _funcs["TTF_GetFontKerningSizeGlyphs"](font, previous_ch, ch)
+    return _ctypes["TTF_GetFontKerningSizeGlyphs"](font, previous_ch, ch)
 
 def TTF_GetFontKerningSizeGlyphs32(font, previous_ch, ch):
     """Gets the kerning size of two glyphs (by FreeType index) for a given font.
@@ -1720,7 +1720,7 @@ def TTF_GetFontKerningSizeGlyphs32(font, previous_ch, ch):
     `Note: Added in SDL_ttf 2.0.18`
 
     """
-    return _funcs["TTF_GetFontKerningSizeGlyphs32"](font, previous_ch, ch)
+    return _ctypes["TTF_GetFontKerningSizeGlyphs32"](font, previous_ch, ch)
 
 def TTF_SetFontSDF(font, on_off):
     """Enables or disables Signed Distance Field rendering for a given font.
@@ -1741,7 +1741,7 @@ def TTF_SetFontSDF(font, on_off):
         int: 0 on success, or -1 if SDF support not available.
 
     """
-    return _funcs["TTF_SetFontSDF"](font, on_off)
+    return _ctypes["TTF_SetFontSDF"](font, on_off)
 
 def TTF_GetFontSDF(font):
     """Checks if Signed Distance Field rendering is enabled for a given font.
@@ -1759,7 +1759,7 @@ def TTF_GetFontSDF(font):
         int: 1 if the font is using SDF, otherwise 0.
 
     """
-    return _funcs["TTF_GetFontSDF"](font)
+    return _ctypes["TTF_GetFontSDF"](font)
 
 TTF_SetError = SDL_SetError
 TTF_GetError = SDL_GetError

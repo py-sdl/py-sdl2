@@ -1,7 +1,7 @@
 import os
 from ctypes import Structure, CFUNCTYPE, c_int, c_char_p, c_void_p, c_double
 from ctypes import POINTER as _P
-from .dll import DLL, SDLFunc
+from .dll import DLL, SDLFunc, AttributeDict
 from .version import SDL_version, SDL_VERSIONNUM
 from .audio import AUDIO_S16LSB, AUDIO_S16MSB, SDL_MIX_MAXVOLUME
 from .stdinc import Uint8, Uint16, Uint32, Sint16, SDL_bool
@@ -269,9 +269,9 @@ _funcdefs = [
     SDLFunc("Mix_GetChunk", [c_int], _P(Mix_Chunk)),
     SDLFunc("Mix_CloseAudio"),
 ]
-_funcs = {}
+_ctypes = AttributeDict()
 for f in _funcdefs:
-    _funcs[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
 
 
 # Python wrapper functions
@@ -284,7 +284,7 @@ def Mix_Linked_Version():
         version of the SDL2_mixer library currently in use.
 
     """
-    return _funcs["Mix_Linked_Version"]()
+    return _ctypes.Mix_Linked_Version()
 
 def Mix_Init(flags):
     """Initializes the SDL2_mixer library.
@@ -336,7 +336,7 @@ def Mix_Init(flags):
         int: A bitmask of all the currently initialized audio decoders. 
 
     """
-    return _funcs["Mix_Init"](flags)
+    return _ctypes["Mix_Init"](flags)
 
 def Mix_Quit():
     """De-initializes the SDL2_mixer library.
@@ -350,7 +350,7 @@ def Mix_Quit():
     :func:`Mix_Init` was called.
 
     """
-    return _funcs["Mix_Quit"]()
+    return _ctypes["Mix_Quit"]()
 
 
 def Mix_OpenAudio(frequency, format, channels, chunksize):
@@ -392,7 +392,7 @@ def Mix_OpenAudio(frequency, format, channels, chunksize):
         int: 0 on success, or -1 on error.
 
     """
-    return _funcs["Mix_OpenAudio"](frequency, format, channels, chunksize)
+    return _ctypes["Mix_OpenAudio"](frequency, format, channels, chunksize)
 
 def Mix_OpenAudioDevice(frequency, format, channels, chunksize, device, allowed_changes):
     """Opens a specific audio output device for use with the mixer API.
@@ -429,7 +429,7 @@ def Mix_OpenAudioDevice(frequency, format, channels, chunksize, device, allowed_
         int: 0 on success, or -1 on error.
 
     """
-    return _funcs["Mix_OpenAudioDevice"](
+    return _ctypes["Mix_OpenAudioDevice"](
         frequency, format, channels, chunksize, device, allowed_changes
     )
 
@@ -457,7 +457,7 @@ def Mix_AllocateChannels(numchans):
             or a negative number to query the current allocated channel count.
     
     """
-    return _funcs["Mix_AllocateChannels"](numchans)
+    return _ctypes["Mix_AllocateChannels"](numchans)
 
 def Mix_QuerySpec(frequency, format, channels):
     """Retrieves the actual audio format in use by the current mixer device.
@@ -489,7 +489,7 @@ def Mix_QuerySpec(frequency, format, channels):
         error.
 
     """
-    return _funcs["Mix_QuerySpec"](frequency, format, channels)
+    return _ctypes["Mix_QuerySpec"](frequency, format, channels)
 
 
 def Mix_LoadWAV_RW(src, freesrc):
@@ -511,7 +511,7 @@ def Mix_LoadWAV_RW(src, freesrc):
         audio.
 
     """
-    return _funcs["Mix_LoadWAV_RW"](src, freesrc)
+    return _ctypes["Mix_LoadWAV_RW"](src, freesrc)
 
 def Mix_LoadWAV(file):
     """Loads an audio clip from a file.
@@ -551,7 +551,7 @@ def Mix_LoadMUS(file):
         music.
 
     """
-    return _funcs["Mix_LoadMUS"](file)
+    return _ctypes["Mix_LoadMUS"](file)
 
 def Mix_LoadMUS_RW(src, freesrc):
     """Loads music from an SDL2 file object.
@@ -572,7 +572,7 @@ def Mix_LoadMUS_RW(src, freesrc):
         music.
 
     """
-    return _funcs["Mix_LoadMUS_RW"](src, freesrc)
+    return _ctypes["Mix_LoadMUS_RW"](src, freesrc)
 
 def Mix_LoadMUSType_RW(src, type, freesrc):
     """Loads music from an SDL2 file object with a specific decoder.
@@ -608,7 +608,7 @@ def Mix_LoadMUSType_RW(src, type, freesrc):
         music.
 
     """
-    return _funcs["Mix_LoadMUSType_RW"](src, type, freesrc)
+    return _ctypes["Mix_LoadMUSType_RW"](src, type, freesrc)
 
 def Mix_QuickLoad_WAV(mem):
     """Loads a memory buffer as a WAV file.
@@ -631,7 +631,7 @@ def Mix_QuickLoad_WAV(mem):
         audio.
 
     """
-    return _funcs["Mix_QuickLoad_WAV"](mem)
+    return _ctypes["Mix_QuickLoad_WAV"](mem)
 
 def Mix_QuickLoad_RAW(mem, len):
     """Loads a memory buffer as a raw audio clip.
@@ -686,7 +686,7 @@ def Mix_QuickLoad_RAW(mem, len):
         audio.
 
     """
-    return _funcs["Mix_QuickLoad_RAW"](mem, len)
+    return _ctypes["Mix_QuickLoad_RAW"](mem, len)
 
 def Mix_FreeChunk(chunk):
     """Closes and frees the memory associated with a given audio clip.
@@ -698,7 +698,7 @@ def Mix_FreeChunk(chunk):
         chunk (:obj:`Mix_Chunk`): The chunk object to close.
 
     """
-    return _funcs["Mix_FreeChunk"](chunk)
+    return _ctypes["Mix_FreeChunk"](chunk)
 
 def Mix_FreeMusic(music):
     """Closes and frees the memory associated with a given music object.
@@ -710,7 +710,7 @@ def Mix_FreeMusic(music):
         music (:obj:`Mix_Music`): The music object to close.
 
     """
-    return _funcs["Mix_FreeMusic"](music)
+    return _ctypes["Mix_FreeMusic"](music)
 
 
 def Mix_GetNumChunkDecoders():
@@ -724,7 +724,7 @@ def Mix_GetNumChunkDecoders():
         int: The number of available audio chunk decoders.
 
     """
-    return _funcs["Mix_GetNumChunkDecoders"]()
+    return _ctypes["Mix_GetNumChunkDecoders"]()
 
 def Mix_GetChunkDecoder(index):
     """Retrieves the name of a given audio chunk decoder.
@@ -753,7 +753,7 @@ def Mix_GetChunkDecoder(index):
         invalid.
 
     """
-    return _funcs["Mix_GetChunkDecoder"](index)
+    return _ctypes["Mix_GetChunkDecoder"](index)
 
 def Mix_HasChunkDecoder(name):
     """Checks whether a specific chunk decoder is available.
@@ -767,7 +767,7 @@ def Mix_HasChunkDecoder(name):
         int: 1 if the decoder is present, or 0 if unavailable.
 
     """
-    return _funcs["Mix_HasChunkDecoder"](name)
+    return _ctypes["Mix_HasChunkDecoder"](name)
 
 def Mix_GetNumMusicDecoders():
     """Retrieves the number of available music decoders.
@@ -780,7 +780,7 @@ def Mix_GetNumMusicDecoders():
         int: The number of available music decoders.
 
     """
-    return _funcs["Mix_GetNumMusicDecoders"]()
+    return _ctypes["Mix_GetNumMusicDecoders"]()
 
 def Mix_GetMusicDecoder(index):
     """Retrieves the name of a given music decoder.
@@ -811,7 +811,7 @@ def Mix_GetMusicDecoder(index):
         invalid.
 
     """
-    return _funcs["Mix_GetMusicDecoder"](index)
+    return _ctypes["Mix_GetMusicDecoder"](index)
 
 def Mix_GetMusicType(music):
     """Gets the format of a given music object.
@@ -827,185 +827,185 @@ def Mix_GetMusicType(music):
         ``MUS_NONE`` (0) if the format could not be identified.
 
     """
-    return _funcs["Mix_GetMusicType"](music)
+    return _ctypes["Mix_GetMusicType"](music)
 
 
 def Mix_SetPostMix(mix_func, arg):
-    return _funcs["Mix_SetPostMix"](mix_func, arg)
+    return _ctypes["Mix_SetPostMix"](mix_func, arg)
 
 def Mix_HookMusic(mix_func, arg):
-    return _funcs["Mix_HookMusic"](mix_func, arg)
+    return _ctypes["Mix_HookMusic"](mix_func, arg)
 
 def Mix_HookMusicFinished(music_finished):
-    return _funcs["Mix_HookMusicFinished"](music_finished)
+    return _ctypes["Mix_HookMusicFinished"](music_finished)
 
 def Mix_GetMusicHookData():
-    return _funcs["Mix_GetMusicHookData"]()
+    return _ctypes["Mix_GetMusicHookData"]()
 
 def Mix_ChannelFinished(channel_finished):
-    return _funcs["Mix_ChannelFinished"](channel_finished)
+    return _ctypes["Mix_ChannelFinished"](channel_finished)
 
 
 def Mix_RegisterEffect(chan, f, d, arg):
-    return _funcs["Mix_RegisterEffect"](chan, f, d, arg)
+    return _ctypes["Mix_RegisterEffect"](chan, f, d, arg)
 
 def Mix_UnregisterEffect(channel, f):
-    return _funcs["Mix_UnregisterEffect"](channel, f)
+    return _ctypes["Mix_UnregisterEffect"](channel, f)
 
 def Mix_UnregisterAllEffects(channel):
-    return _funcs["Mix_UnregisterAllEffects"](channel)
+    return _ctypes["Mix_UnregisterAllEffects"](channel)
 
 
 def Mix_SetPanning(channel, left, right):
-    return _funcs["Mix_SetPanning"](channel, left, right)
+    return _ctypes["Mix_SetPanning"](channel, left, right)
 
 def Mix_SetPosition(channel, angle, distance):
-    return _funcs["Mix_SetPosition"](channel, angle, distance)
+    return _ctypes["Mix_SetPosition"](channel, angle, distance)
 
 def Mix_SetDistance(channel, distance):
-    return _funcs["Mix_SetDistance"](channel, distance)
+    return _ctypes["Mix_SetDistance"](channel, distance)
 
 def Mix_SetReverseStereo(channel, flip):
-    return _funcs["Mix_SetReverseStereo"](channel, flip)
+    return _ctypes["Mix_SetReverseStereo"](channel, flip)
 
 def Mix_ReserveChannels(num):
-    return _funcs["Mix_ReserveChannels"](num)
+    return _ctypes["Mix_ReserveChannels"](num)
 
 
 def Mix_GroupChannel(which, tag):
-    return _funcs["Mix_GroupChannel"](which, tag)
+    return _ctypes["Mix_GroupChannel"](which, tag)
 
 def Mix_GroupChannels(from_, to, tag):
-    return _funcs["Mix_GroupChannels"](from_, to, tag)
+    return _ctypes["Mix_GroupChannels"](from_, to, tag)
 
 def Mix_GroupAvailable(tag):
-    return _funcs["Mix_GroupAvailable"](tag)
+    return _ctypes["Mix_GroupAvailable"](tag)
 
 def Mix_GroupCount(tag):
-    return _funcs["Mix_GroupCount"](tag)
+    return _ctypes["Mix_GroupCount"](tag)
 
 def Mix_GroupOldest(tag):
-    return _funcs["Mix_GroupOldest"](tag)
+    return _ctypes["Mix_GroupOldest"](tag)
 
 def Mix_GroupNewer(tag):
-    return _funcs["Mix_GroupNewer"](tag)
+    return _ctypes["Mix_GroupNewer"](tag)
 
 
 def Mix_PlayChannelTimed(channel, chunk, loops, ticks):
-    return _funcs["Mix_PlayChannelTimed"](channel, chunk, loops, ticks)
+    return _ctypes["Mix_PlayChannelTimed"](channel, chunk, loops, ticks)
 
 def Mix_PlayChannel(channel, chunk, loops):
     return Mix_PlayChannelTimed(channel, chunk, loops, -1)
 
 def Mix_PlayMusic(music, loops):
-    return _funcs["Mix_PlayMusic"](music, loops)
+    return _ctypes["Mix_PlayMusic"](music, loops)
 
 
 def Mix_FadeInMusic(music, loops, ms):
-    return _funcs["Mix_FadeInMusic"](music, loops, ms)
+    return _ctypes["Mix_FadeInMusic"](music, loops, ms)
 
 def Mix_FadeInMusicPos(music, loops, ms, position):
-    return _funcs["Mix_FadeInMusicPos"](music, loops, ms, position)
+    return _ctypes["Mix_FadeInMusicPos"](music, loops, ms, position)
 
 def Mix_FadeInChannelTimed(channel, chunk, loops, ms, ticks):
-    return _funcs["Mix_FadeInChannelTimed"](channel, chunk, loops, ms, ticks)
+    return _ctypes["Mix_FadeInChannelTimed"](channel, chunk, loops, ms, ticks)
 
 def Mix_FadeInChannel(channel, chunk, loops, ms):
     return Mix_FadeInChannelTimed(channel, chunk, loops, ms, -1)
 
 
 def Mix_Volume(channel, volume):
-    return _funcs["Mix_Volume"](channel, volume)
+    return _ctypes["Mix_Volume"](channel, volume)
 
 def Mix_VolumeChunk(chunk, volume):
-    return _funcs["Mix_VolumeChunk"](chunk, volume)
+    return _ctypes["Mix_VolumeChunk"](chunk, volume)
 
 def Mix_VolumeMusic(volume):
-    return _funcs["Mix_VolumeMusic"](volume)
+    return _ctypes["Mix_VolumeMusic"](volume)
 
 
 def Mix_HaltChannel(channel):
-    return _funcs["Mix_HaltChannel"](channel)
+    return _ctypes["Mix_HaltChannel"](channel)
 
 def Mix_HaltGroup(tag):
-    return _funcs["Mix_HaltGroup"](tag)
+    return _ctypes["Mix_HaltGroup"](tag)
 
 def Mix_HaltMusic():
-    return _funcs["Mix_HaltMusic"]()
+    return _ctypes["Mix_HaltMusic"]()
 
 def Mix_ExpireChannel(channel, ticks):
-    return _funcs["Mix_ExpireChannel"](channel, ticks)
+    return _ctypes["Mix_ExpireChannel"](channel, ticks)
 
 
 def Mix_FadeOutChannel(which, ms):
-    return _funcs["Mix_FadeOutChannel"](which, ms)
+    return _ctypes["Mix_FadeOutChannel"](which, ms)
 
 def Mix_FadeOutGroup(tag, ms):
-    return _funcs["Mix_FadeOutGroup"](tag, ms)
+    return _ctypes["Mix_FadeOutGroup"](tag, ms)
 
 def Mix_FadeOutMusic(ms):
-    return _funcs["Mix_FadeOutMusic"](ms)
+    return _ctypes["Mix_FadeOutMusic"](ms)
 
 def Mix_FadingMusic():
-    return _funcs["Mix_FadingMusic"]()
+    return _ctypes["Mix_FadingMusic"]()
 
 def Mix_FadingChannel(which):
-    return _funcs["Mix_FadingChannel"](which)
+    return _ctypes["Mix_FadingChannel"](which)
 
 
 def Mix_Pause(channel):
-    return _funcs["Mix_Pause"](channel)
+    return _ctypes["Mix_Pause"](channel)
 
 def Mix_Resume(channel):
-    return _funcs["Mix_Resume"](channel)
+    return _ctypes["Mix_Resume"](channel)
 
 def Mix_Paused(channel):
-    return _funcs["Mix_Paused"](channel)
+    return _ctypes["Mix_Paused"](channel)
 
 def Mix_PauseMusic():
-    return _funcs["Mix_PauseMusic"]()
+    return _ctypes["Mix_PauseMusic"]()
 
 def Mix_ResumeMusic():
-    return _funcs["Mix_ResumeMusic"]()
+    return _ctypes["Mix_ResumeMusic"]()
 
 def Mix_RewindMusic():
-    return _funcs["Mix_RewindMusic"]()
+    return _ctypes["Mix_RewindMusic"]()
 
 def Mix_PausedMusic():
-    return _funcs["Mix_PausedMusic"]()
+    return _ctypes["Mix_PausedMusic"]()
 
 
 def Mix_SetMusicPosition(position):
-    return _funcs["Mix_SetMusicPosition"](position)
+    return _ctypes["Mix_SetMusicPosition"](position)
 
 def Mix_Playing(channel):
-    return _funcs["Mix_Playing"](channel)
+    return _ctypes["Mix_Playing"](channel)
 
 def Mix_PlayingMusic():
-    return _funcs["Mix_PlayingMusic"]()
+    return _ctypes["Mix_PlayingMusic"]()
 
 def Mix_SetMusicCMD(command):
-    return _funcs["Mix_SetMusicCMD"](command)
+    return _ctypes["Mix_SetMusicCMD"](command)
 
 
 def Mix_SetSynchroValue(value):
-    return _funcs["Mix_SetSynchroValue"](value)
+    return _ctypes["Mix_SetSynchroValue"](value)
 
 def Mix_GetSynchroValue():
-    return _funcs["Mix_GetSynchroValue"]()
+    return _ctypes["Mix_GetSynchroValue"]()
 
 def Mix_SetSoundFonts(paths):
-    return _funcs["Mix_SetSoundFonts"](paths)
+    return _ctypes["Mix_SetSoundFonts"](paths)
 
 def Mix_GetSoundFonts():
-    return _funcs["Mix_GetSoundFonts"]()
+    return _ctypes["Mix_GetSoundFonts"]()
 
 def Mix_EachSoundFont(function, data):
-    return _funcs["Mix_EachSoundFont"](function, data)
+    return _ctypes["Mix_EachSoundFont"](function, data)
 
 
 def Mix_GetChunk(channel):
-    return _funcs["Mix_GetChunk"](channel)
+    return _ctypes["Mix_GetChunk"](channel)
 
 def Mix_CloseAudio():
     """Shuts down and de-initializes the mixer API.
@@ -1019,7 +1019,7 @@ def Mix_CloseAudio():
        be called an equal number of times to actually de-initialize the API.
 
     """
-    return _funcs["Mix_CloseAudio"]()
+    return _ctypes["Mix_CloseAudio"]()
 
 
 Mix_SetError = SDL_SetError

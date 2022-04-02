@@ -53,6 +53,12 @@ class SDLFunc(object):
         self.added = added
 
 
+# Defines a type of dict that allows getting (but not setting) keys as attributes
+class AttributeDict(dict):
+    def __getattr__(self, key):
+        return self[key]
+
+
 def _using_ms_store_python():
     """Checks if the Python interpreter was installed from the Microsoft Store."""
     return 'WindowsApps\\PythonSoftwareFoundation.' in sys.executable

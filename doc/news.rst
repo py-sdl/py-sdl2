@@ -7,6 +7,14 @@ This describes the latest changes between the PySDL2 releases.
 
 Released on XXXX-XX-XX.
 
+New Features:
+
+* The raw ctypes function bindings for the :mod:`~sdl2.sdlttf`,
+  :mod:`~sdl2.sdlmixer`, :mod:`~sdl2.sdlimage`, and :mod:`~sdl2.sdlgfx` modules
+  can now be accessed through the ``_ctypes`` object in each module. For
+  example, ``sdlttf._ctypes.TTF_Linked_Version`` will return the unwrapped
+  ctypes function pointer for that function.
+
 Fixed Bugs:
 
 * Fixed a bug in :func:`~sdl2.rw_from_object` where calling 

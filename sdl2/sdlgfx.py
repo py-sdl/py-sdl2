@@ -2,7 +2,7 @@ import os
 from ctypes import Structure, POINTER, c_int, c_float, c_void_p, c_char, \
     c_char_p, c_double
 from ctypes import POINTER as _P
-from .dll import DLL, SDLFunc
+from .dll import DLL, SDLFunc, AttributeDict
 from .stdinc import Uint8, Uint32, Sint16
 from .render import SDL_Renderer
 from .surface import SDL_Surface
@@ -185,9 +185,9 @@ _funcdefs = [
     SDLFunc("shrinkSurface", [_P(SDL_Surface), c_int, c_int], _P(SDL_Surface)),
     SDLFunc("rotateSurface90Degrees", [_P(SDL_Surface), c_int], _P(SDL_Surface)),
 ]
-_funcs = {}
+_ctypes = AttributeDict()
 for f in _funcdefs:
-    _funcs[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
 
 
 # Python wrapper functions
@@ -204,7 +204,7 @@ def SDL_initFramerate(manager):
         manager (:obj:`sdlgfx.FPSManager`): The framerate manager to initialize.
 
     """
-    return _funcs["SDL_initFramerate"](manager)
+    return _ctypes.SDL_initFramerate(manager)
 
 def SDL_setFramerate(manager, rate):
     """Sets the framerate of a framerate manager.
@@ -221,7 +221,7 @@ def SDL_setFramerate(manager, rate):
         int: 0 on success, or -1 if an error occurred.
 
     """
-    return _funcs["SDL_setFramerate"](manager, rate)
+    return _ctypes["SDL_setFramerate"](manager, rate)
 
 def SDL_getFramerate(manager):
     """Gets the current framerate for a framerate manager.
@@ -234,7 +234,7 @@ def SDL_getFramerate(manager):
         int: 0 on success, or -1 if an error occurred.
 
     """
-    return _funcs["SDL_getFramerate"](manager)
+    return _ctypes["SDL_getFramerate"](manager)
 
 def SDL_getFramecount(manager):
     """Gets the current number of frames counted by a framerate manager.
@@ -252,7 +252,7 @@ def SDL_getFramecount(manager):
         int: 0 on success, or -1 if an error occurred.
 
     """
-    return _funcs["SDL_getFramecount"](manager)
+    return _ctypes["SDL_getFramecount"](manager)
 
 def SDL_framerateDelay(manager):
     """Delays execution until the next frame occurs.
@@ -272,7 +272,7 @@ def SDL_framerateDelay(manager):
         int: 0 on success, or -1 if an error occurred.
 
     """
-    return _funcs["SDL_framerateDelay"](manager)
+    return _ctypes["SDL_framerateDelay"](manager)
 
 
 def pixelColor(renderer, x, y, color):
@@ -291,7 +291,7 @@ def pixelColor(renderer, x, y, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["pixelColor"](renderer, x, y, color)
+    return _ctypes["pixelColor"](renderer, x, y, color)
 
 def pixelRGBA(renderer, x, y, r, g, b, a):
     """Draws a single pixel to the renderer with a given color.
@@ -311,7 +311,7 @@ def pixelRGBA(renderer, x, y, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["pixelRGBA"](renderer, x, y, r, g, b, a)
+    return _ctypes["pixelRGBA"](renderer, x, y, r, g, b, a)
 
 def hlineColor(renderer, x1, x2, y, color):
     """Draws a horizontal line to the renderer with a given color.
@@ -330,7 +330,7 @@ def hlineColor(renderer, x1, x2, y, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["hlineColor"](renderer, x1, x2, y, color)
+    return _ctypes["hlineColor"](renderer, x1, x2, y, color)
 
 def hlineRGBA(renderer, x1, x2, y, r, g, b, a):
     """Draws a horizontal line to the renderer with a given color.
@@ -351,7 +351,7 @@ def hlineRGBA(renderer, x1, x2, y, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["hlineRGBA"](renderer, x1, x2, y, r, g, b, a)
+    return _ctypes["hlineRGBA"](renderer, x1, x2, y, r, g, b, a)
 
 def vlineColor(renderer, x, y1, y2, color):
     """Draws a vertical line to the renderer with a given color.
@@ -370,7 +370,7 @@ def vlineColor(renderer, x, y1, y2, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["vlineColor"](renderer, x, y1, y2, color)
+    return _ctypes["vlineColor"](renderer, x, y1, y2, color)
 
 def vlineRGBA(renderer, x, y1, y2, r, g, b, a):
     """Draws a vertical line to the renderer with a given color.
@@ -391,7 +391,7 @@ def vlineRGBA(renderer, x, y1, y2, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["vlineRGBA"](renderer, x, y1, y2, r, g, b, a)
+    return _ctypes["vlineRGBA"](renderer, x, y1, y2, r, g, b, a)
 
 
 def rectangleColor(renderer, x1, y1, x2, y2, color):
@@ -412,7 +412,7 @@ def rectangleColor(renderer, x1, y1, x2, y2, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["rectangleColor"](renderer, x1, y1, x2, y2, color)
+    return _ctypes["rectangleColor"](renderer, x1, y1, x2, y2, color)
 
 def rectangleRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
     """Draws an unfilled rectangle to the renderer with a given color.
@@ -434,7 +434,7 @@ def rectangleRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["rectangleRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
+    return _ctypes["rectangleRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
 
 def roundedRectangleColor(renderer, x1, y1, x2, y2, rad, color):
     """Draws an unfilled rectangle with rounded corners to the renderer.
@@ -455,7 +455,7 @@ def roundedRectangleColor(renderer, x1, y1, x2, y2, rad, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["roundedRectangleColor"](renderer, x1, y1, x2, y2, rad, color)
+    return _ctypes["roundedRectangleColor"](renderer, x1, y1, x2, y2, rad, color)
 
 def roundedRectangleRGBA(renderer, x1, y1, x2, y2, rad, r, g, b, a):
     """Draws an unfilled rectangle with rounded corners to the renderer.
@@ -478,7 +478,7 @@ def roundedRectangleRGBA(renderer, x1, y1, x2, y2, rad, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["roundedRectangleRGBA"](renderer, x1, y1, x2, y2, rad, r, g, b, a)
+    return _ctypes["roundedRectangleRGBA"](renderer, x1, y1, x2, y2, rad, r, g, b, a)
 
 def boxColor(renderer, x1, y1, x2, y2, color):
     """Draws a filled rectangle to the renderer with a given color.
@@ -498,7 +498,7 @@ def boxColor(renderer, x1, y1, x2, y2, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["boxColor"](renderer, x1, y1, x2, y2, color)
+    return _ctypes["boxColor"](renderer, x1, y1, x2, y2, color)
 
 def boxRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
     """Draws a filled rectangle to the renderer with a given color.
@@ -520,7 +520,7 @@ def boxRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["boxRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
+    return _ctypes["boxRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
 
 def roundedBoxColor(renderer, x1, y1, x2, y2, rad, color):
     """Draws a filled rectangle with rounded corners to the renderer.
@@ -541,7 +541,7 @@ def roundedBoxColor(renderer, x1, y1, x2, y2, rad, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["roundedBoxColor"](renderer, x1, y1, x2, y2, rad, color)
+    return _ctypes["roundedBoxColor"](renderer, x1, y1, x2, y2, rad, color)
 
 def roundedBoxRGBA(renderer, x1, y1, x2, y2, rad, r, g, b, a):
     """Draws a filled rectangle with rounded corners to the renderer.
@@ -564,7 +564,7 @@ def roundedBoxRGBA(renderer, x1, y1, x2, y2, rad, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["roundedBoxRGBA"](renderer, x1, y1, x2, y2, rad, r, g, b, a)
+    return _ctypes["roundedBoxRGBA"](renderer, x1, y1, x2, y2, rad, r, g, b, a)
 
 
 def lineColor(renderer, x1, y1, x2, y2, color):
@@ -585,7 +585,7 @@ def lineColor(renderer, x1, y1, x2, y2, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["lineColor"](renderer, x1, y1, x2, y2, color)
+    return _ctypes["lineColor"](renderer, x1, y1, x2, y2, color)
 
 def lineRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
     """Draws a line to the renderer with a given color.
@@ -607,7 +607,7 @@ def lineRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["lineRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
+    return _ctypes["lineRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
 
 def aalineColor(renderer, x1, y1, x2, y2, color):
     """Draws an anti-aliased line to the renderer with a given color.
@@ -627,7 +627,7 @@ def aalineColor(renderer, x1, y1, x2, y2, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aalineColor"](renderer, x1, y1, x2, y2, color)
+    return _ctypes["aalineColor"](renderer, x1, y1, x2, y2, color)
 
 def aalineRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
     """Draws an anti-aliased line to the renderer with a given color.
@@ -649,7 +649,7 @@ def aalineRGBA(renderer, x1, y1, x2, y2, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aalineRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
+    return _ctypes["aalineRGBA"](renderer, x1, y1, x2, y2, r, g, b, a)
 
 def thickLineColor(renderer, x1, y1, x2, y2, width, color):
     """Draws a line with a given thickness to the renderer.
@@ -670,7 +670,7 @@ def thickLineColor(renderer, x1, y1, x2, y2, width, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["thickLineColor"](renderer, x1, y1, x2, y2, width, color)
+    return _ctypes["thickLineColor"](renderer, x1, y1, x2, y2, width, color)
 
 def thickLineRGBA(renderer, x1, y1, x2, y2, width, r, g, b, a):
     """Draws a line with a given thickness to the renderer.
@@ -693,7 +693,7 @@ def thickLineRGBA(renderer, x1, y1, x2, y2, width, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["thickLineRGBA"](renderer, x1, y1, x2, y2, width, r, g, b, a)
+    return _ctypes["thickLineRGBA"](renderer, x1, y1, x2, y2, width, r, g, b, a)
 
 
 def circleColor(renderer, x, y, rad, color):
@@ -713,7 +713,7 @@ def circleColor(renderer, x, y, rad, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["circleColor"](renderer, x, y, rad, color)
+    return _ctypes["circleColor"](renderer, x, y, rad, color)
 
 def circleRGBA(renderer, x, y, rad, r, g, b, a):
     """Draws an unfilled circle to the renderer with a given color.
@@ -734,7 +734,7 @@ def circleRGBA(renderer, x, y, rad, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["circleRGBA"](renderer, x, y, rad, r, g, b, a)
+    return _ctypes["circleRGBA"](renderer, x, y, rad, r, g, b, a)
 
 def arcColor(renderer, x, y, rad, start, end, color):
     """Draws an arc to the renderer with a given color.
@@ -759,7 +759,7 @@ def arcColor(renderer, x, y, rad, start, end, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["arcColor"](renderer, x, y, rad, start, end, color)
+    return _ctypes["arcColor"](renderer, x, y, rad, start, end, color)
 
 def arcRGBA(renderer, x, y, rad, start, end, r, g, b, a):
     """Draws an arc to the renderer with a given color.
@@ -786,7 +786,7 @@ def arcRGBA(renderer, x, y, rad, start, end, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["arcRGBA"](renderer, x, y, rad, start, end, r, g, b, a)
+    return _ctypes["arcRGBA"](renderer, x, y, rad, start, end, r, g, b, a)
 
 def aacircleColor(renderer, x, y, rad, color):
     """Draws an anti-aliased unfilled circle to the renderer with a given color.
@@ -805,7 +805,7 @@ def aacircleColor(renderer, x, y, rad, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aacircleColor"](renderer, x, y, rad, color)
+    return _ctypes["aacircleColor"](renderer, x, y, rad, color)
 
 def aacircleRGBA(renderer, x, y, rad, r, g, b, a):
     """Draws an anti-aliased unfilled circle to the renderer with a given color.
@@ -826,7 +826,7 @@ def aacircleRGBA(renderer, x, y, rad, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aacircleRGBA"](renderer, x, y, rad, r, g, b, a)
+    return _ctypes["aacircleRGBA"](renderer, x, y, rad, r, g, b, a)
 
 def filledCircleColor(renderer, x, y, rad, color):
     """Draws a filled circle to the renderer with a given color.
@@ -845,7 +845,7 @@ def filledCircleColor(renderer, x, y, rad, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledCircleColor"](renderer, x, y, rad, color)
+    return _ctypes["filledCircleColor"](renderer, x, y, rad, color)
 
 def filledCircleRGBA(renderer, x, y, rad, r, g, b, a):
     """Draws a filled circle to the renderer with a given color.
@@ -866,7 +866,7 @@ def filledCircleRGBA(renderer, x, y, rad, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledCircleRGBA"](renderer, x, y, rad, r, g, b, a)
+    return _ctypes["filledCircleRGBA"](renderer, x, y, rad, r, g, b, a)
 
 
 def ellipseColor(renderer, x, y, rx, ry, color):
@@ -887,7 +887,7 @@ def ellipseColor(renderer, x, y, rx, ry, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["ellipseColor"](renderer, x, y, rx, ry, color)
+    return _ctypes["ellipseColor"](renderer, x, y, rx, ry, color)
 
 def ellipseRGBA(renderer, x, y, rx, ry, r, g, b, a):
     """Draws an unfilled ellipse to the renderer with a given color.
@@ -909,7 +909,7 @@ def ellipseRGBA(renderer, x, y, rx, ry, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["ellipseRGBA"](renderer, x, y, rx, ry, r, g, b, a)
+    return _ctypes["ellipseRGBA"](renderer, x, y, rx, ry, r, g, b, a)
 
 def aaellipseColor(renderer, x, y, rx, ry, color):
     """Draws an anti-aliased unfilled ellipse to the renderer in a given color.
@@ -929,7 +929,7 @@ def aaellipseColor(renderer, x, y, rx, ry, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aaellipseColor"](renderer, x, y, rx, ry, color)
+    return _ctypes["aaellipseColor"](renderer, x, y, rx, ry, color)
 
 def aaellipseRGBA(renderer, x, y, rx, ry, r, g, b, a):
     """Draws an anti-aliased unfilled ellipse to the renderer in a given color.
@@ -951,7 +951,7 @@ def aaellipseRGBA(renderer, x, y, rx, ry, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aaellipseRGBA"](renderer, x, y, rx, ry, r, g, b, a)
+    return _ctypes["aaellipseRGBA"](renderer, x, y, rx, ry, r, g, b, a)
 
 def filledEllipseColor(renderer, x, y, rx, ry, color):
     """Draws a filled ellipse to the renderer with a given color.
@@ -971,7 +971,7 @@ def filledEllipseColor(renderer, x, y, rx, ry, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledEllipseColor"](renderer, x, y, rx, ry, color)
+    return _ctypes["filledEllipseColor"](renderer, x, y, rx, ry, color)
 
 def filledEllipseRGBA(renderer, x, y, rx, ry, r, g, b, a):
     """Draws a filled ellipse to the renderer with a given color.
@@ -993,7 +993,7 @@ def filledEllipseRGBA(renderer, x, y, rx, ry, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledEllipseRGBA"](renderer, x, y, rx, ry, r, g, b, a)
+    return _ctypes["filledEllipseRGBA"](renderer, x, y, rx, ry, r, g, b, a)
 
 
 def pieColor(renderer, x, y, rad, start, end, color):
@@ -1019,7 +1019,7 @@ def pieColor(renderer, x, y, rad, start, end, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["pieColor"](renderer, x, y, rad, start, end, color)
+    return _ctypes["pieColor"](renderer, x, y, rad, start, end, color)
 
 def pieRGBA(renderer, x, y, rad, start, end, r, g, b, a):
     """Draws an unfilled pie slice (i.e. circle segment) to the renderer.
@@ -1046,7 +1046,7 @@ def pieRGBA(renderer, x, y, rad, start, end, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["pieRGBA"](renderer, x, y, rad, start, end, r, g, b, a)
+    return _ctypes["pieRGBA"](renderer, x, y, rad, start, end, r, g, b, a)
 
 def filledPieColor(renderer, x, y, rad, start, end, color):
     """Draws a filled pie slice (i.e. circle segment) to the renderer.
@@ -1071,7 +1071,7 @@ def filledPieColor(renderer, x, y, rad, start, end, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledPieColor"](renderer, x, y, rad, start, end, color)
+    return _ctypes["filledPieColor"](renderer, x, y, rad, start, end, color)
 
 def filledPieRGBA(renderer, x, y, rad, start, end, r, g, b, a):
     """Draws a filled pie slice (i.e. circle segment) to the renderer.
@@ -1098,7 +1098,7 @@ def filledPieRGBA(renderer, x, y, rad, start, end, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledPieRGBA"](renderer, x, y, rad, start, end, r, g, b, a)
+    return _ctypes["filledPieRGBA"](renderer, x, y, rad, start, end, r, g, b, a)
 
 
 def trigonColor(renderer, x1, y1, x2, y2, x3, y3, color):
@@ -1121,7 +1121,7 @@ def trigonColor(renderer, x1, y1, x2, y2, x3, y3, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["trigonColor"](renderer, x1, y1, x2, y2, x3, y3, color)
+    return _ctypes["trigonColor"](renderer, x1, y1, x2, y2, x3, y3, color)
 
 def trigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a):
     """Draws a trigon (i.e. triangle outline) to the renderer in a given color.
@@ -1145,7 +1145,7 @@ def trigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["trigonRGBA"](renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+    return _ctypes["trigonRGBA"](renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
 
 def aatrigonColor(renderer, x1, y1, x2, y2, x3, y3, color):
     """Draws an anti-aliased trigon (i.e. triangle outline) to the renderer.
@@ -1167,7 +1167,7 @@ def aatrigonColor(renderer, x1, y1, x2, y2, x3, y3, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aatrigonColor"](renderer, x1, y1, x2, y2, x3, y3, color)
+    return _ctypes["aatrigonColor"](renderer, x1, y1, x2, y2, x3, y3, color)
 
 def aatrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a):
     """Draws an anti-aliased trigon (i.e. triangle outline) to the renderer.
@@ -1191,7 +1191,7 @@ def aatrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aatrigonRGBA"](renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+    return _ctypes["aatrigonRGBA"](renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
 
 def filledTrigonColor(renderer, x1, y1, x2, y2, x3, y3, color):
     """Draws a filled triangle to the renderer in a given color.
@@ -1213,7 +1213,7 @@ def filledTrigonColor(renderer, x1, y1, x2, y2, x3, y3, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledTrigonColor"](renderer, x1, y1, x2, y2, x3, y3, color)
+    return _ctypes["filledTrigonColor"](renderer, x1, y1, x2, y2, x3, y3, color)
 
 def filledTrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a):
     """Draws a filled triangle to the renderer in a given color.
@@ -1237,7 +1237,7 @@ def filledTrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledTrigonRGBA"](renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+    return _ctypes["filledTrigonRGBA"](renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
 
 
 def polygonColor(renderer, vx, vy, n, color):
@@ -1269,7 +1269,7 @@ def polygonColor(renderer, vx, vy, n, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["polygonColor"](renderer, vx, vy, n, color)
+    return _ctypes["polygonColor"](renderer, vx, vy, n, color)
 
 def polygonRGBA(renderer, vx, vy, n, r, g, b, a):
     """Draws an unfilled polygon to the renderer in a given color.
@@ -1292,7 +1292,7 @@ def polygonRGBA(renderer, vx, vy, n, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["polygonRGBA"](renderer, vx, vy, n, r, g, b, a)
+    return _ctypes["polygonRGBA"](renderer, vx, vy, n, r, g, b, a)
 
 def aapolygonColor(renderer, vx, vy, n, color):
     """Draws an anti-aliased unfilled polygon to the renderer in a given color.
@@ -1313,7 +1313,7 @@ def aapolygonColor(renderer, vx, vy, n, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aapolygonColor"](renderer, vx, vy, n, color)
+    return _ctypes["aapolygonColor"](renderer, vx, vy, n, color)
 
 def aapolygonRGBA(renderer, vx, vy, n, r, g, b, a):
     """Draws an anti-aliased unfilled polygon to the renderer in a given color.
@@ -1336,7 +1336,7 @@ def aapolygonRGBA(renderer, vx, vy, n, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["aapolygonRGBA"](renderer, vx, vy, n, r, g, b, a)
+    return _ctypes["aapolygonRGBA"](renderer, vx, vy, n, r, g, b, a)
 
 def filledPolygonColor(renderer, vx, vy, n, color):
     """Draws a filled polygon to the renderer in a given color.
@@ -1357,7 +1357,7 @@ def filledPolygonColor(renderer, vx, vy, n, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledPolygonColor"](renderer, vx, vy, n, color)
+    return _ctypes["filledPolygonColor"](renderer, vx, vy, n, color)
 
 def filledPolygonRGBA(renderer, vx, vy, n, r, g, b, a):
     """Draws a filled polygon to the renderer in a given color.
@@ -1380,7 +1380,7 @@ def filledPolygonRGBA(renderer, vx, vy, n, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["filledPolygonRGBA"](renderer, vx, vy, n, r, g, b, a)
+    return _ctypes["filledPolygonRGBA"](renderer, vx, vy, n, r, g, b, a)
 
 def texturedPolygon(renderer, vx, vy, n, texture, texture_dx, texture_dy):
     """Draws a polygon to the renderer with a given texture.
@@ -1414,7 +1414,7 @@ def texturedPolygon(renderer, vx, vy, n, texture, texture_dx, texture_dy):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["texturedPolygon"](
+    return _ctypes["texturedPolygon"](
         renderer, vx, vy, n, texture, texture_dx, texture_dy
     )
 
@@ -1446,7 +1446,7 @@ def bezierColor(renderer, vx, vy, n, s, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["bezierColor"](renderer, vx, vy, n, s, color)
+    return _ctypes["bezierColor"](renderer, vx, vy, n, s, color)
 
 def bezierRGBA(renderer, vx, vy, n, s, r, g, b, a):
     """Draws a Bezier curve to the renderer in a given color.
@@ -1471,7 +1471,7 @@ def bezierRGBA(renderer, vx, vy, n, s, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["bezierRGBA"](renderer, vx, vy, n, s, r, g, b, a)
+    return _ctypes["bezierRGBA"](renderer, vx, vy, n, s, r, g, b, a)
 
 
 def gfxPrimitivesSetFont(fontdata, cw, ch):
@@ -1521,7 +1521,7 @@ def gfxPrimitivesSetFont(fontdata, cw, ch):
             if ``fontdata`` is null.
 
     """
-    return _funcs["gfxPrimitivesSetFont"](fontdata, cw, ch)
+    return _ctypes["gfxPrimitivesSetFont"](fontdata, cw, ch)
 
 def gfxPrimitivesSetFontRotation(rotation):
     """Sets the global character rotation for GFX font rendering.
@@ -1534,7 +1534,7 @@ def gfxPrimitivesSetFontRotation(rotation):
             font characters when rendering text.
 
     """
-    return _funcs["gfxPrimitivesSetFontRotation"](rotation)
+    return _ctypes["gfxPrimitivesSetFontRotation"](rotation)
 
 def characterColor(renderer, x, y, c, color):
     """Draws a single character with the current GFX font to the renderer.
@@ -1556,7 +1556,7 @@ def characterColor(renderer, x, y, c, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["characterColor"](renderer, x, y, c, color)
+    return _ctypes["characterColor"](renderer, x, y, c, color)
 
 def characterRGBA(renderer, x, y, c, r, g, b, a):
     """Draws a single character with the current GFX font to the renderer.
@@ -1577,7 +1577,7 @@ def characterRGBA(renderer, x, y, c, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["characterRGBA"](renderer, x, y, c, r, g, b, a)
+    return _ctypes["characterRGBA"](renderer, x, y, c, r, g, b, a)
 
 def stringColor(renderer, x, y, s, color):
     """Draws an ASCII string with the current GFX font to the renderer.
@@ -1596,7 +1596,7 @@ def stringColor(renderer, x, y, s, color):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["stringColor"](renderer, x, y, s, color)
+    return _ctypes["stringColor"](renderer, x, y, s, color)
 
 def stringRGBA(renderer, x, y, s, r, g, b, a):
     """Draws an ASCII string with the current GFX font to the renderer.
@@ -1617,7 +1617,7 @@ def stringRGBA(renderer, x, y, s, r, g, b, a):
         int: 0 on success, or -1 on failure.
 
     """
-    return _funcs["stringRGBA"](renderer, x, y, s, r, g, b, a)
+    return _ctypes["stringRGBA"](renderer, x, y, s, r, g, b, a)
 
 
 def rotozoomSurface(src, angle, zoom, smooth):
@@ -1638,7 +1638,7 @@ def rotozoomSurface(src, angle, zoom, smooth):
         :obj:`SDL_Surface`: A new output surface with zoom & rotation applied.
 
     """
-    return _funcs["rotozoomSurface"](src, angle, zoom, smooth)
+    return _ctypes["rotozoomSurface"](src, angle, zoom, smooth)
 
 def rotozoomSurfaceXY(src, angle, zoomx, zoomy, smooth):
     """Rotates & zooms a surface with different x & y scaling factors.
@@ -1659,7 +1659,7 @@ def rotozoomSurfaceXY(src, angle, zoomx, zoomy, smooth):
         :obj:`SDL_Surface`: A new output surface with zoom & rotation applied.
 
     """
-    return _funcs["rotozoomSurfaceXY"](src, angle, zoomx, zoomy, smooth)
+    return _ctypes["rotozoomSurfaceXY"](src, angle, zoomx, zoomy, smooth)
 
 def rotozoomSurfaceSize(width, height, angle, zoom, dstwidth, dstheight):
     """Returns the output surface size of a :func:`rotozoomSurface` call.
@@ -1679,7 +1679,7 @@ def rotozoomSurfaceSize(width, height, angle, zoom, dstwidth, dstheight):
             calculated height of the output surface will be stored.
 
     """
-    return _funcs["rotozoomSurfaceSize"](
+    return _ctypes["rotozoomSurfaceSize"](
         width, height, angle, zoom, dstwidth, dstheight
     )
 
@@ -1702,7 +1702,7 @@ def rotozoomSurfaceSizeXY(width, height, angle, zoomx, zoomy, dstwidth, dstheigh
             calculated height of the output surface will be stored.
 
     """
-    return _funcs["rotozoomSurfaceSizeXY"](
+    return _ctypes["rotozoomSurfaceSizeXY"](
         width, height, angle, zoomx, zoomy, dstwidth, dstheight
     )
 
@@ -1725,7 +1725,7 @@ def zoomSurface(src, zoomx, zoomy, smooth):
         :obj:`SDL_Surface`: A new output surface with zoom applied.
 
     """
-    return _funcs["zoomSurface"](src, zoomx, zoomy, smooth)
+    return _ctypes["zoomSurface"](src, zoomx, zoomy, smooth)
 
 def zoomSurfaceSize(width, height, zoomx, zoomy, dstwidth, dstheight):
     """Returns the output surface size of a :func:`zoomSurface` call.
@@ -1745,7 +1745,7 @@ def zoomSurfaceSize(width, height, zoomx, zoomy, dstwidth, dstheight):
             calculated height of the output surface will be stored.
 
     """
-    return _funcs["zoomSurfaceSize"](width, height, zoomx, zoomy, dstwidth, dstheight)
+    return _ctypes["zoomSurfaceSize"](width, height, zoomx, zoomy, dstwidth, dstheight)
 
 def shrinkSurface(src, factorx, factory):
     """Shrinks a surface by an integer ratio using averaging.
@@ -1765,7 +1765,7 @@ def shrinkSurface(src, factorx, factory):
         :obj:`SDL_Surface`: The new shrunken surface.
 
     """
-    return _funcs["shrinkSurface"](src, factorx, factory)
+    return _ctypes["shrinkSurface"](src, factorx, factory)
 
 def rotateSurface90Degrees(src, numClockwiseTurns):
     """Rotates an SDL surface clockwise in increments of 90 degrees.
@@ -1783,4 +1783,4 @@ def rotateSurface90Degrees(src, numClockwiseTurns):
         surface was not a compatible format.
 
     """
-    return _funcs["rotateSurface90Degrees"](src, numClockwiseTurns)
+    return _ctypes["rotateSurface90Degrees"](src, numClockwiseTurns)
