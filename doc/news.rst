@@ -21,6 +21,8 @@ Fixed Bugs:
   :obj:`~sdl2.SDL_AudioDeviceEvent`.
 * Fixed :func:`~sdl2.SDL_LoadFile` with Python 3 and old versions of SDL2 (2.0.9
   and older).
+* Fixed a bug in :class:`~sdl2.ext.FontTTF` that prevented rendering text with
+  empty lines.
 
 
 0.9.11
