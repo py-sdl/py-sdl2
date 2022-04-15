@@ -383,7 +383,7 @@ class Renderer(object):
         for x in range(drivers):
             info = render.SDL_RendererInfo()
             ret = render.SDL_GetRenderDriverInfo(x, info)
-            if ret != 0:
+            if ret == 0:
                 renderers.append(stringify(info.name))
             error.SDL_ClearError()
         return renderers
