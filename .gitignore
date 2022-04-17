@@ -1,6 +1,7 @@
 .cache
 .settings
 .pytest_cache
+.vscode
 **/*.DS_Store
 *project
 *.pyc
