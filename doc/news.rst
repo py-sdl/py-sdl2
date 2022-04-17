@@ -14,6 +14,8 @@ New Features:
   can now be accessed through the ``_ctypes`` object in each module. For
   example, ``sdlttf._ctypes.TTF_Linked_Version`` will return the unwrapped
   ctypes function pointer for that function.
+* Added an informative warning for users using pysdl2-dll with PySDL2 on an
+  Apple Silicon Mac.
 
 Fixed Bugs:
 

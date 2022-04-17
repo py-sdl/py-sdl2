@@ -24,6 +24,14 @@ try:
     if prepath != postpath:
         msg = "Using SDL2 binaries from pysdl2-dll {0}"
         prettywarn(msg.format(sdl2dll.__version__), UserWarning)
+    if sys.platform == "darwin" and cpu_arch() == "arm64":
+        msg = "The sdlimage, sdlmixer, and sdlgfx modules are currently\n"
+        msg += "unavailable via py-sdl2 on ARM64 Macs. "
+        msg += "If you require any of these\n"
+        msg += "modules, please uninstall pysdl2-dll and install SDL2 using "
+        msg += "Homebrew."
+        prettywarn(msg.format(sdl2dll.__version__), UserWarning)
+
 except ImportError:
     pass
 
@@ -216,6 +224,7 @@ class DLL(object):
                 # about something weird going on - this may become noisy, but
                 # is better than confusing the users with the RuntimeError below
                 self._dll = None
+
                 warnings.warn(repr(exc), DLLWarning)
         if self._dll is None:
             raise RuntimeError("found %s, but it's not usable for the library %s" %
