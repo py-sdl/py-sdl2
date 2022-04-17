@@ -31,6 +31,8 @@ Fixed Bugs:
   and older).
 * Fixed a bug in :class:`~sdl2.ext.FontTTF` that prevented rendering text with
   empty lines.
+* Fixed a bug in :class:`~sdl2.ext.Renderer` that prevented users from
+  requesting a renderer backend by name (PR #224)
 
 
 0.9.11

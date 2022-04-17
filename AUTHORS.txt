@@ -30,6 +30,7 @@ Thanks to everyone else for their assistance, support, fixes and improvements:
 * Kenneth Long
 * Linus Heckemann
 * Marcel Rodrigues
+* Martin Chaperot-Merino
 * Max Bareiss
 * mgorny
 * Michael McCandless
