@@ -65,14 +65,22 @@ SDL_PACKEDLAYOUT_1010102 = 8
 
 # Macros & inline functions
 
-SDL_FOURCC = lambda a, b, c, d: (ord(a) << 0) | (ord(b) << 8) | (ord(c) << 16) | (ord(d) << 24)
+def SDL_FOURCC(a, b, c, d):
+    return (ord(a) << 0) | (ord(b) << 8) | (ord(c) << 16) | (ord(d) << 24)
+
+def SDL_DEFINE_PIXELFORMAT(ptype, order, layout, bits, pbytes):
+    return (
+        (1 << 28) | ((ptype) << 24) | ((order) << 20) | ((layout) << 16) |
+        ((bits) << 8) | ((pbytes) << 0)
+    )
+
 SDL_DEFINE_PIXELFOURCC = SDL_FOURCC
-SDL_DEFINE_PIXELFORMAT = lambda ptype, order, layout, bits, pbytes: ((1 << 28) | ((ptype) << 24) | ((order) << 20) | ((layout) << 16) | ((bits) << 8) | ((pbytes) << 0))
 SDL_PIXELFLAG = lambda X: (((X) >> 28) & 0x0F)
 SDL_PIXELTYPE = lambda X: (((X) >> 24) & 0x0F)
 SDL_PIXELORDER = lambda X: (((X) >> 20) & 0x0F)
 SDL_PIXELLAYOUT = lambda X: (((X) >> 16) & 0x0F)
 SDL_BITSPERPIXEL = lambda X: (((X) >> 8) & 0xFF)
+SDL_ISPIXELFORMAT_FOURCC = lambda fmt: ((fmt) and (SDL_PIXELFLAG(fmt) != 1))
 
 def SDL_BYTESPERPIXEL(x):
     valid = (SDL_PIXELFORMAT_YUY2, SDL_PIXELFORMAT_UYVY, SDL_PIXELFORMAT_YVYU)
@@ -82,150 +90,220 @@ def SDL_BYTESPERPIXEL(x):
         else:
             return 1
     else:
-        return(((x) >> 0) & 0xFF)
+        return (((x) >> 0) & 0xFF)
 
 def SDL_ISPIXELFORMAT_INDEXED(pformat):
     """Checks, if the passed format value is an indexed format."""
-    return ((not SDL_ISPIXELFORMAT_FOURCC(pformat)) and
-            ((SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX1) or
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX4) or
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX8)))
+    return (
+        SDL_ISPIXELFORMAT_FOURCC(pformat) == False and (
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX1) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX4) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_INDEX8)
+        ))
 
 def SDL_ISPIXELFORMAT_PACKED(pformat):
     """Checks, if the passed format value is a packed format."""
-    return (not SDL_ISPIXELFORMAT_FOURCC(pformat) and
-            ((SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED8) or
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED16) or
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED32)))
+    return (
+        SDL_ISPIXELFORMAT_FOURCC(pformat) == False and (
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED8) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED16) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_PACKED32)
+        ))
 
 def SDL_ISPIXELFORMAT_ARRAY(pformat):
     """Checks, if the passed format value is an array format."""
-    return (not SDL_ISPIXELFORMAT_FOURCC(pformat) and
-            ((SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU8) and
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU16) or
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU32) or
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYF16) or
-             (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYF32)))
+    return (
+        SDL_ISPIXELFORMAT_FOURCC(pformat) == False and (
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU8) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU16) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYU32) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYF16) or
+            (SDL_PIXELTYPE(pformat) == SDL_PIXELTYPE_ARRAYF32)
+        ))
 
 def SDL_ISPIXELFORMAT_ALPHA(pformat):
     """Checks, if the passed format value is an alpha channel supporting
     format.
     """
-    return ((SDL_ISPIXELFORMAT_PACKED(pformat) and
-             ((SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ARGB) or
-              (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_RGBA) or
-              (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ABGR) or
-              (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_BGRA))) or
-            (SDL_ISPIXELFORMAT_ARRAY(pformat) and
-             ((SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_ARGB) or
-              (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_RGBA) or
-              (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_ABGR) or
-              (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_BGRA))))
-
-SDL_ISPIXELFORMAT_FOURCC = lambda fmt: ((fmt) and (SDL_PIXELFLAG(fmt) != 1))
+    return ((
+        SDL_ISPIXELFORMAT_PACKED(pformat) and (
+            (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ARGB) or
+            (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_RGBA) or
+            (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_ABGR) or
+            (SDL_PIXELORDER(pformat) == SDL_PACKEDORDER_BGRA))
+        ) or (
+        SDL_ISPIXELFORMAT_ARRAY(pformat) and (
+            (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_ARGB) or
+            (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_RGBA) or
+            (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_ABGR) or
+            (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_BGRA))
+        ))
 
 
 # Pixel format defintions
 
 SDL_PixelFormatEnum = c_int
 SDL_PIXELFORMAT_UNKNOWN = 0
-SDL_PIXELFORMAT_INDEX1LSB = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_INDEX1,
-                                                   SDL_BITMAPORDER_4321,
-                                                   0, 1, 0)
-SDL_PIXELFORMAT_INDEX1MSB = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_INDEX1,
-                                                   SDL_BITMAPORDER_1234,
-                                                   0, 1, 0)
-SDL_PIXELFORMAT_INDEX4LSB = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_INDEX4,
-                                                   SDL_BITMAPORDER_4321,
-                                                   0, 4, 0)
-SDL_PIXELFORMAT_INDEX4MSB = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_INDEX4,
-                                                   SDL_BITMAPORDER_1234,
-                                                   0, 4, 0)
-SDL_PIXELFORMAT_INDEX8 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_INDEX8, 0,
-                                                0, 8, 1)
-SDL_PIXELFORMAT_RGB332 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED8,
-                                                SDL_PACKEDORDER_XRGB,
-                                                SDL_PACKEDLAYOUT_332, 8, 1)
-SDL_PIXELFORMAT_XRGB4444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_XRGB,
-                                                  SDL_PACKEDLAYOUT_4444, 12, 2)
+SDL_PIXELFORMAT_INDEX1LSB = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_INDEX1,
+    SDL_BITMAPORDER_4321,
+    0, 1, 0
+)
+SDL_PIXELFORMAT_INDEX1MSB = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_INDEX1,
+    SDL_BITMAPORDER_1234,
+    0, 1, 0
+)
+SDL_PIXELFORMAT_INDEX4LSB = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_INDEX4,
+    SDL_BITMAPORDER_4321,
+    0, 4, 0
+)
+SDL_PIXELFORMAT_INDEX4MSB = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_INDEX4,
+    SDL_BITMAPORDER_1234,
+    0, 4, 0
+)
+SDL_PIXELFORMAT_INDEX8 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_INDEX8,
+    0,
+    0, 8, 1
+)
+SDL_PIXELFORMAT_RGB332 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED8,
+    SDL_PACKEDORDER_XRGB,
+    SDL_PACKEDLAYOUT_332, 8, 1
+)
+SDL_PIXELFORMAT_XRGB4444 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_XRGB,
+    SDL_PACKEDLAYOUT_4444, 12, 2
+)
 SDL_PIXELFORMAT_RGB444 = SDL_PIXELFORMAT_XRGB4444
-SDL_PIXELFORMAT_XBGR4444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_XBGR,
-                                                  SDL_PACKEDLAYOUT_4444, 12, 2)
+SDL_PIXELFORMAT_XBGR4444 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_XBGR,
+    SDL_PACKEDLAYOUT_4444, 12, 2
+)
 SDL_PIXELFORMAT_BGR444 = SDL_PIXELFORMAT_XBGR4444
-SDL_PIXELFORMAT_XRGB1555 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_XRGB,
-                                                  SDL_PACKEDLAYOUT_1555, 15, 2)
+SDL_PIXELFORMAT_XRGB1555 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_XRGB,
+    SDL_PACKEDLAYOUT_1555, 15, 2
+)
 SDL_PIXELFORMAT_RGB555 = SDL_PIXELFORMAT_XRGB1555
-SDL_PIXELFORMAT_XBGR1555 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_XBGR,
-                                                  SDL_PACKEDLAYOUT_1555, 15, 2)
+SDL_PIXELFORMAT_XBGR1555 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_XBGR,
+    SDL_PACKEDLAYOUT_1555, 15, 2
+)
 SDL_PIXELFORMAT_BGR555 = SDL_PIXELFORMAT_XBGR1555
-SDL_PIXELFORMAT_ARGB4444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_ARGB,
-                                                  SDL_PACKEDLAYOUT_4444, 16, 2)
-SDL_PIXELFORMAT_RGBA4444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_RGBA,
-                                                  SDL_PACKEDLAYOUT_4444, 16, 2)
-SDL_PIXELFORMAT_ABGR4444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_ABGR,
-                                                  SDL_PACKEDLAYOUT_4444, 16, 2)
-SDL_PIXELFORMAT_BGRA4444 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_BGRA,
-                                                  SDL_PACKEDLAYOUT_4444, 16, 2)
-SDL_PIXELFORMAT_ARGB1555 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_ARGB,
-                                                  SDL_PACKEDLAYOUT_1555, 16, 2)
-SDL_PIXELFORMAT_RGBA5551 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_RGBA,
-                                                  SDL_PACKEDLAYOUT_5551, 16, 2)
-SDL_PIXELFORMAT_ABGR1555 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_ABGR,
-                                                  SDL_PACKEDLAYOUT_1555, 16, 2)
-SDL_PIXELFORMAT_BGRA5551 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                  SDL_PACKEDORDER_BGRA,
-                                                  SDL_PACKEDLAYOUT_5551, 16, 2)
-SDL_PIXELFORMAT_RGB565 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                SDL_PACKEDORDER_XRGB,
-                                                SDL_PACKEDLAYOUT_565, 16, 2)
-SDL_PIXELFORMAT_BGR565 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED16,
-                                                SDL_PACKEDORDER_XBGR,
-                                                SDL_PACKEDLAYOUT_565, 16, 2)
-SDL_PIXELFORMAT_RGB24 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_ARRAYU8,
-                                               SDL_ARRAYORDER_RGB, 0, 24, 3)
-SDL_PIXELFORMAT_BGR24 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_ARRAYU8,
-                                               SDL_ARRAYORDER_BGR, 0, 24, 3)
-SDL_PIXELFORMAT_XRGB8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_XRGB,
-                                                  SDL_PACKEDLAYOUT_8888, 24, 4)
+SDL_PIXELFORMAT_ARGB4444 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_ARGB,
+    SDL_PACKEDLAYOUT_4444, 16, 2
+)
+SDL_PIXELFORMAT_RGBA4444 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_RGBA,
+    SDL_PACKEDLAYOUT_4444, 16, 2
+)
+SDL_PIXELFORMAT_ABGR4444 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_ABGR,
+    SDL_PACKEDLAYOUT_4444, 16, 2
+)
+SDL_PIXELFORMAT_BGRA4444 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_BGRA,
+    SDL_PACKEDLAYOUT_4444, 16, 2
+)
+SDL_PIXELFORMAT_ARGB1555 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_ARGB,
+    SDL_PACKEDLAYOUT_1555, 16, 2
+)
+SDL_PIXELFORMAT_RGBA5551 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_RGBA,
+    SDL_PACKEDLAYOUT_5551, 16, 2
+)
+SDL_PIXELFORMAT_ABGR1555 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_ABGR,
+    SDL_PACKEDLAYOUT_1555, 16, 2
+)
+SDL_PIXELFORMAT_BGRA5551 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_BGRA,
+    SDL_PACKEDLAYOUT_5551, 16, 2
+)
+SDL_PIXELFORMAT_RGB565 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_XRGB,
+    SDL_PACKEDLAYOUT_565, 16, 2
+)
+SDL_PIXELFORMAT_BGR565 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED16,
+    SDL_PACKEDORDER_XBGR,
+    SDL_PACKEDLAYOUT_565, 16, 2
+)
+SDL_PIXELFORMAT_RGB24 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_ARRAYU8,
+    SDL_ARRAYORDER_RGB, 0, 24, 3
+)
+SDL_PIXELFORMAT_BGR24 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_ARRAYU8,
+    SDL_ARRAYORDER_BGR, 0, 24, 3
+)
+SDL_PIXELFORMAT_XRGB8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_XRGB,
+    SDL_PACKEDLAYOUT_8888, 24, 4
+)
 SDL_PIXELFORMAT_RGB888 = SDL_PIXELFORMAT_XRGB8888
-SDL_PIXELFORMAT_RGBX8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_RGBX,
-                                                  SDL_PACKEDLAYOUT_8888, 24, 4)
-SDL_PIXELFORMAT_XBGR8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_XBGR,
-                                                  SDL_PACKEDLAYOUT_8888, 24, 4)
+SDL_PIXELFORMAT_RGBX8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_RGBX,
+    SDL_PACKEDLAYOUT_8888, 24, 4
+)
+SDL_PIXELFORMAT_XBGR8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_XBGR,
+    SDL_PACKEDLAYOUT_8888, 24, 4
+)
 SDL_PIXELFORMAT_BGR888 = SDL_PIXELFORMAT_XBGR8888
-SDL_PIXELFORMAT_BGRX8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_BGRX,
-                                                  SDL_PACKEDLAYOUT_8888, 24, 4)
-SDL_PIXELFORMAT_ARGB8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_ARGB,
-                                                  SDL_PACKEDLAYOUT_8888, 32, 4)
-SDL_PIXELFORMAT_RGBA8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_RGBA,
-                                                  SDL_PACKEDLAYOUT_8888, 32, 4)
-SDL_PIXELFORMAT_ABGR8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_ABGR,
-                                                  SDL_PACKEDLAYOUT_8888, 32, 4)
-SDL_PIXELFORMAT_BGRA8888 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                  SDL_PACKEDORDER_BGRA,
-                                                  SDL_PACKEDLAYOUT_8888, 32, 4)
-SDL_PIXELFORMAT_ARGB2101010 = SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32,
-                                                     SDL_PACKEDORDER_ARGB,
-                                                     SDL_PACKEDLAYOUT_2101010,
-                                                     32, 4)
+SDL_PIXELFORMAT_BGRX8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_BGRX,
+    SDL_PACKEDLAYOUT_8888, 24, 4
+)
+SDL_PIXELFORMAT_ARGB8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_ARGB,
+    SDL_PACKEDLAYOUT_8888, 32, 4
+)
+SDL_PIXELFORMAT_RGBA8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_RGBA,
+    SDL_PACKEDLAYOUT_8888, 32, 4
+)
+SDL_PIXELFORMAT_ABGR8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_ABGR,
+    SDL_PACKEDLAYOUT_8888, 32, 4
+)
+SDL_PIXELFORMAT_BGRA8888 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_BGRA,
+    SDL_PACKEDLAYOUT_8888, 32, 4
+)
+SDL_PIXELFORMAT_ARGB2101010 = SDL_DEFINE_PIXELFORMAT(
+    SDL_PIXELTYPE_PACKED32,
+    SDL_PACKEDORDER_ARGB,
+    SDL_PACKEDLAYOUT_2101010,
+    32, 4
+)
 if SDL_BYTEORDER == SDL_BIG_ENDIAN:
     SDL_PIXELFORMAT_RGBA32 = SDL_PIXELFORMAT_RGBA8888
     SDL_PIXELFORMAT_ARGB32 = SDL_PIXELFORMAT_ARGB8888
@@ -297,11 +375,12 @@ ALL_PIXELFORMATS = tuple(NAME_MAP.values())
 # Struct definitions
 
 class SDL_Color(Structure):
-    _fields_ = [("r", Uint8),
-                ("g", Uint8),
-                ("b", Uint8),
-                ("a", Uint8),
-                ]
+    _fields_ = [
+        ("r", Uint8),
+        ("g", Uint8),
+        ("b", Uint8),
+        ("a", Uint8),
+    ]
 
     def __init__(self, r=255, g=255, b=255, a=255):
         super(SDL_Color, self).__init__()
@@ -331,33 +410,36 @@ class SDL_Color(Structure):
 SDL_Colour = SDL_Color
 
 class SDL_Palette(Structure):
-    _fields_ = [("ncolors", c_int),
-                ("colors", POINTER(SDL_Color)),
-                ("version", Uint32),
-                ("refcount", c_int)]
+    _fields_ = [
+        ("ncolors", c_int),
+        ("colors", POINTER(SDL_Color)),
+        ("version", Uint32),
+        ("refcount", c_int),
+    ]
 
 class SDL_PixelFormat(Structure):
     pass
-SDL_PixelFormat._fields_ = \
-    [("format", Uint32),
-     ("palette", POINTER(SDL_Palette)),
-     ("BitsPerPixel", Uint8),
-     ("BytesPerPixel", Uint8),
-     ("padding", Uint8 * 2),
-     ("Rmask", Uint32),
-     ("Gmask", Uint32),
-     ("Bmask", Uint32),
-     ("Amask", Uint32),
-     ("Rloss", Uint8),
-     ("Gloss", Uint8),
-     ("Bloss", Uint8),
-     ("Aloss", Uint8),
-     ("Rshift", Uint8),
-     ("Gshift", Uint8),
-     ("Bshift", Uint8),
-     ("Ashift", Uint8),
-     ("refcount", c_int),
-     ("next", POINTER(SDL_PixelFormat))]
+SDL_PixelFormat._fields_ = [
+    ("format", Uint32),
+    ("palette", POINTER(SDL_Palette)),
+    ("BitsPerPixel", Uint8),
+    ("BytesPerPixel", Uint8),
+    ("padding", Uint8 * 2),
+    ("Rmask", Uint32),
+    ("Gmask", Uint32),
+    ("Bmask", Uint32),
+    ("Amask", Uint32),
+    ("Rloss", Uint8),
+    ("Gloss", Uint8),
+    ("Bloss", Uint8),
+    ("Aloss", Uint8),
+    ("Rshift", Uint8),
+    ("Gshift", Uint8),
+    ("Bshift", Uint8),
+    ("Ashift", Uint8),
+    ("refcount", c_int),
+    ("next", POINTER(SDL_PixelFormat)),
+]
 
 
 
