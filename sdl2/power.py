@@ -1,6 +1,6 @@
 from ctypes import c_int
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 
 __all__ = [
     # Enums
@@ -24,5 +24,16 @@ SDL_POWERSTATE_CHARGING = 3
 SDL_POWERSTATE_CHARGED = 4
 
 
+# Raw ctypes function definitions
 
-SDL_GetPowerInfo = _bind("SDL_GetPowerInfo", [_P(c_int), _P(c_int)], SDL_PowerState)
+_funcdefs = [
+    SDLFunc("SDL_GetPowerInfo", [_P(c_int), _P(c_int)], SDL_PowerState),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetPowerInfo = _ctypes["SDL_GetPowerInfo"]

@@ -1,6 +1,6 @@
 from ctypes import Structure, c_int, c_char_p
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Uint8, Uint16, Uint32, SDL_bool
 from .keycode import SDL_Keycode, SDL_Keymod
 from .scancode import SDL_Scancode
@@ -33,20 +33,46 @@ class SDL_Keysym(Structure):
     ]
 
 
+# Raw ctypes function definitions
 
-SDL_GetKeyboardFocus = _bind("SDL_GetKeyboardFocus", None, _P(SDL_Window))
-SDL_GetKeyboardState = _bind("SDL_GetKeyboardState", [_P(c_int)], _P(Uint8))
-SDL_GetModState = _bind("SDL_GetModState", None, SDL_Keymod)
-SDL_SetModState = _bind("SDL_SetModState", [SDL_Keymod])
-SDL_GetKeyFromScancode = _bind("SDL_GetKeyFromScancode", [SDL_Scancode], SDL_Keycode)
-SDL_GetScancodeFromKey = _bind("SDL_GetScancodeFromKey", [SDL_Keycode], SDL_Scancode)
-SDL_GetScancodeName = _bind("SDL_GetScancodeName", [SDL_Scancode], c_char_p)
-SDL_GetScancodeFromName = _bind("SDL_GetScancodeFromName", [c_char_p], SDL_Scancode)
-SDL_GetKeyName = _bind("SDL_GetKeyName", [SDL_Keycode], c_char_p)
-SDL_GetKeyFromName = _bind("SDL_GetKeyFromName", [c_char_p], SDL_Keycode)
-SDL_StartTextInput = _bind("SDL_StartTextInput")
-SDL_IsTextInputActive = _bind("SDL_IsTextInputActive", None, SDL_bool)
-SDL_StopTextInput = _bind("SDL_StopTextInput")
-SDL_SetTextInputRect = _bind("SDL_SetTextInputRect", [_P(SDL_Rect)])
-SDL_HasScreenKeyboardSupport = _bind("SDL_HasScreenKeyboardSupport", None, SDL_bool)
-SDL_IsScreenKeyboardShown = _bind("SDL_IsScreenKeyboardShown", [_P(SDL_Window)], SDL_bool)
+_funcdefs = [
+    SDLFunc("SDL_GetKeyboardFocus", None, _P(SDL_Window)),
+    SDLFunc("SDL_GetKeyboardState", [_P(c_int)], _P(Uint8)),
+    SDLFunc("SDL_GetModState", None, SDL_Keymod),
+    SDLFunc("SDL_SetModState", [SDL_Keymod]),
+    SDLFunc("SDL_GetKeyFromScancode", [SDL_Scancode], SDL_Keycode),
+    SDLFunc("SDL_GetScancodeFromKey", [SDL_Keycode], SDL_Scancode),
+    SDLFunc("SDL_GetScancodeName", [SDL_Scancode], c_char_p),
+    SDLFunc("SDL_GetScancodeFromName", [c_char_p], SDL_Scancode),
+    SDLFunc("SDL_GetKeyName", [SDL_Keycode], c_char_p),
+    SDLFunc("SDL_GetKeyFromName", [c_char_p], SDL_Keycode),
+    SDLFunc("SDL_StartTextInput"),
+    SDLFunc("SDL_IsTextInputActive", None, SDL_bool),
+    SDLFunc("SDL_StopTextInput"),
+    SDLFunc("SDL_SetTextInputRect", [_P(SDL_Rect)]),
+    SDLFunc("SDL_HasScreenKeyboardSupport", None, SDL_bool),
+    SDLFunc("SDL_IsScreenKeyboardShown", [_P(SDL_Window)], SDL_bool),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetKeyboardFocus = _ctypes["SDL_GetKeyboardFocus"]
+SDL_GetKeyboardState = _ctypes["SDL_GetKeyboardState"]
+SDL_GetModState = _ctypes["SDL_GetModState"]
+SDL_SetModState = _ctypes["SDL_SetModState"]
+SDL_GetKeyFromScancode = _ctypes["SDL_GetKeyFromScancode"]
+SDL_GetScancodeFromKey = _ctypes["SDL_GetScancodeFromKey"]
+SDL_GetScancodeName = _ctypes["SDL_GetScancodeName"]
+SDL_GetScancodeFromName = _ctypes["SDL_GetScancodeFromName"]
+SDL_GetKeyName = _ctypes["SDL_GetKeyName"]
+SDL_GetKeyFromName = _ctypes["SDL_GetKeyFromName"]
+SDL_StartTextInput = _ctypes["SDL_StartTextInput"]
+SDL_IsTextInputActive = _ctypes["SDL_IsTextInputActive"]
+SDL_StopTextInput = _ctypes["SDL_StopTextInput"]
+SDL_SetTextInputRect = _ctypes["SDL_SetTextInputRect"]
+SDL_HasScreenKeyboardSupport = _ctypes["SDL_HasScreenKeyboardSupport"]
+SDL_IsScreenKeyboardShown = _ctypes["SDL_IsScreenKeyboardShown"]

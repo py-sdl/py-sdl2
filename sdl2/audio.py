@@ -1,6 +1,6 @@
 from ctypes import c_int, c_char_p, c_double, c_void_p, CFUNCTYPE, Structure
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .endian import SDL_BYTEORDER, SDL_LIL_ENDIAN
 from .stdinc import Uint8, Uint16, Uint32
 from .rwops import SDL_RWops, SDL_RWFromFile
@@ -192,40 +192,97 @@ class SDL_AudioStream(c_void_p):
 
 # Raw ctypes function definitions
 
-SDL_GetNumAudioDrivers = _bind("SDL_GetNumAudioDrivers", None, c_int)
-SDL_GetAudioDriver = _bind("SDL_GetAudioDriver", [c_int], c_char_p)
-SDL_AudioInit = _bind("SDL_AudioInit", [c_char_p], c_int)
-SDL_AudioQuit = _bind("SDL_AudioQuit")
-SDL_GetCurrentAudioDriver = _bind("SDL_GetCurrentAudioDriver", None, c_char_p)
-SDL_OpenAudio = _bind("SDL_OpenAudio", [_P(SDL_AudioSpec), _P(SDL_AudioSpec)], c_int)
-SDL_GetNumAudioDevices = _bind("SDL_GetNumAudioDevices", [c_int], c_int)
-SDL_GetAudioDeviceName = _bind("SDL_GetAudioDeviceName", [c_int, c_int], c_char_p)
-SDL_GetAudioDeviceSpec = _bind("SDL_GetAudioDeviceSpec", [c_int, c_int, _P(SDL_AudioSpec)], c_int, added='2.0.16')
-SDL_OpenAudioDevice = _bind("SDL_OpenAudioDevice", [c_char_p, c_int, _P(SDL_AudioSpec), _P(SDL_AudioSpec), c_int], SDL_AudioDeviceID)
-SDL_GetAudioStatus = _bind("SDL_GetAudioStatus", None, SDL_AudioStatus)
-SDL_GetAudioDeviceStatus = _bind("SDL_GetAudioDeviceStatus", [SDL_AudioDeviceID], SDL_AudioStatus)
-SDL_PauseAudio = _bind("SDL_PauseAudio", [c_int])
-SDL_PauseAudioDevice = _bind("SDL_PauseAudioDevice", [SDL_AudioDeviceID, c_int])
-SDL_LoadWAV_RW = _bind("SDL_LoadWAV_RW", [_P(SDL_RWops), c_int, _P(SDL_AudioSpec), _P(_P(Uint8)), _P(Uint32)], _P(SDL_AudioSpec))
+_funcdefs = [
+    SDLFunc("SDL_GetNumAudioDrivers", None, c_int),
+    SDLFunc("SDL_GetAudioDriver", [c_int], c_char_p),
+    SDLFunc("SDL_AudioInit", [c_char_p], c_int),
+    SDLFunc("SDL_AudioQuit"),
+    SDLFunc("SDL_GetCurrentAudioDriver", None, c_char_p),
+    SDLFunc("SDL_OpenAudio", [_P(SDL_AudioSpec), _P(SDL_AudioSpec)], c_int),
+    SDLFunc("SDL_GetNumAudioDevices", [c_int], c_int),
+    SDLFunc("SDL_GetAudioDeviceName", [c_int, c_int], c_char_p),
+    SDLFunc("SDL_GetAudioDeviceSpec", [c_int, c_int, _P(SDL_AudioSpec)], c_int, added='2.0.16'),
+    SDLFunc("SDL_OpenAudioDevice",
+        [c_char_p, c_int, _P(SDL_AudioSpec), _P(SDL_AudioSpec), c_int],
+        returns = SDL_AudioDeviceID
+    ),
+    SDLFunc("SDL_GetAudioStatus", None, SDL_AudioStatus),
+    SDLFunc("SDL_GetAudioDeviceStatus", [SDL_AudioDeviceID], SDL_AudioStatus),
+    SDLFunc("SDL_PauseAudio", [c_int]),
+    SDLFunc("SDL_PauseAudioDevice", [SDL_AudioDeviceID, c_int]),
+    SDLFunc("SDL_LoadWAV_RW",
+        [_P(SDL_RWops), c_int, _P(SDL_AudioSpec), _P(_P(Uint8)), _P(Uint32)],
+        returns = _P(SDL_AudioSpec)
+    ),
+    SDLFunc("SDL_FreeWAV", [_P(Uint8)]),
+    SDLFunc("SDL_BuildAudioCVT",
+        [_P(SDL_AudioCVT), SDL_AudioFormat, Uint8, c_int, SDL_AudioFormat, Uint8, c_int],
+        returns = c_int
+    ),
+    SDLFunc("SDL_ConvertAudio", [_P(SDL_AudioCVT)], c_int),
+    SDLFunc("SDL_MixAudio", [_P(Uint8), _P(Uint8), Uint32, c_int]),
+    SDLFunc("SDL_MixAudioFormat", [_P(Uint8), _P(Uint8), SDL_AudioFormat, Uint32, c_int]),
+    SDLFunc("SDL_LockAudio"),
+    SDLFunc("SDL_LockAudioDevice", [SDL_AudioDeviceID]),
+    SDLFunc("SDL_UnlockAudio"),
+    SDLFunc("SDL_UnlockAudioDevice", [SDL_AudioDeviceID]),
+    SDLFunc("SDL_CloseAudio"),
+    SDLFunc("SDL_CloseAudioDevice", [SDL_AudioDeviceID]),
+    SDLFunc("SDL_QueueAudio", [SDL_AudioDeviceID, c_void_p, Uint32], c_int, added='2.0.4'),
+    SDLFunc("SDL_DequeueAudio", [SDL_AudioDeviceID, c_void_p, Uint32], Uint32, added='2.0.5'),
+    SDLFunc("SDL_GetQueuedAudioSize", [SDL_AudioDeviceID], Uint32, added='2.0.4'),
+    SDLFunc("SDL_ClearQueuedAudio", [SDL_AudioDeviceID], added='2.0.4'),
+    SDLFunc("SDL_NewAudioStream",
+        [SDL_AudioFormat, Uint8, c_int, SDL_AudioFormat, Uint8, c_int],
+        returns = _P(SDL_AudioStream), added = '2.0.7'
+    ),
+    SDLFunc("SDL_AudioStreamPut", [_P(SDL_AudioStream), c_void_p, c_int], c_int, added='2.0.7'),
+    SDLFunc("SDL_AudioStreamGet", [_P(SDL_AudioStream), c_void_p, c_int], c_int, added='2.0.7'),
+    SDLFunc("SDL_AudioStreamAvailable", [_P(SDL_AudioStream)], c_int, added='2.0.7'),
+    SDLFunc("SDL_AudioStreamClear", [_P(SDL_AudioStream)], added='2.0.7'),
+    SDLFunc("SDL_FreeAudioStream", [_P(SDL_AudioStream)], added='2.0.7'),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetNumAudioDrivers = _ctypes["SDL_GetNumAudioDrivers"]
+SDL_GetAudioDriver = _ctypes["SDL_GetAudioDriver"]
+SDL_AudioInit = _ctypes["SDL_AudioInit"]
+SDL_AudioQuit = _ctypes["SDL_AudioQuit"]
+SDL_GetCurrentAudioDriver = _ctypes["SDL_GetCurrentAudioDriver"]
+SDL_OpenAudio = _ctypes["SDL_OpenAudio"]
+SDL_GetNumAudioDevices = _ctypes["SDL_GetNumAudioDevices"]
+SDL_GetAudioDeviceName = _ctypes["SDL_GetAudioDeviceName"]
+SDL_GetAudioDeviceSpec = _ctypes["SDL_GetAudioDeviceSpec"]
+SDL_OpenAudioDevice = _ctypes["SDL_OpenAudioDevice"]
+SDL_GetAudioStatus = _ctypes["SDL_GetAudioStatus"]
+SDL_GetAudioDeviceStatus = _ctypes["SDL_GetAudioDeviceStatus"]
+SDL_PauseAudio = _ctypes["SDL_PauseAudio"]
+SDL_PauseAudioDevice = _ctypes["SDL_PauseAudioDevice"]
+SDL_LoadWAV_RW = _ctypes["SDL_LoadWAV_RW"]
 SDL_LoadWAV = lambda f, s, ab, al: SDL_LoadWAV_RW(SDL_RWFromFile(f, b"rb"), 1, s, ab , al)
-SDL_FreeWAV = _bind("SDL_FreeWAV", [_P(Uint8)])
-SDL_BuildAudioCVT = _bind("SDL_BuildAudioCVT", [_P(SDL_AudioCVT), SDL_AudioFormat, Uint8, c_int, SDL_AudioFormat, Uint8, c_int], c_int)
-SDL_ConvertAudio = _bind("SDL_ConvertAudio", [_P(SDL_AudioCVT)], c_int)
-SDL_MixAudio = _bind("SDL_MixAudio", [_P(Uint8), _P(Uint8), Uint32, c_int])
-SDL_MixAudioFormat = _bind("SDL_MixAudioFormat", [_P(Uint8), _P(Uint8), SDL_AudioFormat, Uint32, c_int])
-SDL_LockAudio = _bind("SDL_LockAudio")
-SDL_LockAudioDevice = _bind("SDL_LockAudioDevice", [SDL_AudioDeviceID])
-SDL_UnlockAudio = _bind("SDL_UnlockAudio")
-SDL_UnlockAudioDevice = _bind("SDL_UnlockAudioDevice", [SDL_AudioDeviceID])
-SDL_CloseAudio = _bind("SDL_CloseAudio")
-SDL_CloseAudioDevice = _bind("SDL_CloseAudioDevice", [SDL_AudioDeviceID])
-SDL_QueueAudio = _bind("SDL_QueueAudio", [SDL_AudioDeviceID, c_void_p, Uint32], c_int, added='2.0.4')
-SDL_DequeueAudio = _bind("SDL_DequeueAudio", [SDL_AudioDeviceID, c_void_p, Uint32], Uint32, added='2.0.5')
-SDL_GetQueuedAudioSize = _bind("SDL_GetQueuedAudioSize", [SDL_AudioDeviceID], Uint32, added='2.0.4')
-SDL_ClearQueuedAudio = _bind("SDL_ClearQueuedAudio", [SDL_AudioDeviceID], added='2.0.4')
-SDL_NewAudioStream = _bind("SDL_NewAudioStream", [SDL_AudioFormat, Uint8, c_int, SDL_AudioFormat, Uint8, c_int], _P(SDL_AudioStream), added='2.0.7')
-SDL_AudioStreamPut = _bind("SDL_AudioStreamPut", [_P(SDL_AudioStream), c_void_p, c_int], c_int, added='2.0.7')
-SDL_AudioStreamGet = _bind("SDL_AudioStreamGet", [_P(SDL_AudioStream), c_void_p, c_int], c_int, added='2.0.7')
-SDL_AudioStreamAvailable = _bind("SDL_AudioStreamAvailable", [_P(SDL_AudioStream)], c_int, added='2.0.7')
-SDL_AudioStreamClear = _bind("SDL_AudioStreamClear", [_P(SDL_AudioStream)], added='2.0.7')
-SDL_FreeAudioStream = _bind("SDL_FreeAudioStream", [_P(SDL_AudioStream)], added='2.0.7')
+SDL_FreeWAV = _ctypes["SDL_FreeWAV"]
+SDL_BuildAudioCVT = _ctypes["SDL_BuildAudioCVT"]
+SDL_ConvertAudio = _ctypes["SDL_ConvertAudio"]
+SDL_MixAudio = _ctypes["SDL_MixAudio"]
+SDL_MixAudioFormat = _ctypes["SDL_MixAudioFormat"]
+SDL_LockAudio = _ctypes["SDL_LockAudio"]
+SDL_LockAudioDevice = _ctypes["SDL_LockAudioDevice"]
+SDL_UnlockAudio = _ctypes["SDL_UnlockAudio"]
+SDL_UnlockAudioDevice = _ctypes["SDL_UnlockAudioDevice"]
+SDL_CloseAudio = _ctypes["SDL_CloseAudio"]
+SDL_CloseAudioDevice = _ctypes["SDL_CloseAudioDevice"]
+SDL_QueueAudio = _ctypes["SDL_QueueAudio"]
+SDL_DequeueAudio = _ctypes["SDL_DequeueAudio"]
+SDL_GetQueuedAudioSize = _ctypes["SDL_GetQueuedAudioSize"]
+SDL_ClearQueuedAudio = _ctypes["SDL_ClearQueuedAudio"]
+SDL_NewAudioStream = _ctypes["SDL_NewAudioStream"]
+SDL_AudioStreamPut = _ctypes["SDL_AudioStreamPut"]
+SDL_AudioStreamGet = _ctypes["SDL_AudioStreamGet"]
+SDL_AudioStreamAvailable = _ctypes["SDL_AudioStreamAvailable"]
+SDL_AudioStreamClear = _ctypes["SDL_AudioStreamClear"]
+SDL_FreeAudioStream = _ctypes["SDL_FreeAudioStream"]

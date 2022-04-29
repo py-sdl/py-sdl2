@@ -3,7 +3,7 @@ from ctypes import (
     Union, Structure
 )
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .dll import version as sdl_version
 from .stdinc import SDL_bool, Uint8, Uint32
 from .version import SDL_version
@@ -239,5 +239,16 @@ class SDL_SysWMinfo(Structure):
     ]
 
 
+# Raw ctypes function definitions
 
-SDL_GetWindowWMInfo = _bind("SDL_GetWindowWMInfo", [_P(SDL_Window), _P(SDL_SysWMinfo)], SDL_bool)
+_funcdefs = [
+    SDLFunc("SDL_GetWindowWMInfo", [_P(SDL_Window), _P(SDL_SysWMinfo)], SDL_bool),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetWindowWMInfo = _ctypes["SDL_GetWindowWMInfo"]

@@ -1,6 +1,6 @@
 from ctypes import Structure, c_int, c_char_p, c_float
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .dll import version as sdl_version
 from .endian import SDL_BYTEORDER, SDL_BIG_ENDIAN, SDL_LIL_ENDIAN
 from .stdinc import Uint8, Uint16, Uint32, SDL_bool
@@ -525,18 +525,48 @@ SDL_PixelFormat._fields_ = [
 ]
 
 
+# Raw ctypes function definitions
 
-SDL_GetPixelFormatName = _bind("SDL_GetPixelFormatName", [Uint32], c_char_p)
-SDL_PixelFormatEnumToMasks = _bind("SDL_PixelFormatEnumToMasks", [Uint32, _P(c_int), _P(Uint32), _P(Uint32), _P(Uint32), _P(Uint32)], SDL_bool)
-SDL_MasksToPixelFormatEnum = _bind("SDL_MasksToPixelFormatEnum", [c_int, Uint32, Uint32, Uint32, Uint32], Uint32)
-SDL_AllocFormat = _bind("SDL_AllocFormat", [Uint32], _P(SDL_PixelFormat))
-SDL_FreeFormat = _bind("SDL_FreeFormat", [_P(SDL_PixelFormat)])
-SDL_AllocPalette = _bind("SDL_AllocPalette", [c_int], _P(SDL_Palette))
-SDL_SetPixelFormatPalette = _bind("SDL_SetPixelFormatPalette", [_P(SDL_PixelFormat), _P(SDL_Palette)], c_int)
-SDL_SetPaletteColors = _bind("SDL_SetPaletteColors", [_P(SDL_Palette), _P(SDL_Color), c_int, c_int], c_int)
-SDL_FreePalette = _bind("SDL_FreePalette", [_P(SDL_Palette)])
-SDL_MapRGB = _bind("SDL_MapRGB", [_P(SDL_PixelFormat), Uint8, Uint8, Uint8], Uint32)
-SDL_MapRGBA = _bind("SDL_MapRGBA", [_P(SDL_PixelFormat), Uint8, Uint8, Uint8, Uint8], Uint32)
-SDL_GetRGB = _bind("SDL_GetRGB", [Uint32, _P(SDL_PixelFormat), _P(Uint8), _P(Uint8), _P(Uint8)])
-SDL_GetRGBA = _bind("SDL_GetRGBA", [Uint32, _P(SDL_PixelFormat), _P(Uint8), _P(Uint8), _P(Uint8), _P(Uint8)])
-SDL_CalculateGammaRamp = _bind("SDL_CalculateGammaRamp", [c_float, _P(Uint16)])
+_funcdefs = [
+    SDLFunc("SDL_GetPixelFormatName", [Uint32], c_char_p),
+    SDLFunc("SDL_PixelFormatEnumToMasks",
+        [Uint32, _P(c_int), _P(Uint32), _P(Uint32), _P(Uint32), _P(Uint32)],
+        returns = SDL_bool
+    ),
+    SDLFunc("SDL_MasksToPixelFormatEnum", [c_int, Uint32, Uint32, Uint32, Uint32], Uint32),
+    SDLFunc("SDL_AllocFormat", [Uint32], _P(SDL_PixelFormat)),
+    SDLFunc("SDL_FreeFormat", [_P(SDL_PixelFormat)]),
+    SDLFunc("SDL_AllocPalette", [c_int], _P(SDL_Palette)),
+    SDLFunc("SDL_SetPixelFormatPalette", [_P(SDL_PixelFormat), _P(SDL_Palette)], c_int),
+    SDLFunc("SDL_SetPaletteColors", [_P(SDL_Palette), _P(SDL_Color), c_int, c_int], c_int),
+    SDLFunc("SDL_FreePalette", [_P(SDL_Palette)]),
+    SDLFunc("SDL_MapRGB", [_P(SDL_PixelFormat), Uint8, Uint8, Uint8], Uint32),
+    SDLFunc("SDL_MapRGBA", [_P(SDL_PixelFormat), Uint8, Uint8, Uint8, Uint8], Uint32),
+    SDLFunc("SDL_GetRGB", [Uint32, _P(SDL_PixelFormat), _P(Uint8), _P(Uint8), _P(Uint8)]),
+    SDLFunc("SDL_GetRGBA",
+        [Uint32, _P(SDL_PixelFormat), _P(Uint8), _P(Uint8), _P(Uint8), _P(Uint8)],
+        returns = None
+    ),
+    SDLFunc("SDL_CalculateGammaRamp", [c_float, _P(Uint16)]),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetPixelFormatName = _ctypes["SDL_GetPixelFormatName"]
+SDL_PixelFormatEnumToMasks = _ctypes["SDL_PixelFormatEnumToMasks"]
+SDL_MasksToPixelFormatEnum = _ctypes["SDL_MasksToPixelFormatEnum"]
+SDL_AllocFormat = _ctypes["SDL_AllocFormat"]
+SDL_FreeFormat = _ctypes["SDL_FreeFormat"]
+SDL_AllocPalette = _ctypes["SDL_AllocPalette"]
+SDL_SetPixelFormatPalette = _ctypes["SDL_SetPixelFormatPalette"]
+SDL_SetPaletteColors = _ctypes["SDL_SetPaletteColors"]
+SDL_FreePalette = _ctypes["SDL_FreePalette"]
+SDL_MapRGB = _ctypes["SDL_MapRGB"]
+SDL_MapRGBA = _ctypes["SDL_MapRGBA"]
+SDL_GetRGB = _ctypes["SDL_GetRGB"]
+SDL_GetRGBA = _ctypes["SDL_GetRGBA"]
+SDL_CalculateGammaRamp = _ctypes["SDL_CalculateGammaRamp"]

@@ -1,6 +1,6 @@
 from ctypes import Structure, c_float, c_int
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Sint64
 
 __all__ = [
@@ -50,9 +50,24 @@ class SDL_Finger(Structure):
     ]
 
 
+# Raw ctypes function definitions
 
-SDL_GetNumTouchDevices = _bind("SDL_GetNumTouchDevices", None, c_int)
-SDL_GetTouchDevice = _bind("SDL_GetTouchDevice", [c_int], SDL_TouchID)
-SDL_GetTouchDeviceType = _bind("SDL_GetTouchDeviceType", [SDL_TouchID], SDL_TouchDeviceType, added='2.0.10')
-SDL_GetNumTouchFingers = _bind("SDL_GetNumTouchFingers", [SDL_TouchID], c_int)
-SDL_GetTouchFinger = _bind("SDL_GetTouchFinger", [SDL_TouchID, c_int], _P(SDL_Finger))
+_funcdefs = [
+    SDLFunc("SDL_GetNumTouchDevices", None, c_int),
+    SDLFunc("SDL_GetTouchDevice", [c_int], SDL_TouchID),
+    SDLFunc("SDL_GetTouchDeviceType", [SDL_TouchID], SDL_TouchDeviceType, added='2.0.10'),
+    SDLFunc("SDL_GetNumTouchFingers", [SDL_TouchID], c_int),
+    SDLFunc("SDL_GetTouchFinger", [SDL_TouchID, c_int], _P(SDL_Finger)),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetNumTouchDevices = _ctypes["SDL_GetNumTouchDevices"]
+SDL_GetTouchDevice = _ctypes["SDL_GetTouchDevice"]
+SDL_GetTouchDeviceType = _ctypes["SDL_GetTouchDeviceType"]
+SDL_GetNumTouchFingers = _ctypes["SDL_GetNumTouchFingers"]
+SDL_GetTouchFinger = _ctypes["SDL_GetTouchFinger"]

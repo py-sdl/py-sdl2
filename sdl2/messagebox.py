@@ -1,6 +1,6 @@
 from ctypes import Structure, c_int, c_char_p
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Uint8, Uint32
 from .video import SDL_Window
 
@@ -75,6 +75,18 @@ class SDL_MessageBoxData(Structure):
     ]
 
 
+# Raw ctypes function definitions
 
-SDL_ShowMessageBox = _bind("SDL_ShowMessageBox", [_P(SDL_MessageBoxData), _P(c_int)], c_int)
-SDL_ShowSimpleMessageBox = _bind("SDL_ShowSimpleMessageBox", [Uint32, c_char_p, c_char_p, _P(SDL_Window)], c_int)
+_funcdefs = [
+    SDLFunc("SDL_ShowMessageBox", [_P(SDL_MessageBoxData), _P(c_int)], c_int),
+    SDLFunc("SDL_ShowSimpleMessageBox", [Uint32, c_char_p, c_char_p, _P(SDL_Window)], c_int),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_ShowMessageBox = _ctypes["SDL_ShowMessageBox"]
+SDL_ShowSimpleMessageBox = _ctypes["SDL_ShowSimpleMessageBox"]

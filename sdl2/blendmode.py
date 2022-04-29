@@ -1,5 +1,5 @@
 from ctypes import c_int
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 
 __all__ = [
     # Enums
@@ -54,4 +54,20 @@ SDL_BLENDFACTOR_DST_ALPHA           = 0x9
 SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA = 0xA
 
 
-SDL_ComposeCustomBlendMode = _bind("SDL_ComposeCustomBlendMode", [SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation, SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation], SDL_BlendMode, added='2.0.6')
+# Raw ctypes function definitions
+
+_funcdefs = [
+    SDLFunc("SDL_ComposeCustomBlendMode",
+        args = [SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation, SDL_BlendFactor,
+                SDL_BlendFactor, SDL_BlendOperation],
+        returns = SDL_BlendMode, added = '2.0.6'
+    ),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_ComposeCustomBlendMode = _ctypes["SDL_ComposeCustomBlendMode"]

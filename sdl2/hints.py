@@ -1,5 +1,5 @@
 from ctypes import CFUNCTYPE, c_int, c_char_p, c_void_p
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import SDL_bool
 
 __all__ = [
@@ -273,12 +273,33 @@ SDL_HINT_NORMAL = 1
 SDL_HINT_OVERRIDE = 2
 
 
+# Callback function definitions
 
-SDL_SetHintWithPriority = _bind("SDL_SetHintWithPriority", [c_char_p, c_char_p, SDL_HintPriority], SDL_bool)
-SDL_SetHint = _bind("SDL_SetHint", [c_char_p, c_char_p], SDL_bool)
-SDL_GetHint = _bind("SDL_GetHint", [c_char_p], c_char_p)
-SDL_GetHintBoolean = _bind("SDL_GetHintBoolean", [c_char_p, SDL_bool], SDL_bool, added='2.0.5')
-SDL_ClearHints = _bind("SDL_ClearHints")
 SDL_HintCallback = CFUNCTYPE(None, c_void_p, c_char_p, c_char_p, c_char_p)
-SDL_AddHintCallback = _bind("SDL_AddHintCallback", [c_char_p, SDL_HintCallback, c_void_p])
-SDL_DelHintCallback = _bind("SDL_DelHintCallback",[c_char_p, SDL_HintCallback, c_void_p])
+
+
+# Raw ctypes function definitions
+
+_funcdefs = [
+    SDLFunc("SDL_SetHintWithPriority", [c_char_p, c_char_p, SDL_HintPriority], SDL_bool),
+    SDLFunc("SDL_SetHint", [c_char_p, c_char_p], SDL_bool),
+    SDLFunc("SDL_GetHint", [c_char_p], c_char_p),
+    SDLFunc("SDL_GetHintBoolean", [c_char_p, SDL_bool], SDL_bool, added='2.0.5'),
+    SDLFunc("SDL_ClearHints"),
+    SDLFunc("SDL_AddHintCallback", [c_char_p, SDL_HintCallback, c_void_p]),
+    SDLFunc("SDL_DelHintCallback",[c_char_p, SDL_HintCallback, c_void_p]),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_SetHintWithPriority = _ctypes["SDL_SetHintWithPriority"]
+SDL_SetHint = _ctypes["SDL_SetHint"]
+SDL_GetHint = _ctypes["SDL_GetHint"]
+SDL_GetHintBoolean = _ctypes["SDL_GetHintBoolean"]
+SDL_ClearHints = _ctypes["SDL_ClearHints"]
+SDL_AddHintCallback = _ctypes["SDL_AddHintCallback"]
+SDL_DelHintCallback = _ctypes["SDL_DelHintCallback"]

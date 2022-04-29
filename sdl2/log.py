@@ -1,6 +1,6 @@
 from ctypes import c_int, c_char_p, c_void_p, CFUNCTYPE
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 
 __all__ = [
     # Defines
@@ -74,20 +74,48 @@ SDL_LOG_PRIORITY_CRITICAL = 6
 SDL_NUM_LOG_PRIORITIES = 7
 
 
+# Callback function definitions
 
-SDL_LogSetAllPriority = _bind("SDL_LogSetAllPriority", [SDL_LogPriority])
-SDL_LogSetPriority = _bind("SDL_LogSetPriority", [c_int, SDL_LogPriority])
-SDL_LogGetPriority = _bind("SDL_LogGetPriority", [c_int], SDL_LogPriority)
-SDL_LogResetPriorities = _bind("SDL_LogResetPriorities")
-SDL_Log = _bind("SDL_Log", [c_char_p])
-SDL_LogVerbose = _bind("SDL_LogVerbose", [c_int, c_char_p])
-SDL_LogDebug = _bind("SDL_LogDebug", [c_int, c_char_p])
-SDL_LogInfo = _bind("SDL_LogInfo", [c_int, c_char_p])
-SDL_LogWarn = _bind("SDL_LogWarn", [c_int, c_char_p])
-SDL_LogError = _bind("SDL_LogError", [c_int, c_char_p])
-SDL_LogCritical = _bind("SDL_LogCritical", [c_int, c_char_p])
-SDL_LogMessage = _bind("SDL_LogMessage", [c_int, SDL_LogPriority, c_char_p])
-# TODO: do we want SDL_LogMessageV?
 SDL_LogOutputFunction = CFUNCTYPE(None, c_void_p, c_int, SDL_LogPriority, c_char_p)
-SDL_LogGetOutputFunction = _bind("SDL_LogGetOutputFunction", [_P(SDL_LogOutputFunction), c_void_p])
-SDL_LogSetOutputFunction = _bind("SDL_LogSetOutputFunction", [SDL_LogOutputFunction, c_void_p])
+
+
+# Raw ctypes function definitions
+
+# TODO: do we want SDL_LogMessageV?
+_funcdefs = [
+    SDLFunc("SDL_LogSetAllPriority", [SDL_LogPriority]),
+    SDLFunc("SDL_LogSetPriority", [c_int, SDL_LogPriority]),
+    SDLFunc("SDL_LogGetPriority", [c_int], SDL_LogPriority),
+    SDLFunc("SDL_LogResetPriorities"),
+    SDLFunc("SDL_Log", [c_char_p]),
+    SDLFunc("SDL_LogVerbose", [c_int, c_char_p]),
+    SDLFunc("SDL_LogDebug", [c_int, c_char_p]),
+    SDLFunc("SDL_LogInfo", [c_int, c_char_p]),
+    SDLFunc("SDL_LogWarn", [c_int, c_char_p]),
+    SDLFunc("SDL_LogError", [c_int, c_char_p]),
+    SDLFunc("SDL_LogCritical", [c_int, c_char_p]),
+    SDLFunc("SDL_LogMessage", [c_int, SDL_LogPriority, c_char_p]),
+    SDLFunc("SDL_LogGetOutputFunction", [_P(SDL_LogOutputFunction), c_void_p]),
+    SDLFunc("SDL_LogSetOutputFunction", [SDL_LogOutputFunction, c_void_p]),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_LogSetAllPriority = _ctypes["SDL_LogSetAllPriority"]
+SDL_LogSetPriority = _ctypes["SDL_LogSetPriority"]
+SDL_LogGetPriority = _ctypes["SDL_LogGetPriority"]
+SDL_LogResetPriorities = _ctypes["SDL_LogResetPriorities"]
+SDL_Log = _ctypes["SDL_Log"]
+SDL_LogVerbose = _ctypes["SDL_LogVerbose"]
+SDL_LogDebug = _ctypes["SDL_LogDebug"]
+SDL_LogInfo = _ctypes["SDL_LogInfo"]
+SDL_LogWarn = _ctypes["SDL_LogWarn"]
+SDL_LogError = _ctypes["SDL_LogError"]
+SDL_LogCritical = _ctypes["SDL_LogCritical"]
+SDL_LogMessage = _ctypes["SDL_LogMessage"]
+SDL_LogGetOutputFunction = _ctypes["SDL_LogGetOutputFunction"]
+SDL_LogSetOutputFunction = _ctypes["SDL_LogSetOutputFunction"]

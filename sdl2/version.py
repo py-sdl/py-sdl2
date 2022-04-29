@@ -1,6 +1,6 @@
 from ctypes import Structure, c_char_p, c_int
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Uint8
 
 __all__ = [
@@ -45,7 +45,20 @@ class SDL_version(Structure):
     ]
 
 
+# Raw ctypes function definitions
 
-SDL_GetVersion = _bind("SDL_GetVersion", [_P(SDL_version)])
-SDL_GetRevision = _bind("SDL_GetRevision", None, c_char_p)
-SDL_GetRevisionNumber = _bind("SDL_GetRevisionNumber", None, c_int) # Deprecated as of 2.0.16, add warning?
+_funcdefs = [
+    SDLFunc("SDL_GetVersion", [_P(SDL_version)]),
+    SDLFunc("SDL_GetRevision", None, c_char_p),
+    SDLFunc("SDL_GetRevisionNumber", None, c_int),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetVersion = _ctypes["SDL_GetVersion"]
+SDL_GetRevision = _ctypes["SDL_GetRevision"]
+SDL_GetRevisionNumber = _ctypes["SDL_GetRevisionNumber"] # Deprecated as of 2.0.16, add warning?

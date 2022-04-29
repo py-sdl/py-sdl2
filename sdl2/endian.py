@@ -54,7 +54,7 @@ if SDL_BYTEORDER == SDL_LIL_ENDIAN:
     SDL_SwapBE16 = SDL_Swap16
     SDL_SwapBE32 = SDL_Swap32
     SDL_SwapBE64 = SDL_Swap64
-    SDL_SwapFloatBE = SDL_SwapFloats
+    SDL_SwapFloatBE = SDL_SwapFloat
 else:
     SDL_SwapLE16 = SDL_Swap16
     SDL_SwapLE32 = SDL_Swap32

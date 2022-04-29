@@ -3,7 +3,7 @@ from ctypes import (
 )
 from ctypes import POINTER as _P
 from .dll import version as sdl_version
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Sint16, Sint32, Uint8, Uint16, Uint32, SDL_bool
 from .keyboard import SDL_Keysym
 from .joystick import SDL_JoystickID
@@ -501,25 +501,57 @@ class SDL_Event(Union):
     ]
 
 
-SDL_PumpEvents = _bind("SDL_PumpEvents")
-SDL_PeepEvents = _bind("SDL_PeepEvents", [_P(SDL_Event), c_int, SDL_eventaction, Uint32, Uint32], c_int)
-SDL_HasEvent = _bind("SDL_HasEvent", [Uint32], SDL_bool)
-SDL_HasEvents = _bind("SDL_HasEvents", [Uint32, Uint32], SDL_bool)
-SDL_FlushEvent = _bind("SDL_FlushEvent", [Uint32])
-SDL_FlushEvents = _bind("SDL_FlushEvents", [Uint32, Uint32])
-SDL_PollEvent = _bind("SDL_PollEvent", [_P(SDL_Event)], c_int)
-SDL_WaitEvent = _bind("SDL_WaitEvent", [_P(SDL_Event)], c_int)
-SDL_WaitEventTimeout = _bind("SDL_WaitEventTimeout", [_P(SDL_Event), c_int], c_int)
-SDL_PushEvent = _bind("SDL_PushEvent", [_P(SDL_Event)], c_int)
+# Callback function definitions
+
 SDL_EventFilter = CFUNCTYPE(c_int, c_void_p, _P(SDL_Event))
-SDL_SetEventFilter = _bind("SDL_SetEventFilter", [SDL_EventFilter, c_void_p])
-SDL_GetEventFilter = _bind("SDL_GetEventFilter", [_P(SDL_EventFilter), _P(c_void_p)], SDL_bool)
-SDL_AddEventWatch = _bind("SDL_AddEventWatch", [SDL_EventFilter, c_void_p])
-SDL_DelEventWatch = _bind("SDL_DelEventWatch", [SDL_EventFilter, c_void_p])
-SDL_FilterEvents = _bind("SDL_FilterEvents", [SDL_EventFilter, c_void_p])
-SDL_EventState = _bind("SDL_EventState", [Uint32, c_int], Uint8)
+
+
+# Raw ctypes function definitions
+
+_funcdefs = [
+    SDLFunc("SDL_PumpEvents"),
+    SDLFunc("SDL_PeepEvents", [_P(SDL_Event), c_int, SDL_eventaction, Uint32, Uint32], c_int),
+    SDLFunc("SDL_HasEvent", [Uint32], SDL_bool),
+    SDLFunc("SDL_HasEvents", [Uint32, Uint32], SDL_bool),
+    SDLFunc("SDL_FlushEvent", [Uint32]),
+    SDLFunc("SDL_FlushEvents", [Uint32, Uint32]),
+    SDLFunc("SDL_PollEvent", [_P(SDL_Event)], c_int),
+    SDLFunc("SDL_WaitEvent", [_P(SDL_Event)], c_int),
+    SDLFunc("SDL_WaitEventTimeout", [_P(SDL_Event), c_int], c_int),
+    SDLFunc("SDL_PushEvent", [_P(SDL_Event)], c_int),
+    SDLFunc("SDL_SetEventFilter", [SDL_EventFilter, c_void_p]),
+    SDLFunc("SDL_GetEventFilter", [_P(SDL_EventFilter), _P(c_void_p)], SDL_bool),
+    SDLFunc("SDL_AddEventWatch", [SDL_EventFilter, c_void_p]),
+    SDLFunc("SDL_DelEventWatch", [SDL_EventFilter, c_void_p]),
+    SDLFunc("SDL_FilterEvents", [SDL_EventFilter, c_void_p]),
+    SDLFunc("SDL_EventState", [Uint32, c_int], Uint8),
+    SDLFunc("SDL_RegisterEvents", [c_int], Uint32),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_PumpEvents = _ctypes["SDL_PumpEvents"]
+SDL_PeepEvents = _ctypes["SDL_PeepEvents"]
+SDL_HasEvent = _ctypes["SDL_HasEvent"]
+SDL_HasEvents = _ctypes["SDL_HasEvents"]
+SDL_FlushEvent = _ctypes["SDL_FlushEvent"]
+SDL_FlushEvents = _ctypes["SDL_FlushEvents"]
+SDL_PollEvent = _ctypes["SDL_PollEvent"]
+SDL_WaitEvent = _ctypes["SDL_WaitEvent"]
+SDL_WaitEventTimeout = _ctypes["SDL_WaitEventTimeout"]
+SDL_PushEvent = _ctypes["SDL_PushEvent"]
+SDL_SetEventFilter = _ctypes["SDL_SetEventFilter"]
+SDL_GetEventFilter = _ctypes["SDL_GetEventFilter"]
+SDL_AddEventWatch = _ctypes["SDL_AddEventWatch"]
+SDL_DelEventWatch = _ctypes["SDL_DelEventWatch"]
+SDL_FilterEvents = _ctypes["SDL_FilterEvents"]
+SDL_EventState = _ctypes["SDL_EventState"]
 SDL_GetEventState = lambda t: SDL_EventState(t, SDL_QUERY)
-SDL_RegisterEvents = _bind("SDL_RegisterEvents", [c_int], Uint32)
+SDL_RegisterEvents = _ctypes["SDL_RegisterEvents"]
 
 
 # SDL_quit.h

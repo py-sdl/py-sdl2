@@ -1,5 +1,5 @@
 from ctypes import c_int, c_size_t, c_void_p
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import SDL_bool
 
 __all__ = [
@@ -21,25 +21,56 @@ __all__ = [
 SDL_CACHELINE_SIZE = 128
 
 
+# Raw ctypes function definitions
 
-SDL_GetCPUCount = _bind("SDL_GetCPUCount", None, c_int)
-SDL_GetCPUCacheLineSize = _bind("SDL_GetCPUCacheLineSize", None, c_int)
-SDL_HasRDTSC = _bind("SDL_HasRDTSC", None, SDL_bool)
-SDL_HasAltiVec = _bind("SDL_HasAltiVec", None, SDL_bool)
-SDL_HasMMX = _bind("SDL_HasMMX", None, SDL_bool)
-SDL_Has3DNow = _bind("SDL_Has3DNow", None, SDL_bool)
-SDL_HasSSE = _bind("SDL_HasSSE", None, SDL_bool)
-SDL_HasSSE2 = _bind("SDL_HasSSE2", None, SDL_bool)
-SDL_HasSSE3 = _bind("SDL_HasSSE3", None, SDL_bool)
-SDL_HasSSE41 = _bind("SDL_HasSSE41", None, SDL_bool)
-SDL_HasSSE42 = _bind("SDL_HasSSE42", None, SDL_bool)
-SDL_GetSystemRAM = _bind("SDL_GetSystemRAM", None, c_int)
-SDL_HasAVX = _bind("SDL_HasAVX", None, SDL_bool)
-SDL_HasAVX2 = _bind("SDL_HasAVX2", None, SDL_bool, added='2.0.4')
-SDL_HasAVX512F = _bind("SDL_HasAVX512F", None, SDL_bool, added='2.0.9')
-SDL_HasARMSIMD = _bind("SDL_HasARMSIMD", None, SDL_bool, added='2.0.12')
-SDL_HasNEON = _bind("SDL_HasNEON", None, SDL_bool, added='2.0.6')
-SDL_SIMDGetAlignment = _bind("SDL_SIMDGetAlignment", None, c_size_t, added='2.0.10')
-SDL_SIMDAlloc = _bind("SDL_SIMDAlloc", [c_size_t], c_void_p, added='2.0.10')
-SDL_SIMDRealloc = _bind("SDL_SIMDRealloc", [c_void_p, c_size_t], c_void_p, added='2.0.14')
-SDL_SIMDFree = _bind("SDL_SIMDFree", [c_void_p], None, added='2.0.10')
+_funcdefs = [
+    SDLFunc("SDL_GetCPUCount", None, c_int),
+    SDLFunc("SDL_GetCPUCacheLineSize", None, c_int),
+    SDLFunc("SDL_HasRDTSC", None, SDL_bool),
+    SDLFunc("SDL_HasAltiVec", None, SDL_bool),
+    SDLFunc("SDL_HasMMX", None, SDL_bool),
+    SDLFunc("SDL_Has3DNow", None, SDL_bool),
+    SDLFunc("SDL_HasSSE", None, SDL_bool),
+    SDLFunc("SDL_HasSSE2", None, SDL_bool),
+    SDLFunc("SDL_HasSSE3", None, SDL_bool),
+    SDLFunc("SDL_HasSSE41", None, SDL_bool),
+    SDLFunc("SDL_HasSSE42", None, SDL_bool),
+    SDLFunc("SDL_GetSystemRAM", None, c_int),
+    SDLFunc("SDL_HasAVX", None, SDL_bool),
+    SDLFunc("SDL_HasAVX2", None, SDL_bool, added='2.0.4'),
+    SDLFunc("SDL_HasAVX512F", None, SDL_bool, added='2.0.9'),
+    SDLFunc("SDL_HasARMSIMD", None, SDL_bool, added='2.0.12'),
+    SDLFunc("SDL_HasNEON", None, SDL_bool, added='2.0.6'),
+    SDLFunc("SDL_SIMDGetAlignment", None, c_size_t, added='2.0.10'),
+    SDLFunc("SDL_SIMDAlloc", [c_size_t], c_void_p, added='2.0.10'),
+    SDLFunc("SDL_SIMDRealloc", [c_void_p, c_size_t], c_void_p, added='2.0.14'),
+    SDLFunc("SDL_SIMDFree", [c_void_p], None, added='2.0.10'),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_GetCPUCount = _ctypes["SDL_GetCPUCount"]
+SDL_GetCPUCacheLineSize = _ctypes["SDL_GetCPUCacheLineSize"]
+SDL_HasRDTSC = _ctypes["SDL_HasRDTSC"]
+SDL_HasAltiVec = _ctypes["SDL_HasAltiVec"]
+SDL_HasMMX = _ctypes["SDL_HasMMX"]
+SDL_Has3DNow = _ctypes["SDL_Has3DNow"]
+SDL_HasSSE = _ctypes["SDL_HasSSE"]
+SDL_HasSSE2 = _ctypes["SDL_HasSSE2"]
+SDL_HasSSE3 = _ctypes["SDL_HasSSE3"]
+SDL_HasSSE41 = _ctypes["SDL_HasSSE41"]
+SDL_HasSSE42 = _ctypes["SDL_HasSSE42"]
+SDL_GetSystemRAM = _ctypes["SDL_GetSystemRAM"]
+SDL_HasAVX = _ctypes["SDL_HasAVX"]
+SDL_HasAVX2 = _ctypes["SDL_HasAVX2"]
+SDL_HasAVX512F = _ctypes["SDL_HasAVX512F"]
+SDL_HasARMSIMD = _ctypes["SDL_HasARMSIMD"]
+SDL_HasNEON = _ctypes["SDL_HasNEON"]
+SDL_SIMDGetAlignment = _ctypes["SDL_SIMDGetAlignment"]
+SDL_SIMDAlloc = _ctypes["SDL_SIMDAlloc"]
+SDL_SIMDRealloc = _ctypes["SDL_SIMDRealloc"]
+SDL_SIMDFree = _ctypes["SDL_SIMDFree"]

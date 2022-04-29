@@ -1,6 +1,6 @@
 from ctypes import c_int, c_uint, c_float, c_char_p, c_void_p, Structure, Union
 from ctypes import POINTER as _P
-from .dll import _bind
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Uint8, Uint16, Uint32, Sint16, Sint32
 from .joystick import SDL_Joystick
 
@@ -180,34 +180,74 @@ class SDL_HapticEffect(Union):
     ]
 
 
+# Raw ctypes function definitions
 
-SDL_NumHaptics = _bind("SDL_NumHaptics", None, c_int)
-SDL_HapticName = _bind("SDL_HapticName", [c_int], c_char_p)
-SDL_HapticOpen = _bind("SDL_HapticOpen", [c_int], _P(SDL_Haptic))
-SDL_HapticOpened = _bind("SDL_HapticOpened", [c_int], c_int)
-SDL_HapticIndex = _bind("SDL_HapticIndex", [_P(SDL_Haptic)], c_int)
-SDL_MouseIsHaptic = _bind("SDL_MouseIsHaptic", None, c_int)
-SDL_HapticOpenFromMouse = _bind("SDL_HapticOpenFromMouse", None, _P(SDL_Haptic))
-SDL_JoystickIsHaptic = _bind("SDL_JoystickIsHaptic", [_P(SDL_Joystick)], c_int)
-SDL_HapticOpenFromJoystick = _bind("SDL_HapticOpenFromJoystick", [_P(SDL_Joystick)], _P(SDL_Haptic))
-SDL_HapticClose = _bind("SDL_HapticClose", [_P(SDL_Haptic)])
-SDL_HapticNumEffects = _bind("SDL_HapticNumEffects", [_P(SDL_Haptic)], c_int)
-SDL_HapticNumEffectsPlaying = _bind("SDL_HapticNumEffectsPlaying", [_P(SDL_Haptic)], c_int)
-SDL_HapticQuery = _bind("SDL_HapticQuery", [_P(SDL_Haptic)], c_uint)
-SDL_HapticNumAxes = _bind("SDL_HapticNumAxes", [_P(SDL_Haptic)], c_int)
-SDL_HapticEffectSupported = _bind("SDL_HapticEffectSupported", [_P(SDL_Haptic), _P(SDL_HapticEffect)], c_int)
-SDL_HapticNewEffect = _bind("SDL_HapticNewEffect", [_P(SDL_Haptic), _P(SDL_HapticEffect)], c_int)
-SDL_HapticUpdateEffect = _bind("SDL_HapticUpdateEffect", [_P(SDL_Haptic), c_int, _P(SDL_HapticEffect)], c_int)
-SDL_HapticRunEffect = _bind("SDL_HapticRunEffect", [_P(SDL_Haptic), c_int, Uint32], c_int)
-SDL_HapticStopEffect = _bind("SDL_HapticStopEffect", [_P(SDL_Haptic), c_int], c_int)
-SDL_HapticDestroyEffect = _bind("SDL_HapticDestroyEffect", [_P(SDL_Haptic), c_int])
-SDL_HapticGetEffectStatus = _bind("SDL_HapticGetEffectStatus", [_P(SDL_Haptic), c_int], c_int)
-SDL_HapticSetGain = _bind("SDL_HapticSetGain", [_P(SDL_Haptic), c_int], c_int)
-SDL_HapticSetAutocenter = _bind("SDL_HapticSetAutocenter", [_P(SDL_Haptic), c_int], c_int)
-SDL_HapticPause = _bind("SDL_HapticPause", [_P(SDL_Haptic)], c_int)
-SDL_HapticUnpause = _bind("SDL_HapticUnpause", [_P(SDL_Haptic)], c_int)
-SDL_HapticStopAll = _bind("SDL_HapticStopAll", [_P(SDL_Haptic)], c_int)
-SDL_HapticRumbleSupported = _bind("SDL_HapticRumbleSupported", [_P(SDL_Haptic)], c_int)
-SDL_HapticRumbleInit = _bind("SDL_HapticRumbleInit", [_P(SDL_Haptic)], c_int)
-SDL_HapticRumblePlay = _bind("SDL_HapticRumblePlay", [_P(SDL_Haptic), c_float, Uint32], c_int)
-SDL_HapticRumbleStop = _bind("SDL_HapticRumbleStop", [_P(SDL_Haptic)], c_int)
+_funcdefs = [
+    SDLFunc("SDL_NumHaptics", None, c_int),
+    SDLFunc("SDL_HapticName", [c_int], c_char_p),
+    SDLFunc("SDL_HapticOpen", [c_int], _P(SDL_Haptic)),
+    SDLFunc("SDL_HapticOpened", [c_int], c_int),
+    SDLFunc("SDL_HapticIndex", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_MouseIsHaptic", None, c_int),
+    SDLFunc("SDL_HapticOpenFromMouse", None, _P(SDL_Haptic)),
+    SDLFunc("SDL_JoystickIsHaptic", [_P(SDL_Joystick)], c_int),
+    SDLFunc("SDL_HapticOpenFromJoystick", [_P(SDL_Joystick)], _P(SDL_Haptic)),
+    SDLFunc("SDL_HapticClose", [_P(SDL_Haptic)]),
+    SDLFunc("SDL_HapticNumEffects", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticNumEffectsPlaying", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticQuery", [_P(SDL_Haptic)], c_uint),
+    SDLFunc("SDL_HapticNumAxes", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticEffectSupported", [_P(SDL_Haptic), _P(SDL_HapticEffect)], c_int),
+    SDLFunc("SDL_HapticNewEffect", [_P(SDL_Haptic), _P(SDL_HapticEffect)], c_int),
+    SDLFunc("SDL_HapticUpdateEffect", [_P(SDL_Haptic), c_int, _P(SDL_HapticEffect)], c_int),
+    SDLFunc("SDL_HapticRunEffect", [_P(SDL_Haptic), c_int, Uint32], c_int),
+    SDLFunc("SDL_HapticStopEffect", [_P(SDL_Haptic), c_int], c_int),
+    SDLFunc("SDL_HapticDestroyEffect", [_P(SDL_Haptic), c_int]),
+    SDLFunc("SDL_HapticGetEffectStatus", [_P(SDL_Haptic), c_int], c_int),
+    SDLFunc("SDL_HapticSetGain", [_P(SDL_Haptic), c_int], c_int),
+    SDLFunc("SDL_HapticSetAutocenter", [_P(SDL_Haptic), c_int], c_int),
+    SDLFunc("SDL_HapticPause", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticUnpause", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticStopAll", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticRumbleSupported", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticRumbleInit", [_P(SDL_Haptic)], c_int),
+    SDLFunc("SDL_HapticRumblePlay", [_P(SDL_Haptic), c_float, Uint32], c_int),
+    SDLFunc("SDL_HapticRumbleStop", [_P(SDL_Haptic)], c_int),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+
+
+# Aliases for ctypes bindings
+
+SDL_NumHaptics = _ctypes["SDL_NumHaptics"]
+SDL_HapticName = _ctypes["SDL_HapticName"]
+SDL_HapticOpen = _ctypes["SDL_HapticOpen"]
+SDL_HapticOpened = _ctypes["SDL_HapticOpened"]
+SDL_HapticIndex = _ctypes["SDL_HapticIndex"]
+SDL_MouseIsHaptic = _ctypes["SDL_MouseIsHaptic"]
+SDL_HapticOpenFromMouse = _ctypes["SDL_HapticOpenFromMouse"]
+SDL_JoystickIsHaptic = _ctypes["SDL_JoystickIsHaptic"]
+SDL_HapticOpenFromJoystick = _ctypes["SDL_HapticOpenFromJoystick"]
+SDL_HapticClose = _ctypes["SDL_HapticClose"]
+SDL_HapticNumEffects = _ctypes["SDL_HapticNumEffects"]
+SDL_HapticNumEffectsPlaying = _ctypes["SDL_HapticNumEffectsPlaying"]
+SDL_HapticQuery = _ctypes["SDL_HapticQuery"]
+SDL_HapticNumAxes = _ctypes["SDL_HapticNumAxes"]
+SDL_HapticEffectSupported = _ctypes["SDL_HapticEffectSupported"]
+SDL_HapticNewEffect = _ctypes["SDL_HapticNewEffect"]
+SDL_HapticUpdateEffect = _ctypes["SDL_HapticUpdateEffect"]
+SDL_HapticRunEffect = _ctypes["SDL_HapticRunEffect"]
+SDL_HapticStopEffect = _ctypes["SDL_HapticStopEffect"]
+SDL_HapticDestroyEffect = _ctypes["SDL_HapticDestroyEffect"]
+SDL_HapticGetEffectStatus = _ctypes["SDL_HapticGetEffectStatus"]
+SDL_HapticSetGain = _ctypes["SDL_HapticSetGain"]
+SDL_HapticSetAutocenter = _ctypes["SDL_HapticSetAutocenter"]
+SDL_HapticPause = _ctypes["SDL_HapticPause"]
+SDL_HapticUnpause = _ctypes["SDL_HapticUnpause"]
+SDL_HapticStopAll = _ctypes["SDL_HapticStopAll"]
+SDL_HapticRumbleSupported = _ctypes["SDL_HapticRumbleSupported"]
+SDL_HapticRumbleInit = _ctypes["SDL_HapticRumbleInit"]
+SDL_HapticRumblePlay = _ctypes["SDL_HapticRumblePlay"]
+SDL_HapticRumbleStop = _ctypes["SDL_HapticRumbleStop"]
