@@ -43,7 +43,8 @@ ShapeModeColorKey = 3
 
 # Macros & inline functions
 
-SDL_SHAPEMODEALPHA = lambda mode: (mode == ShapeModeDefault or mode == ShapeModeBinarizeAlpha or mode == ShapeModeReverseBinarizeAlpha)
+def SDL_SHAPEMODEALPHA(mode):
+    return ShapeModeDefault <= mode <= ShapeModeReverseBinarizeAlpha
 
 
 # Struct definitions

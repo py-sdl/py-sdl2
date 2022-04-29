@@ -9,10 +9,11 @@ __all__ = [
     "SDL_UNSUPPORTED", "SDL_LASTERROR",
 
     # Macro Functions
-    "SDL_OutOfMemory", "SDL_Unsupported", "SDL_InvalidParamError", "SDL_Error",
+    "SDL_OutOfMemory", "SDL_Unsupported", "SDL_InvalidParamError",
 
     # Functions
-    "SDL_SetError", "SDL_GetError", "SDL_GetErrorMsg", "SDL_ClearError"
+    "SDL_SetError", "SDL_GetError", "SDL_GetErrorMsg", "SDL_ClearError",
+    "SDL_Error",
 ]
 
 
@@ -51,4 +52,6 @@ SDL_Error = _ctypes["SDL_Error"]
 
 SDL_OutOfMemory = SDL_Error(SDL_ENOMEM)
 SDL_Unsupported = SDL_Error(SDL_UNSUPPORTED)
-SDL_InvalidParamError = lambda x: SDL_SetError("Parameter '%s' is invalid" % (x))
+
+def SDL_InvalidParamError(x):
+    return SDL_SetError("Parameter '%s' is invalid" % (x))

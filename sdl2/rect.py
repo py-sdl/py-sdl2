@@ -140,11 +140,14 @@ class SDL_FRect(Structure):
 
 # Macro & inline functions
 
-SDL_RectEmpty = lambda x: ((not x) or (x.w <= 0) or (x.h <= 0))
-SDL_RectEquals = lambda a, b: ((a.x == b.x) and (a.y == b.y) and
-                               (a.w == b.w) and (a.h == b.h))
-SDL_PointInRect = lambda p, r: ((p.x >= r.x) and (p.x < (r.x + r.w)) and
-                                (p.y >= r.y) and (p.y < (r.y + r.h)))
+def SDL_RectEmpty(x):
+    return (not x) or (x.w <= 0) or (x.h <= 0)
+
+def SDL_RectEquals(a, b):
+    return (a.x == b.x) and (a.y == b.y) and (a.w == b.w) and (a.h == b.h)
+
+def SDL_PointInRect(p, r):
+    return (p.x >= r.x) and (p.x < (r.x+r.w)) and (p.y >= r.y) and (p.y < (r.y+r.h))
 
 
 # Raw ctypes function definitions
