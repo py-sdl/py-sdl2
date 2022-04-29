@@ -21,12 +21,16 @@ __all__ = [
 ]
 
 
+# Struct definitions
+
 class SDL_Keysym(Structure):
     _fields_ = [("scancode", SDL_Scancode),
                 ("sym", SDL_Keycode),
                 ("mod", Uint16),
                 ("unused", Uint32)
                 ]
+
+
 
 SDL_GetKeyboardFocus = _bind("SDL_GetKeyboardFocus", None, POINTER(SDL_Window))
 SDL_GetKeyboardState = _bind("SDL_GetKeyboardState", [POINTER(c_int)], POINTER(Uint8))

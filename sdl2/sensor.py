@@ -26,10 +26,7 @@ __all__ = [
 ]
 
 
-class SDL_Sensor(c_void_p):
-    pass
-
-SDL_SensorID = Uint32
+# Constants & enums
 
 SDL_SensorType = c_int
 SDL_SENSOR_INVALID = -1
@@ -38,6 +35,16 @@ SDL_SENSOR_ACCEL = 1
 SDL_SENSOR_GYRO = 2
 
 SDL_STANDARD_GRAVITY = 9.80665
+
+
+# Structs & typedefs
+
+SDL_SensorID = Uint32
+
+class SDL_Sensor(c_void_p):
+    pass
+
+
 
 SDL_LockSensors = _bind("SDL_LockSensors", None, None, added='2.0.14')
 SDL_UnlockSensors = _bind("SDL_UnlockSensors", None, None, added='2.0.14')

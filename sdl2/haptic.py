@@ -36,8 +36,7 @@ __all__ = [
 ]
 
 
-class SDL_Haptic(c_void_p):
-    pass
+# Constants & enums
 
 SDL_HAPTIC_CONSTANT = 1 << 0
 SDL_HAPTIC_SINE = 1 << 1
@@ -61,6 +60,12 @@ SDL_HAPTIC_SPHERICAL = 2
 SDL_HAPTIC_STEERING_AXIS = 3
 SDL_HAPTIC_INFINITY = 4294967295
 
+
+# Structs & opaque typedefs
+
+class SDL_Haptic(c_void_p):
+    pass
+
 class SDL_HapticDirection(Structure):
     _fields_ = [("type", Uint8), ("dir", (Sint32 * 3))]
 
@@ -77,7 +82,6 @@ class SDL_HapticConstant(Structure):
                 ("fade_length", Uint16),
                 ("fade_level", Uint16),
                 ]
-
 
 class SDL_HapticPeriodic(Structure):
     _fields_ = [("type", Uint16),
@@ -96,7 +100,6 @@ class SDL_HapticPeriodic(Structure):
                 ("fade_level", Uint16),
                 ]
 
-
 class SDL_HapticCondition(Structure):
     """A conditionally running effect."""
     _fields_ = [("type", Uint16),
@@ -112,7 +115,6 @@ class SDL_HapticCondition(Structure):
                 ("deadband", (Uint16 * 3)),
                 ("center", (Sint16 * 3)),
                 ]
-
 
 class SDL_HapticRamp(Structure):
     """A ramp-like effect."""
@@ -130,7 +132,6 @@ class SDL_HapticRamp(Structure):
                 ("fade_level", Uint16),
                 ]
 
-
 class SDL_HapticLeftRight(Structure):
     """A left-right effect."""
     _fields_ = [("type", Uint16),
@@ -138,7 +139,6 @@ class SDL_HapticLeftRight(Structure):
                 ("large_magnitude", Uint16),
                 ("small_magnitude", Uint16)
             ]
-
 
 class SDL_HapticCustom(Structure):
     """A custom effect."""
@@ -158,7 +158,6 @@ class SDL_HapticCustom(Structure):
                 ("fade_level", Uint16),
                 ]
 
-
 class SDL_HapticEffect(Union):
     """A generic haptic effect, containing the concrete haptic effect."""
     _fields_ = [("type", Uint16),
@@ -169,6 +168,8 @@ class SDL_HapticEffect(Union):
                 ("leftright", SDL_HapticLeftRight),
                 ("custom", SDL_HapticCustom),
                 ]
+
+
 
 SDL_NumHaptics = _bind("SDL_NumHaptics", None, c_int)
 SDL_HapticName = _bind("SDL_HapticName", [c_int], c_char_p)

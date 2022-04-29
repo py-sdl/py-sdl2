@@ -23,8 +23,9 @@ __all__ = [
 ]
 
 
-SDL_SYSWM_TYPE = c_int
+# Constants & enums
 
+SDL_SYSWM_TYPE = c_int
 SDL_SYSWM_UNKNOWN = 0
 SDL_SYSWM_WINDOWS = 1
 SDL_SYSWM_X11 = 2
@@ -41,6 +42,8 @@ SDL_SYSWM_HAIKU = 12
 SDL_SYSWM_KMSDRM = 13
 SDL_SYSWM_RISCOS = 14
 
+
+# Define the SDL_SysWMmsg struct and its OS-specific subcomponents
 
 # FIXME: Hack around the ctypes "_type_ 'v' not supported" bug - remove
 # once this has been fixed properly in Python 2.7+
@@ -66,22 +69,17 @@ class _winmsg(Structure):
 class _x11msg(Structure):
     _fields_ = [("event", c_void_p)]
 
-
 class _dfbmsg(Structure):
     _fields_ = [("event", c_void_p)]
-
 
 class _cocoamsg(Structure):
     _fields_ = [("dummy", c_int)]
 
-
 class _uikitmsg(Structure):
     _fields_ = [("dummy", c_int)]
 
-
 class _vivantemsg(Structure):
     _fields_ = [("dummy", c_int)]
-
 
 BOOL = c_int
 ULONG = Uint32
@@ -94,7 +92,6 @@ class _os2msg(Structure):
                 ("mp2", MPARAM),
                ]
 
-
 class _msg(Union):
     _fields_ = [("win", _winmsg),
                 ("x11", _x11msg),
@@ -106,13 +103,14 @@ class _msg(Union):
                 ("dummy", c_int)
                ]
 
-
 class SDL_SysWMmsg(Structure):
     _fields_ = [("version", SDL_version),
                 ("subsystem", SDL_SYSWM_TYPE),
                 ("msg", _msg)
                ]
 
+
+# Define the SDL_SysWMinfo struct and its OS-specific subcomponents
 
 class _wininfo(Structure):
     _fields_ = [("window", HWND),
@@ -123,12 +121,10 @@ class _wininfo(Structure):
 class _winrtinfo(Structure):
     _fields_ = [("window", c_void_p)]
 
-
 class _x11info(Structure):
     """Window information for X11."""
     _fields_ = [("display", c_void_p),
                 ("window", c_ulong)]
-
 
 class _dfbinfo(Structure):
     """Window information for DirectFB."""
@@ -136,11 +132,9 @@ class _dfbinfo(Structure):
                 ("window", c_void_p),
                 ("surface", c_void_p)]
 
-
 class _cocoainfo(Structure):
     """Window information for MacOS X."""
     _fields_ = [("window", c_void_p)]
-
 
 class _uikitinfo(Structure):
     """Window information for iOS."""
@@ -148,7 +142,6 @@ class _uikitinfo(Structure):
                 ("framebuffer", Uint32),
                 ("colorbuffer", Uint32),
                 ("resolveFramebuffer", Uint32)]
-
 
 _wl_fields = [
     ("display", c_void_p),
@@ -170,7 +163,6 @@ class _mir(Structure):
     """Window information for Mir."""
     _fields_ = [("connection", c_void_p),
                 ("surface", c_void_p)]
-
 
 class _android(Structure):
     """Window information for Android."""
@@ -210,7 +202,6 @@ class _info(Union):
                 ("dummy", (Uint8 * 64))
                ]
 
-
 class SDL_SysWMinfo(Structure):
     """System-specific window manager information.
 
@@ -220,5 +211,7 @@ class SDL_SysWMinfo(Structure):
                 ("subsystem", SDL_SYSWM_TYPE),
                 ("info", _info)
                ]
+
+
 
 SDL_GetWindowWMInfo = _bind("SDL_GetWindowWMInfo", [POINTER(SDL_Window), POINTER(SDL_SysWMinfo)], SDL_bool)

@@ -71,6 +71,12 @@ __all__ = [
 ]
 
 
+# Constants & enums
+
+SDL_RELEASED = 0
+SDL_PRESSED = 1
+
+SDL_EventType = c_int
 SDL_FIRSTEVENT = 0
 SDL_QUIT = 0x100
 SDL_APP_TERMINATING = 0x101
@@ -128,11 +134,22 @@ SDL_RENDER_DEVICE_RESET = 0x2001
 SDL_POLLSENTINEL = 0x7F00
 SDL_USEREVENT = 0x8000
 SDL_LASTEVENT = 0xFFFF
-SDL_EventType = c_int
 
-SDL_RELEASED = 0
-SDL_PRESSED = 1
+SDL_eventaction = c_int
+SDL_ADDEVENT = 0
+SDL_PEEKEVENT = 1
+SDL_GETEVENT = 2
 
+SDL_TEXTEDITINGEVENT_TEXT_SIZE = 32
+SDL_TEXTINPUTEVENT_TEXT_SIZE = 32
+
+SDL_QUERY = -1
+SDL_IGNORE = 0
+SDL_DISABLE = 0
+SDL_ENABLE = 1
+
+
+# Struct definintions
 
 class SDL_CommonEvent(Structure):
     _fields_ = [("type", Uint32), ("timestamp", Uint32)]
@@ -171,8 +188,6 @@ class SDL_KeyboardEvent(Structure):
                 ("keysym", SDL_Keysym)
                 ]
 
-SDL_TEXTEDITINGEVENT_TEXT_SIZE = 32
-
 class SDL_TextEditingEvent(Structure):
     _fields_ = [("type", Uint32),
                 ("timestamp", Uint32),
@@ -182,7 +197,6 @@ class SDL_TextEditingEvent(Structure):
                 ("length", Sint32)
                 ]
 
-SDL_TEXTINPUTEVENT_TEXT_SIZE = 32
 class SDL_TextInputEvent(Structure):
     _fields_ = [("type", Uint32),
                 ("timestamp", Uint32),
@@ -455,13 +469,6 @@ class SDL_Event(Union):
                 ]
 
 
-SDL_eventaction = c_int
-
-SDL_ADDEVENT = 0
-SDL_PEEKEVENT = 1
-SDL_GETEVENT = 2
-
-
 SDL_PumpEvents = _bind("SDL_PumpEvents")
 SDL_PeepEvents = _bind("SDL_PeepEvents", [POINTER(SDL_Event), c_int, SDL_eventaction, Uint32, Uint32], c_int)
 SDL_HasEvent = _bind("SDL_HasEvent", [Uint32], SDL_bool)
@@ -478,10 +485,6 @@ SDL_GetEventFilter = _bind("SDL_GetEventFilter", [POINTER(SDL_EventFilter), POIN
 SDL_AddEventWatch = _bind("SDL_AddEventWatch", [SDL_EventFilter, c_void_p])
 SDL_DelEventWatch = _bind("SDL_DelEventWatch", [SDL_EventFilter, c_void_p])
 SDL_FilterEvents = _bind("SDL_FilterEvents", [SDL_EventFilter, c_void_p])
-SDL_QUERY = -1
-SDL_IGNORE = 0
-SDL_DISABLE = 0
-SDL_ENABLE = 1
 SDL_EventState = _bind("SDL_EventState", [Uint32, c_int], Uint8)
 SDL_GetEventState = lambda t: SDL_EventState(t, SDL_QUERY)
 SDL_RegisterEvents = _bind("SDL_RegisterEvents", [c_int], Uint32)

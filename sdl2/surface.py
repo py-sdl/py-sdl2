@@ -42,19 +42,27 @@ __all__ = [
 ]
 
 
+# Constants & enums
+
 SDL_SWSURFACE = 0
 SDL_PREALLOC = 0x00000001
 SDL_RLEACCEL = 0x00000002
 SDL_DONTFREE = 0x00000004
 SDL_SIMD_ALIGNED = 0x00000008
 
-SDL_MUSTLOCK = lambda s: ((s.flags & SDL_RLEACCEL) != 0)
-
 SDL_YUV_CONVERSION_MODE = c_int
 SDL_YUV_CONVERSION_JPEG = 0
 SDL_YUV_CONVERSION_BT601 = 1
 SDL_YUV_CONVERSION_BT709 = 2
 SDL_YUV_CONVERSION_AUTOMATIC = 3
+
+
+# Macros & inline functions
+
+SDL_MUSTLOCK = lambda s: ((s.flags & SDL_RLEACCEL) != 0)
+
+
+# Structs & opaque typedefs
 
 class SDL_BlitMap(c_void_p):
     pass
@@ -73,7 +81,12 @@ class SDL_Surface(Structure):
                 ("refcount", c_int)
                ]
 
+
+# Function type definitions
+
 SDL_Blit = CFUNCTYPE(c_int, POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect))
+
+
 
 SDL_CreateRGBSurface = _bind("SDL_CreateRGBSurface", [Uint32, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], POINTER(SDL_Surface))
 SDL_CreateRGBSurfaceFrom = _bind("SDL_CreateRGBSurfaceFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], POINTER(SDL_Surface))

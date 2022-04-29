@@ -54,8 +54,9 @@ __all__ = [
 ]
 
 
-SDL_JoystickPowerLevel = c_int
+# Constants & enums
 
+SDL_JoystickPowerLevel = c_int
 SDL_JOYSTICK_POWER_UNKNOWN = -1
 SDL_JOYSTICK_POWER_EMPTY = 0
 SDL_JOYSTICK_POWER_LOW = 1
@@ -64,9 +65,7 @@ SDL_JOYSTICK_POWER_FULL = 3
 SDL_JOYSTICK_POWER_WIRED = 4
 SDL_JOYSTICK_POWER_MAX = 5
 
-
 SDL_JoystickType = c_int
-
 SDL_JOYSTICK_TYPE_UNKNOWN = 0
 SDL_JOYSTICK_TYPE_GAMECONTROLLER = 1
 SDL_JOYSTICK_TYPE_WHEEL = 2
@@ -77,7 +76,6 @@ SDL_JOYSTICK_TYPE_GUITAR = 6
 SDL_JOYSTICK_TYPE_DRUM_KIT = 7
 SDL_JOYSTICK_TYPE_ARCADE_PAD = 8
 SDL_JOYSTICK_TYPE_THROTTLE = 9
-
 
 SDL_IPHONE_MAX_GFORCE = 5.0
 
@@ -92,13 +90,16 @@ SDL_HAT_LEFTUP = SDL_HAT_LEFT | SDL_HAT_UP
 SDL_HAT_LEFTDOWN = SDL_HAT_LEFT | SDL_HAT_DOWN
 
 
+# Structs & typedefs
+
+SDL_JoystickID = Sint32
+
 class SDL_Joystick(c_void_p):
     pass
 
 class SDL_JoystickGUID(Structure):
     _fields_ = [("data", (Uint8 * 16))]
 
-SDL_JoystickID = Sint32
 
 
 SDL_NumJoysticks = _bind("SDL_NumJoysticks", None, c_int)

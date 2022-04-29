@@ -149,40 +149,9 @@ __all__ = [
 ]
 
 
-class SDL_DisplayMode(Structure):
-    _fields_ = [("format", Uint32),
-                ("w", c_int),
-                ("h", c_int),
-                ("refresh_rate", c_int),
-                ("driverdata", c_void_p)
-               ]
-
-    def __init__(self, format_=0, w=0, h=0, refresh_rate=0):
-        super(SDL_DisplayMode, self).__init__()
-        self.format = format_
-        self.w = w
-        self.h = h
-        self.refresh_rate = refresh_rate
-
-    def __repr__(self):
-        return "SDL_DisplayMode(format=%d, w=%d, h=%d, refresh_rate=%d)" % \
-            (self.format, self.w, self.h, self.refresh_rate)
-
-    def __eq__(self, mode):
-        return self.format == mode.format and self.w == mode.w and \
-            self.h == mode.h and self.refresh_rate == mode.refresh_rate
-
-    def __ne__(self, mode):
-        return self.format != mode.format or self.w != mode.w or \
-            self.h != mode.h or self.refresh_rate != mode.refresh_rate
-
-
-class SDL_Window(c_void_p):
-    pass
-
+# Constants, enums, & macros
 
 SDL_WindowFlags = c_int
-
 SDL_WINDOW_FULLSCREEN = 0x00000001
 SDL_WINDOW_OPENGL = 0x00000002
 SDL_WINDOW_SHOWN = 0x00000004
@@ -208,19 +177,7 @@ SDL_WINDOW_KEYBOARD_GRABBED = 0x00100000
 SDL_WINDOW_VULKAN = 0x10000000
 SDL_WINDOW_METAL = 0x20000000
 
-SDL_WINDOWPOS_UNDEFINED_MASK = 0x1FFF0000
-SDL_WINDOWPOS_UNDEFINED_DISPLAY = lambda x: (SDL_WINDOWPOS_UNDEFINED_MASK | x)
-SDL_WINDOWPOS_UNDEFINED = SDL_WINDOWPOS_UNDEFINED_DISPLAY(0)
-SDL_WINDOWPOS_ISUNDEFINED = lambda x: ((x & 0xFFFF0000) == SDL_WINDOWPOS_UNDEFINED_MASK)
-
-SDL_WINDOWPOS_CENTERED_MASK = 0x2FFF0000
-SDL_WINDOWPOS_CENTERED_DISPLAY = lambda x: (SDL_WINDOWPOS_CENTERED_MASK | x)
-SDL_WINDOWPOS_CENTERED = SDL_WINDOWPOS_CENTERED_DISPLAY(0)
-SDL_WINDOWPOS_ISCENTERED = lambda x: ((x & 0xFFFF0000) == SDL_WINDOWPOS_CENTERED_MASK)
-
-
 SDL_WindowEventID = c_int
-
 SDL_WINDOWEVENT_NONE = 0
 SDL_WINDOWEVENT_SHOWN = 1
 SDL_WINDOWEVENT_HIDDEN = 2
@@ -241,36 +198,25 @@ SDL_WINDOWEVENT_HIT_TEST = 16
 SDL_WINDOWEVENT_ICCPROF_CHANGED = 17
 SDL_WINDOWEVENT_DISPLAY_CHANGED = 18
 
-
 SDL_DisplayEventID = c_int
-
 SDL_DISPLAYEVENT_NONE = 0
 SDL_DISPLAYEVENT_ORIENTATION = 1
 SDL_DISPLAYEVENT_CONNECTED = 2
 SDL_DISPLAYEVENT_DISCONNECTED = 3
 
-
 SDL_DisplayOrientation = c_int
-
 SDL_ORIENTATION_UNKNOWN = 0
 SDL_ORIENTATION_LANDSCAPE = 1
 SDL_ORIENTATION_LANDSCAPE_FLIPPED = 2
 SDL_ORIENTATION_PORTRAIT = 3
 SDL_ORIENTATION_PORTRAIT_FLIPPED = 4
 
-
 SDL_FlashOperation = c_int
-
 SDL_FLASH_CANCEL = 0
 SDL_FLASH_BRIEFLY = 1
 SDL_FLASH_UNTIL_FOCUSED = 2
 
-
-SDL_GLContext = c_void_p
-
-
 SDL_GLattr = c_int
-
 SDL_GL_RED_SIZE = 0
 SDL_GL_GREEN_SIZE = 1
 SDL_GL_BLUE_SIZE = 2
@@ -299,36 +245,26 @@ SDL_GL_CONTEXT_RELEASE_BEHAVIOR = 24
 SDL_GL_CONTEXT_RESET_NOTIFICATION = 25
 SDL_GL_CONTEXT_NO_ERROR = 26
 
-
 SDL_GLprofile = c_int
-
 SDL_GL_CONTEXT_PROFILE_CORE = 0x0001
 SDL_GL_CONTEXT_PROFILE_COMPATIBILITY = 0x0002
 SDL_GL_CONTEXT_PROFILE_ES = 0x0004
 
-
 SDL_GLcontextFlag = c_int
-
 SDL_GL_CONTEXT_DEBUG_FLAG = 0x0001
 SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG = 0x0002
 SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG = 0x0004
 SDL_GL_CONTEXT_RESET_ISOLATION_FLAG = 0x0008
 
-
 SDL_GLcontextReleaseFlag = c_int
-
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE = 0x0000
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH = 0x0001
 
-
 SDL_GLContextResetNotification = c_int
-
 SDL_GL_CONTEXT_RESET_NO_NOTIFICATION = 0x0000
 SDL_GL_CONTEXT_RESET_LOSE_CONTEXT = 0x0001
 
-
 SDL_HitTestResult = c_int
-
 SDL_HITTEST_NORMAL = 0
 SDL_HITTEST_DRAGGABLE = 1
 SDL_HITTEST_RESIZE_TOPLEFT = 2
@@ -340,8 +276,58 @@ SDL_HITTEST_RESIZE_BOTTOM = 7
 SDL_HITTEST_RESIZE_BOTTOMLEFT = 8
 SDL_HITTEST_RESIZE_LEFT = 9
 
+SDL_WINDOWPOS_UNDEFINED_MASK = 0x1FFF0000
+SDL_WINDOWPOS_UNDEFINED_DISPLAY = lambda x: (SDL_WINDOWPOS_UNDEFINED_MASK | x)
+SDL_WINDOWPOS_UNDEFINED = SDL_WINDOWPOS_UNDEFINED_DISPLAY(0)
+SDL_WINDOWPOS_ISUNDEFINED = lambda x: ((x & 0xFFFF0000) == SDL_WINDOWPOS_UNDEFINED_MASK)
+
+SDL_WINDOWPOS_CENTERED_MASK = 0x2FFF0000
+SDL_WINDOWPOS_CENTERED_DISPLAY = lambda x: (SDL_WINDOWPOS_CENTERED_MASK | x)
+SDL_WINDOWPOS_CENTERED = SDL_WINDOWPOS_CENTERED_DISPLAY(0)
+SDL_WINDOWPOS_ISCENTERED = lambda x: ((x & 0xFFFF0000) == SDL_WINDOWPOS_CENTERED_MASK)
+
+
+# Struct defintions & typedefs
+
+SDL_GLContext = c_void_p
+
+class SDL_Window(c_void_p):
+    pass
+
+class SDL_DisplayMode(Structure):
+    _fields_ = [("format", Uint32),
+                ("w", c_int),
+                ("h", c_int),
+                ("refresh_rate", c_int),
+                ("driverdata", c_void_p)
+               ]
+
+    def __init__(self, format_=0, w=0, h=0, refresh_rate=0):
+        super(SDL_DisplayMode, self).__init__()
+        self.format = format_
+        self.w = w
+        self.h = h
+        self.refresh_rate = refresh_rate
+
+    def __repr__(self):
+        return "SDL_DisplayMode(format=%d, w=%d, h=%d, refresh_rate=%d)" % \
+            (self.format, self.w, self.h, self.refresh_rate)
+
+    def __eq__(self, mode):
+        return self.format == mode.format and self.w == mode.w and \
+            self.h == mode.h and self.refresh_rate == mode.refresh_rate
+
+    def __ne__(self, mode):
+        return self.format != mode.format or self.w != mode.w or \
+            self.h != mode.h or self.refresh_rate != mode.refresh_rate
+
+
+# Callback function definitions
 
 SDL_HitTest = CFUNCTYPE(SDL_HitTestResult, POINTER(SDL_Window), POINTER(SDL_Point), c_void_p)
+
+
+
 
 SDL_GetNumVideoDrivers = _bind("SDL_GetNumVideoDrivers", None, c_int)
 SDL_GetVideoDriver = _bind("SDL_GetVideoDriver", [c_int], c_char_p)

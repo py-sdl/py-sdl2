@@ -39,8 +39,7 @@ __all__ = [
 ]
 
 
-class SDL_Cursor(c_void_p):
-    pass
+# Constants, macros, & enums
 
 SDL_SystemCursor = c_int
 SDL_SYSTEM_CURSOR_ARROW = 0
@@ -72,6 +71,14 @@ SDL_BUTTON_MMASK = SDL_BUTTON(SDL_BUTTON_MIDDLE)
 SDL_BUTTON_RMASK = SDL_BUTTON(SDL_BUTTON_RIGHT)
 SDL_BUTTON_X1MASK = SDL_BUTTON(SDL_BUTTON_X1)
 SDL_BUTTON_X2MASK = SDL_BUTTON(SDL_BUTTON_X2)
+
+
+# Structs & opaque typedefs
+
+class SDL_Cursor(c_void_p):
+    pass
+
+
 
 SDL_GetMouseFocus = _bind("SDL_GetMouseFocus", None, POINTER(SDL_Window))
 SDL_GetMouseState = _bind("SDL_GetMouseState", [POINTER(c_int), POINTER(c_int)], Uint32)

@@ -11,6 +11,8 @@ __all__ = [
 ]
 
 
+# Struct definitions
+
 class SDL_Locale(Structure):
     _fields_ = [("language", c_char_p),
                 ("country", c_char_p)
@@ -23,6 +25,7 @@ class SDL_Locale(Structure):
             country = country.decode('utf-8') if country else ''
         country_str = ", country={0}".format(country) if country else ''
         return "SDL_Locale(lang={0}{1})".format(lang, country_str)
+
 
 
 _SDL_GetPreferredLocales = _bind("SDL_GetPreferredLocales", None, c_void_p, added='2.0.14')

@@ -24,6 +24,8 @@ __all__ = [
 ]
 
 
+# Structs & opaque typedefs
+
 class SDL_hid_device(c_void_p):
     pass
 
@@ -46,6 +48,7 @@ SDL_hid_device_info._fields_ = [
     ("interface_protocol", c_int),
     ("next", POINTER(SDL_hid_device_info))
 ]
+
 
 
 SDL_hid_init = _bind("SDL_hid_init", None, c_int, added='2.0.18')

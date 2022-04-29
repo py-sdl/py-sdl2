@@ -16,7 +16,12 @@ __all__ = [
 ]
 
 
+# Constants & enums
+
 SDL_CACHELINE_SIZE = 128
+
+
+
 SDL_GetCPUCount = _bind("SDL_GetCPUCount", None, c_int)
 SDL_GetCPUCacheLineSize = _bind("SDL_GetCPUCacheLineSize", None, c_int)
 SDL_HasRDTSC = _bind("SDL_HasRDTSC", None, SDL_bool)

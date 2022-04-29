@@ -13,7 +13,6 @@ __all__ = [
 
 
 VkInstance = c_void_p
-# TODO: 32bit/64bit
 VkSurfaceKHR = c_uint64
 
 SDL_Vulkan_LoadLibrary = _bind("SDL_Vulkan_LoadLibrary", [c_char_p], c_int, added='2.0.6')

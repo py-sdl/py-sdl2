@@ -55,9 +55,7 @@ __all__ = [
 ]
 
 
-# Constants, enums, and macros
-
-SDL_AudioFormat = Uint16
+# Constants & enums
 
 SDL_AUDIO_MASK_BITSIZE = 0xFF
 SDL_AUDIO_MASK_DATATYPE = 1 << 8
@@ -129,8 +127,6 @@ SDL_AUDIO_ALLOW_ANY_CHANGE = (
     SDL_AUDIO_ALLOW_CHANNELS_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE
 )
 
-SDL_AudioDeviceID = Uint32
-
 SDL_AudioStatus = c_int
 SDL_AUDIO_STOPPED = 0
 SDL_AUDIO_PLAYING = 1
@@ -140,7 +136,10 @@ SDL_MIX_MAXVOLUME = 128
 SDL_AUDIOCVT_MAX_FILTERS = 9
 
 
-# Structure, opaque type, and callback definitions
+# Structs, typedefs, and callback definitions
+
+SDL_AudioFormat = Uint16
+SDL_AudioDeviceID = Uint32
 
 SDL_AudioCallback = CFUNCTYPE(None, c_void_p, POINTER(Uint8), c_int)
 

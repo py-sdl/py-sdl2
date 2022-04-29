@@ -87,20 +87,15 @@ __all__ = [
 ]
 
 
-class SDL_GameController(c_void_p):
-    pass
-
+# Constants & enums
 
 SDL_GameControllerBindType = c_int
-
 SDL_CONTROLLER_BINDTYPE_NONE = 0
 SDL_CONTROLLER_BINDTYPE_BUTTON = 1
 SDL_CONTROLLER_BINDTYPE_AXIS = 2
 SDL_CONTROLLER_BINDTYPE_HAT = 3
 
-
 SDL_GameControllerType = c_int
-
 SDL_CONTROLLER_TYPE_UNKNOWN = 0
 SDL_CONTROLLER_TYPE_XBOX360 = 1
 SDL_CONTROLLER_TYPE_XBOXONE = 2
@@ -112,33 +107,7 @@ SDL_CONTROLLER_TYPE_PS5 = 7
 SDL_CONTROLLER_TYPE_AMAZON_LUNA = 8
 SDL_CONTROLLER_TYPE_GOOGLE_STADIA = 9
 
-
-class _gchat(Structure):
-    _fields_ = [("hat", c_int), ("hat_mask", c_int)]
-
-class _gcvalue(Union):
-    _fields_ = [("button", c_int), ("axis", c_int), ("hat", _gchat)]
-
-class SDL_GameControllerButtonBind(Structure):
-    _fields_ = [("bindType", SDL_GameControllerBindType), ("value", _gcvalue)]
-
-
-SDL_GameControllerAddMapping = _bind("SDL_GameControllerAddMapping", [c_char_p], c_int)
-SDL_GameControllerMapping = _bind("SDL_GameControllerMapping", [POINTER(SDL_GameController)], c_char_p)
-SDL_IsGameController = _bind("SDL_IsGameController", [c_int], SDL_bool)
-SDL_GameControllerNameForIndex = _bind("SDL_GameControllerNameForIndex", [c_int], c_char_p)
-SDL_GameControllerTypeForIndex = _bind("SDL_GameControllerTypeForIndex", [c_int], SDL_GameControllerType, added='2.0.12')
-SDL_GameControllerOpen = _bind("SDL_GameControllerOpen", [c_int], POINTER(SDL_GameController))
-SDL_GameControllerName = _bind("SDL_GameControllerName", [POINTER(SDL_GameController)], c_char_p)
-SDL_GameControllerGetType = _bind("SDL_GameControllerGetType", [POINTER(SDL_GameController)], SDL_GameControllerType, added='2.0.12')
-SDL_GameControllerGetAttached = _bind("SDL_GameControllerGetAttached", [POINTER(SDL_GameController)], SDL_bool)
-SDL_GameControllerGetJoystick = _bind("SDL_GameControllerGetJoystick", [POINTER(SDL_GameController)], POINTER(SDL_Joystick))
-SDL_GameControllerEventState = _bind("SDL_GameControllerEventState", [c_int], c_int)
-SDL_GameControllerUpdate = _bind("SDL_GameControllerUpdate")
-
-
 SDL_GameControllerAxis = c_int
-
 SDL_CONTROLLER_AXIS_INVALID = -1
 SDL_CONTROLLER_AXIS_LEFTX = 0
 SDL_CONTROLLER_AXIS_LEFTY = 1
@@ -148,16 +117,7 @@ SDL_CONTROLLER_AXIS_TRIGGERLEFT = 4
 SDL_CONTROLLER_AXIS_TRIGGERRIGHT = 5
 SDL_CONTROLLER_AXIS_MAX = 6
 
-
-SDL_GameControllerGetAxisFromString = _bind("SDL_GameControllerGetAxisFromString", [c_char_p], SDL_GameControllerAxis)
-SDL_GameControllerGetStringForAxis = _bind("SDL_GameControllerGetStringForAxis", [SDL_GameControllerAxis], c_char_p)
-SDL_GameControllerGetBindForAxis = _bind("SDL_GameControllerGetBindForAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_GameControllerButtonBind)
-SDL_GameControllerHasAxis = _bind("SDL_GameControllerHasAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_bool, added='2.0.14')
-SDL_GameControllerGetAxis = _bind("SDL_GameControllerGetAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], Sint16)
-
-
 SDL_GameControllerButton = c_int
-
 SDL_CONTROLLER_BUTTON_INVALID = -1
 SDL_CONTROLLER_BUTTON_A = 0
 SDL_CONTROLLER_BUTTON_B = 1
@@ -185,6 +145,38 @@ if sdl_version < 2014:
     SDL_CONTROLLER_BUTTON_MAX = 15  # For backwards compatibility
 
 
+# Structs & opaque typedefs
+
+class _gchat(Structure):
+    _fields_ = [("hat", c_int), ("hat_mask", c_int)]
+
+class _gcvalue(Union):
+    _fields_ = [("button", c_int), ("axis", c_int), ("hat", _gchat)]
+
+class SDL_GameControllerButtonBind(Structure):
+    _fields_ = [("bindType", SDL_GameControllerBindType), ("value", _gcvalue)]
+
+class SDL_GameController(c_void_p):
+    pass
+
+
+SDL_GameControllerAddMapping = _bind("SDL_GameControllerAddMapping", [c_char_p], c_int)
+SDL_GameControllerMapping = _bind("SDL_GameControllerMapping", [POINTER(SDL_GameController)], c_char_p)
+SDL_IsGameController = _bind("SDL_IsGameController", [c_int], SDL_bool)
+SDL_GameControllerNameForIndex = _bind("SDL_GameControllerNameForIndex", [c_int], c_char_p)
+SDL_GameControllerTypeForIndex = _bind("SDL_GameControllerTypeForIndex", [c_int], SDL_GameControllerType, added='2.0.12')
+SDL_GameControllerOpen = _bind("SDL_GameControllerOpen", [c_int], POINTER(SDL_GameController))
+SDL_GameControllerName = _bind("SDL_GameControllerName", [POINTER(SDL_GameController)], c_char_p)
+SDL_GameControllerGetType = _bind("SDL_GameControllerGetType", [POINTER(SDL_GameController)], SDL_GameControllerType, added='2.0.12')
+SDL_GameControllerGetAttached = _bind("SDL_GameControllerGetAttached", [POINTER(SDL_GameController)], SDL_bool)
+SDL_GameControllerGetJoystick = _bind("SDL_GameControllerGetJoystick", [POINTER(SDL_GameController)], POINTER(SDL_Joystick))
+SDL_GameControllerEventState = _bind("SDL_GameControllerEventState", [c_int], c_int)
+SDL_GameControllerUpdate = _bind("SDL_GameControllerUpdate")
+SDL_GameControllerGetAxisFromString = _bind("SDL_GameControllerGetAxisFromString", [c_char_p], SDL_GameControllerAxis)
+SDL_GameControllerGetStringForAxis = _bind("SDL_GameControllerGetStringForAxis", [SDL_GameControllerAxis], c_char_p)
+SDL_GameControllerGetBindForAxis = _bind("SDL_GameControllerGetBindForAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_GameControllerButtonBind)
+SDL_GameControllerHasAxis = _bind("SDL_GameControllerHasAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], SDL_bool, added='2.0.14')
+SDL_GameControllerGetAxis = _bind("SDL_GameControllerGetAxis", [POINTER(SDL_GameController), SDL_GameControllerAxis], Sint16)
 SDL_GameControllerGetButtonFromString = _bind("SDL_GameControllerGetButtonFromString", [c_char_p], SDL_GameControllerButton)
 SDL_GameControllerGetStringForButton = _bind("SDL_GameControllerGetStringForButton", [SDL_GameControllerButton], c_char_p)
 SDL_GameControllerGetBindForButton = _bind("SDL_GameControllerGetBindForButton", [POINTER(SDL_GameController), SDL_GameControllerButton], SDL_GameControllerButtonBind)

@@ -71,12 +71,36 @@ __all__ = [
 ]
 
 
+# Constants & enums
+
 SDL_RendererFlags = c_int
 SDL_RENDERER_SOFTWARE = 0x00000001
 SDL_RENDERER_ACCELERATED = 0x00000002
 SDL_RENDERER_PRESENTVSYNC = 0x00000004
 SDL_RENDERER_TARGETTEXTURE = 0x00000008
 
+SDL_ScaleMode = c_int
+SDL_ScaleModeNearest = 0
+SDL_ScaleModeLinear = 1
+SDL_ScaleModeBest = 2
+
+SDL_TextureAccess = c_int
+SDL_TEXTUREACCESS_STATIC = 0
+SDL_TEXTUREACCESS_STREAMING = 1
+SDL_TEXTUREACCESS_TARGET = 2
+
+SDL_TextureModulate = c_int
+SDL_TEXTUREMODULATE_NONE = 0x00000000
+SDL_TEXTUREMODULATE_COLOR = 0x00000001
+SDL_TEXTUREMODULATE_ALPHA = 0x00000002
+
+SDL_RendererFlip = c_int
+SDL_FLIP_NONE = 0x00000000
+SDL_FLIP_HORIZONTAL = 0x00000001
+SDL_FLIP_VERTICAL = 0x00000002
+
+
+# Structs & opaque typedefs
 
 class SDL_RendererInfo(Structure):
     _fields_ = [("name", c_char_p),
@@ -85,7 +109,6 @@ class SDL_RendererInfo(Structure):
                 ("texture_formats", Uint32 * 16),
                 ("max_texture_width", c_int),
                 ("max_texture_height", c_int)]
-
 
 class SDL_Vertex(Structure):
     _fields_ = [("position", SDL_FPoint),
@@ -136,33 +159,12 @@ class SDL_Vertex(Structure):
     def __deepcopy__(self, memo):
         return SDL_Vertex(self.position, self.color, self.tex_coord)
 
-
-SDL_ScaleMode = c_int
-SDL_ScaleModeNearest = 0
-SDL_ScaleModeLinear = 1
-SDL_ScaleModeBest = 2
-
-SDL_TextureAccess = c_int
-SDL_TEXTUREACCESS_STATIC = 0
-SDL_TEXTUREACCESS_STREAMING = 1
-SDL_TEXTUREACCESS_TARGET = 2
-
-SDL_TextureModulate = c_int
-SDL_TEXTUREMODULATE_NONE = 0x00000000
-SDL_TEXTUREMODULATE_COLOR = 0x00000001
-SDL_TEXTUREMODULATE_ALPHA = 0x00000002
-
-SDL_RendererFlip = c_int
-SDL_FLIP_NONE = 0x00000000
-SDL_FLIP_HORIZONTAL = 0x00000001
-SDL_FLIP_VERTICAL = 0x00000002
-
-
 class SDL_Renderer(c_void_p):
     pass
 
 class SDL_Texture(c_void_p):
     pass
+
 
 
 SDL_GetNumRenderDrivers = _bind("SDL_GetNumRenderDrivers", None, c_int)

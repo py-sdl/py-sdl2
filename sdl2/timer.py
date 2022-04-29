@@ -19,18 +19,26 @@ __all__ = [
 ]
 
 
+# Callback function definitions & typedefs
+
+SDL_TimerID = c_int
+SDL_TimerCallback = CFUNCTYPE(Uint32, Uint32, c_void_p)
+
+
+# Macros & inline functions
+
+def SDL_TICKS_PASSED(A, B):
+    return (B - A) <= 0
+
+
+
 SDL_GetTicks = _bind("SDL_GetTicks", None, Uint32)
 SDL_GetTicks64 = _bind("SDL_GetTicks64", None, Uint64, added='2.0.18')
 SDL_GetPerformanceCounter = _bind("SDL_GetPerformanceCounter", None, Uint64)
 SDL_GetPerformanceFrequency = _bind("SDL_GetPerformanceFrequency", None, Uint64)
 SDL_Delay = _bind("SDL_Delay", [Uint32])
-
-SDL_TimerCallback = CFUNCTYPE(Uint32, Uint32, c_void_p)
-SDL_TimerID = c_int
-
 SDL_AddTimer = _bind("SDL_AddTimer", [Uint32, SDL_TimerCallback, c_void_p], SDL_TimerID)
 SDL_RemoveTimer = _bind("SDL_RemoveTimer", [SDL_TimerID], SDL_bool)
 
-def SDL_TICKS_PASSED(A, B):
-    return (B - A) <= 0
+
 

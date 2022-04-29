@@ -23,14 +23,22 @@ __all__ = [
 ]
 
 
-SDL_TouchID = Sint64
-SDL_FingerID = Sint64
+# Constants & enums
 
 SDL_TouchDeviceType = c_int
 SDL_TOUCH_DEVICE_INVALID = -1,
 SDL_TOUCH_DEVICE_DIRECT = 0
 SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE = 1
 SDL_TOUCH_DEVICE_INDIRECT_RELATIVE = 2
+
+SDL_TOUCH_MOUSEID = 2**32 - 1 # defined as ((Uint32)-1), hope this is right
+SDL_MOUSE_TOUCHID = 2**63 - 1 # defined as ((Sint64)-1), hope this is right
+
+
+# Struct definitions & typedefs
+
+SDL_TouchID = Sint64
+SDL_FingerID = Sint64
 
 class SDL_Finger(Structure):
     _fields_ = [("id", SDL_FingerID),
@@ -39,8 +47,7 @@ class SDL_Finger(Structure):
                 ("pressure", c_float)
                 ]
 
-SDL_TOUCH_MOUSEID = 2**32 - 1 # defined as ((Uint32)-1), hope this is right
-SDL_MOUSE_TOUCHID = 2**63 - 1 # defined as ((Sint64)-1), hope this is right
+
 
 SDL_GetNumTouchDevices = _bind("SDL_GetNumTouchDevices", None, c_int)
 SDL_GetTouchDevice = _bind("SDL_GetTouchDevice", [c_int], SDL_TouchID)

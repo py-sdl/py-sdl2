@@ -14,7 +14,11 @@ __all__ = [
 ]
 
 
+# Constants & typedefs
+
 SDL_GestureID = Sint64
+
+
 SDL_RecordGesture = _bind("SDL_RecordGesture", [SDL_TouchID], c_int)
 SDL_SaveAllDollarTemplates = _bind("SDL_SaveAllDollarTemplates", [POINTER(SDL_RWops)], c_int)
 SDL_SaveDollarTemplate = _bind("SDL_SaveDollarTemplate", [SDL_GestureID, POINTER(SDL_RWops)], c_int)

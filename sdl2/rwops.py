@@ -36,7 +36,7 @@ def _ptr2obj(ptr):
     return ptr
 
 
-# Constants, enums, and macros
+# Constants & enums
 
 SDL_RWOPS_UNKNOWN = 0
 SDL_RWOPS_WINFILE = 1
@@ -50,7 +50,7 @@ RW_SEEK_CUR = 1
 RW_SEEK_END = 2
 
 
-# Structure, opaque type, and callback definitions
+# Structs & opaque typedefs
 
 class _hidden(Union):
     pass

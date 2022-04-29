@@ -4,13 +4,15 @@ from .dll import version as sdl_version
 from .endian import SDL_BYTEORDER, SDL_BIG_ENDIAN, SDL_LIL_ENDIAN
 from .stdinc import Uint8, Uint16, Uint32, SDL_bool
 
+# NOTE: Missing __all__
+
+
+# Constants & enums
 
 SDL_ALPHA_OPAQUE = 255
 SDL_ALPHA_TRANSPARENT = 0
 
-
 SDL_PixelType = c_int
-
 SDL_PIXELTYPE_UNKNOWN = 0
 SDL_PIXELTYPE_INDEX1 = 1
 SDL_PIXELTYPE_INDEX4 = 2
@@ -24,16 +26,12 @@ SDL_PIXELTYPE_ARRAYU32 = 9
 SDL_PIXELTYPE_ARRAYF16 = 10
 SDL_PIXELTYPE_ARRAYF32 = 11
 
-
 SDL_BitmapOrder = c_int
-
 SDL_BITMAPORDER_NONE = 0
 SDL_BITMAPORDER_4321 = 1
 SDL_BITMAPORDER_1234 = 2
 
-
 SDL_PackedOrder = c_int
-
 SDL_PACKEDORDER_NONE = 0
 SDL_PACKEDORDER_XRGB = 1
 SDL_PACKEDORDER_RGBX = 2
@@ -44,9 +42,7 @@ SDL_PACKEDORDER_BGRX = 6
 SDL_PACKEDORDER_ABGR = 7
 SDL_PACKEDORDER_BGRA = 8
 
-
 SDL_ArrayOrder = c_int
-
 SDL_ARRAYORDER_NONE = 0
 SDL_ARRAYORDER_RGB = 1
 SDL_ARRAYORDER_RGBA = 2
@@ -55,9 +51,7 @@ SDL_ARRAYORDER_BGR = 4
 SDL_ARRAYORDER_BGRA = 5
 SDL_ARRAYORDER_ABGR = 6
 
-
 SDL_PackedLayout = c_int
-
 SDL_PACKEDLAYOUT_NONE = 0
 SDL_PACKEDLAYOUT_332 = 1
 SDL_PACKEDLAYOUT_4444 = 2
@@ -69,6 +63,8 @@ SDL_PACKEDLAYOUT_2101010 = 7
 SDL_PACKEDLAYOUT_1010102 = 8
 
 
+# Macros & inline functions
+
 SDL_FOURCC = lambda a, b, c, d: (ord(a) << 0) | (ord(b) << 8) | (ord(c) << 16) | (ord(d) << 24)
 SDL_DEFINE_PIXELFOURCC = SDL_FOURCC
 SDL_DEFINE_PIXELFORMAT = lambda ptype, order, layout, bits, pbytes: ((1 << 28) | ((ptype) << 24) | ((order) << 20) | ((layout) << 16) | ((bits) << 8) | ((pbytes) << 0))
@@ -77,6 +73,7 @@ SDL_PIXELTYPE = lambda X: (((X) >> 24) & 0x0F)
 SDL_PIXELORDER = lambda X: (((X) >> 20) & 0x0F)
 SDL_PIXELLAYOUT = lambda X: (((X) >> 16) & 0x0F)
 SDL_BITSPERPIXEL = lambda X: (((X) >> 8) & 0xFF)
+
 def SDL_BYTESPERPIXEL(x):
     valid = (SDL_PIXELFORMAT_YUY2, SDL_PIXELFORMAT_UYVY, SDL_PIXELFORMAT_YVYU)
     if SDL_ISPIXELFORMAT_FOURCC(x):
@@ -86,6 +83,7 @@ def SDL_BYTESPERPIXEL(x):
             return 1
     else:
         return(((x) >> 0) & 0xFF)
+
 def SDL_ISPIXELFORMAT_INDEXED(pformat):
     """Checks, if the passed format value is an indexed format."""
     return ((not SDL_ISPIXELFORMAT_FOURCC(pformat)) and
@@ -125,6 +123,9 @@ def SDL_ISPIXELFORMAT_ALPHA(pformat):
               (SDL_PIXELORDER(pformat) == SDL_ARRAYORDER_BGRA))))
 
 SDL_ISPIXELFORMAT_FOURCC = lambda fmt: ((fmt) and (SDL_PIXELFLAG(fmt) != 1))
+
+
+# Pixel format defintions
 
 SDL_PixelFormatEnum = c_int
 SDL_PIXELFORMAT_UNKNOWN = 0
@@ -292,6 +293,9 @@ if sdl_version >= 2012:
     NAME_MAP['BGR444'] = SDL_PIXELFORMAT_BGR444
 ALL_PIXELFORMATS = tuple(NAME_MAP.values())
 
+
+# Struct definitions
+
 class SDL_Color(Structure):
     _fields_ = [("r", Uint8),
                 ("g", Uint8),
@@ -326,13 +330,11 @@ class SDL_Color(Structure):
 
 SDL_Colour = SDL_Color
 
-
 class SDL_Palette(Structure):
     _fields_ = [("ncolors", c_int),
                 ("colors", POINTER(SDL_Color)),
                 ("version", Uint32),
                 ("refcount", c_int)]
-
 
 class SDL_PixelFormat(Structure):
     pass
@@ -356,6 +358,7 @@ SDL_PixelFormat._fields_ = \
      ("Ashift", Uint8),
      ("refcount", c_int),
      ("next", POINTER(SDL_PixelFormat))]
+
 
 
 SDL_GetPixelFormatName = _bind("SDL_GetPixelFormatName", [Uint32], c_char_p)
