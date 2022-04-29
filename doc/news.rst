@@ -37,6 +37,8 @@ Fixed Bugs:
   requesting a renderer backend by name (PR #224)
 * Changed :func:`~sdl2.SDL_abs` to be an actual ctypes binding instead of an
   alias for Python's built-in ``abs`` function.
+* Renamed the ``SDL_Blit`` ctypes function definition to ``SDL_blit`` to match
+  the SDL2 headers.
 
 
 0.9.11

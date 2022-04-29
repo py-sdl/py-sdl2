@@ -39,7 +39,7 @@ __all__ = [
     "SDL_GetYUVConversionModeForResolution",
 
     # Callback Functions
-    "SDL_Blit"
+    "SDL_blit", "SDL_Blit",
 ]
 
 
@@ -86,7 +86,8 @@ class SDL_Surface(Structure):
 
 # Function type definitions
 
-SDL_Blit = CFUNCTYPE(c_int, _P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect))
+SDL_blit = CFUNCTYPE(c_int, _P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect))
+SDL_Blit = SDL_blit  # for backwards compatibility
 
 
 # Raw ctypes function definitions
