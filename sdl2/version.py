@@ -37,10 +37,11 @@ SDL_VERSION_ATLEAST = lambda x, y, z: (SDL_COMPILEDVERSION >= SDL_VERSIONNUM(x, 
 # Struct definitions
 
 class SDL_version(Structure):
-    _fields_ = [("major", Uint8),
-                ("minor", Uint8),
-                ("patch", Uint8),
-                ]
+    _fields_ = [
+        ("major", Uint8),
+        ("minor", Uint8),
+        ("patch", Uint8),
+    ]
 
 
 

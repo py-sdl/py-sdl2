@@ -67,107 +67,117 @@ class SDL_Haptic(c_void_p):
     pass
 
 class SDL_HapticDirection(Structure):
-    _fields_ = [("type", Uint8), ("dir", (Sint32 * 3))]
+    _fields_ = [
+        ("type", Uint8),
+        ("dir", (Sint32 * 3))
+    ]
 
 class SDL_HapticConstant(Structure):
-    _fields_ = [("type", Uint16),
-                ("direction", SDL_HapticDirection),
-                ("length", Uint32),
-                ("delay", Uint16),
-                ("button", Uint16),
-                ("interval", Uint16),
-                ("level", Sint16),
-                ("attack_length", Uint16),
-                ("attack_level", Uint16),
-                ("fade_length", Uint16),
-                ("fade_level", Uint16),
-                ]
+    _fields_ = [
+        ("type", Uint16),
+        ("direction", SDL_HapticDirection),
+        ("length", Uint32),
+        ("delay", Uint16),
+        ("button", Uint16),
+        ("interval", Uint16),
+        ("level", Sint16),
+        ("attack_length", Uint16),
+        ("attack_level", Uint16),
+        ("fade_length", Uint16),
+        ("fade_level", Uint16),
+    ]
 
 class SDL_HapticPeriodic(Structure):
-    _fields_ = [("type", Uint16),
-                ("direction", SDL_HapticDirection),
-                ("length", Uint32),
-                ("delay", Uint16),
-                ("button", Uint16),
-                ("interval", Uint16),
-                ("period", Uint16),
-                ("magnitude", Sint16),
-                ("offset", Sint16),
-                ("phase", Uint16),
-                ("attack_length", Uint16),
-                ("attack_level", Uint16),
-                ("fade_length", Uint16),
-                ("fade_level", Uint16),
-                ]
+    _fields_ = [
+        ("type", Uint16),
+        ("direction", SDL_HapticDirection),
+        ("length", Uint32),
+        ("delay", Uint16),
+        ("button", Uint16),
+        ("interval", Uint16),
+        ("period", Uint16),
+        ("magnitude", Sint16),
+        ("offset", Sint16),
+        ("phase", Uint16),
+        ("attack_length", Uint16),
+        ("attack_level", Uint16),
+        ("fade_length", Uint16),
+        ("fade_level", Uint16),
+    ]
 
 class SDL_HapticCondition(Structure):
     """A conditionally running effect."""
-    _fields_ = [("type", Uint16),
-                ("direction", SDL_HapticDirection),
-                ("length", Uint32),
-                ("delay", Uint16),
-                ("button", Uint16),
-                ("interval", Uint16),
-                ("right_sat", (Uint16 * 3)),
-                ("left_sat", (Uint16 * 3)),
-                ("right_coeff", (Sint16 * 3)),
-                ("left_coeff", (Sint16 * 3)),
-                ("deadband", (Uint16 * 3)),
-                ("center", (Sint16 * 3)),
-                ]
+    _fields_ = [
+        ("type", Uint16),
+        ("direction", SDL_HapticDirection),
+        ("length", Uint32),
+        ("delay", Uint16),
+        ("button", Uint16),
+        ("interval", Uint16),
+        ("right_sat", (Uint16 * 3)),
+        ("left_sat", (Uint16 * 3)),
+        ("right_coeff", (Sint16 * 3)),
+        ("left_coeff", (Sint16 * 3)),
+        ("deadband", (Uint16 * 3)),
+        ("center", (Sint16 * 3)),
+    ]
 
 class SDL_HapticRamp(Structure):
     """A ramp-like effect."""
-    _fields_ = [("type", Uint16),
-                ("direction", SDL_HapticDirection),
-                ("length", Uint32),
-                ("delay", Uint16),
-                ("button", Uint16),
-                ("interval", Uint16),
-                ("start", Sint16),
-                ("end", Sint16),
-                ("attack_length", Uint16),
-                ("attack_level", Uint16),
-                ("fade_length", Uint16),
-                ("fade_level", Uint16),
-                ]
+    _fields_ = [
+        ("type", Uint16),
+        ("direction", SDL_HapticDirection),
+        ("length", Uint32),
+        ("delay", Uint16),
+        ("button", Uint16),
+        ("interval", Uint16),
+        ("start", Sint16),
+        ("end", Sint16),
+        ("attack_length", Uint16),
+        ("attack_level", Uint16),
+        ("fade_length", Uint16),
+        ("fade_level", Uint16),
+    ]
 
 class SDL_HapticLeftRight(Structure):
     """A left-right effect."""
-    _fields_ = [("type", Uint16),
-                ("length", Uint32),
-                ("large_magnitude", Uint16),
-                ("small_magnitude", Uint16)
-            ]
+    _fields_ = [
+        ("type", Uint16),
+        ("length", Uint32),
+        ("large_magnitude", Uint16),
+        ("small_magnitude", Uint16),
+    ]
 
 class SDL_HapticCustom(Structure):
     """A custom effect."""
-    _fields_ = [("type", Uint16),
-                ("direction", SDL_HapticDirection),
-                ("length", Uint32),
-                ("delay", Uint16),
-                ("button", Uint16),
-                ("interval", Uint16),
-                ("channels", Uint8),
-                ("period", Uint16),
-                ("samples", Uint16),
-                ("data", POINTER(Uint16)),
-                ("attack_length", Uint16),
-                ("attack_level", Uint16),
-                ("fade_length", Uint16),
-                ("fade_level", Uint16),
-                ]
+    _fields_ = [
+        ("type", Uint16),
+        ("direction", SDL_HapticDirection),
+        ("length", Uint32),
+        ("delay", Uint16),
+        ("button", Uint16),
+        ("interval", Uint16),
+        ("channels", Uint8),
+        ("period", Uint16),
+        ("samples", Uint16),
+        ("data", POINTER(Uint16)),
+        ("attack_length", Uint16),
+        ("attack_level", Uint16),
+        ("fade_length", Uint16),
+        ("fade_level", Uint16),
+    ]
 
 class SDL_HapticEffect(Union):
     """A generic haptic effect, containing the concrete haptic effect."""
-    _fields_ = [("type", Uint16),
-                ("constant", SDL_HapticConstant),
-                ("periodic", SDL_HapticPeriodic),
-                ("condition", SDL_HapticCondition),
-                ("ramp", SDL_HapticRamp),
-                ("leftright", SDL_HapticLeftRight),
-                ("custom", SDL_HapticCustom),
-                ]
+    _fields_ = [
+        ("type", Uint16),
+        ("constant", SDL_HapticConstant),
+        ("periodic", SDL_HapticPeriodic),
+        ("condition", SDL_HapticCondition),
+        ("ramp", SDL_HapticRamp),
+        ("leftright", SDL_HapticLeftRight),
+        ("custom", SDL_HapticCustom),
+    ]
 
 
 

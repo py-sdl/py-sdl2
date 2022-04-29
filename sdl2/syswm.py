@@ -60,11 +60,12 @@ elif sizeof(c_longlong) == sizeof(c_void_p):
 # FIXME: end
 
 class _winmsg(Structure):
-    _fields_ = [("hwnd", HWND),
-                ("msg", UINT),
-                ("wParam", WPARAM),
-                ("lParam", LPARAM),
-               ]
+    _fields_ = [
+        ("hwnd", HWND),
+        ("msg", UINT),
+        ("wParam", WPARAM),
+        ("lParam", LPARAM),
+    ]
 
 class _x11msg(Structure):
     _fields_ = [("event", c_void_p)]
@@ -85,52 +86,60 @@ BOOL = c_int
 ULONG = Uint32
 MPARAM = Uint32
 class _os2msg(Structure):
-    _fields_ = [("fFrame", BOOL),
-                ("hwnd", Uint32),
-                ("msg", ULONG),
-                ("mp1", MPARAM),
-                ("mp2", MPARAM),
-               ]
+    _fields_ = [
+        ("fFrame", BOOL),
+        ("hwnd", Uint32),
+        ("msg", ULONG),
+        ("mp1", MPARAM),
+        ("mp2", MPARAM),
+    ]
 
 class _msg(Union):
-    _fields_ = [("win", _winmsg),
-                ("x11", _x11msg),
-                ("dfb", _dfbmsg),
-                ("cocoa", _cocoamsg),
-                ("uikit", _uikitmsg),
-                ("vivante", _vivantemsg),
-                ("os2", _os2msg),
-                ("dummy", c_int)
-               ]
+    _fields_ = [
+        ("win", _winmsg),
+        ("x11", _x11msg),
+        ("dfb", _dfbmsg),
+        ("cocoa", _cocoamsg),
+        ("uikit", _uikitmsg),
+        ("vivante", _vivantemsg),
+        ("os2", _os2msg),
+        ("dummy", c_int),
+    ]
 
 class SDL_SysWMmsg(Structure):
-    _fields_ = [("version", SDL_version),
-                ("subsystem", SDL_SYSWM_TYPE),
-                ("msg", _msg)
-               ]
+    _fields_ = [
+        ("version", SDL_version),
+        ("subsystem", SDL_SYSWM_TYPE),
+        ("msg", _msg),
+    ]
 
 
 # Define the SDL_SysWMinfo struct and its OS-specific subcomponents
 
 class _wininfo(Structure):
-    _fields_ = [("window", HWND),
-                ("hdc", HDC),
-                ("hinstance", HINSTANCE)
-               ]
+    _fields_ = [
+        ("window", HWND),
+        ("hdc", HDC),
+        ("hinstance", HINSTANCE),
+    ]
 
 class _winrtinfo(Structure):
     _fields_ = [("window", c_void_p)]
 
 class _x11info(Structure):
     """Window information for X11."""
-    _fields_ = [("display", c_void_p),
-                ("window", c_ulong)]
+    _fields_ = [
+        ("display", c_void_p),
+        ("window", c_ulong),
+    ]
 
 class _dfbinfo(Structure):
     """Window information for DirectFB."""
-    _fields_ = [("dfb", c_void_p),
-                ("window", c_void_p),
-                ("surface", c_void_p)]
+    _fields_ = [
+        ("dfb", c_void_p),
+        ("window", c_void_p),
+        ("surface", c_void_p),
+    ]
 
 class _cocoainfo(Structure):
     """Window information for MacOS X."""
@@ -138,10 +147,12 @@ class _cocoainfo(Structure):
 
 class _uikitinfo(Structure):
     """Window information for iOS."""
-    _fields_ = [("window", c_void_p),
-                ("framebuffer", Uint32),
-                ("colorbuffer", Uint32),
-                ("resolveFramebuffer", Uint32)]
+    _fields_ = [
+        ("window", c_void_p),
+        ("framebuffer", Uint32),
+        ("colorbuffer", Uint32),
+        ("resolveFramebuffer", Uint32),
+        ]
 
 _wl_fields = [
     ("display", c_void_p),
@@ -161,56 +172,68 @@ class _wl(Structure):
 
 class _mir(Structure):
     """Window information for Mir."""
-    _fields_ = [("connection", c_void_p),
-                ("surface", c_void_p)]
+    _fields_ = [
+        ("connection", c_void_p),
+        ("surface", c_void_p),
+    ]
 
 class _android(Structure):
     """Window information for Android."""
-    _fields_ = [("window", c_void_p),
-                ("surface", c_void_p)]
+    _fields_ = [
+        ("window", c_void_p),
+        ("surface", c_void_p),
+    ]
 
 class _os2(Structure):
     """Window information for OS/2."""
-    _fields_ = [("hwnd", HWND),
-                ("hwndFrame", HWND)]
+    _fields_ = [
+        ("hwnd", HWND),
+        ("hwndFrame", HWND),
+    ]
 
 class _vivante(Structure):
     """Window information for Vivante."""
-    _fields_ = [("display", c_void_p),
-                ("window", c_void_p)]
+    _fields_ = [
+        ("display", c_void_p),
+        ("window", c_void_p),
+    ]
 
 class _kmsdrm(Structure):
     """Window information for KMS/DRM."""
-    _fields_ = [("dev_index", c_int),
-                ("drm_fd", c_int),
-                ("gbm_dev", c_void_p)]
+    _fields_ = [
+        ("dev_index", c_int),
+        ("drm_fd", c_int),
+        ("gbm_dev", c_void_p),
+    ]
 
 class _info(Union):
     """The platform-specific information of a window."""
-    _fields_ = [("win", _wininfo),
-                ("winrt", _winrtinfo),
-                ("x11", _x11info),
-                ("dfb", _dfbinfo),
-                ("cocoa", _cocoainfo),
-                ("uikit", _uikitinfo),
-                ("wl", _wl),
-                ("mir", _mir),
-                ("android", _android),
-                ("os2", _os2),
-                ("vivante", _vivante),
-                ("kmsdrm", _kmsdrm),
-                ("dummy", (Uint8 * 64))
-               ]
+    _fields_ = [
+        ("win", _wininfo),
+        ("winrt", _winrtinfo),
+        ("x11", _x11info),
+        ("dfb", _dfbinfo),
+        ("cocoa", _cocoainfo),
+        ("uikit", _uikitinfo),
+        ("wl", _wl),
+        ("mir", _mir),
+        ("android", _android),
+        ("os2", _os2),
+        ("vivante", _vivante),
+        ("kmsdrm", _kmsdrm),
+        ("dummy", (Uint8 * 64)),
+    ]
 
 class SDL_SysWMinfo(Structure):
     """System-specific window manager information.
 
     This holds the low-level information about the window.
     """
-    _fields_ = [("version", SDL_version),
-                ("subsystem", SDL_SYSWM_TYPE),
-                ("info", _info)
-               ]
+    _fields_ = [
+        ("version", SDL_version),
+        ("subsystem", SDL_SYSWM_TYPE),
+        ("info", _info),
+    ]
 
 
 

@@ -165,10 +165,12 @@ class Mix_Chunk(Structure):
             100%.
 
     """
-    _fields_ = [("allocated", c_int),
-                ("abuf", _P(Uint8)),
-                ("alen", Uint32),
-                ("volume", Uint8)]
+    _fields_ = [
+        ("allocated", c_int),
+        ("abuf", _P(Uint8)),
+        ("alen", Uint32),
+        ("volume", Uint8),
+    ]
 
 class Mix_Music(c_void_p):
     """The opaque data type representing a loaded music file.

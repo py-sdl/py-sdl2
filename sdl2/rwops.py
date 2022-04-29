@@ -63,14 +63,15 @@ _sdlseek = CFUNCTYPE(Sint64, POINTER(SDL_RWops), Sint64, c_int)
 _sdlread = CFUNCTYPE(c_size_t, POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t)
 _sdlwrite = CFUNCTYPE(c_size_t, POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t)
 _sdlclose = CFUNCTYPE(c_int, POINTER(SDL_RWops))
-SDL_RWops._fields_ = [("size", _sdlsize),
-                      ("seek", _sdlseek),
-                      ("read", _sdlread),
-                      ("write", _sdlwrite),
-                      ("close", _sdlclose),
-                      ("type", Uint32),
-                      ("hidden", _hidden)
-                      ]
+SDL_RWops._fields_ = [
+    ("size", _sdlsize),
+    ("seek", _sdlseek),
+    ("read", _sdlread),
+    ("write", _sdlwrite),
+    ("close", _sdlclose),
+    ("type", Uint32),
+    ("hidden", _hidden),
+]
 
 
 # Raw ctypes function definitions

@@ -68,18 +68,19 @@ class SDL_BlitMap(c_void_p):
     pass
 
 class SDL_Surface(Structure):
-    _fields_ = [("flags", Uint32),
-                ("format", POINTER(SDL_PixelFormat)),
-                ("w", c_int), ("h", c_int),
-                ("pitch", c_int),
-                ("pixels", c_void_p),
-                ("userdata", c_void_p),
-                ("locked", c_int),
-                ("list_blitmap", c_void_p),
-                ("clip_rect", SDL_Rect),
-                ("map", POINTER(SDL_BlitMap)),
-                ("refcount", c_int)
-               ]
+    _fields_ = [
+        ("flags", Uint32),
+        ("format", POINTER(SDL_PixelFormat)),
+        ("w", c_int), ("h", c_int),
+        ("pitch", c_int),
+        ("pixels", c_void_p),
+        ("userdata", c_void_p),
+        ("locked", c_int),
+        ("list_blitmap", c_void_p),
+        ("clip_rect", SDL_Rect),
+        ("map", POINTER(SDL_BlitMap)),
+        ("refcount", c_int),
+    ]
 
 
 # Function type definitions

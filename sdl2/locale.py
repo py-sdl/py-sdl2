@@ -14,10 +14,10 @@ __all__ = [
 # Struct definitions
 
 class SDL_Locale(Structure):
-    _fields_ = [("language", c_char_p),
-                ("country", c_char_p)
-                ]
-
+    _fields_ = [
+        ("language", c_char_p),
+        ("country", c_char_p),
+    ]
     def __repr__(self):
         lang, country = (self.language, self.country)
         if type(lang) == bytes and type(lang) != str:

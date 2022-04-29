@@ -101,12 +101,13 @@ class FPSManager(Structure):
         rate (int): The framerate (in Hz) of the manager.
 
     """
-    _fields_ = [("framecount", Uint32),
-                ("rateticks", c_float),
-                ("baseticks", Uint32),
-                ("lastticks", Uint32),
-                ("rate", Uint32)
-                ]
+    _fields_ = [
+        ("framecount", Uint32),
+        ("rateticks", c_float),
+        ("baseticks", Uint32),
+        ("lastticks", Uint32),
+        ("rate", Uint32),
+    ]
 
 
 # Raw ctypes function definitions

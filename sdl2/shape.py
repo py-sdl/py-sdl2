@@ -48,13 +48,16 @@ SDL_SHAPEMODEALPHA = lambda mode: (mode == ShapeModeDefault or mode == ShapeMode
 # Struct definitions
 
 class SDL_WindowShapeParams(Union):
-    _fields_ = [("binarizationCutoff", Uint8),
-                ("colorKey", SDL_Color)
-                ]
+    _fields_ = [
+        ("binarizationCutoff", Uint8),
+        ("colorKey", SDL_Color),
+    ]
+
 class SDL_WindowShapeMode(Structure):
-    _fields_ = [("mode", WindowShapeMode),
-                ("parameters", SDL_WindowShapeParams)
-                ]
+    _fields_ = [
+        ("mode", WindowShapeMode),
+        ("parameters", SDL_WindowShapeParams),
+    ]
 
 
 

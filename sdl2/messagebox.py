@@ -63,14 +63,15 @@ class SDL_MessageBoxColorScheme(Structure):
     _fields_ = [("colors", (SDL_MessageBoxColor * SDL_MESSAGEBOX_COLOR_MAX))]
 
 class SDL_MessageBoxData(Structure):
-    _fields_ = [("flags", Uint32),
-                ("window", POINTER(SDL_Window)),
-                ("title", c_char_p),
-                ("message", c_char_p),
-                ("numbuttons", c_int),
-                ("buttons", POINTER(SDL_MessageBoxButtonData)),
-                ("colorScheme", POINTER(SDL_MessageBoxColorScheme))
-                ]
+    _fields_ = [
+        ("flags", Uint32),
+        ("window", POINTER(SDL_Window)),
+        ("title", c_char_p),
+        ("message", c_char_p),
+        ("numbuttons", c_int),
+        ("buttons", POINTER(SDL_MessageBoxButtonData)),
+        ("colorScheme", POINTER(SDL_MessageBoxColorScheme)),
+    ]
 
 
 

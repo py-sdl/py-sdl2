@@ -66,8 +66,12 @@ class SDL_FPoint(Structure):
 
 
 class SDL_Rect(Structure):
-    _fields_ = [("x", c_int), ("y", c_int),
-                ("w", c_int), ("h", c_int)]
+    _fields_ = [
+        ("x", c_int),
+        ("y", c_int),
+        ("w", c_int),
+        ("h", c_int)
+    ]
 
     def __init__(self, x=0, y=0, w=0, h=0):
         super(SDL_Rect, self).__init__()
@@ -98,8 +102,12 @@ class SDL_Rect(Structure):
 
 
 class SDL_FRect(Structure):
-    _fields_ = [("x", c_float), ("y", c_float),
-                ("w", c_float), ("h", c_float)]
+    _fields_ = [
+        ("x", c_float),
+        ("y", c_float),
+        ("w", c_float),
+        ("h", c_float)
+    ]
 
     def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
         super(SDL_FRect, self).__init__()

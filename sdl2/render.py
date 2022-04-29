@@ -103,17 +103,21 @@ SDL_FLIP_VERTICAL = 0x00000002
 # Structs & opaque typedefs
 
 class SDL_RendererInfo(Structure):
-    _fields_ = [("name", c_char_p),
-                ("flags", Uint32),
-                ("num_texture_formats", Uint32),
-                ("texture_formats", Uint32 * 16),
-                ("max_texture_width", c_int),
-                ("max_texture_height", c_int)]
+    _fields_ = [
+        ("name", c_char_p),
+        ("flags", Uint32),
+        ("num_texture_formats", Uint32),
+        ("texture_formats", Uint32 * 16),
+        ("max_texture_width", c_int),
+        ("max_texture_height", c_int),
+    ]
 
 class SDL_Vertex(Structure):
-    _fields_ = [("position", SDL_FPoint),
-                ("color", SDL_Color),
-                ("tex_coord", SDL_FPoint)]
+    _fields_ = [
+        ("position", SDL_FPoint),
+        ("color", SDL_Color),
+        ("tex_coord", SDL_FPoint),
+    ]
 
     def __init__(
         self, position=SDL_FPoint(), color=SDL_Color(), tex_coord=SDL_FPoint()

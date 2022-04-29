@@ -24,11 +24,12 @@ __all__ = [
 # Struct definitions
 
 class SDL_Keysym(Structure):
-    _fields_ = [("scancode", SDL_Scancode),
-                ("sym", SDL_Keycode),
-                ("mod", Uint16),
-                ("unused", Uint32)
-                ]
+    _fields_ = [
+        ("scancode", SDL_Scancode),
+        ("sym", SDL_Keycode),
+        ("mod", Uint16),
+        ("unused", Uint32),
+    ]
 
 
 

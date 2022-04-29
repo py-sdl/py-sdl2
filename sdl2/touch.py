@@ -41,11 +41,12 @@ SDL_TouchID = Sint64
 SDL_FingerID = Sint64
 
 class SDL_Finger(Structure):
-    _fields_ = [("id", SDL_FingerID),
-                ("x", c_float),
-                ("y", c_float),
-                ("pressure", c_float)
-                ]
+    _fields_ = [
+        ("id", SDL_FingerID),
+        ("x", c_float),
+        ("y", c_float),
+        ("pressure", c_float),
+    ]
 
 
 
