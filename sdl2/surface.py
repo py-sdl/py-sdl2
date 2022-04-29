@@ -1,4 +1,5 @@
-from ctypes import CFUNCTYPE, Structure, POINTER, c_int, c_void_p
+from ctypes import CFUNCTYPE, Structure, c_int, c_void_p
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .blendmode import SDL_BlendMode
@@ -70,7 +71,7 @@ class SDL_BlitMap(c_void_p):
 class SDL_Surface(Structure):
     _fields_ = [
         ("flags", Uint32),
-        ("format", POINTER(SDL_PixelFormat)),
+        ("format", _P(SDL_PixelFormat)),
         ("w", c_int), ("h", c_int),
         ("pitch", c_int),
         ("pixels", c_void_p),
@@ -78,60 +79,60 @@ class SDL_Surface(Structure):
         ("locked", c_int),
         ("list_blitmap", c_void_p),
         ("clip_rect", SDL_Rect),
-        ("map", POINTER(SDL_BlitMap)),
+        ("map", _P(SDL_BlitMap)),
         ("refcount", c_int),
     ]
 
 
 # Function type definitions
 
-SDL_Blit = CFUNCTYPE(c_int, POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect))
+SDL_Blit = CFUNCTYPE(c_int, _P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect))
 
 
 
-SDL_CreateRGBSurface = _bind("SDL_CreateRGBSurface", [Uint32, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], POINTER(SDL_Surface))
-SDL_CreateRGBSurfaceFrom = _bind("SDL_CreateRGBSurfaceFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], POINTER(SDL_Surface))
-SDL_CreateRGBSurfaceWithFormat = _bind("SDL_CreateRGBSurfaceWithFormat", [Uint32, c_int, c_int, c_int, Uint32], POINTER(SDL_Surface))
-SDL_CreateRGBSurfaceWithFormatFrom = _bind("SDL_CreateRGBSurfaceWithFormatFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32], POINTER(SDL_Surface))
-SDL_FreeSurface = _bind("SDL_FreeSurface", [POINTER(SDL_Surface)])
-SDL_SetSurfacePalette = _bind("SDL_SetSurfacePalette", [POINTER(SDL_Surface), POINTER(SDL_Palette)], c_int)
-SDL_LockSurface = _bind("SDL_LockSurface", [POINTER(SDL_Surface)], c_int)
-SDL_UnlockSurface = _bind("SDL_UnlockSurface", [POINTER(SDL_Surface)])
-SDL_DuplicateSurface = _bind("SDL_DuplicateSurface", [POINTER(SDL_Surface)], POINTER(SDL_Surface), added='2.0.6')
+SDL_CreateRGBSurface = _bind("SDL_CreateRGBSurface", [Uint32, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], _P(SDL_Surface))
+SDL_CreateRGBSurfaceFrom = _bind("SDL_CreateRGBSurfaceFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32, Uint32, Uint32, Uint32], _P(SDL_Surface))
+SDL_CreateRGBSurfaceWithFormat = _bind("SDL_CreateRGBSurfaceWithFormat", [Uint32, c_int, c_int, c_int, Uint32], _P(SDL_Surface))
+SDL_CreateRGBSurfaceWithFormatFrom = _bind("SDL_CreateRGBSurfaceWithFormatFrom", [c_void_p, c_int, c_int, c_int, c_int, Uint32], _P(SDL_Surface))
+SDL_FreeSurface = _bind("SDL_FreeSurface", [_P(SDL_Surface)])
+SDL_SetSurfacePalette = _bind("SDL_SetSurfacePalette", [_P(SDL_Surface), _P(SDL_Palette)], c_int)
+SDL_LockSurface = _bind("SDL_LockSurface", [_P(SDL_Surface)], c_int)
+SDL_UnlockSurface = _bind("SDL_UnlockSurface", [_P(SDL_Surface)])
+SDL_DuplicateSurface = _bind("SDL_DuplicateSurface", [_P(SDL_Surface)], _P(SDL_Surface), added='2.0.6')
 
-SDL_LoadBMP_RW = _bind("SDL_LoadBMP_RW", [POINTER(SDL_RWops), c_int], POINTER(SDL_Surface))
+SDL_LoadBMP_RW = _bind("SDL_LoadBMP_RW", [_P(SDL_RWops), c_int], _P(SDL_Surface))
 SDL_LoadBMP = lambda fname: SDL_LoadBMP_RW(SDL_RWFromFile(fname, b"rb"), 1)
-SDL_SaveBMP_RW = _bind("SDL_SaveBMP_RW", [POINTER(SDL_Surface), POINTER(SDL_RWops), c_int], c_int)
+SDL_SaveBMP_RW = _bind("SDL_SaveBMP_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int], c_int)
 SDL_SaveBMP = lambda surface, fname: SDL_SaveBMP_RW(surface, SDL_RWFromFile(fname, b"wb"), 1)
 
-SDL_SetSurfaceRLE = _bind("SDL_SetSurfaceRLE", [POINTER(SDL_Surface), c_int], c_int)
-SDL_HasSurfaceRLE = _bind("SDL_HasSurfaceRLE", [POINTER(SDL_Surface)], SDL_bool, added='2.0.14')
-SDL_HasColorKey = _bind("SDL_HasColorKey", [POINTER(SDL_Surface)], SDL_bool, added='2.0.9')
-SDL_SetColorKey = _bind("SDL_SetColorKey", [POINTER(SDL_Surface), c_int, Uint32], c_int)
-SDL_GetColorKey = _bind("SDL_GetColorKey", [POINTER(SDL_Surface), POINTER(Uint32)], c_int)
-SDL_SetSurfaceColorMod = _bind("SDL_SetSurfaceColorMod", [POINTER(SDL_Surface), Uint8, Uint8, Uint8], c_int)
-SDL_GetSurfaceColorMod = _bind("SDL_GetSurfaceColorMod", [POINTER(SDL_Surface), POINTER(Uint8), POINTER(Uint8), POINTER(Uint8)], c_int)
-SDL_SetSurfaceAlphaMod = _bind("SDL_SetSurfaceAlphaMod", [POINTER(SDL_Surface), Uint8], c_int)
-SDL_GetSurfaceAlphaMod = _bind("SDL_GetSurfaceAlphaMod", [POINTER(SDL_Surface), POINTER(Uint8)], c_int)
-SDL_SetSurfaceBlendMode = _bind("SDL_SetSurfaceBlendMode", [POINTER(SDL_Surface), SDL_BlendMode], c_int)
-SDL_GetSurfaceBlendMode = _bind("SDL_GetSurfaceBlendMode", [POINTER(SDL_Surface), POINTER(SDL_BlendMode)], c_int)
-SDL_SetClipRect = _bind("SDL_SetClipRect", [POINTER(SDL_Surface), POINTER(SDL_Rect)], SDL_bool)
-SDL_GetClipRect = _bind("SDL_GetClipRect", [POINTER(SDL_Surface), POINTER(SDL_Rect)])
-SDL_ConvertSurface = _bind("SDL_ConvertSurface", [POINTER(SDL_Surface), POINTER(SDL_PixelFormat), Uint32], POINTER(SDL_Surface))
-SDL_ConvertSurfaceFormat = _bind("SDL_ConvertSurfaceFormat", [POINTER(SDL_Surface), Uint32, Uint32], POINTER(SDL_Surface))
+SDL_SetSurfaceRLE = _bind("SDL_SetSurfaceRLE", [_P(SDL_Surface), c_int], c_int)
+SDL_HasSurfaceRLE = _bind("SDL_HasSurfaceRLE", [_P(SDL_Surface)], SDL_bool, added='2.0.14')
+SDL_HasColorKey = _bind("SDL_HasColorKey", [_P(SDL_Surface)], SDL_bool, added='2.0.9')
+SDL_SetColorKey = _bind("SDL_SetColorKey", [_P(SDL_Surface), c_int, Uint32], c_int)
+SDL_GetColorKey = _bind("SDL_GetColorKey", [_P(SDL_Surface), _P(Uint32)], c_int)
+SDL_SetSurfaceColorMod = _bind("SDL_SetSurfaceColorMod", [_P(SDL_Surface), Uint8, Uint8, Uint8], c_int)
+SDL_GetSurfaceColorMod = _bind("SDL_GetSurfaceColorMod", [_P(SDL_Surface), _P(Uint8), _P(Uint8), _P(Uint8)], c_int)
+SDL_SetSurfaceAlphaMod = _bind("SDL_SetSurfaceAlphaMod", [_P(SDL_Surface), Uint8], c_int)
+SDL_GetSurfaceAlphaMod = _bind("SDL_GetSurfaceAlphaMod", [_P(SDL_Surface), _P(Uint8)], c_int)
+SDL_SetSurfaceBlendMode = _bind("SDL_SetSurfaceBlendMode", [_P(SDL_Surface), SDL_BlendMode], c_int)
+SDL_GetSurfaceBlendMode = _bind("SDL_GetSurfaceBlendMode", [_P(SDL_Surface), _P(SDL_BlendMode)], c_int)
+SDL_SetClipRect = _bind("SDL_SetClipRect", [_P(SDL_Surface), _P(SDL_Rect)], SDL_bool)
+SDL_GetClipRect = _bind("SDL_GetClipRect", [_P(SDL_Surface), _P(SDL_Rect)])
+SDL_ConvertSurface = _bind("SDL_ConvertSurface", [_P(SDL_Surface), _P(SDL_PixelFormat), Uint32], _P(SDL_Surface))
+SDL_ConvertSurfaceFormat = _bind("SDL_ConvertSurfaceFormat", [_P(SDL_Surface), Uint32, Uint32], _P(SDL_Surface))
 SDL_ConvertPixels = _bind("SDL_ConvertPixels", [c_int, c_int, Uint32, c_void_p, c_int, Uint32, c_void_p, c_int], c_int)
 SDL_PremultiplyAlpha = _bind("SDL_PremultiplyAlpha", [c_int, c_int, Uint32, c_void_p, c_int, Uint32, c_void_p, c_int], c_int, added='2.0.18')
-SDL_FillRect = _bind("SDL_FillRect", [POINTER(SDL_Surface), POINTER(SDL_Rect), Uint32], c_int)
-SDL_FillRects = _bind("SDL_FillRects", [POINTER(SDL_Surface), POINTER(SDL_Rect), c_int, Uint32], c_int)
+SDL_FillRect = _bind("SDL_FillRect", [_P(SDL_Surface), _P(SDL_Rect), Uint32], c_int)
+SDL_FillRects = _bind("SDL_FillRects", [_P(SDL_Surface), _P(SDL_Rect), c_int, Uint32], c_int)
 
-SDL_UpperBlit = _bind("SDL_UpperBlit", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
+SDL_UpperBlit = _bind("SDL_UpperBlit", [_P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect)], c_int)
 SDL_BlitSurface = SDL_UpperBlit
-SDL_LowerBlit = _bind("SDL_LowerBlit", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
-SDL_SoftStretch = _bind("SDL_SoftStretch", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
-SDL_SoftStretchLinear = _bind("SDL_SoftStretchLinear", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int, added='2.0.16')
-SDL_UpperBlitScaled = _bind("SDL_UpperBlitScaled", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
+SDL_LowerBlit = _bind("SDL_LowerBlit", [_P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect)], c_int)
+SDL_SoftStretch = _bind("SDL_SoftStretch", [_P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect)], c_int)
+SDL_SoftStretchLinear = _bind("SDL_SoftStretchLinear", [_P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect)], c_int, added='2.0.16')
+SDL_UpperBlitScaled = _bind("SDL_UpperBlitScaled", [_P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect)], c_int)
 SDL_BlitScaled = SDL_UpperBlitScaled
-SDL_LowerBlitScaled = _bind("SDL_LowerBlitScaled", [POINTER(SDL_Surface), POINTER(SDL_Rect), POINTER(SDL_Surface), POINTER(SDL_Rect)], c_int)
+SDL_LowerBlitScaled = _bind("SDL_LowerBlitScaled", [_P(SDL_Surface), _P(SDL_Rect), _P(SDL_Surface), _P(SDL_Rect)], c_int)
 
 SDL_SetYUVConversionMode = _bind("SDL_SetYUVConversionMode", [SDL_YUV_CONVERSION_MODE], None, added='2.0.8')
 SDL_GetYUVConversionMode = _bind("SDL_GetYUVConversionMode", None, SDL_YUV_CONVERSION_MODE, added='2.0.8')

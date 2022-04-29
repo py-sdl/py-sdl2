@@ -1,4 +1,5 @@
-from ctypes import Structure, c_int, c_float, POINTER
+from ctypes import Structure, c_int, c_float
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import SDL_bool
 
@@ -147,8 +148,8 @@ SDL_PointInRect = lambda p, r: ((p.x >= r.x) and (p.x < (r.x + r.w)) and
 
 
 
-SDL_HasIntersection = _bind("SDL_HasIntersection", [POINTER(SDL_Rect), POINTER(SDL_Rect)], SDL_bool)
-SDL_IntersectRect = _bind("SDL_IntersectRect", [POINTER(SDL_Rect), POINTER(SDL_Rect), POINTER(SDL_Rect)], SDL_bool)
-SDL_UnionRect = _bind("SDL_UnionRect", [POINTER(SDL_Rect), POINTER(SDL_Rect), POINTER(SDL_Rect)])
-SDL_EnclosePoints = _bind("SDL_EnclosePoints", [POINTER(SDL_Point), c_int, POINTER(SDL_Rect), POINTER(SDL_Rect)], SDL_bool)
-SDL_IntersectRectAndLine = _bind("SDL_IntersectRectAndLine", [POINTER(SDL_Rect), POINTER(c_int), POINTER(c_int), POINTER(c_int), POINTER(c_int)], SDL_bool)
+SDL_HasIntersection = _bind("SDL_HasIntersection", [_P(SDL_Rect), _P(SDL_Rect)], SDL_bool)
+SDL_IntersectRect = _bind("SDL_IntersectRect", [_P(SDL_Rect), _P(SDL_Rect), _P(SDL_Rect)], SDL_bool)
+SDL_UnionRect = _bind("SDL_UnionRect", [_P(SDL_Rect), _P(SDL_Rect), _P(SDL_Rect)])
+SDL_EnclosePoints = _bind("SDL_EnclosePoints", [_P(SDL_Point), c_int, _P(SDL_Rect), _P(SDL_Rect)], SDL_bool)
+SDL_IntersectRectAndLine = _bind("SDL_IntersectRectAndLine", [_P(SDL_Rect), _P(c_int), _P(c_int), _P(c_int), _P(c_int)], SDL_bool)

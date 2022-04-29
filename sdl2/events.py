@@ -1,5 +1,7 @@
-from ctypes import c_char, c_char_p, c_float, c_void_p, c_int, Structure, \
-    Union, CFUNCTYPE, POINTER, sizeof
+from ctypes import (
+    c_char, c_char_p, c_float, c_void_p, c_int, Structure, Union, CFUNCTYPE, sizeof
+)
+from ctypes import POINTER as _P
 from .dll import version as sdl_version
 from .dll import _bind
 from .stdinc import Sint16, Sint32, Uint8, Uint16, Uint32, SDL_bool
@@ -457,7 +459,7 @@ class SDL_SysWMEvent(Structure):
     _fields_ = [
         ("type", Uint32),
         ("timestamp", Uint32),
-        ("msg", POINTER(SDL_SysWMmsg)),
+        ("msg", _P(SDL_SysWMmsg)),
     ]
 
 _event_pad_size = 56 if sizeof(c_void_p) <= 8 else 64
@@ -500,18 +502,18 @@ class SDL_Event(Union):
 
 
 SDL_PumpEvents = _bind("SDL_PumpEvents")
-SDL_PeepEvents = _bind("SDL_PeepEvents", [POINTER(SDL_Event), c_int, SDL_eventaction, Uint32, Uint32], c_int)
+SDL_PeepEvents = _bind("SDL_PeepEvents", [_P(SDL_Event), c_int, SDL_eventaction, Uint32, Uint32], c_int)
 SDL_HasEvent = _bind("SDL_HasEvent", [Uint32], SDL_bool)
 SDL_HasEvents = _bind("SDL_HasEvents", [Uint32, Uint32], SDL_bool)
 SDL_FlushEvent = _bind("SDL_FlushEvent", [Uint32])
 SDL_FlushEvents = _bind("SDL_FlushEvents", [Uint32, Uint32])
-SDL_PollEvent = _bind("SDL_PollEvent", [POINTER(SDL_Event)], c_int)
-SDL_WaitEvent = _bind("SDL_WaitEvent", [POINTER(SDL_Event)], c_int)
-SDL_WaitEventTimeout = _bind("SDL_WaitEventTimeout", [POINTER(SDL_Event), c_int], c_int)
-SDL_PushEvent = _bind("SDL_PushEvent", [POINTER(SDL_Event)], c_int)
-SDL_EventFilter = CFUNCTYPE(c_int, c_void_p, POINTER(SDL_Event))
+SDL_PollEvent = _bind("SDL_PollEvent", [_P(SDL_Event)], c_int)
+SDL_WaitEvent = _bind("SDL_WaitEvent", [_P(SDL_Event)], c_int)
+SDL_WaitEventTimeout = _bind("SDL_WaitEventTimeout", [_P(SDL_Event), c_int], c_int)
+SDL_PushEvent = _bind("SDL_PushEvent", [_P(SDL_Event)], c_int)
+SDL_EventFilter = CFUNCTYPE(c_int, c_void_p, _P(SDL_Event))
 SDL_SetEventFilter = _bind("SDL_SetEventFilter", [SDL_EventFilter, c_void_p])
-SDL_GetEventFilter = _bind("SDL_GetEventFilter", [POINTER(SDL_EventFilter), POINTER(c_void_p)], SDL_bool)
+SDL_GetEventFilter = _bind("SDL_GetEventFilter", [_P(SDL_EventFilter), _P(c_void_p)], SDL_bool)
 SDL_AddEventWatch = _bind("SDL_AddEventWatch", [SDL_EventFilter, c_void_p])
 SDL_DelEventWatch = _bind("SDL_DelEventWatch", [SDL_EventFilter, c_void_p])
 SDL_FilterEvents = _bind("SDL_FilterEvents", [SDL_EventFilter, c_void_p])

@@ -1,4 +1,5 @@
-from ctypes import Structure, c_int, c_char_p, POINTER
+from ctypes import Structure, c_int, c_char_p
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import Uint8, Uint16, Uint32, SDL_bool
 from .keycode import SDL_Keycode, SDL_Keymod
@@ -33,8 +34,8 @@ class SDL_Keysym(Structure):
 
 
 
-SDL_GetKeyboardFocus = _bind("SDL_GetKeyboardFocus", None, POINTER(SDL_Window))
-SDL_GetKeyboardState = _bind("SDL_GetKeyboardState", [POINTER(c_int)], POINTER(Uint8))
+SDL_GetKeyboardFocus = _bind("SDL_GetKeyboardFocus", None, _P(SDL_Window))
+SDL_GetKeyboardState = _bind("SDL_GetKeyboardState", [_P(c_int)], _P(Uint8))
 SDL_GetModState = _bind("SDL_GetModState", None, SDL_Keymod)
 SDL_SetModState = _bind("SDL_SetModState", [SDL_Keymod])
 SDL_GetKeyFromScancode = _bind("SDL_GetKeyFromScancode", [SDL_Scancode], SDL_Keycode)
@@ -46,6 +47,6 @@ SDL_GetKeyFromName = _bind("SDL_GetKeyFromName", [c_char_p], SDL_Keycode)
 SDL_StartTextInput = _bind("SDL_StartTextInput")
 SDL_IsTextInputActive = _bind("SDL_IsTextInputActive", None, SDL_bool)
 SDL_StopTextInput = _bind("SDL_StopTextInput")
-SDL_SetTextInputRect = _bind("SDL_SetTextInputRect", [POINTER(SDL_Rect)])
+SDL_SetTextInputRect = _bind("SDL_SetTextInputRect", [_P(SDL_Rect)])
 SDL_HasScreenKeyboardSupport = _bind("SDL_HasScreenKeyboardSupport", None, SDL_bool)
-SDL_IsScreenKeyboardShown = _bind("SDL_IsScreenKeyboardShown", [POINTER(SDL_Window)], SDL_bool)
+SDL_IsScreenKeyboardShown = _bind("SDL_IsScreenKeyboardShown", [_P(SDL_Window)], SDL_bool)

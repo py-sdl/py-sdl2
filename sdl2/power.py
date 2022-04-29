@@ -1,4 +1,5 @@
-from ctypes import POINTER, c_int
+from ctypes import c_int
+from ctypes import POINTER as _P
 from .dll import _bind
 
 __all__ = [
@@ -24,4 +25,4 @@ SDL_POWERSTATE_CHARGED = 4
 
 
 
-SDL_GetPowerInfo = _bind("SDL_GetPowerInfo", [POINTER(c_int), POINTER(c_int)], SDL_PowerState)
+SDL_GetPowerInfo = _bind("SDL_GetPowerInfo", [_P(c_int), _P(c_int)], SDL_PowerState)

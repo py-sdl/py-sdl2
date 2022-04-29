@@ -1,4 +1,5 @@
-from ctypes import Structure, POINTER, c_float, c_int
+from ctypes import Structure, c_float, c_int
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import Sint64
 
@@ -54,4 +55,4 @@ SDL_GetNumTouchDevices = _bind("SDL_GetNumTouchDevices", None, c_int)
 SDL_GetTouchDevice = _bind("SDL_GetTouchDevice", [c_int], SDL_TouchID)
 SDL_GetTouchDeviceType = _bind("SDL_GetTouchDeviceType", [SDL_TouchID], SDL_TouchDeviceType, added='2.0.10')
 SDL_GetNumTouchFingers = _bind("SDL_GetNumTouchFingers", [SDL_TouchID], c_int)
-SDL_GetTouchFinger = _bind("SDL_GetTouchFinger", [SDL_TouchID, c_int], POINTER(SDL_Finger))
+SDL_GetTouchFinger = _bind("SDL_GetTouchFinger", [SDL_TouchID, c_int], _P(SDL_Finger))

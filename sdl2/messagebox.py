@@ -1,4 +1,5 @@
-from ctypes import Structure, c_int, c_char_p, POINTER
+from ctypes import Structure, c_int, c_char_p
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import Uint8, Uint32
 from .video import SDL_Window
@@ -65,15 +66,15 @@ class SDL_MessageBoxColorScheme(Structure):
 class SDL_MessageBoxData(Structure):
     _fields_ = [
         ("flags", Uint32),
-        ("window", POINTER(SDL_Window)),
+        ("window", _P(SDL_Window)),
         ("title", c_char_p),
         ("message", c_char_p),
         ("numbuttons", c_int),
-        ("buttons", POINTER(SDL_MessageBoxButtonData)),
-        ("colorScheme", POINTER(SDL_MessageBoxColorScheme)),
+        ("buttons", _P(SDL_MessageBoxButtonData)),
+        ("colorScheme", _P(SDL_MessageBoxColorScheme)),
     ]
 
 
 
-SDL_ShowMessageBox = _bind("SDL_ShowMessageBox", [POINTER(SDL_MessageBoxData), POINTER(c_int)], c_int)
-SDL_ShowSimpleMessageBox = _bind("SDL_ShowSimpleMessageBox", [Uint32, c_char_p, c_char_p, POINTER(SDL_Window)], c_int)
+SDL_ShowMessageBox = _bind("SDL_ShowMessageBox", [_P(SDL_MessageBoxData), _P(c_int)], c_int)
+SDL_ShowSimpleMessageBox = _bind("SDL_ShowSimpleMessageBox", [Uint32, c_char_p, c_char_p, _P(SDL_Window)], c_int)

@@ -1,4 +1,5 @@
-from ctypes import Structure, POINTER, c_int, c_char_p, c_float
+from ctypes import Structure, c_int, c_char_p, c_float
+from ctypes import POINTER as _P
 from .dll import _bind
 from .dll import version as sdl_version
 from .endian import SDL_BYTEORDER, SDL_BIG_ENDIAN, SDL_LIL_ENDIAN
@@ -412,7 +413,7 @@ SDL_Colour = SDL_Color
 class SDL_Palette(Structure):
     _fields_ = [
         ("ncolors", c_int),
-        ("colors", POINTER(SDL_Color)),
+        ("colors", _P(SDL_Color)),
         ("version", Uint32),
         ("refcount", c_int),
     ]
@@ -421,7 +422,7 @@ class SDL_PixelFormat(Structure):
     pass
 SDL_PixelFormat._fields_ = [
     ("format", Uint32),
-    ("palette", POINTER(SDL_Palette)),
+    ("palette", _P(SDL_Palette)),
     ("BitsPerPixel", Uint8),
     ("BytesPerPixel", Uint8),
     ("padding", Uint8 * 2),
@@ -438,22 +439,22 @@ SDL_PixelFormat._fields_ = [
     ("Bshift", Uint8),
     ("Ashift", Uint8),
     ("refcount", c_int),
-    ("next", POINTER(SDL_PixelFormat)),
+    ("next", _P(SDL_PixelFormat)),
 ]
 
 
 
 SDL_GetPixelFormatName = _bind("SDL_GetPixelFormatName", [Uint32], c_char_p)
-SDL_PixelFormatEnumToMasks = _bind("SDL_PixelFormatEnumToMasks", [Uint32, POINTER(c_int), POINTER(Uint32), POINTER(Uint32), POINTER(Uint32), POINTER(Uint32)], SDL_bool)
+SDL_PixelFormatEnumToMasks = _bind("SDL_PixelFormatEnumToMasks", [Uint32, _P(c_int), _P(Uint32), _P(Uint32), _P(Uint32), _P(Uint32)], SDL_bool)
 SDL_MasksToPixelFormatEnum = _bind("SDL_MasksToPixelFormatEnum", [c_int, Uint32, Uint32, Uint32, Uint32], Uint32)
-SDL_AllocFormat = _bind("SDL_AllocFormat", [Uint32], POINTER(SDL_PixelFormat))
-SDL_FreeFormat = _bind("SDL_FreeFormat", [POINTER(SDL_PixelFormat)])
-SDL_AllocPalette = _bind("SDL_AllocPalette", [c_int], POINTER(SDL_Palette))
-SDL_SetPixelFormatPalette = _bind("SDL_SetPixelFormatPalette", [POINTER(SDL_PixelFormat), POINTER(SDL_Palette)], c_int)
-SDL_SetPaletteColors = _bind("SDL_SetPaletteColors", [POINTER(SDL_Palette), POINTER(SDL_Color), c_int, c_int], c_int)
-SDL_FreePalette = _bind("SDL_FreePalette", [POINTER(SDL_Palette)])
-SDL_MapRGB = _bind("SDL_MapRGB", [POINTER(SDL_PixelFormat), Uint8, Uint8, Uint8], Uint32)
-SDL_MapRGBA = _bind("SDL_MapRGBA", [POINTER(SDL_PixelFormat), Uint8, Uint8, Uint8, Uint8], Uint32)
-SDL_GetRGB = _bind("SDL_GetRGB", [Uint32, POINTER(SDL_PixelFormat), POINTER(Uint8), POINTER(Uint8), POINTER(Uint8)])
-SDL_GetRGBA = _bind("SDL_GetRGBA", [Uint32, POINTER(SDL_PixelFormat), POINTER(Uint8), POINTER(Uint8), POINTER(Uint8), POINTER(Uint8)])
-SDL_CalculateGammaRamp = _bind("SDL_CalculateGammaRamp", [c_float, POINTER(Uint16)])
+SDL_AllocFormat = _bind("SDL_AllocFormat", [Uint32], _P(SDL_PixelFormat))
+SDL_FreeFormat = _bind("SDL_FreeFormat", [_P(SDL_PixelFormat)])
+SDL_AllocPalette = _bind("SDL_AllocPalette", [c_int], _P(SDL_Palette))
+SDL_SetPixelFormatPalette = _bind("SDL_SetPixelFormatPalette", [_P(SDL_PixelFormat), _P(SDL_Palette)], c_int)
+SDL_SetPaletteColors = _bind("SDL_SetPaletteColors", [_P(SDL_Palette), _P(SDL_Color), c_int, c_int], c_int)
+SDL_FreePalette = _bind("SDL_FreePalette", [_P(SDL_Palette)])
+SDL_MapRGB = _bind("SDL_MapRGB", [_P(SDL_PixelFormat), Uint8, Uint8, Uint8], Uint32)
+SDL_MapRGBA = _bind("SDL_MapRGBA", [_P(SDL_PixelFormat), Uint8, Uint8, Uint8, Uint8], Uint32)
+SDL_GetRGB = _bind("SDL_GetRGB", [Uint32, _P(SDL_PixelFormat), _P(Uint8), _P(Uint8), _P(Uint8)])
+SDL_GetRGBA = _bind("SDL_GetRGBA", [Uint32, _P(SDL_PixelFormat), _P(Uint8), _P(Uint8), _P(Uint8), _P(Uint8)])
+SDL_CalculateGammaRamp = _bind("SDL_CalculateGammaRamp", [c_float, _P(Uint16)])

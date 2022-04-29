@@ -1,5 +1,8 @@
-from ctypes import Union, Structure, c_int, c_void_p, c_long, c_ulong, \
-    c_longlong, c_ulonglong, c_uint, sizeof, POINTER
+from ctypes import (
+    c_int, c_void_p, c_long, c_ulong, c_longlong, c_ulonglong, c_uint, sizeof,
+    Union, Structure
+)
+from ctypes import POINTER as _P
 from .dll import _bind
 from .dll import version as sdl_version
 from .stdinc import SDL_bool, Uint8, Uint32
@@ -237,4 +240,4 @@ class SDL_SysWMinfo(Structure):
 
 
 
-SDL_GetWindowWMInfo = _bind("SDL_GetWindowWMInfo", [POINTER(SDL_Window), POINTER(SDL_SysWMinfo)], SDL_bool)
+SDL_GetWindowWMInfo = _bind("SDL_GetWindowWMInfo", [_P(SDL_Window), _P(SDL_SysWMinfo)], SDL_bool)

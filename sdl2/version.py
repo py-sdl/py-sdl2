@@ -1,4 +1,5 @@
-from ctypes import Structure, POINTER, c_char_p, c_int
+from ctypes import Structure, c_char_p, c_int
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import Uint8
 
@@ -45,6 +46,6 @@ class SDL_version(Structure):
 
 
 
-SDL_GetVersion = _bind("SDL_GetVersion", [POINTER(SDL_version)])
+SDL_GetVersion = _bind("SDL_GetVersion", [_P(SDL_version)])
 SDL_GetRevision = _bind("SDL_GetRevision", None, c_char_p)
 SDL_GetRevisionNumber = _bind("SDL_GetRevisionNumber", None, c_int) # Deprecated as of 2.0.16, add warning?

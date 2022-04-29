@@ -1,4 +1,5 @@
-from ctypes import Union, Structure, POINTER, c_char_p, c_uint, c_int
+from ctypes import Union, Structure, c_char_p, c_uint, c_int
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .pixels import SDL_Color
@@ -61,7 +62,7 @@ class SDL_WindowShapeMode(Structure):
 
 
 
-SDL_CreateShapedWindow = _bind("SDL_CreateShapedWindow", [c_char_p, c_uint, c_uint, c_uint, c_uint, Uint32], POINTER(SDL_Window))
-SDL_IsShapedWindow = _bind("SDL_IsShapedWindow", [POINTER(SDL_Window)], SDL_bool)
-SDL_SetWindowShape = _bind("SDL_SetWindowShape", [POINTER(SDL_Window), POINTER(SDL_Surface), POINTER(SDL_WindowShapeMode)], c_int)
-SDL_GetShapedWindowMode = _bind("SDL_GetShapedWindowMode", [POINTER(SDL_Window), POINTER(SDL_WindowShapeMode)], c_int)
+SDL_CreateShapedWindow = _bind("SDL_CreateShapedWindow", [c_char_p, c_uint, c_uint, c_uint, c_uint, Uint32], _P(SDL_Window))
+SDL_IsShapedWindow = _bind("SDL_IsShapedWindow", [_P(SDL_Window)], SDL_bool)
+SDL_SetWindowShape = _bind("SDL_SetWindowShape", [_P(SDL_Window), _P(SDL_Surface), _P(SDL_WindowShapeMode)], c_int)
+SDL_GetShapedWindowMode = _bind("SDL_GetShapedWindowMode", [_P(SDL_Window), _P(SDL_WindowShapeMode)], c_int)

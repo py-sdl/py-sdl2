@@ -1,4 +1,5 @@
-from ctypes import Structure, POINTER, c_char_p, c_void_p, cast, sizeof
+from ctypes import Structure, c_char_p, c_void_p, cast, sizeof
+from ctypes import POINTER as _P
 from .dll import _bind
 from .dll import version as sdl_version
 
@@ -39,7 +40,7 @@ def SDL_GetPreferredLocales():
     loc_size = sizeof(SDL_Locale)
     p = _SDL_GetPreferredLocales()  # Get void pointer to first locale in array
     while True:
-        loc = cast(p, POINTER(SDL_Locale))
+        loc = cast(p, _P(SDL_Locale))
         if not loc:
             # Break if loc is a null pointer
             break

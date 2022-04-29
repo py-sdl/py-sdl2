@@ -1,4 +1,4 @@
-from ctypes import c_char, c_char_p, POINTER
+from ctypes import c_char, c_char_p
 from .dll import _bind
 
 __all__ = ["SDL_GetBasePath", "SDL_GetPrefPath"]

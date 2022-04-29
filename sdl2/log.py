@@ -1,4 +1,5 @@
-from ctypes import c_int, c_char_p, c_void_p, CFUNCTYPE, POINTER
+from ctypes import c_int, c_char_p, c_void_p, CFUNCTYPE
+from ctypes import POINTER as _P
 from .dll import _bind
 
 __all__ = [
@@ -88,5 +89,5 @@ SDL_LogCritical = _bind("SDL_LogCritical", [c_int, c_char_p])
 SDL_LogMessage = _bind("SDL_LogMessage", [c_int, SDL_LogPriority, c_char_p])
 # TODO: do we want SDL_LogMessageV?
 SDL_LogOutputFunction = CFUNCTYPE(None, c_void_p, c_int, SDL_LogPriority, c_char_p)
-SDL_LogGetOutputFunction = _bind("SDL_LogGetOutputFunction", [POINTER(SDL_LogOutputFunction), c_void_p])
+SDL_LogGetOutputFunction = _bind("SDL_LogGetOutputFunction", [_P(SDL_LogOutputFunction), c_void_p])
 SDL_LogSetOutputFunction = _bind("SDL_LogSetOutputFunction", [SDL_LogOutputFunction, c_void_p])

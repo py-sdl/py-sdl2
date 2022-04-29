@@ -1,4 +1,5 @@
-from ctypes import Structure, POINTER, c_int, c_void_p
+from ctypes import Structure, c_int, c_void_p
+from ctypes import POINTER as _P
 from .dll import _bind
 from .stdinc import Uint8, Uint32, SDL_bool
 from .video import SDL_Window
@@ -80,20 +81,20 @@ class SDL_Cursor(c_void_p):
 
 
 
-SDL_GetMouseFocus = _bind("SDL_GetMouseFocus", None, POINTER(SDL_Window))
-SDL_GetMouseState = _bind("SDL_GetMouseState", [POINTER(c_int), POINTER(c_int)], Uint32)
-SDL_GetRelativeMouseState = _bind("SDL_GetRelativeMouseState", [POINTER(c_int), POINTER(c_int)], Uint32)
-SDL_WarpMouseInWindow = _bind("SDL_WarpMouseInWindow", [POINTER(SDL_Window), c_int, c_int])
+SDL_GetMouseFocus = _bind("SDL_GetMouseFocus", None, _P(SDL_Window))
+SDL_GetMouseState = _bind("SDL_GetMouseState", [_P(c_int), _P(c_int)], Uint32)
+SDL_GetRelativeMouseState = _bind("SDL_GetRelativeMouseState", [_P(c_int), _P(c_int)], Uint32)
+SDL_WarpMouseInWindow = _bind("SDL_WarpMouseInWindow", [_P(SDL_Window), c_int, c_int])
 SDL_SetRelativeMouseMode = _bind("SDL_SetRelativeMouseMode", [SDL_bool], c_int)
 SDL_GetRelativeMouseMode = _bind("SDL_GetRelativeMouseMode", None, SDL_bool)
-SDL_CreateCursor = _bind("SDL_CreateCursor", [POINTER(Uint8), POINTER(Uint8), c_int, c_int, c_int, c_int], POINTER(SDL_Cursor))
-SDL_CreateColorCursor = _bind("SDL_CreateColorCursor", [POINTER(SDL_Surface), c_int, c_int], POINTER(SDL_Cursor))
-SDL_CreateSystemCursor = _bind("SDL_CreateSystemCursor", [SDL_SystemCursor], POINTER(SDL_Cursor))
-SDL_SetCursor = _bind("SDL_SetCursor", [POINTER(SDL_Cursor)])
-SDL_GetCursor = _bind("SDL_GetCursor", None, POINTER(SDL_Cursor))
-SDL_GetDefaultCursor = _bind("SDL_GetDefaultCursor", None, POINTER(SDL_Cursor))
-SDL_FreeCursor = _bind("SDL_FreeCursor", [POINTER(SDL_Cursor)])
+SDL_CreateCursor = _bind("SDL_CreateCursor", [_P(Uint8), _P(Uint8), c_int, c_int, c_int, c_int], _P(SDL_Cursor))
+SDL_CreateColorCursor = _bind("SDL_CreateColorCursor", [_P(SDL_Surface), c_int, c_int], _P(SDL_Cursor))
+SDL_CreateSystemCursor = _bind("SDL_CreateSystemCursor", [SDL_SystemCursor], _P(SDL_Cursor))
+SDL_SetCursor = _bind("SDL_SetCursor", [_P(SDL_Cursor)])
+SDL_GetCursor = _bind("SDL_GetCursor", None, _P(SDL_Cursor))
+SDL_GetDefaultCursor = _bind("SDL_GetDefaultCursor", None, _P(SDL_Cursor))
+SDL_FreeCursor = _bind("SDL_FreeCursor", [_P(SDL_Cursor)])
 SDL_ShowCursor = _bind("SDL_ShowCursor", [c_int], c_int)
 SDL_WarpMouseGlobal = _bind("SDL_WarpMouseGlobal", [c_int, c_int], c_int, added='2.0.4')
 SDL_CaptureMouse = _bind("SDL_CaptureMouse", [SDL_bool], c_int, added='2.0.4')
-SDL_GetGlobalMouseState = _bind("SDL_GetGlobalMouseState", [POINTER(c_int), POINTER(c_int)], Uint32, added='2.0.4')
+SDL_GetGlobalMouseState = _bind("SDL_GetGlobalMouseState", [_P(c_int), _P(c_int)], Uint32, added='2.0.4')

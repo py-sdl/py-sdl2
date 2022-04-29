@@ -1,6 +1,8 @@
 from .dll import _bind
-from ctypes import c_int, c_int8, c_uint8, c_int16, c_uint16, c_int32, \
-    c_uint32, c_int64, c_uint64, c_size_t, c_void_p, c_char_p
+from ctypes import (
+    c_int, c_int8, c_uint8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
+    c_uint64, c_size_t, c_void_p, c_char_p
+)
 
 # NOTE: Lots of functions in SDL_stdinc.h are not yet added here, but they're
 # mostly for math and string operations that Python can do much more easily.
