@@ -35,6 +35,8 @@ Fixed Bugs:
   empty lines.
 * Fixed a bug in :class:`~sdl2.ext.Renderer` that prevented users from
   requesting a renderer backend by name (PR #224)
+* Changed :func:`~sdl2.SDL_abs` to be an actual ctypes binding instead of an
+  alias for Python's built-in ``abs`` function.
 
 
 0.9.11

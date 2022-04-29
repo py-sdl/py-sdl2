@@ -41,7 +41,6 @@ Uint64 = c_uint64
 
 # Macro & inline functions
 
-SDL_abs = abs
 SDL_min = min
 SDL_max = max
 
@@ -63,6 +62,7 @@ _funcdefs = [
     SDLFunc("SDL_free", [c_void_p], None),
     SDLFunc("SDL_getenv", [c_char_p], c_char_p),
     SDLFunc("SDL_setenv", [c_char_p, c_char_p, c_int], c_int),
+    SDLFunc("SDL_abs", [c_int], c_int),
     SDLFunc("SDL_memset", [c_void_p, c_int, c_size_t], c_void_p),
     SDLFunc("SDL_memcpy", [c_void_p, c_void_p, c_size_t], c_void_p),
 ]
@@ -79,5 +79,6 @@ SDL_realloc = _ctypes["SDL_realloc"]
 SDL_free = _ctypes["SDL_free"]
 SDL_getenv = _ctypes["SDL_getenv"]
 SDL_setenv = _ctypes["SDL_setenv"]
+SDL_abs = _ctypes["SDL_abs"]
 SDL_memset = _ctypes["SDL_memset"]
 SDL_memcpy = _ctypes["SDL_memcpy"]
