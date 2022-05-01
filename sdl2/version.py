@@ -13,9 +13,6 @@ __all__ = [
     # Macro Functions
     "SDL_VERSION", "SDL_VERSIONNUM", "SDL_COMPILEDVERSION",
     "SDL_VERSION_ATLEAST",
-
-    # Functions
-    "SDL_GetVersion", "SDL_GetRevision", "SDL_GetRevisionNumber"
 ]
 
 
@@ -55,6 +52,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

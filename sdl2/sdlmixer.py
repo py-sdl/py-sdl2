@@ -38,41 +38,15 @@ __all__ = [
     "SDL_MIXER_VERSION_ATLEAST", "Mix_LoadWAV", "Mix_PlayChannel",
     "Mix_FadeInChannel",
 
-    "Mix_Linked_Version",  "Mix_Init", "Mix_Quit", "Mix_OpenAudioDevice",
-    "Mix_OpenAudio", "Mix_AllocateChannels", "Mix_QuerySpec",
-    "Mix_LoadWAV_RW", "Mix_LoadMUS", "Mix_LoadMUS_RW",
-    "Mix_LoadMUSType_RW", "Mix_QuickLoad_WAV", "Mix_QuickLoad_RAW",
-    "Mix_FreeChunk", "Mix_FreeMusic", "Mix_GetNumChunkDecoders",
-    "Mix_GetChunkDecoder", "Mix_GetNumMusicDecoders",
-    "Mix_HasChunkDecoder", #"Mix_HasMusicDecoder",
-    "Mix_GetMusicDecoder", "Mix_GetMusicType", 
-    "Mix_SetPostMix", "Mix_HookMusic", 
-    "Mix_HookMusicFinished", "Mix_GetMusicHookData", 
-    "Mix_ChannelFinished",  "Mix_RegisterEffect", "Mix_UnregisterEffect",
-    "Mix_UnregisterAllEffects",  "Mix_SetPanning",
-    "Mix_SetPosition", "Mix_SetDistance", "Mix_SetReverseStereo",
-    "Mix_ReserveChannels", "Mix_GroupChannel", "Mix_GroupChannels",
-    "Mix_GroupAvailable", "Mix_GroupCount", "Mix_GroupOldest",
-    "Mix_GroupNewer", "Mix_PlayChannelTimed",
-    "Mix_PlayMusic", "Mix_FadeInMusic", "Mix_FadeInMusicPos",
-    "Mix_FadeInChannelTimed", "Mix_Volume",
-    "Mix_VolumeChunk", "Mix_VolumeMusic", "Mix_HaltChannel",
-    "Mix_HaltGroup", "Mix_HaltMusic", "Mix_ExpireChannel",
-    "Mix_FadeOutChannel", "Mix_FadeOutGroup", "Mix_FadeOutMusic",
-    "Mix_FadingMusic", "Mix_FadingChannel", "Mix_Pause", "Mix_Resume",
-    "Mix_Paused", "Mix_PauseMusic", "Mix_ResumeMusic", "Mix_RewindMusic",
-    "Mix_PausedMusic", "Mix_SetMusicPosition", "Mix_Playing",
-    "Mix_PlayingMusic", "Mix_SetMusicCMD", "Mix_SetSynchroValue",
-    "Mix_GetSynchroValue", "Mix_SetSoundFonts", "Mix_GetSoundFonts",
-    "Mix_EachSoundFont", "Mix_GetChunk",
-    "Mix_CloseAudio", "Mix_SetError", "Mix_GetError", "Mix_ClearError",
-
     # Callback Functions
     "channel_finished", "music_finished", "mix_func", "soundfont_function",
     "Mix_EffectFunc_t", "Mix_EffectDone_t",
 
+    # Function Aliases
+    "Mix_SetError", "Mix_GetError", "Mix_ClearError",
+
     # Python Functions
-    "get_dll_file"
+    "get_dll_file",
 ]
 
 try:
@@ -274,6 +248,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Python wrapper functions

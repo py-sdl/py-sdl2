@@ -16,11 +16,6 @@ __all__ = [
     "SDL_TOUCH_DEVICE_INVALID", "SDL_TOUCH_DEVICE_DIRECT",
     "SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE",
     "SDL_TOUCH_DEVICE_INDIRECT_RELATIVE",
-
-    # Functions
-    "SDL_GetNumTouchDevices", "SDL_GetTouchDevice",
-    "SDL_GetTouchDeviceType", "SDL_GetNumTouchFingers",
-    "SDL_GetTouchFinger"
 ]
 
 
@@ -62,6 +57,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

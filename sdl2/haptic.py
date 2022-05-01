@@ -18,21 +18,6 @@ __all__ = [
     "SDL_HAPTIC_GAIN", "SDL_HAPTIC_AUTOCENTER", "SDL_HAPTIC_STATUS",
     "SDL_HAPTIC_PAUSE", "SDL_HAPTIC_POLAR", "SDL_HAPTIC_CARTESIAN",
     "SDL_HAPTIC_SPHERICAL", "SDL_HAPTIC_STEERING_AXIS", "SDL_HAPTIC_INFINITY",
-
-    # Functions         
-    "SDL_NumHaptics", "SDL_HapticName", "SDL_HapticOpen", "SDL_HapticOpened",
-    "SDL_HapticIndex", "SDL_MouseIsHaptic", "SDL_HapticOpenFromMouse",
-    "SDL_JoystickIsHaptic", "SDL_HapticOpenFromJoystick",
-    "SDL_HapticClose", "SDL_HapticNumEffects",
-    "SDL_HapticNumEffectsPlaying", "SDL_HapticQuery",
-    "SDL_HapticNumAxes", "SDL_HapticEffectSupported",
-    "SDL_HapticNewEffect", "SDL_HapticUpdateEffect",
-    "SDL_HapticRunEffect", "SDL_HapticStopEffect",
-    "SDL_HapticDestroyEffect", "SDL_HapticGetEffectStatus",
-    "SDL_HapticSetGain", "SDL_HapticSetAutocenter", "SDL_HapticPause",
-    "SDL_HapticUnpause", "SDL_HapticStopAll",
-    "SDL_HapticRumbleSupported", "SDL_HapticRumbleInit",
-    "SDL_HapticRumblePlay", "SDL_HapticRumbleStop"
 ]
 
 
@@ -217,6 +202,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

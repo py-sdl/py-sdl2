@@ -25,13 +25,6 @@ __all__ = [
     "SDL_LOG_PRIORITY_DEBUG", "SDL_LOG_PRIORITY_INFO",
     "SDL_LOG_PRIORITY_WARN", "SDL_LOG_PRIORITY_ERROR",
     "SDL_LOG_PRIORITY_CRITICAL", "SDL_NUM_LOG_PRIORITIES",
-    
-    # Functions
-    "SDL_LogSetAllPriority", "SDL_LogSetPriority",
-    "SDL_LogGetPriority", "SDL_LogResetPriorities", "SDL_Log",
-    "SDL_LogVerbose", "SDL_LogDebug", "SDL_LogInfo", "SDL_LogWarn",
-    "SDL_LogError", "SDL_LogCritical", "SDL_LogMessage",
-    "SDL_LogGetOutputFunction", "SDL_LogSetOutputFunction",
 
     # Callback Functions
     "SDL_LogOutputFunction",
@@ -101,6 +94,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

@@ -30,44 +30,6 @@ __all__ = [
 
     "SDL_RendererFlip",
     "SDL_FLIP_NONE", "SDL_FLIP_HORIZONTAL", "SDL_FLIP_VERTICAL",
-
-    # Functions
-    "SDL_GetNumRenderDrivers", "SDL_GetRenderDriverInfo",
-    "SDL_CreateWindowAndRenderer", "SDL_CreateRenderer",
-    "SDL_CreateSoftwareRenderer", "SDL_GetRenderer",
-    "SDL_GetRendererInfo", "SDL_CreateTexture",
-    "SDL_CreateTextureFromSurface", "SDL_QueryTexture",
-    "SDL_SetTextureColorMod", "SDL_GetTextureColorMod",
-    "SDL_SetTextureAlphaMod", "SDL_GetTextureAlphaMod",
-    "SDL_SetTextureBlendMode", "SDL_GetTextureBlendMode",
-    "SDL_SetTextureScaleMode", "SDL_GetTextureScaleMode",
-    "SDL_SetTextureUserData", "SDL_GetTextureUserData",
-    "SDL_UpdateTexture", "SDL_LockTexture", "SDL_LockTextureToSurface",
-    "SDL_UnlockTexture",
-    "SDL_RenderTargetSupported", "SDL_SetRenderTarget",
-    "SDL_GetRenderTarget", "SDL_RenderSetLogicalSize",
-    "SDL_RenderGetLogicalSize", "SDL_RenderSetViewport",
-    "SDL_RenderGetClipRect", "SDL_RenderSetClipRect",
-    "SDL_RenderGetViewport", "SDL_RenderSetScale", "SDL_RenderGetScale",
-    "SDL_RenderWindowToLogical", "SDL_RenderLogicalToWindow",
-    "SDL_SetRenderDrawColor", "SDL_GetRenderDrawColor",
-    "SDL_SetRenderDrawBlendMode", "SDL_GetRenderDrawBlendMode",
-    "SDL_RenderClear", "SDL_RenderDrawPoint", "SDL_RenderDrawPoints",
-    "SDL_RenderDrawLine", "SDL_RenderDrawLines", "SDL_RenderDrawRect",
-    "SDL_RenderDrawRects", "SDL_RenderFillRect", "SDL_RenderFillRects",
-    "SDL_RenderCopy", "SDL_RenderCopyEx", "SDL_RenderDrawPointF",
-    "SDL_RenderDrawPointsF", "SDL_RenderDrawLineF",
-    "SDL_RenderDrawLinesF", "SDL_RenderDrawRectF",
-    "SDL_RenderDrawRectsF", "SDL_RenderFillRectF",
-    "SDL_RenderFillRectsF", "SDL_RenderCopyF", "SDL_RenderCopyExF",
-    "SDL_RenderGeometry", "SDL_RenderGeometryRaw",
-    "SDL_RenderReadPixels", "SDL_RenderPresent",
-    "SDL_DestroyTexture", "SDL_DestroyRenderer", "SDL_RenderFlush",
-    "SDL_UpdateYUVTexture", "SDL_UpdateNVTexture",
-    "SDL_GL_BindTexture", "SDL_GL_UnbindTexture",
-    "SDL_GetRendererOutputSize", "SDL_RenderGetIntegerScale",
-    "SDL_RenderSetIntegerScale", "SDL_RenderGetMetalLayer",
-    "SDL_RenderGetMetalCommandEncoder", "SDL_RenderSetVSync"
 ]
 
 
@@ -320,6 +282,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

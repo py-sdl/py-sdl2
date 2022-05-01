@@ -8,10 +8,6 @@ from .rwops import SDL_RWops
 __all__ = [
     # Defines
     "SDL_GestureID",
-    
-    # Functions
-    "SDL_RecordGesture", "SDL_SaveAllDollarTemplates",
-    "SDL_SaveDollarTemplate", "SDL_LoadDollarTemplates"
 ]
 
 
@@ -31,6 +27,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

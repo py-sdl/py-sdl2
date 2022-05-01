@@ -13,37 +13,13 @@ from .surface import SDL_Surface
 # be wrapped at a later date for the sake of completeness.
 
 __all__ = [
-    # Structs
-    "FPSManager",
-    
-    # Defines
+    # Constants
     "FPS_UPPER_LIMIT", "FPS_LOWER_LIMIT", "FPS_DEFAULT",
     "SDL2_GFXPRIMITIVES_MAJOR", "SDL2_GFXPRIMITIVES_MAJOR",
     "SDL2_GFXPRIMITIVES_MICRO", "SMOOTHING_OFF", "SMOOTHING_ON",
 
-    # Functions
-    "SDL_initFramerate", "SDL_getFramerate",
-    "SDL_setFramerate", "SDL_getFramecount", "SDL_framerateDelay",
-    "pixelColor", "pixelRGBA", "hlineColor",
-    "hlineRGBA", "vlineColor", "vlineRGBA", "rectangleColor",
-    "rectangleRGBA", "roundedRectangleColor", "roundedRectangleRGBA",
-    "boxColor", "boxRGBA", "roundedBoxColor", "roundedBoxRGBA",
-    "lineColor", "lineRGBA", "aalineColor", "aalineRGBA",
-    "thickLineColor", "thickLineRGBA", "circleColor", "circleRGBA",
-    "arcColor", "arcRGBA", "aacircleColor", "aacircleRGBA",
-    "filledCircleColor", "filledCircleRGBA", "ellipseColor",
-    "ellipseRGBA", "aaellipseColor", "aaellipseRGBA",
-    "filledEllipseColor", "filledEllipseRGBA", "pieColor", "pieRGBA",
-    "filledPieColor", "filledPieRGBA", "trigonColor", "trigonRGBA",
-    "aatrigonColor", "aatrigonRGBA", "filledTrigonColor",
-    "filledTrigonRGBA", "polygonColor", "polygonRGBA", "aapolygonColor",
-    "aapolygonRGBA", "filledPolygonColor", "filledPolygonRGBA",
-    "texturedPolygon", "bezierColor", "bezierRGBA",
-    "gfxPrimitivesSetFont", "gfxPrimitivesSetFontRotation",
-    "characterColor", "characterRGBA", "stringColor", "stringRGBA",
-    "rotozoomSurface", "rotozoomSurfaceXY", "rotozoomSurfaceSize",
-    "rotozoomSurfaceSizeXY", "zoomSurface", "zoomSurfaceSize", "shrinkSurface",
-    "rotateSurface90Degrees",
+    # Structs
+    "FPSManager",
 
     # Python Functions
     "get_dll_file"
@@ -189,6 +165,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Python wrapper functions

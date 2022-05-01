@@ -98,54 +98,6 @@ __all__ = [
     "SDL_WINDOWPOS_CENTERED_MASK", "SDL_WINDOWPOS_CENTERED_DISPLAY",
     "SDL_WINDOWPOS_CENTERED", "SDL_WINDOWPOS_ISCENTERED",
 
-    # Functions
-    "SDL_GetNumVideoDrivers", "SDL_GetVideoDriver",
-    "SDL_VideoInit", "SDL_VideoQuit",
-    "SDL_GetCurrentVideoDriver", "SDL_GetNumVideoDisplays",
-    "SDL_GetDisplayName", "SDL_GetDisplayBounds",
-    "SDL_GetDisplayOrientation", "SDL_GetNumDisplayModes",
-    "SDL_GetDisplayMode",
-    "SDL_GetDesktopDisplayMode", "SDL_GetCurrentDisplayMode",
-    "SDL_GetClosestDisplayMode", "SDL_GetWindowDisplayIndex",
-    "SDL_SetWindowDisplayMode", "SDL_GetWindowDisplayMode",
-    "SDL_GetWindowICCProfile",
-    "SDL_GetWindowPixelFormat", "SDL_CreateWindow",
-    "SDL_CreateWindowFrom", "SDL_GetWindowID", "SDL_GetWindowFromID",
-    "SDL_GetWindowFlags", "SDL_SetWindowTitle", "SDL_GetWindowTitle",
-    "SDL_SetWindowIcon", "SDL_SetWindowData", "SDL_GetWindowData",
-    "SDL_SetWindowPosition", "SDL_GetWindowPosition",
-    "SDL_SetWindowSize", "SDL_GetWindowSize",
-    "SDL_SetWindowMinimumSize", "SDL_GetWindowMinimumSize",
-    "SDL_SetWindowMaximumSize", "SDL_GetWindowMaximumSize",
-    "SDL_SetWindowBordered", "SDL_ShowWindow", "SDL_HideWindow",
-    "SDL_RaiseWindow", "SDL_MaximizeWindow", "SDL_MinimizeWindow",
-    "SDL_RestoreWindow", "SDL_SetWindowFullscreen",
-    "SDL_GetWindowSurface", "SDL_UpdateWindowSurface",
-    "SDL_UpdateWindowSurfaceRects", "SDL_SetWindowGrab",
-    "SDL_SetWindowKeyboardGrab", "SDL_SetWindowMouseGrab",
-    "SDL_GetWindowGrab", "SDL_GetWindowKeyboardGrab",
-    "SDL_GetWindowMouseGrab", "SDL_GetGrabbedWindow",
-    "SDL_SetWindowMouseRect", "SDL_GetWindowMouseRect",
-    "SDL_SetWindowBrightness", "SDL_GetWindowBrightness",
-    "SDL_SetWindowGammaRamp", "SDL_GetWindowGammaRamp", 
-    "SDL_FlashWindow", "SDL_DestroyWindow",
-    "SDL_DisableScreenSaver", "SDL_IsScreenSaverEnabled",
-    "SDL_EnableScreenSaver",
-    "SDL_SetWindowHitTest", "SDL_GL_LoadLibrary",
-    "SDL_GL_GetProcAddress", "SDL_GL_UnloadLibrary",
-    "SDL_GL_ExtensionSupported", "SDL_GL_SetAttribute",
-    "SDL_GL_GetAttribute", "SDL_GL_CreateContext",
-    "SDL_GL_MakeCurrent", "SDL_GL_SetSwapInterval",
-    "SDL_GL_GetSwapInterval", "SDL_GL_SwapWindow",
-    "SDL_GL_GetDrawableSize", "SDL_GL_GetCurrentWindow",
-    "SDL_GL_GetCurrentContext", "SDL_GL_DeleteContext",
-    "SDL_GL_ResetAttributes",
-    "SDL_GetDisplayDPI", "SDL_GetDisplayUsableBounds",
-    "SDL_GetWindowBordersSize", "SDL_GetWindowOpacity",
-    "SDL_SetWindowOpacity", "SDL_SetWindowInputFocus",
-    "SDL_SetWindowModalFor", "SDL_SetWindowResizable",
-    "SDL_SetWindowAlwaysOnTop",
-
     # Callback Functions
     "SDL_HitTest"
 ]
@@ -437,6 +389,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

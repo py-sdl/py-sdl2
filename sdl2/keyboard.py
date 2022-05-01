@@ -10,15 +10,6 @@ from .video import SDL_Window
 __all__ = [
     # Structs
     "SDL_Keysym",
-    
-    # Functions
-    "SDL_GetKeyboardFocus", "SDL_GetKeyboardState",
-    "SDL_GetModState", "SDL_SetModState", "SDL_GetKeyFromScancode",
-    "SDL_GetScancodeFromKey", "SDL_GetScancodeName",
-    "SDL_GetScancodeFromName", "SDL_GetKeyName", "SDL_GetKeyFromName",
-    "SDL_StartTextInput", "SDL_IsTextInputActive", "SDL_StopTextInput",
-    "SDL_SetTextInputRect", "SDL_HasScreenKeyboardSupport",
-    "SDL_IsScreenKeyboardShown"
 ]
 
 
@@ -56,6 +47,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

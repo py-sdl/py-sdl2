@@ -26,32 +26,6 @@ __all__ = [
     "SDL_JOYSTICK_POWER_LOW", "SDL_JOYSTICK_POWER_MEDIUM",
     "SDL_JOYSTICK_POWER_FULL", "SDL_JOYSTICK_POWER_WIRED",
     "SDL_JOYSTICK_POWER_MAX",
-
-    # Functions
-    "SDL_LockJoysticks", "SDL_UnlockJoysticks", "SDL_NumJoysticks",
-    "SDL_JoystickNameForIndex", "SDL_JoystickGetDevicePlayerIndex",
-    "SDL_JoystickGetDeviceGUID", "SDL_JoystickGetDeviceVendor", 
-    "SDL_JoystickGetDeviceProduct", "SDL_JoystickGetDeviceProductVersion",
-    "SDL_JoystickGetDeviceType", "SDL_JoystickGetDeviceInstanceID", 
-    "SDL_JoystickOpen", "SDL_JoystickFromInstanceID",
-    "SDL_JoystickFromPlayerIndex",
-    "SDL_JoystickAttachVirtual", "SDL_JoystickDetachVirtual",
-    "SDL_JoystickIsVirtual", "SDL_JoystickSetVirtualAxis",
-    "SDL_JoystickSetVirtualButton", "SDL_JoystickSetVirtualHat",
-    "SDL_JoystickName", "SDL_JoystickGetPlayerIndex",
-    "SDL_JoystickSetPlayerIndex",
-    "SDL_JoystickGetGUID", "SDL_JoystickGetVendor", "SDL_JoystickGetProduct",
-    "SDL_JoystickGetProductVersion", "SDL_JoystickGetSerial",
-    "SDL_JoystickGetType", "SDL_JoystickGetGUIDString",
-    "SDL_JoystickGetGUIDFromString", "SDL_JoystickGetAttached",
-    "SDL_JoystickInstanceID", "SDL_JoystickNumAxes", "SDL_JoystickNumBalls",
-    "SDL_JoystickNumHats", "SDL_JoystickNumButtons", "SDL_JoystickUpdate",
-    "SDL_JoystickEventState", "SDL_JoystickGetAxis", "SDL_JoystickGetAxisInitialState",
-    "SDL_JoystickGetHat", "SDL_JoystickGetBall", "SDL_JoystickGetButton",
-    "SDL_JoystickRumble", "SDL_JoystickRumbleTriggers",
-    "SDL_JoystickHasLED", "SDL_JoystickHasRumble", "SDL_JoystickHasRumbleTriggers",
-    "SDL_JoystickSetLED", "SDL_JoystickSendEffect",
-    "SDL_JoystickClose", "SDL_JoystickCurrentPowerLevel"
 ]
 
 
@@ -183,6 +157,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

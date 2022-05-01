@@ -9,11 +9,6 @@ __all__ = [
     # Macro Functions
     "SDL_TICKS_PASSED",
 
-    # Functions
-    "SDL_GetTicks", "SDL_GetTicks64", "SDL_GetPerformanceCounter",
-    "SDL_GetPerformanceFrequency", "SDL_Delay",
-    "SDL_AddTimer", "SDL_RemoveTimer",
-
     # Callback Functions
     "SDL_TimerCallback"
 ]
@@ -45,6 +40,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

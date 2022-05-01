@@ -15,15 +15,6 @@ __all__ = [
     "SDL_SensorType",
     "SDL_SENSOR_INVALID", "SDL_SENSOR_UNKNOWN", "SDL_SENSOR_ACCEL",
     "SDL_SENSOR_GYRO",
-
-    # Functions
-    "SDL_LockSensors", "SDL_UnlockSensors", "SDL_NumSensors",
-    "SDL_SensorGetDeviceName", "SDL_SensorGetDeviceType",
-    "SDL_SensorGetDeviceNonPortableType", "SDL_SensorGetDeviceInstanceID",
-    "SDL_SensorOpen", "SDL_SensorFromInstanceID", "SDL_SensorGetName",
-    "SDL_SensorGetType", "SDL_SensorGetNonPortableType",
-    "SDL_SensorGetInstanceID", "SDL_SensorGetData", "SDL_SensorClose",
-    "SDL_SensorUpdate"
 ]
 
 
@@ -69,6 +60,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

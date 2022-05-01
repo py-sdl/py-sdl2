@@ -17,10 +17,7 @@ __all__ = [
     "SDL_BLENDFACTOR_SRC_COLOR", "SDL_BLENDFACTOR_ONE_MINUS_SRC_COLOR",
     "SDL_BLENDFACTOR_SRC_ALPHA", "SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA",
     "SDL_BLENDFACTOR_DST_COLOR", "SDL_BLENDFACTOR_ONE_MINUS_DST_COLOR",
-    "SDL_BLENDFACTOR_DST_ALPHA", "SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA", 
-
-    # Functions
-    "SDL_ComposeCustomBlendMode"
+    "SDL_BLENDFACTOR_DST_ALPHA", "SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA",
 ]
 
 
@@ -66,6 +63,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

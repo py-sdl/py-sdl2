@@ -8,9 +8,6 @@ __all__ = [
     "SDL_POWERSTATE_UNKNOWN", "SDL_POWERSTATE_ON_BATTERY",
     "SDL_POWERSTATE_NO_BATTERY", "SDL_POWERSTATE_CHARGING",
     "SDL_POWERSTATE_CHARGED",
-
-    # Functions
-    "SDL_GetPowerInfo"
 ]
 
 
@@ -32,6 +29,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

@@ -9,18 +9,6 @@ from .stdinc import Uint32, SDL_bool
 __all__ = [
     # Structs
     "SDL_hid_device", "SDL_hid_device_info",
-
-    # Functions
-    "SDL_hid_init", "SDL_hid_exit", "SDL_hid_device_change_count",
-    "SDL_hid_enumerate", "SDL_hid_free_enumeration",
-    "SDL_hid_open", "SDL_hid_open_path",
-    "SDL_hid_write", "SDL_hid_read_timeout", "SDL_hid_read",
-    "SDL_hid_set_nonblocking",
-    "SDL_hid_send_feature_report", "SDL_hid_get_feature_report",
-    "SDL_hid_close",
-    "SDL_hid_get_manufacturer_string", "SDL_hid_get_product_string",
-    "SDL_hid_get_serial_number_string", "SDL_hid_get_indexed_string",
-    "SDL_hid_ble_scan",
 ]
 
 
@@ -98,6 +86,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

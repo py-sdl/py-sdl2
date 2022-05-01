@@ -20,9 +20,6 @@ __all__ = [
     "SDL_SYSWM_WAYLAND", "SDL_SYSWM_MIR", "SDL_SYSWM_WINRT",
     "SDL_SYSWM_ANDROID", "SDL_SYSWM_VIVANTE", "SDL_SYSWM_OS2",
     "SDL_SYSWM_HAIKU", "SDL_SYSWM_KMSDRM", "SDL_SYSWM_RISCOS",
-
-    # Functions
-    "SDL_GetWindowWMInfo"
 ]
 
 
@@ -247,6 +244,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

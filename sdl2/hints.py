@@ -111,13 +111,8 @@ __all__ = [
     "SDL_HintPriority",
     "SDL_HINT_DEFAULT", "SDL_HINT_NORMAL", "SDL_HINT_OVERRIDE",
 
-    # Functions
-    "SDL_SetHintWithPriority", "SDL_SetHint", "SDL_GetHint",
-    "SDL_GetHintBoolean", "SDL_AddHintCallback", "SDL_DelHintCallback",
-    "SDL_ClearHints",
-
     # Callback Functions
-    "SDL_HintCallback"
+    "SDL_HintCallback",
 ]
 
 
@@ -292,6 +287,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

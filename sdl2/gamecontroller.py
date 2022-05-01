@@ -50,42 +50,6 @@ __all__ = [
 
     # Macro Functions
     "SDL_GameControllerAddMappingsFromFile",
-    
-    # Functions
-    "SDL_GameControllerAddMappingsFromRW", "SDL_GameControllerAddMapping",
-    "SDL_GameControllerNumMappings", "SDL_GameControllerMappingForIndex",
-    "SDL_GameControllerMappingForGUID", "SDL_GameControllerMapping",
-    "SDL_IsGameController", "SDL_GameControllerNameForIndex",
-    "SDL_GameControllerTypeForIndex", "SDL_GameControllerMappingForDeviceIndex",
-    "SDL_GameControllerOpen", "SDL_GameControllerFromInstanceID",
-    "SDL_GameControllerFromPlayerIndex", "SDL_GameControllerName",
-    "SDL_GameControllerGetType", 
-    "SDL_GameControllerGetPlayerIndex", "SDL_GameControllerSetPlayerIndex",
-    "SDL_GameControllerGetVendor", "SDL_GameControllerGetProduct",
-    "SDL_GameControllerGetProductVersion", "SDL_GameControllerGetSerial",
-    "SDL_GameControllerGetAttached", "SDL_GameControllerGetJoystick",
-    "SDL_GameControllerEventState", "SDL_GameControllerUpdate",
-    "SDL_GameControllerGetAxisFromString", "SDL_GameControllerGetStringForAxis",
-    "SDL_GameControllerGetBindForAxis", "SDL_GameControllerHasAxis",
-    "SDL_GameControllerGetAxis",
-    "SDL_GameControllerGetButtonFromString",
-    "SDL_GameControllerGetStringForButton",
-    "SDL_GameControllerGetBindForButton", "SDL_GameControllerHasButton",
-    "SDL_GameControllerGetButton",
-    "SDL_GameControllerGetNumTouchpads",
-    "SDL_GameControllerGetNumTouchpadFingers",
-    "SDL_GameControllerGetTouchpadFinger",
-    "SDL_GameControllerHasSensor", "SDL_GameControllerSetSensorEnabled",
-    "SDL_GameControllerIsSensorEnabled", 
-    "SDL_GameControllerGetSensorDataRate", "SDL_GameControllerGetSensorData",
-    "SDL_GameControllerRumble", "SDL_GameControllerRumbleTriggers",
-    "SDL_GameControllerHasLED", "SDL_GameControllerHasRumble",
-    "SDL_GameControllerHasRumbleTriggers",
-    "SDL_GameControllerSetLED",
-    "SDL_GameControllerSendEffect",
-    "SDL_GameControllerClose",
-    "SDL_GameControllerGetAppleSFSymbolsNameForButton",
-    "SDL_GameControllerGetAppleSFSymbolsNameForAxis",
 ]
 
 
@@ -289,6 +253,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

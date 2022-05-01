@@ -5,14 +5,6 @@ from .stdinc import SDL_bool
 __all__ = [
     # Defines
     "SDL_CACHELINE_SIZE",
-
-    # Functions
-    "SDL_GetCPUCount", "SDL_GetCPUCacheLineSize",
-    "SDL_HasRDTSC", "SDL_HasAltiVec", "SDL_HasMMX", "SDL_Has3DNow",
-    "SDL_HasSSE", "SDL_HasSSE2", "SDL_HasSSE3", "SDL_HasSSE41",
-    "SDL_HasSSE42", "SDL_GetSystemRAM", "SDL_HasAVX", "SDL_HasAVX2",
-    "SDL_HasAVX512F", "SDL_HasARMSIMD", "SDL_HasNEON",
-    "SDL_SIMDGetAlignment", "SDL_SIMDAlloc", "SDL_SIMDRealloc", "SDL_SIMDFree"
 ]
 
 
@@ -49,6 +41,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

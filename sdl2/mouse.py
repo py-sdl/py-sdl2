@@ -28,15 +28,6 @@ __all__ = [
     # Macro Functions
     "SDL_BUTTON", "SDL_BUTTON_LMASK", "SDL_BUTTON_MMASK",
     "SDL_BUTTON_RMASK", "SDL_BUTTON_X1MASK", "SDL_BUTTON_X2MASK",
-    
-    # Functions
-    "SDL_GetMouseFocus", "SDL_GetMouseState", "SDL_GetGlobalMouseState",
-    "SDL_GetRelativeMouseState",
-    "SDL_WarpMouseInWindow", "SDL_WarpMouseGlobal", "SDL_SetRelativeMouseMode",
-    "SDL_CaptureMouse", "SDL_GetRelativeMouseMode",
-    "SDL_CreateCursor", "SDL_CreateColorCursor", "SDL_CreateSystemCursor",
-    "SDL_SetCursor", "SDL_GetCursor", "SDL_GetDefaultCursor", "SDL_FreeCursor",
-    "SDL_ShowCursor"
 ]
 
 
@@ -107,6 +98,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

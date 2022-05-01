@@ -16,27 +16,10 @@ __all__ = [
     "SDL_SIMD_ALIGNED",
 
     # Macro Functions
-    "SDL_MUSTLOCK",
+    "SDL_MUSTLOCK", "SDL_LoadBMP", "SDL_SaveBMP",
     
-    # Functions
-    "SDL_CreateRGBSurface", "SDL_CreateRGBSurfaceFrom", "SDL_FreeSurface",
-    "SDL_SetSurfacePalette", "SDL_LockSurface", "SDL_UnlockSurface",
-    "SDL_LoadBMP_RW", "SDL_LoadBMP", "SDL_SaveBMP_RW", "SDL_SaveBMP",
-    "SDL_SetSurfaceRLE", "SDL_HasSurfaceRLE",
-    "SDL_HasColorKey", "SDL_SetColorKey", "SDL_GetColorKey",
-    "SDL_SetSurfaceColorMod", "SDL_GetSurfaceColorMod",
-    "SDL_SetSurfaceAlphaMod", "SDL_GetSurfaceAlphaMod",
-    "SDL_SetSurfaceBlendMode", "SDL_GetSurfaceBlendMode",
-    "SDL_SetClipRect", "SDL_GetClipRect", "SDL_ConvertSurface",
-    "SDL_ConvertSurfaceFormat", "SDL_ConvertPixels", "SDL_PremultiplyAlpha",
-    "SDL_FillRect", "SDL_FillRects",
-    "SDL_UpperBlit", "SDL_BlitSurface", "SDL_LowerBlit",
-    "SDL_SoftStretch", "SDL_SoftStretchLinear",
-    "SDL_UpperBlitScaled", "SDL_BlitScaled",
-    "SDL_LowerBlitScaled", "SDL_CreateRGBSurfaceWithFormat",
-    "SDL_CreateRGBSurfaceWithFormatFrom", "SDL_DuplicateSurface",
-    "SDL_SetYUVConversionMode", "SDL_GetYUVConversionMode",
-    "SDL_GetYUVConversionModeForResolution",
+    # Function Aliases
+    "SDL_BlitSurface", "SDL_BlitScaled",
 
     # Callback Functions
     "SDL_blit", "SDL_Blit",
@@ -175,6 +158,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

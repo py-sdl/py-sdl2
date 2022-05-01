@@ -31,22 +31,6 @@ __all__ = [
     "SDL_AUDIO_ISBIGENDIAN", "SDL_AUDIO_ISSIGNED", "SDL_AUDIO_ISINT",
     "SDL_AUDIO_ISLITTLEENDIAN", "SDL_AUDIO_ISUNSIGNED", "SDL_LoadWAV",
 
-    # Functions
-    "SDL_GetNumAudioDrivers", "SDL_GetAudioDriver", "SDL_AudioInit",
-    "SDL_AudioQuit", "SDL_GetCurrentAudioDriver", "SDL_OpenAudio",
-    "SDL_AudioDeviceID", "SDL_GetNumAudioDevices",
-    "SDL_GetAudioDeviceName", "SDL_GetAudioDeviceSpec",
-    "SDL_OpenAudioDevice", "SDL_GetAudioStatus", "SDL_GetAudioDeviceStatus",
-    "SDL_PauseAudio", "SDL_PauseAudioDevice", "SDL_LoadWAV_RW", "SDL_FreeWAV",
-    "SDL_BuildAudioCVT", "SDL_ConvertAudio",  "SDL_MixAudio",
-    "SDL_MixAudioFormat", "SDL_LockAudio", "SDL_LockAudioDevice",
-    "SDL_UnlockAudio", "SDL_UnlockAudioDevice", "SDL_CloseAudio",
-    "SDL_CloseAudioDevice", "SDL_QueueAudio", "SDL_GetQueuedAudioSize",
-    "SDL_ClearQueuedAudio", "SDL_DequeueAudio", "SDL_AudioStream",
-    "SDL_NewAudioStream", "SDL_AudioStreamPut", "SDL_AudioStreamGet",
-    "SDL_AudioStreamAvailable", "SDL_AudioStreamClear",
-    "SDL_FreeAudioStream",
-
     # Callback Functions
     "SDL_AudioCallback", "SDL_AudioFilter",
 
@@ -245,6 +229,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

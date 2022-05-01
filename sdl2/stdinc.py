@@ -16,10 +16,8 @@ __all__ = [
     "SDL_bool",
     "SDL_FALSE", "SDL_TRUE",
     
-    # Functions
-    "SDL_malloc", "SDL_calloc", "SDL_realloc", "SDL_free",
-    "SDL_getenv", "SDL_setenv", "SDL_abs", "SDL_min", "SDL_max", "SDL_clamp",
-    "SDL_memset", "SDL_memcpy"
+    # Macro Functions
+    "SDL_min", "SDL_max", "SDL_clamp",
 ]
 
 
@@ -69,6 +67,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

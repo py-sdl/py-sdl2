@@ -9,10 +9,6 @@ __all__ = [
 
     # Macro Functions
     "SDL_PointInRect", "SDL_RectEmpty", "SDL_RectEquals",
-
-    # Functions
-    "SDL_HasIntersection", "SDL_IntersectRect", "SDL_UnionRect",
-    "SDL_EnclosePoints", "SDL_IntersectRectAndLine"
 ]
 
 
@@ -165,6 +161,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

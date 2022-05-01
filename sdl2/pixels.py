@@ -77,14 +77,6 @@ __all__ = [
     "SDL_ISPIXELFORMAT_INDEXED", "SDL_ISPIXELFORMAT_PACKED",
     "SDL_ISPIXELFORMAT_ARRAY","SDL_ISPIXELFORMAT_ALPHA",
 
-    # Functions
-    "SDL_GetPixelFormatName",
-    "SDL_PixelFormatEnumToMasks", "SDL_MasksToPixelFormatEnum",
-    "SDL_AllocFormat", "SDL_FreeFormat", "SDL_AllocPalette",
-    "SDL_SetPixelFormatPalette", "SDL_SetPaletteColors", "SDL_FreePalette",
-    "SDL_MapRGB", "SDL_MapRGBA", "SDL_GetRGB", "SDL_GetRGBA",
-    "SDL_CalculateGammaRamp",
-
     # Convenience Variables
     "NAME_MAP", "ALL_PIXELFORMATS",
 ]
@@ -552,6 +544,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

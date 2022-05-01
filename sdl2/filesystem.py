@@ -1,7 +1,7 @@
 from ctypes import c_char, c_char_p
 from .dll import _bind, SDLFunc, AttributeDict
 
-__all__ = ["SDL_GetBasePath", "SDL_GetPrefPath"]
+__all__ = []
 
 
 # Raw ctypes function definitions
@@ -13,6 +13,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

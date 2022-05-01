@@ -59,14 +59,8 @@ __all__ = [
     "SDL_eventaction",
     "SDL_ADDEVENT", "SDL_PEEKEVENT", "SDL_GETEVENT", 
     
-    # Functions
-    "SDL_PumpEvents",  "SDL_PeepEvents", "SDL_HasEvent",
-    "SDL_HasEvents", "SDL_FlushEvent", "SDL_FlushEvents",
-    "SDL_PollEvent", "SDL_WaitEvent", "SDL_WaitEventTimeout",
-    "SDL_PushEvent", "SDL_SetEventFilter",
-    "SDL_GetEventFilter", "SDL_AddEventWatch", "SDL_DelEventWatch",
-    "SDL_FilterEvents",  "SDL_EventState", "SDL_GetEventState",
-    "SDL_RegisterEvents", "SDL_QuitRequested",
+    # Macro Functions
+    "SDL_GetEventState", "SDL_QuitRequested",
 
     # Callback Functions
     "SDL_EventFilter"
@@ -530,6 +524,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

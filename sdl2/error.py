@@ -10,10 +10,6 @@ __all__ = [
 
     # Macro Functions
     "SDL_OutOfMemory", "SDL_Unsupported", "SDL_InvalidParamError",
-
-    # Functions
-    "SDL_SetError", "SDL_GetError", "SDL_GetErrorMsg", "SDL_ClearError",
-    "SDL_Error",
 ]
 
 
@@ -40,6 +36,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

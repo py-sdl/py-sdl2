@@ -9,10 +9,6 @@ from .video import SDL_Window
 __all__ = [
     # Opaque Types
     "SDL_MetalView",
-    
-    # Functions
-    "SDL_Metal_CreateView", "SDL_Metal_DestroyView", "SDL_Metal_GetLayer",
-    "SDL_Metal_GetDrawableSize"
 ]
 
 
@@ -36,6 +32,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

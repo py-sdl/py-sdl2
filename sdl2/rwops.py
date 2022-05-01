@@ -16,19 +16,9 @@ __all__ = [
     "SDL_RWOPS_UNKNOWN", "SDL_RWOPS_WINFILE", "SDL_RWOPS_STDFILE",
     "SDL_RWOPS_JNIFILE", "SDL_RWOPS_MEMORY", "SDL_RWOPS_MEMORY_RO",
     "RW_SEEK_SET", "RW_SEEK_CUR", "RW_SEEK_END",
-
-    # Functions
-    "SDL_RWFromFile", "SDL_RWFromFP", "SDL_RWFromMem", "SDL_RWFromConstMem",
-    "SDL_AllocRW", "SDL_FreeRW", "SDL_RWsize", "SDL_RWseek",
-    "SDL_RWtell", "SDL_RWread", "SDL_RWwrite", "SDL_RWclose",
-    "SDL_LoadFile_RW", "SDL_LoadFile",
-    "SDL_ReadU8", "SDL_ReadLE16", "SDL_ReadBE16", "SDL_ReadLE32",
-    "SDL_ReadBE32", "SDL_ReadLE64", "SDL_ReadBE64", "SDL_WriteU8",
-    "SDL_WriteLE16", "SDL_WriteBE16", "SDL_WriteLE32", "SDL_WriteBE32",
-    "SDL_WriteLE64", "SDL_WriteBE64",
     
     # Python Functions
-    "rw_from_object"
+    "rw_from_object",
 ]
 
 def _ptr2obj(ptr):
@@ -79,12 +69,6 @@ SDL_RWops._fields_ = [
 
 # Raw ctypes function definitions
 
-was_macro = [
-    # Functions that were macros in SDL2 < 2.0.10
-    "SDL_LoadFile", "SDL_RWsize", "SDL_RWseek", "SDL_RWtell",
-    "SDL_RWread", "SDL_RWwrite", "SDL_RWclose"
-]
-
 _funcdefs = [
     SDLFunc("SDL_RWFromFile", [c_char_p, c_char_p], _P(SDL_RWops)),
     SDLFunc("SDL_RWFromFP", [c_void_p, SDL_bool], _P(SDL_RWops)),
@@ -121,6 +105,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings

@@ -24,9 +24,6 @@ __all__ = [
     "SDL_MESSAGEBOX_COLOR_BUTTON_BORDER",
     "SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND",
     "SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED", "SDL_MESSAGEBOX_COLOR_MAX",
-
-    # Functions
-    "SDL_ShowMessageBox", "SDL_ShowSimpleMessageBox"
 ]
 
 
@@ -84,6 +81,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Aliases for ctypes bindings
