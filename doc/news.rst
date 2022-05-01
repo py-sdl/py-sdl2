@@ -44,6 +44,8 @@ Fixed Bugs:
   alias for Python's built-in ``abs`` function.
 * Renamed the ``SDL_Blit`` ctypes function definition to ``SDL_blit`` to match
   the SDL2 headers.
+* Fixed export of ``SDL_TIMER_RESOLUTION`` hint (was previously not accessable
+  through the ``sdl2`` namespace).
 
 
 0.9.11
