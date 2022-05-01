@@ -20,19 +20,8 @@ __all__ = [
     "SDL_IMAGE_VERSION", "SDL_IMAGE_COMPILEDVERSION",
     "SDL_IMAGE_VERSION_ATLEAST", 
     
-    # Functions
-    "IMG_Linked_Version", "IMG_Init", "IMG_Quit", "IMG_LoadTyped_RW",
-    "IMG_Load", "IMG_Load_RW", "IMG_LoadTexture", "IMG_LoadTexture_RW",
-    "IMG_LoadTextureTyped_RW", "IMG_isICO", "IMG_isCUR", "IMG_isBMP",
-    "IMG_isGIF", "IMG_isJPG", "IMG_isLBM", "IMG_isPNG", "IMG_isPNM",
-    "IMG_isPCX", "IMG_isTIF", "IMG_isXCF", "IMG_isXV", "IMG_isWEBP",
-    "IMG_LoadBMP_RW", "IMG_LoadCUR_RW", "IMG_LoadCUR_RW",
-    "IMG_LoadGIF_RW", "IMG_LoadICO_RW", "IMG_LoadJPG_RW",
-    "IMG_LoadLBM_RW", "IMG_LoadPCX_RW", "IMG_LoadPNM_RW",
-    "IMG_LoadPNG_RW", "IMG_LoadTGA_RW", "IMG_LoadTIF_RW",
-    "IMG_LoadXCF_RW", "IMG_LoadWEBP_RW", "IMG_LoadXPM_RW",
-    "IMG_LoadXV_RW", "IMG_ReadXPMFromArray",
-    "IMG_GetError", "IMG_SetError", "IMG_SaveJPG", "IMG_SaveJPG_RW",
+    # Function Aliases
+    "IMG_GetError", "IMG_SetError",
     
     # Python Functions
     "get_dll_file"
@@ -126,6 +115,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Python wrapper functions

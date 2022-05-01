@@ -1,5 +1,6 @@
-from ctypes import POINTER, c_char_p, c_int, c_char
-from .dll import _bind
+from ctypes import c_char_p, c_int, c_char
+from ctypes import POINTER as _P
+from .dll import _bind, SDLFunc, AttributeDict
 
 __all__ = [
     # Enums
@@ -8,21 +9,13 @@ __all__ = [
     "SDL_UNSUPPORTED", "SDL_LASTERROR",
 
     # Macro Functions
-    "SDL_OutOfMemory", "SDL_Unsupported", "SDL_InvalidParamError", "SDL_Error",
-
-    # Functions
-    "SDL_SetError", "SDL_GetError", "SDL_GetErrorMsg", "SDL_ClearError"
+    "SDL_OutOfMemory", "SDL_Unsupported", "SDL_InvalidParamError",
 ]
 
 
-SDL_SetError = _bind("SDL_SetError", [c_char_p], c_int)
-SDL_GetError = _bind("SDL_GetError", None, c_char_p)
-SDL_GetErrorMsg = _bind("SDL_GetErrorMsg", [POINTER(c_char), c_int], c_char_p, added='2.0.14')
-SDL_ClearError = _bind("SDL_ClearError")
-
+# Constants & enums
 
 SDL_errorcode = c_int
-
 SDL_ENOMEM = 0
 SDL_EFREAD = 1
 SDL_EFWRITE = 2
@@ -31,7 +24,31 @@ SDL_UNSUPPORTED = 4
 SDL_LASTERROR = 5
 
 
-SDL_Error = _bind("SDL_Error", [SDL_errorcode], c_int)
+# Raw ctypes function definitions
+
+_funcdefs = [
+    SDLFunc("SDL_SetError", [c_char_p], c_int),
+    SDLFunc("SDL_GetError", None, c_char_p),
+    SDLFunc("SDL_GetErrorMsg", [_P(c_char), c_int], c_char_p, added='2.0.14'),
+    SDLFunc("SDL_ClearError"),
+    SDLFunc("SDL_Error", [SDL_errorcode], c_int),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
+
+
+# Aliases for ctypes bindings
+
+SDL_SetError = _ctypes["SDL_SetError"]
+SDL_GetError = _ctypes["SDL_GetError"]
+SDL_GetErrorMsg = _ctypes["SDL_GetErrorMsg"]
+SDL_ClearError = _ctypes["SDL_ClearError"]
+SDL_Error = _ctypes["SDL_Error"]
+
 SDL_OutOfMemory = SDL_Error(SDL_ENOMEM)
 SDL_Unsupported = SDL_Error(SDL_UNSUPPORTED)
-SDL_InvalidParamError = lambda x: SDL_SetError("Parameter '%s' is invalid" % (x))
+
+def SDL_InvalidParamError(x):
+    return SDL_SetError("Parameter '%s' is invalid" % (x))

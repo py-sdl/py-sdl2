@@ -1,8 +1,11 @@
 import io
 import sys
-from ctypes import Structure, POINTER, CFUNCTYPE, c_int, c_size_t, c_void_p, \
-    c_char_p, memmove, string_at, Union, _Pointer
-from .dll import _bind, version
+from ctypes import (
+    c_int, c_size_t, c_void_p, c_char_p, memmove, string_at, CFUNCTYPE,
+    Structure, Union, _Pointer
+)
+from ctypes import POINTER as _P
+from .dll import _bind, SDLFunc, AttributeDict, version
 from .stdinc import Sint64, Uint8, Uint16, Uint32, Uint64, SDL_bool
 
 __all__ = [
@@ -13,19 +16,9 @@ __all__ = [
     "SDL_RWOPS_UNKNOWN", "SDL_RWOPS_WINFILE", "SDL_RWOPS_STDFILE",
     "SDL_RWOPS_JNIFILE", "SDL_RWOPS_MEMORY", "SDL_RWOPS_MEMORY_RO",
     "RW_SEEK_SET", "RW_SEEK_CUR", "RW_SEEK_END",
-
-    # Functions
-    "SDL_RWFromFile", "SDL_RWFromFP", "SDL_RWFromMem", "SDL_RWFromConstMem",
-    "SDL_AllocRW", "SDL_FreeRW", "SDL_RWsize", "SDL_RWseek",
-    "SDL_RWtell", "SDL_RWread", "SDL_RWwrite", "SDL_RWclose",
-    "SDL_LoadFile_RW", "SDL_LoadFile",
-    "SDL_ReadU8", "SDL_ReadLE16", "SDL_ReadBE16", "SDL_ReadLE32",
-    "SDL_ReadBE32", "SDL_ReadLE64", "SDL_ReadBE64", "SDL_WriteU8",
-    "SDL_WriteLE16", "SDL_WriteBE16", "SDL_WriteLE32", "SDL_WriteBE32",
-    "SDL_WriteLE64", "SDL_WriteBE64",
     
     # Python Functions
-    "rw_from_object"
+    "rw_from_object",
 ]
 
 def _ptr2obj(ptr):
@@ -36,7 +29,7 @@ def _ptr2obj(ptr):
     return ptr
 
 
-# Constants, enums, and macros
+# Constants & enums
 
 SDL_RWOPS_UNKNOWN = 0
 SDL_RWOPS_WINFILE = 1
@@ -50,7 +43,7 @@ RW_SEEK_CUR = 1
 RW_SEEK_END = 2
 
 
-# Structure, opaque type, and callback definitions
+# Structs & opaque typedefs
 
 class _hidden(Union):
     pass
@@ -58,34 +51,76 @@ class _hidden(Union):
 class SDL_RWops(Structure):
     pass
 
-_sdlsize = CFUNCTYPE(Sint64, POINTER(SDL_RWops))
-_sdlseek = CFUNCTYPE(Sint64, POINTER(SDL_RWops), Sint64, c_int)
-_sdlread = CFUNCTYPE(c_size_t, POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t)
-_sdlwrite = CFUNCTYPE(c_size_t, POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t)
-_sdlclose = CFUNCTYPE(c_int, POINTER(SDL_RWops))
-SDL_RWops._fields_ = [("size", _sdlsize),
-                      ("seek", _sdlseek),
-                      ("read", _sdlread),
-                      ("write", _sdlwrite),
-                      ("close", _sdlclose),
-                      ("type", Uint32),
-                      ("hidden", _hidden)
-                      ]
+_sdlsize = CFUNCTYPE(Sint64, _P(SDL_RWops))
+_sdlseek = CFUNCTYPE(Sint64, _P(SDL_RWops), Sint64, c_int)
+_sdlread = CFUNCTYPE(c_size_t, _P(SDL_RWops), c_void_p, c_size_t, c_size_t)
+_sdlwrite = CFUNCTYPE(c_size_t, _P(SDL_RWops), c_void_p, c_size_t, c_size_t)
+_sdlclose = CFUNCTYPE(c_int, _P(SDL_RWops))
+SDL_RWops._fields_ = [
+    ("size", _sdlsize),
+    ("seek", _sdlseek),
+    ("read", _sdlread),
+    ("write", _sdlwrite),
+    ("close", _sdlclose),
+    ("type", Uint32),
+    ("hidden", _hidden),
+]
 
 
 # Raw ctypes function definitions
 
-SDL_RWFromFile = _bind("SDL_RWFromFile", [c_char_p, c_char_p], POINTER(SDL_RWops))
-SDL_RWFromFP = _bind("SDL_RWFromFP", [c_void_p, SDL_bool], POINTER(SDL_RWops))
-SDL_RWFromMem = _bind("SDL_RWFromMem", [c_void_p, c_int], POINTER(SDL_RWops))
-SDL_RWFromConstMem = _bind("SDL_RWFromConstMem", [c_void_p, c_int], POINTER(SDL_RWops))
-SDL_AllocRW = _bind("SDL_AllocRW", None, POINTER(SDL_RWops))
-SDL_FreeRW = _bind("SDL_FreeRW", [POINTER(SDL_RWops)])
+_funcdefs = [
+    SDLFunc("SDL_RWFromFile", [c_char_p, c_char_p], _P(SDL_RWops)),
+    SDLFunc("SDL_RWFromFP", [c_void_p, SDL_bool], _P(SDL_RWops)),
+    SDLFunc("SDL_RWFromMem", [c_void_p, c_int], _P(SDL_RWops)),
+    SDLFunc("SDL_RWFromConstMem", [c_void_p, c_int], _P(SDL_RWops)),
+    SDLFunc("SDL_AllocRW", None, _P(SDL_RWops)),
+    SDLFunc("SDL_FreeRW", [_P(SDL_RWops)]),
+    SDLFunc("SDL_LoadFile_RW", [_P(SDL_RWops), _P(c_size_t), c_int], c_void_p, added='2.0.6'),
+    SDLFunc("SDL_LoadFile", [c_char_p, _P(c_size_t)], c_void_p, added='2.0.10'),
+    SDLFunc("SDL_RWsize", [_P(SDL_RWops)], Sint64, added='2.0.10'),
+    SDLFunc("SDL_RWseek", [_P(SDL_RWops), Sint64, c_int], Sint64, added='2.0.10'),
+    SDLFunc("SDL_RWtell", [_P(SDL_RWops)], Sint64, added='2.0.10'),
+    SDLFunc("SDL_RWread", [_P(SDL_RWops), c_void_p, c_size_t, c_size_t], c_size_t, added='2.0.10'),
+    SDLFunc("SDL_RWwrite",
+        [_P(SDL_RWops), c_void_p, c_size_t, c_size_t],
+        returns = c_size_t, added = '2.0.10'
+    ),
+    SDLFunc("SDL_RWclose", [_P(SDL_RWops)], c_int, added='2.0.10'),
+    SDLFunc("SDL_ReadU8", [_P(SDL_RWops)], Uint8),
+    SDLFunc("SDL_ReadLE16", [_P(SDL_RWops)], Uint16),
+    SDLFunc("SDL_ReadBE16", [_P(SDL_RWops)], Uint16),
+    SDLFunc("SDL_ReadLE32", [_P(SDL_RWops)], Uint32),
+    SDLFunc("SDL_ReadBE32", [_P(SDL_RWops)], Uint32),
+    SDLFunc("SDL_ReadLE64", [_P(SDL_RWops)], Uint64),
+    SDLFunc("SDL_ReadBE64", [_P(SDL_RWops)], Uint64),
+    SDLFunc("SDL_WriteU8", [_P(SDL_RWops), Uint8], c_size_t),
+    SDLFunc("SDL_WriteLE16", [_P(SDL_RWops), Uint16], c_size_t),
+    SDLFunc("SDL_WriteBE16", [_P(SDL_RWops), Uint16], c_size_t),
+    SDLFunc("SDL_WriteLE32", [_P(SDL_RWops), Uint32], c_size_t),
+    SDLFunc("SDL_WriteBE32", [_P(SDL_RWops), Uint32], c_size_t),
+    SDLFunc("SDL_WriteLE64", [_P(SDL_RWops), Uint64], c_size_t),
+    SDLFunc("SDL_WriteBE64", [_P(SDL_RWops), Uint64], c_size_t),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
-SDL_LoadFile_RW = _bind("SDL_LoadFile_RW", [POINTER(SDL_RWops), POINTER(c_size_t), c_int], c_void_p, added='2.0.6')
+
+# Aliases for ctypes bindings
+
+SDL_RWFromFile = _ctypes["SDL_RWFromFile"]
+SDL_RWFromFP = _ctypes["SDL_RWFromFP"]
+SDL_RWFromMem = _ctypes["SDL_RWFromMem"]
+SDL_RWFromConstMem = _ctypes["SDL_RWFromConstMem"]
+SDL_AllocRW = _ctypes["SDL_AllocRW"]
+SDL_FreeRW = _ctypes["SDL_FreeRW"]
+
+SDL_LoadFile_RW = _ctypes["SDL_LoadFile_RW"]
 # SDL_LoadFile was a macro in SDL <= 2.0.9, added as a function in 2.0.10
 if version >= 2010:
-    SDL_LoadFile = _bind("SDL_LoadFile", [c_char_p, POINTER(c_size_t)], c_void_p)
+    SDL_LoadFile = _ctypes["SDL_LoadFile"]
 else:
     SDL_LoadFile = lambda fname, ds: SDL_LoadFile_RW(SDL_RWFromFile(fname, b"rb"), ds, 1)
 
@@ -93,36 +128,36 @@ else:
 # functions in SDL 2.0.10. Lambda functions are to mimic macro behaviour with
 # earlier SDL2 versions.
 if version >= 2010:
-    SDL_RWsize = _bind("SDL_RWsize", [POINTER(SDL_RWops)], Sint64)
-    SDL_RWseek = _bind("SDL_RWseek", [POINTER(SDL_RWops), Sint64, c_int], Sint64)
-    SDL_RWtell = _bind("SDL_RWtell", [POINTER(SDL_RWops)], Sint64)
-    SDL_RWread = _bind("SDL_RWread", [POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t], c_size_t)
-    SDL_RWwrite = _bind("SDL_RWwrite", [POINTER(SDL_RWops), c_void_p, c_size_t, c_size_t], c_size_t)
-    SDL_RWclose = _bind("SDL_RWclose", [POINTER(SDL_RWops)], c_int)
+    SDL_RWsize = _ctypes["SDL_RWsize"]
+    SDL_RWseek = _ctypes["SDL_RWseek"]
+    SDL_RWtell = _ctypes["SDL_RWtell"]
+    SDL_RWread = _ctypes["SDL_RWread"]
+    SDL_RWwrite = _ctypes["SDL_RWwrite"]
+    SDL_RWclose = _ctypes["SDL_RWclose"]
 else:
-    _p = _ptr2obj # allow pointers to be passed directly to these functions
-    SDL_RWsize = lambda ctx: _p(ctx).size(_p(ctx))
-    SDL_RWseek = lambda ctx, offset, whence: _p(ctx).seek(_p(ctx), offset, whence)
-    SDL_RWtell = lambda ctx: _p(ctx).seek(_p(ctx), 0, RW_SEEK_CUR)
-    SDL_RWread = lambda ctx, ptr, size, n: _p(ctx).read(_p(ctx), ptr, size, n)
-    SDL_RWwrite = lambda ctx, ptr, size, n: _p(ctx).write(_p(ctx), ptr, size, n)
-    SDL_RWclose = lambda ctx: _p(ctx).close(_p(ctx))
+    _po = _ptr2obj # allow pointers to be passed directly to these functions
+    SDL_RWsize = lambda ctx: _po(ctx).size(_po(ctx))
+    SDL_RWseek = lambda ctx, offset, whence: _po(ctx).seek(_po(ctx), offset, whence)
+    SDL_RWtell = lambda ctx: _po(ctx).seek(_po(ctx), 0, RW_SEEK_CUR)
+    SDL_RWread = lambda ctx, ptr, size, n: _po(ctx).read(_po(ctx), ptr, size, n)
+    SDL_RWwrite = lambda ctx, ptr, size, n: _po(ctx).write(_po(ctx), ptr, size, n)
+    SDL_RWclose = lambda ctx: _po(ctx).close(_po(ctx))
 
-SDL_ReadU8 = _bind("SDL_ReadU8", [POINTER(SDL_RWops)], Uint8)
-SDL_ReadLE16 = _bind("SDL_ReadLE16", [POINTER(SDL_RWops)], Uint16)
-SDL_ReadBE16 = _bind("SDL_ReadBE16", [POINTER(SDL_RWops)], Uint16)
-SDL_ReadLE32 = _bind("SDL_ReadLE32", [POINTER(SDL_RWops)], Uint32)
-SDL_ReadBE32 = _bind("SDL_ReadBE32", [POINTER(SDL_RWops)], Uint32)
-SDL_ReadLE64 = _bind("SDL_ReadLE64", [POINTER(SDL_RWops)], Uint64)
-SDL_ReadBE64 = _bind("SDL_ReadBE64", [POINTER(SDL_RWops)], Uint64)
+SDL_ReadU8 = _ctypes["SDL_ReadU8"]
+SDL_ReadLE16 = _ctypes["SDL_ReadLE16"]
+SDL_ReadBE16 = _ctypes["SDL_ReadBE16"]
+SDL_ReadLE32 = _ctypes["SDL_ReadLE32"]
+SDL_ReadBE32 = _ctypes["SDL_ReadBE32"]
+SDL_ReadLE64 = _ctypes["SDL_ReadLE64"]
+SDL_ReadBE64 = _ctypes["SDL_ReadBE64"]
 
-SDL_WriteU8 = _bind("SDL_WriteU8", [POINTER(SDL_RWops), Uint8], c_size_t)
-SDL_WriteLE16 = _bind("SDL_WriteLE16", [POINTER(SDL_RWops), Uint16], c_size_t)
-SDL_WriteBE16 = _bind("SDL_WriteBE16", [POINTER(SDL_RWops), Uint16], c_size_t)
-SDL_WriteLE32 = _bind("SDL_WriteLE32", [POINTER(SDL_RWops), Uint32], c_size_t)
-SDL_WriteBE32 = _bind("SDL_WriteBE32", [POINTER(SDL_RWops), Uint32], c_size_t)
-SDL_WriteLE64 = _bind("SDL_WriteLE64", [POINTER(SDL_RWops), Uint64], c_size_t)
-SDL_WriteBE64 = _bind("SDL_WriteBE64", [POINTER(SDL_RWops), Uint64], c_size_t)
+SDL_WriteU8 = _ctypes["SDL_WriteU8"]
+SDL_WriteLE16 = _ctypes["SDL_WriteLE16"]
+SDL_WriteBE16 = _ctypes["SDL_WriteBE16"]
+SDL_WriteLE32 = _ctypes["SDL_WriteLE32"]
+SDL_WriteBE32 = _ctypes["SDL_WriteBE32"]
+SDL_WriteLE64 = _ctypes["SDL_WriteLE64"]
+SDL_WriteBE64 = _ctypes["SDL_WriteBE64"]
 
 
 # Additional Python functions (move to ext?)

@@ -31,7 +31,7 @@ __all__ = [
     "SDL_TTF_VERSION",  "TTF_VERSION", "SDL_TTF_COMPILEDVERSION",
     "SDL_TTF_VERSION_ATLEAST", "HB_TAG",
 
-    # Functions not contained in _funcdefs
+    # Function Aliases
     "TTF_RenderText", "TTF_RenderUTF8", "TTF_RenderUNICODE",
     "TTF_SetError", "TTF_GetError",
 
@@ -208,7 +208,7 @@ _funcdefs = [
 _ctypes = AttributeDict()
 for f in _funcdefs:
     _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
-    __all__.append(f.name)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
 # Python wrapper functions

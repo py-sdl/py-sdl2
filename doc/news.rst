@@ -9,11 +9,16 @@ Released on XXXX-XX-XX.
 
 New Features:
 
-* The raw ctypes function bindings for the :mod:`~sdl2.sdlttf`,
-  :mod:`~sdl2.sdlmixer`, :mod:`~sdl2.sdlimage`, and :mod:`~sdl2.sdlgfx` modules
-  can now be accessed through the ``_ctypes`` object in each module. For
-  example, ``sdlttf._ctypes.TTF_Linked_Version`` will return the unwrapped
-  ctypes function pointer for that function.
+* Added a new stable API for accessing the raw ctypes function bindings for each
+  submodule. Each submodule (e.g. ``sdl2.sdlttf``, ``sdl2.video``) now contains
+  a ``_ctypes`` object through which the raw ctypes function objects can be
+  accessed by attribute or dict key (e.g. ``sdlttf._ctypes.TTF_Linked_Version``
+  or ``sdl2.timer._ctypes["SDL_GetTicks"]``). This new API allows proper access
+  to the ctypes function objects for the ``sdlttf``, ``sdlmixer``, ``sdlimage``,
+  and ``sdlgfx`` modules (which have been migrated to thin Python function
+  wrappers around the ctypes bindings), and also allows developers to write code
+  that will not break when other SDL2 modules are eventually migrated to similar
+  Python-wrapped bindings.
 * Added an informative warning for users using pysdl2-dll with PySDL2 on an
   Apple Silicon Mac.
 
@@ -35,6 +40,10 @@ Fixed Bugs:
   empty lines.
 * Fixed a bug in :class:`~sdl2.ext.Renderer` that prevented users from
   requesting a renderer backend by name (PR #224)
+* Changed :func:`~sdl2.SDL_abs` to be an actual ctypes binding instead of an
+  alias for Python's built-in ``abs`` function.
+* Renamed the ``SDL_Blit`` ctypes function definition to ``SDL_blit`` to match
+  the SDL2 headers.
 
 
 0.9.11

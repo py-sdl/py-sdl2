@@ -12,20 +12,32 @@ __all__ = [
 ]
 
 
+# Constants & enums
+
 SDL_LIL_ENDIAN = 1234
 SDL_BIG_ENDIAN = 4321
-if sys.byteorder == "little":
-    SDL_BYTEORDER = SDL_LIL_ENDIAN
-else:
-    SDL_BYTEORDER = SDL_BIG_ENDIAN
+SDL_BYTEORDER = SDL_LIL_ENDIAN if sys.byteorder == "little" else SDL_BIG_ENDIAN
 
-SDL_Swap16 = lambda x: ((x << 8 & 0xFF00) | (x >> 8 & 0x00FF))
-SDL_Swap32 = lambda x: (((x << 24) & 0xFF000000) |
-                        ((x << 8) & 0x00FF0000) |
-                        ((x >> 8) & 0x0000FF00) |
-                        ((x >> 24) & 0x000000FF))
-SDL_Swap64 = lambda x: ((SDL_Swap32(x & 0xFFFFFFFF) << 32) |
-                        (SDL_Swap32(x >> 32 & 0xFFFFFFFF)))
+
+# Macro & inline functions
+
+def SDL_Swap16(x):
+    return ((x << 8 & 0xFF00) | (x >> 8 & 0x00FF))
+
+def SDL_Swap32(x):
+    return (
+        ((x << 24) & 0xFF000000) |
+        ((x << 8)  & 0x00FF0000) |
+        ((x >> 8)  & 0x0000FF00) |
+        ((x >> 24) & 0x000000FF)
+    )
+
+def SDL_Swap64(x):
+    return (
+        (SDL_Swap32(x & 0xFFFFFFFF) << 32) |
+        (SDL_Swap32(x >> 32 & 0xFFFFFFFF))
+    )
+
 def SDL_SwapFloat(x):
     ar = array.array("d", (x,))
     ar.byteswap()
@@ -33,6 +45,7 @@ def SDL_SwapFloat(x):
 
 def _nop(x):
     return x
+
 if SDL_BYTEORDER == SDL_LIL_ENDIAN:
     SDL_SwapLE16 = _nop
     SDL_SwapLE32 = _nop

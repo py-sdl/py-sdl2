@@ -1,6 +1,7 @@
 import sys
-from ctypes import Structure, c_int, c_char_p, c_void_p, POINTER
-from .dll import _bind
+from ctypes import Structure, c_int, c_char_p, c_void_p
+from ctypes import POINTER as _P
+from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Sint16, Sint32, Uint32, Uint16, Uint8, SDL_bool
 
 __all__ = [
@@ -25,37 +26,12 @@ __all__ = [
     "SDL_JOYSTICK_POWER_LOW", "SDL_JOYSTICK_POWER_MEDIUM",
     "SDL_JOYSTICK_POWER_FULL", "SDL_JOYSTICK_POWER_WIRED",
     "SDL_JOYSTICK_POWER_MAX",
-
-    # Functions
-    "SDL_LockJoysticks", "SDL_UnlockJoysticks", "SDL_NumJoysticks",
-    "SDL_JoystickNameForIndex", "SDL_JoystickGetDevicePlayerIndex",
-    "SDL_JoystickGetDeviceGUID", "SDL_JoystickGetDeviceVendor", 
-    "SDL_JoystickGetDeviceProduct", "SDL_JoystickGetDeviceProductVersion",
-    "SDL_JoystickGetDeviceType", "SDL_JoystickGetDeviceInstanceID", 
-    "SDL_JoystickOpen", "SDL_JoystickFromInstanceID",
-    "SDL_JoystickFromPlayerIndex",
-    "SDL_JoystickAttachVirtual", "SDL_JoystickDetachVirtual",
-    "SDL_JoystickIsVirtual", "SDL_JoystickSetVirtualAxis",
-    "SDL_JoystickSetVirtualButton", "SDL_JoystickSetVirtualHat",
-    "SDL_JoystickName", "SDL_JoystickGetPlayerIndex",
-    "SDL_JoystickSetPlayerIndex",
-    "SDL_JoystickGetGUID", "SDL_JoystickGetVendor", "SDL_JoystickGetProduct",
-    "SDL_JoystickGetProductVersion", "SDL_JoystickGetSerial",
-    "SDL_JoystickGetType", "SDL_JoystickGetGUIDString",
-    "SDL_JoystickGetGUIDFromString", "SDL_JoystickGetAttached",
-    "SDL_JoystickInstanceID", "SDL_JoystickNumAxes", "SDL_JoystickNumBalls",
-    "SDL_JoystickNumHats", "SDL_JoystickNumButtons", "SDL_JoystickUpdate",
-    "SDL_JoystickEventState", "SDL_JoystickGetAxis", "SDL_JoystickGetAxisInitialState",
-    "SDL_JoystickGetHat", "SDL_JoystickGetBall", "SDL_JoystickGetButton",
-    "SDL_JoystickRumble", "SDL_JoystickRumbleTriggers",
-    "SDL_JoystickHasLED", "SDL_JoystickHasRumble", "SDL_JoystickHasRumbleTriggers",
-    "SDL_JoystickSetLED", "SDL_JoystickSendEffect",
-    "SDL_JoystickClose", "SDL_JoystickCurrentPowerLevel"
 ]
 
 
-SDL_JoystickPowerLevel = c_int
+# Constants & enums
 
+SDL_JoystickPowerLevel = c_int
 SDL_JOYSTICK_POWER_UNKNOWN = -1
 SDL_JOYSTICK_POWER_EMPTY = 0
 SDL_JOYSTICK_POWER_LOW = 1
@@ -64,9 +40,7 @@ SDL_JOYSTICK_POWER_FULL = 3
 SDL_JOYSTICK_POWER_WIRED = 4
 SDL_JOYSTICK_POWER_MAX = 5
 
-
 SDL_JoystickType = c_int
-
 SDL_JOYSTICK_TYPE_UNKNOWN = 0
 SDL_JOYSTICK_TYPE_GAMECONTROLLER = 1
 SDL_JOYSTICK_TYPE_WHEEL = 2
@@ -77,7 +51,6 @@ SDL_JOYSTICK_TYPE_GUITAR = 6
 SDL_JOYSTICK_TYPE_DRUM_KIT = 7
 SDL_JOYSTICK_TYPE_ARCADE_PAD = 8
 SDL_JOYSTICK_TYPE_THROTTLE = 9
-
 
 SDL_IPHONE_MAX_GFORCE = 5.0
 
@@ -92,71 +65,159 @@ SDL_HAT_LEFTUP = SDL_HAT_LEFT | SDL_HAT_UP
 SDL_HAT_LEFTDOWN = SDL_HAT_LEFT | SDL_HAT_DOWN
 
 
+# Structs & typedefs
+
+SDL_JoystickID = Sint32
+
 class SDL_Joystick(c_void_p):
     pass
 
 class SDL_JoystickGUID(Structure):
     _fields_ = [("data", (Uint8 * 16))]
 
-SDL_JoystickID = Sint32
+
+# Raw ctypes function definitions
+
+_funcdefs = [
+    SDLFunc("SDL_LockJoysticks", None, None, added='2.0.7'),
+    SDLFunc("SDL_UnlockJoysticks", None, None, added='2.0.7'),
+    SDLFunc("SDL_NumJoysticks", None, c_int),
+    SDLFunc("SDL_JoystickNameForIndex", [c_int], c_char_p),
+    SDLFunc("SDL_JoystickGetDevicePlayerIndex", [c_int], c_int, added='2.0.9'),
+    SDLFunc("SDL_JoystickGetDeviceGUID", [c_int], SDL_JoystickGUID),
+    SDLFunc("SDL_JoystickGetDeviceVendor", [c_int], Uint16, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetDeviceProduct", [c_int], Uint16, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetDeviceProductVersion", [c_int], Uint16, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetDeviceType", [c_int], SDL_JoystickType, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetDeviceInstanceID", [c_int], SDL_JoystickID, added='2.0.6'),
+    SDLFunc("SDL_JoystickOpen", [c_int], _P(SDL_Joystick)),
+    SDLFunc("SDL_JoystickFromInstanceID", [SDL_JoystickID], _P(SDL_Joystick), added='2.0.4'),
+    SDLFunc("SDL_JoystickFromPlayerIndex", [c_int], _P(SDL_Joystick), added='2.0.12'),
+    SDLFunc("SDL_JoystickAttachVirtual",
+        [SDL_JoystickType, c_int, c_int, c_int],
+        returns = c_int, added = '2.0.14'
+    ),
+    SDLFunc("SDL_JoystickDetachVirtual", [c_int], c_int, added='2.0.14'),
+    SDLFunc("SDL_JoystickIsVirtual", [c_int], SDL_bool, added='2.0.14'),
+    SDLFunc("SDL_JoystickSetVirtualAxis",
+        [_P(SDL_Joystick), c_int, Sint16],
+        returns = c_int, added = '2.0.14'
+    ),
+    SDLFunc("SDL_JoystickSetVirtualButton",
+        [_P(SDL_Joystick), c_int, Uint8],
+        returns = c_int, added = '2.0.14'
+    ),
+    SDLFunc("SDL_JoystickSetVirtualHat", [_P(SDL_Joystick), c_int, Uint8], c_int, added='2.0.14'),
+     SDLFunc("SDL_JoystickName", [_P(SDL_Joystick)], c_char_p),
+    SDLFunc("SDL_JoystickGetPlayerIndex", [_P(SDL_Joystick)], c_int, added='2.0.9'),
+    SDLFunc("SDL_JoystickSetPlayerIndex", [_P(SDL_Joystick), c_int], added='2.0.12'),
+    SDLFunc("SDL_JoystickGetGUID", [_P(SDL_Joystick)], SDL_JoystickGUID),
+    SDLFunc("SDL_JoystickGetVendor", [_P(SDL_Joystick)], Uint16, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetProduct", [_P(SDL_Joystick)], Uint16, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetProductVersion", [_P(SDL_Joystick)], Uint16, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetSerial", [_P(SDL_Joystick)], c_char_p, added='2.0.14'),
+    SDLFunc("SDL_JoystickGetType", [_P(SDL_Joystick)], SDL_JoystickType, added='2.0.6'),
+    SDLFunc("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int]),
+    SDLFunc("SDL_JoystickGetGUIDFromString", [c_char_p], SDL_JoystickGUID),
+    SDLFunc("SDL_JoystickGetAttached", [_P(SDL_Joystick)], SDL_bool),
+    SDLFunc("SDL_JoystickInstanceID", [_P(SDL_Joystick)], SDL_JoystickID),
+    SDLFunc("SDL_JoystickNumAxes", [_P(SDL_Joystick)], c_int),
+    SDLFunc("SDL_JoystickNumBalls", [_P(SDL_Joystick)], c_int),
+    SDLFunc("SDL_JoystickNumHats", [_P(SDL_Joystick)], c_int),
+    SDLFunc("SDL_JoystickNumButtons", [_P(SDL_Joystick)], c_int),
+    SDLFunc("SDL_JoystickUpdate"),
+    SDLFunc("SDL_JoystickEventState", [c_int], c_int),
+    SDLFunc("SDL_JoystickGetAxis", [_P(SDL_Joystick), c_int], Sint16),
+    SDLFunc("SDL_JoystickGetAxisInitialState",
+        [_P(SDL_Joystick), c_int, _P(Sint16)],
+        returns = SDL_bool, added = '2.0.6'
+    ),
+    SDLFunc("SDL_JoystickGetHat", [_P(SDL_Joystick), c_int], Uint8),
+    SDLFunc("SDL_JoystickGetBall", [_P(SDL_Joystick), c_int, _P(c_int), _P(c_int)], c_int),
+    SDLFunc("SDL_JoystickGetButton", [_P(SDL_Joystick), c_int], Uint8),
+    SDLFunc("SDL_JoystickRumble",
+        [_P(SDL_Joystick), Uint16, Uint16, Uint32],
+        returns = c_int, added = '2.0.9'
+    ),
+    SDLFunc("SDL_JoystickRumbleTriggers",
+        [_P(SDL_Joystick), Uint16, Uint16, Uint32],
+        returns = c_int, added = '2.0.14'
+    ),
+    SDLFunc("SDL_JoystickHasLED", [_P(SDL_Joystick)], SDL_bool, added='2.0.14'),
+    SDLFunc("SDL_JoystickHasRumble", [_P(SDL_Joystick)], SDL_bool, added='2.0.18'),
+    SDLFunc("SDL_JoystickHasRumbleTriggers", [_P(SDL_Joystick)], SDL_bool, added='2.0.18'),
+    SDLFunc("SDL_JoystickSetLED", [_P(SDL_Joystick), Uint8, Uint8, Uint8], c_int, added='2.0.14'),
+    SDLFunc("SDL_JoystickSendEffect", [_P(SDL_Joystick), c_void_p, c_int], c_int, added='2.0.16'),
+    SDLFunc("SDL_JoystickClose", [_P(SDL_Joystick)]),
+    SDLFunc("SDL_JoystickCurrentPowerLevel",
+        [_P(SDL_Joystick)],
+        returns = SDL_JoystickPowerLevel, added = '2.0.4'
+    ),
+]
+_ctypes = AttributeDict()
+for f in _funcdefs:
+    _ctypes[f.name] = _bind(f.name, f.args, f.returns, f.added)
+    __all__.append(f.name) # Add all bound functions to module namespace
 
 
-SDL_NumJoysticks = _bind("SDL_NumJoysticks", None, c_int)
-SDL_JoystickNameForIndex = _bind("SDL_JoystickNameForIndex", [c_int], c_char_p)
-SDL_JoystickOpen = _bind("SDL_JoystickOpen", [c_int], POINTER(SDL_Joystick))
-SDL_JoystickName = _bind("SDL_JoystickName", [POINTER(SDL_Joystick)], c_char_p)
-SDL_JoystickGetDeviceGUID = _bind("SDL_JoystickGetDeviceGUID", [c_int], SDL_JoystickGUID)
-SDL_JoystickGetGUID = _bind("SDL_JoystickGetGUID", [POINTER(SDL_Joystick)], SDL_JoystickGUID)
-SDL_JoystickGetGUIDFromString = _bind("SDL_JoystickGetGUIDFromString", [c_char_p], SDL_JoystickGUID)
-SDL_JoystickGetAttached = _bind("SDL_JoystickGetAttached", [POINTER(SDL_Joystick)], SDL_bool)
-SDL_JoystickInstanceID = _bind("SDL_JoystickInstanceID", [POINTER(SDL_Joystick)], SDL_JoystickID)
-SDL_JoystickNumAxes = _bind("SDL_JoystickNumAxes", [POINTER(SDL_Joystick)], c_int)
-SDL_JoystickNumBalls = _bind("SDL_JoystickNumBalls", [POINTER(SDL_Joystick)], c_int)
-SDL_JoystickNumHats = _bind("SDL_JoystickNumHats", [POINTER(SDL_Joystick)], c_int)
-SDL_JoystickNumButtons = _bind("SDL_JoystickNumButtons", [POINTER(SDL_Joystick)], c_int)
-SDL_JoystickUpdate = _bind("SDL_JoystickUpdate")
-SDL_JoystickEventState = _bind("SDL_JoystickEventState", [c_int], c_int)
-SDL_JoystickGetAxis = _bind("SDL_JoystickGetAxis", [POINTER(SDL_Joystick), c_int], Sint16)
-SDL_JoystickGetHat = _bind("SDL_JoystickGetHat", [POINTER(SDL_Joystick), c_int], Uint8)
-SDL_JoystickGetBall = _bind("SDL_JoystickGetBall", [POINTER(SDL_Joystick), c_int, POINTER(c_int), POINTER(c_int)], c_int)
-SDL_JoystickGetButton = _bind("SDL_JoystickGetButton", [POINTER(SDL_Joystick), c_int], Uint8)
-SDL_JoystickClose = _bind("SDL_JoystickClose", [POINTER(SDL_Joystick)])
-SDL_JoystickCurrentPowerLevel = _bind("SDL_JoystickCurrentPowerLevel", [POINTER(SDL_Joystick)], SDL_JoystickPowerLevel, added='2.0.4')
-SDL_JoystickFromInstanceID = _bind("SDL_JoystickFromInstanceID", [SDL_JoystickID], POINTER(SDL_Joystick), added='2.0.4')
-SDL_JoystickFromPlayerIndex = _bind("SDL_JoystickFromPlayerIndex", [c_int], POINTER(SDL_Joystick), added='2.0.12')
-SDL_JoystickAttachVirtual = _bind("SDL_JoystickAttachVirtual", [SDL_JoystickType, c_int, c_int, c_int], c_int, added='2.0.14')
-SDL_JoystickDetachVirtual = _bind("SDL_JoystickDetachVirtual", [c_int], c_int, added='2.0.14')
-SDL_JoystickIsVirtual = _bind("SDL_JoystickIsVirtual", [c_int], SDL_bool, added='2.0.14')
-SDL_JoystickSetVirtualAxis = _bind("SDL_JoystickSetVirtualAxis", [POINTER(SDL_Joystick), c_int, Sint16], c_int, added='2.0.14')
-SDL_JoystickSetVirtualButton = _bind("SDL_JoystickSetVirtualButton", [POINTER(SDL_Joystick), c_int, Uint8], c_int, added='2.0.14')
-SDL_JoystickSetVirtualHat = _bind("SDL_JoystickSetVirtualHat", [POINTER(SDL_Joystick), c_int, Uint8], c_int, added='2.0.14')
-SDL_JoystickGetVendor = _bind("SDL_JoystickGetVendor", [POINTER(SDL_Joystick)], Uint16, added='2.0.6')
-SDL_JoystickGetProduct = _bind("SDL_JoystickGetProduct", [POINTER(SDL_Joystick)], Uint16, added='2.0.6')
-SDL_JoystickGetProductVersion = _bind("SDL_JoystickGetProductVersion", [POINTER(SDL_Joystick)], Uint16, added='2.0.6')
-SDL_JoystickGetSerial = _bind("SDL_JoystickGetSerial", [POINTER(SDL_Joystick)], c_char_p, added='2.0.14')
-SDL_JoystickGetAxisInitialState = _bind("SDL_JoystickGetAxisInitialState", [POINTER(SDL_Joystick), c_int, POINTER(Sint16)], SDL_bool, added='2.0.6')
-SDL_JoystickGetType = _bind("SDL_JoystickGetType", [POINTER(SDL_Joystick)], SDL_JoystickType, added='2.0.6')
-SDL_JoystickGetDeviceVendor = _bind("SDL_JoystickGetDeviceVendor", [c_int], Uint16, added='2.0.6')
-SDL_JoystickGetDeviceProduct = _bind("SDL_JoystickGetDeviceProduct", [c_int], Uint16, added='2.0.6')
-SDL_JoystickGetDeviceProductVersion = _bind("SDL_JoystickGetDeviceProductVersion", [c_int], Uint16, added='2.0.6')
-SDL_JoystickGetDeviceType = _bind("SDL_JoystickGetDeviceType", [c_int], SDL_JoystickType, added='2.0.6')
-SDL_JoystickGetDeviceInstanceID = _bind("SDL_JoystickGetDeviceInstanceID", [c_int], SDL_JoystickID, added='2.0.6')
-SDL_LockJoysticks = _bind("SDL_LockJoysticks", None, None, added='2.0.7')
-SDL_UnlockJoysticks = _bind("SDL_UnlockJoysticks", None, None, added='2.0.7')
-SDL_JoystickGetPlayerIndex = _bind("SDL_JoystickGetPlayerIndex", [POINTER(SDL_Joystick)], c_int, added='2.0.9')
-SDL_JoystickSetPlayerIndex = _bind("SDL_JoystickSetPlayerIndex", [POINTER(SDL_Joystick), c_int], added='2.0.12')
-SDL_JoystickGetDevicePlayerIndex = _bind("SDL_JoystickGetDevicePlayerIndex", [c_int], c_int, added='2.0.9')
-SDL_JoystickRumble = _bind("SDL_JoystickRumble", [POINTER(SDL_Joystick), Uint16, Uint16, Uint32], c_int, added='2.0.9')
-SDL_JoystickRumbleTriggers = _bind("SDL_JoystickRumbleTriggers", [POINTER(SDL_Joystick), Uint16, Uint16, Uint32], c_int, added='2.0.14')
-SDL_JoystickHasLED = _bind("SDL_JoystickHasLED", [POINTER(SDL_Joystick)], SDL_bool, added='2.0.14')
-SDL_JoystickHasRumble = _bind("SDL_JoystickHasRumble", [POINTER(SDL_Joystick)], SDL_bool, added='2.0.18')
-SDL_JoystickHasRumbleTriggers = _bind("SDL_JoystickHasRumbleTriggers", [POINTER(SDL_Joystick)], SDL_bool, added='2.0.18')
-SDL_JoystickSetLED = _bind("SDL_JoystickSetLED", [POINTER(SDL_Joystick), Uint8, Uint8, Uint8], c_int, added='2.0.14')
-SDL_JoystickSendEffect = _bind("SDL_JoystickSendEffect", [POINTER(SDL_Joystick), c_void_p, c_int], c_int, added='2.0.16')
+# Aliases for ctypes bindings
+
+SDL_NumJoysticks = _ctypes["SDL_NumJoysticks"]
+SDL_JoystickNameForIndex = _ctypes["SDL_JoystickNameForIndex"]
+SDL_JoystickOpen = _ctypes["SDL_JoystickOpen"]
+SDL_JoystickName = _ctypes["SDL_JoystickName"]
+SDL_JoystickGetDeviceGUID = _ctypes["SDL_JoystickGetDeviceGUID"]
+SDL_JoystickGetGUID = _ctypes["SDL_JoystickGetGUID"]
+SDL_JoystickGetGUIDFromString = _ctypes["SDL_JoystickGetGUIDFromString"]
+SDL_JoystickGetAttached = _ctypes["SDL_JoystickGetAttached"]
+SDL_JoystickInstanceID = _ctypes["SDL_JoystickInstanceID"]
+SDL_JoystickNumAxes = _ctypes["SDL_JoystickNumAxes"]
+SDL_JoystickNumBalls = _ctypes["SDL_JoystickNumBalls"]
+SDL_JoystickNumHats = _ctypes["SDL_JoystickNumHats"]
+SDL_JoystickNumButtons = _ctypes["SDL_JoystickNumButtons"]
+SDL_JoystickUpdate = _ctypes["SDL_JoystickUpdate"]
+SDL_JoystickEventState = _ctypes["SDL_JoystickEventState"]
+SDL_JoystickGetAxis = _ctypes["SDL_JoystickGetAxis"]
+SDL_JoystickGetHat = _ctypes["SDL_JoystickGetHat"]
+SDL_JoystickGetBall = _ctypes["SDL_JoystickGetBall"]
+SDL_JoystickGetButton = _ctypes["SDL_JoystickGetButton"]
+SDL_JoystickClose = _ctypes["SDL_JoystickClose"]
+SDL_JoystickCurrentPowerLevel = _ctypes["SDL_JoystickCurrentPowerLevel"]
+SDL_JoystickFromInstanceID = _ctypes["SDL_JoystickFromInstanceID"]
+SDL_JoystickFromPlayerIndex = _ctypes["SDL_JoystickFromPlayerIndex"]
+SDL_JoystickAttachVirtual = _ctypes["SDL_JoystickAttachVirtual"]
+SDL_JoystickDetachVirtual = _ctypes["SDL_JoystickDetachVirtual"]
+SDL_JoystickIsVirtual = _ctypes["SDL_JoystickIsVirtual"]
+SDL_JoystickSetVirtualAxis = _ctypes["SDL_JoystickSetVirtualAxis"]
+SDL_JoystickSetVirtualButton = _ctypes["SDL_JoystickSetVirtualButton"]
+SDL_JoystickSetVirtualHat = _ctypes["SDL_JoystickSetVirtualHat"]
+SDL_JoystickGetVendor = _ctypes["SDL_JoystickGetVendor"]
+SDL_JoystickGetProduct = _ctypes["SDL_JoystickGetProduct"]
+SDL_JoystickGetProductVersion = _ctypes["SDL_JoystickGetProductVersion"]
+SDL_JoystickGetSerial = _ctypes["SDL_JoystickGetSerial"]
+SDL_JoystickGetAxisInitialState = _ctypes["SDL_JoystickGetAxisInitialState"]
+SDL_JoystickGetType = _ctypes["SDL_JoystickGetType"]
+SDL_JoystickGetDeviceVendor = _ctypes["SDL_JoystickGetDeviceVendor"]
+SDL_JoystickGetDeviceProduct = _ctypes["SDL_JoystickGetDeviceProduct"]
+SDL_JoystickGetDeviceProductVersion = _ctypes["SDL_JoystickGetDeviceProductVersion"]
+SDL_JoystickGetDeviceType = _ctypes["SDL_JoystickGetDeviceType"]
+SDL_JoystickGetDeviceInstanceID = _ctypes["SDL_JoystickGetDeviceInstanceID"]
+SDL_LockJoysticks = _ctypes["SDL_LockJoysticks"]
+SDL_UnlockJoysticks = _ctypes["SDL_UnlockJoysticks"]
+SDL_JoystickGetPlayerIndex = _ctypes["SDL_JoystickGetPlayerIndex"]
+SDL_JoystickSetPlayerIndex = _ctypes["SDL_JoystickSetPlayerIndex"]
+SDL_JoystickGetDevicePlayerIndex = _ctypes["SDL_JoystickGetDevicePlayerIndex"]
+SDL_JoystickRumble = _ctypes["SDL_JoystickRumble"]
+SDL_JoystickRumbleTriggers = _ctypes["SDL_JoystickRumbleTriggers"]
+SDL_JoystickHasLED = _ctypes["SDL_JoystickHasLED"]
+SDL_JoystickHasRumble = _ctypes["SDL_JoystickHasRumble"]
+SDL_JoystickHasRumbleTriggers = _ctypes["SDL_JoystickHasRumbleTriggers"]
+SDL_JoystickSetLED = _ctypes["SDL_JoystickSetLED"]
+SDL_JoystickSendEffect = _ctypes["SDL_JoystickSendEffect"]
 
 # Reimplemented in Python due to crash-causing ctypes bug (fixed in 3.8)
 if sys.version_info >= (3, 8, 0, 'final'):
-    SDL_JoystickGetGUIDString = _bind("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int])
+    SDL_JoystickGetGUIDString = _ctypes["SDL_JoystickGetGUIDString"]
 else:
     def SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
         s = ""
