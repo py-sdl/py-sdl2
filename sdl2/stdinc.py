@@ -1,3 +1,4 @@
+import sys
 from .dll import _bind, SDLFunc, AttributeDict
 from ctypes import (
     c_int, c_int8, c_uint8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
@@ -12,6 +13,9 @@ __all__ = [
     "Sint8", "Uint8", "Sint16", "Uint16", "Sint32", "Uint32",
     "Sint64", "Uint64",
 
+    # Constants
+    "SDL_FLT_EPSILON",
+
     # Enums
     "SDL_bool",
     "SDL_FALSE", "SDL_TRUE",
@@ -22,6 +26,8 @@ __all__ = [
 
 
 # Constants, enums, & typedefs
+
+SDL_FLT_EPSILON = sys.float_info.epsilon
 
 SDL_bool = c_int
 SDL_FALSE = 0

@@ -1,4 +1,4 @@
-from ctypes import Structure, c_float, c_int
+from ctypes import Structure, c_float, c_int, c_char_p
 from ctypes import POINTER as _P
 from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Sint64
@@ -50,6 +50,7 @@ class SDL_Finger(Structure):
 _funcdefs = [
     SDLFunc("SDL_GetNumTouchDevices", None, c_int),
     SDLFunc("SDL_GetTouchDevice", [c_int], SDL_TouchID),
+    SDLFunc("SDL_GetTouchName", [c_int], c_char_p, added='2.0.22'),
     SDLFunc("SDL_GetTouchDeviceType", [SDL_TouchID], SDL_TouchDeviceType, added='2.0.10'),
     SDLFunc("SDL_GetNumTouchFingers", [SDL_TouchID], c_int),
     SDLFunc("SDL_GetTouchFinger", [SDL_TouchID, c_int], _P(SDL_Finger)),
@@ -64,6 +65,7 @@ for f in _funcdefs:
 
 SDL_GetNumTouchDevices = _ctypes["SDL_GetNumTouchDevices"]
 SDL_GetTouchDevice = _ctypes["SDL_GetTouchDevice"]
+SDL_GetTouchName = _ctypes["SDL_GetTouchName"]
 SDL_GetTouchDeviceType = _ctypes["SDL_GetTouchDeviceType"]
 SDL_GetNumTouchFingers = _ctypes["SDL_GetNumTouchFingers"]
 SDL_GetTouchFinger = _ctypes["SDL_GetTouchFinger"]

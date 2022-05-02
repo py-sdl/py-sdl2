@@ -2,7 +2,7 @@ import sys
 import copy
 import pytest
 import random
-from ctypes import byref, c_int
+from ctypes import byref, c_int, c_float
 import sdl2
 from sdl2.stdinc import SDL_FALSE, SDL_TRUE
 from sdl2 import rect
@@ -447,3 +447,133 @@ def test_SDL_PointInRect():
     for x, y in outside:
         p = sdl2.SDL_Point(x, y)
         assert not sdl2.SDL_PointInRect(p, r)
+
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_HasIntersectionF():
+    tests = [
+        [(0, 0, 0, 0), (0, 0, 0, 0), SDL_FALSE],
+        [(0, 0, -200, 200), (0, 0, -200, 200), SDL_FALSE],
+        [(0, 0, 10, 10), (-5, 5, 10, 2), SDL_TRUE],
+        [(0, 0, 10, 10), (-5, -5, 10, 2), SDL_FALSE],
+        [(0, 0, 10, 10), (-5, -5, 2, 10), SDL_FALSE],
+        [(0, 0, 10, 10), (-5, -5, 5, 5), SDL_FALSE],
+        [(0, 0, 10, 10), (-5, -5, 5.1, 5.1), SDL_TRUE],
+        [(0, 0, 10, 10), (-4.99, -4.99, 5, 5), SDL_TRUE],
+    ]
+    for rect1, rect2, expected in tests:
+        r1 = sdl2.SDL_FRect(*rect1)
+        r2 = sdl2.SDL_FRect(*rect2)
+        assert sdl2.SDL_HasIntersectionF(r1, r2) == expected
+
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_IntersectFRect():
+    tests = [
+        [(0, 0, 0, 0), (0, 0, 0, 0), SDL_FALSE, None],
+        [(0, 0, -200, 200), (0, 0, -200, 200), SDL_FALSE, None],
+        [(0, 0, 10, 10), (-5, 5, 9.9, 2), SDL_TRUE, (0, 5, 4.9, 2)],
+        [(0, 0, 10, 10), (-5, -5, 10, 2), SDL_FALSE, None],
+        [(0, 0, 10, 10), (-5, -5, 2, 10), SDL_FALSE, None],
+        [(0, 0, 10, 10), (-5, -5, 5, 5), SDL_FALSE, None],
+        [(0, 0, 10, 10), (-5, -5, 5.5, 6), SDL_TRUE, (0, 0, 0.5, 1)]
+    ]
+    res = sdl2.SDL_FRect()
+    for rect1, rect2, expected_ret, expected_rect in tests:
+        r1 = sdl2.SDL_FRect(*rect1)
+        r2 = sdl2.SDL_FRect(*rect2)
+        ret = sdl2.SDL_IntersectFRect(r1, r2, byref(res))
+        assert ret == expected_ret
+        if ret == SDL_TRUE:
+            res == sdl2.SDL_FRect(*expected_rect)
+
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_UnionFRect():
+    tests = [
+        [(0, 0, 10, 10), (19.9, 20, 10, 10), (0, 0, 29.9, 30)],
+        [(0, 0, 0, 0), (20, 20.1, 10.1, 10), (20, 20.1, 10.1, 10)],
+        [(-200, -4.5, 450, 33), (20, 20, 10, 10), (-200, -4.5, 450, 34.5)],
+        [(0, 0, 15, 16.5), (20, 20, 0, 0), (0, 0, 15, 16.5)]
+    ]
+    out = sdl2.SDL_FRect()
+    for rect1, rect2, expected in tests:
+        r1 = sdl2.SDL_FRect(*rect1)
+        r2 = sdl2.SDL_FRect(*rect2)
+        sdl2.SDL_UnionFRect(r1, r2, byref(out))
+        res = (out.x, out.y, out.w, out.h)
+        assert tuple([round(n, 6) for n in res]) == expected
+
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_EncloseFPoints():
+    tests = [
+        [sdl2.SDL_FRect(0, 0, 10, 10), SDL_TRUE, (0.5, 0.1, 6, 8)],
+        [sdl2.SDL_FRect(1.2, 1, 10, 10), SDL_TRUE, (1.5, 1.1, 5, 7)],
+        [sdl2.SDL_FRect(-10, -10, 3, 3), SDL_FALSE, (0, 0, 0, 0)],
+        [None, SDL_TRUE, (0.5, 0.1, 6, 8)],
+    ]
+    pt1, pt2 = [sdl2.SDL_FPoint(0.5, 0.1), sdl2.SDL_FPoint(5.5, 7.1)]
+    pt3 = sdl2.SDL_FPoint(1.5, 1.1)
+    points = to_ctypes([pt1, pt2, pt3], sdl2.SDL_FPoint)
+    res = sdl2.SDL_FRect()
+    for clip, expected_ret, expected_rect in tests:
+        clip_p = byref(clip) if isinstance(clip, sdl2.SDL_FRect) else None
+        ret = sdl2.SDL_EncloseFPoints(points, 3, clip_p, byref(res))
+        assert ret == expected_ret
+        r = sdl2.SDL_FRect(*expected_rect)
+        assert res == r if ret == SDL_TRUE else res != r
+    # Test with no points
+    ret = sdl2.SDL_EncloseFPoints(None, 0, None, byref(res))
+    assert not ret
+    assert res != sdl2.SDL_FRect()
+
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_IntersectFRectAndLine():
+    tests = [
+        [(0, 0, 0, 0), (-4.8, -4.8, 5.2, 5.2), SDL_FALSE, None],
+        [(0, 0, 2, 2), (-1, -1, 3.5, 3.5), SDL_TRUE, (0, 0, 1, 1)],
+        [(-4, -4, 14, 14), (8, 22, 8, 33), SDL_FALSE, None]
+    ]
+    for rect1, line, expected_ret, expected_coords in tests:
+        r = sdl2.SDL_FRect(*rect1)
+        x1, y1, x2, y2 = line
+        x1, y1, x2, y2 = c_float(x1), c_float(y1), c_float(x2), c_float(y2)
+        ret = sdl2.SDL_IntersectFRectAndLine(
+            r, byref(x1), byref(y1), byref(x2), byref(y2))
+        assert ret == expected_ret
+        if ret == SDL_TRUE:
+            assert (x1.value, y1.value, x2.value, y2.value) == expected_coords
+
+def test_SDL_PointInFRect():
+    r = sdl2.SDL_FRect(0, 0, 8.6, 9.2)
+    inside = [(0, 0), (4, 2)]
+    outside = [(8.6, 9.2), (8.6, 3), (3, 9.2), (-1, -3)]
+    for x, y in inside:
+        p = sdl2.SDL_FPoint(x, y)
+        assert sdl2.SDL_PointInFRect(p, r)
+    for x, y in outside:
+        p = sdl2.SDL_FPoint(x, y)
+        assert not sdl2.SDL_PointInFRect(p, r)
+
+def test_SDL_FRectEmpty():
+    for i in range(0, 20):
+        w = random.uniform(-100, 100)
+        h = random.uniform(-100, 100)
+        r = sdl2.SDL_FRect(0, 0, w, h)
+        empty = sdl2.SDL_FRectEmpty(r)
+        assert empty if not (w > 0 and h > 0) else not empty
+
+def test_SDL_FRectEqualsEpsilon():
+    r1 = sdl2.SDL_FRect(0, 0, 1.5, 1.2)
+    r2 = sdl2.SDL_FRect(0, 0, 1.6, 1.1)
+    assert sdl2.SDL_FRectEqualsEpsilon(r1, r2, 0.11)
+    assert not sdl2.SDL_FRectEqualsEpsilon(r1, r2, 0.05)
+    r2 = sdl2.SDL_FRect(0.01, 0.01, 1.5, 1.2)
+    assert sdl2.SDL_FRectEqualsEpsilon(r1, r2, 0.011)
+    assert not sdl2.SDL_FRectEqualsEpsilon(r1, r2, 0.001)
+
+def test_SDL_FRectEquals():
+    r1 = sdl2.SDL_FRect(0, 0, 1.5, 1.2)
+    r2 = sdl2.SDL_FRect(0, 0, 0.1 * 15, 0.1 * 12)
+    assert sdl2.SDL_FRectEquals(r1, r2)
+    r2 = sdl2.SDL_FRect(-1, 2, 1.5, 1.2)
+    assert not sdl2.SDL_FRectEquals(r1, r2)
+    r2 = sdl2.SDL_FRect(0, 0, 1.5, 1.3)
+    assert not sdl2.SDL_FRectEquals(r1, r2)

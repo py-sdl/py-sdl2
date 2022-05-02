@@ -40,6 +40,8 @@ _funcdefs = [
     SDLFunc("SDL_StartTextInput"),
     SDLFunc("SDL_IsTextInputActive", None, SDL_bool),
     SDLFunc("SDL_StopTextInput"),
+    SDLFunc("SDL_ClearComposition", added='2.0.22'),
+    SDLFunc("SDL_IsTextInputShown", None, SDL_bool, added='2.0.22'),
     SDLFunc("SDL_SetTextInputRect", [_P(SDL_Rect)]),
     SDLFunc("SDL_HasScreenKeyboardSupport", None, SDL_bool),
     SDLFunc("SDL_IsScreenKeyboardShown", [_P(SDL_Window)], SDL_bool),
@@ -65,6 +67,8 @@ SDL_GetKeyFromName = _ctypes["SDL_GetKeyFromName"]
 SDL_StartTextInput = _ctypes["SDL_StartTextInput"]
 SDL_IsTextInputActive = _ctypes["SDL_IsTextInputActive"]
 SDL_StopTextInput = _ctypes["SDL_StopTextInput"]
+SDL_ClearComposition = _ctypes["SDL_ClearComposition"]
+SDL_IsTextInputShown = _ctypes["SDL_IsTextInputShown"]
 SDL_SetTextInputRect = _ctypes["SDL_SetTextInputRect"]
 SDL_HasScreenKeyboardSupport = _ctypes["SDL_HasScreenKeyboardSupport"]
 SDL_IsScreenKeyboardShown = _ctypes["SDL_IsScreenKeyboardShown"]

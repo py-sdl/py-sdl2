@@ -144,6 +144,7 @@ _funcdefs = [
     SDLFunc("SDL_CreateRenderer", [_P(SDL_Window), c_int, Uint32], _P(SDL_Renderer)),
     SDLFunc("SDL_CreateSoftwareRenderer", [_P(SDL_Surface)], _P(SDL_Renderer)),
     SDLFunc("SDL_GetRenderer", [_P(SDL_Window)], _P(SDL_Renderer)),
+    SDLFunc("SDL_RenderGetWindow", [_P(SDL_Renderer)], _P(SDL_Window), added='2.0.22'),
     SDLFunc("SDL_GetRendererInfo", [_P(SDL_Renderer), _P(SDL_RendererInfo)], c_int),
     SDLFunc("SDL_GetRendererOutputSize", [_P(SDL_Renderer), _P(c_int), _P(c_int)], c_int),
     SDLFunc("SDL_CreateTexture", [_P(SDL_Renderer), Uint32, c_int, c_int, c_int], _P(SDL_Texture)),
@@ -293,6 +294,7 @@ SDL_CreateWindowAndRenderer = _ctypes["SDL_CreateWindowAndRenderer"]
 SDL_CreateRenderer = _ctypes["SDL_CreateRenderer"]
 SDL_CreateSoftwareRenderer = _ctypes["SDL_CreateSoftwareRenderer"]
 SDL_GetRenderer = _ctypes["SDL_GetRenderer"]
+SDL_RenderGetWindow = _ctypes["SDL_RenderGetWindow"]
 SDL_GetRendererInfo = _ctypes["SDL_GetRendererInfo"]
 SDL_GetRendererOutputSize = _ctypes["SDL_GetRendererOutputSize"]
 SDL_CreateTexture = _ctypes["SDL_CreateTexture"]
