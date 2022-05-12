@@ -1,11 +1,14 @@
 import sys
 import pytest
+import sdl2
 from sdl2 import ext as sdl2ext
-from sdl2 import SDL_WasInit, SDL_INIT_VIDEO, SDL_FlushEvent, SDL_USEREVENT, \
+from sdl2 import SDL_Quit, SDL_WasInit, SDL_FlushEvent, SDL_USEREVENT, \
     SDL_FIRSTEVENT, SDL_LASTEVENT, SDL_Event, SDL_UserEvent, SDL_PushEvent
 
 @pytest.fixture(scope="module")
 def with_sdl_ext():
+    if SDL_WasInit(0) != 0:
+        SDL_Quit()
     sdl2ext.init()
     yield
     sdl2ext.quit()
@@ -18,15 +21,39 @@ def test_init_quit():
         sdl2ext.init()
     except sdl2ext.SDLError:
         raise pytest.skip('Video subsystem not supported')
-    assert SDL_WasInit(SDL_INIT_VIDEO) == SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_VIDEO) == sdl2.SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_EVENTS) == sdl2.SDL_INIT_EVENTS
     sdl2ext.quit()
-    assert SDL_WasInit(SDL_INIT_VIDEO) != SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_VIDEO) != sdl2.SDL_INIT_VIDEO
     sdl2ext.init()
     sdl2ext.init()
     sdl2ext.init()
-    assert SDL_WasInit(SDL_INIT_VIDEO) == SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_VIDEO) == sdl2.SDL_INIT_VIDEO
     sdl2ext.quit()
-    assert SDL_WasInit(SDL_INIT_VIDEO) != SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_VIDEO) != sdl2.SDL_INIT_VIDEO
+
+    # Test initializing other subsystems
+    sdl2ext.init(video=False, events=True)
+    assert SDL_WasInit(sdl2.SDL_INIT_VIDEO) != sdl2.SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_EVENTS) == sdl2.SDL_INIT_EVENTS
+    sdl2ext.init(video=True, audio=True, timer=True)
+    assert SDL_WasInit(sdl2.SDL_INIT_VIDEO) == sdl2.SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_AUDIO) == sdl2.SDL_INIT_AUDIO
+    assert SDL_WasInit(sdl2.SDL_INIT_TIMER) == sdl2.SDL_INIT_TIMER
+    sdl2ext.init(joystick=True, haptic=True)
+    assert SDL_WasInit(sdl2.SDL_INIT_VIDEO) == sdl2.SDL_INIT_VIDEO
+    assert SDL_WasInit(sdl2.SDL_INIT_JOYSTICK) == sdl2.SDL_INIT_JOYSTICK
+    assert SDL_WasInit(sdl2.SDL_INIT_HAPTIC) == sdl2.SDL_INIT_HAPTIC
+    assert SDL_WasInit(sdl2.SDL_INIT_GAMECONTROLLER) != sdl2.SDL_INIT_GAMECONTROLLER
+    sdl2ext.init(controller=True)
+    assert SDL_WasInit(sdl2.SDL_INIT_GAMECONTROLLER) == sdl2.SDL_INIT_GAMECONTROLLER
+    if sdl2.dll.version < 2009:
+        with pytest.raises(RuntimeError):
+            sdl2ext.init(sensor=True)
+    else:
+        sdl2ext.init(sensor=True)
+        assert SDL_WasInit(sdl2.SDL_INIT_SENSOR) == sdl2.SDL_INIT_SENSOR
+    sdl2ext.quit()
 
 def test_get_events(with_sdl_ext):
     SDL_FlushEvent(SDL_FIRSTEVENT, SDL_LASTEVENT)

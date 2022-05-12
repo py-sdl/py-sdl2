@@ -1,6 +1,9 @@
 import ctypes
-from .. import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_WasInit, \
-    SDL_INIT_VIDEO, error, events, timer
+from .. import (events, timer, error, dll,
+    SDL_Init, SDL_InitSubSystem, SDL_Quit, SDL_QuitSubSystem, SDL_WasInit,
+    SDL_INIT_VIDEO, SDL_INIT_AUDIO, SDL_INIT_TIMER, SDL_INIT_HAPTIC,
+    SDL_INIT_JOYSTICK, SDL_INIT_GAMECONTROLLER, SDL_INIT_SENSOR, SDL_INIT_EVENTS,
+)
 
 _HASSDLTTF = True
 try:
@@ -14,6 +17,18 @@ except ImportError:
     _HASSDLIMAGE = False
 
 __all__ = ["SDLError", "init", "quit", "get_events", "TestEventProcessor"]
+
+
+_sdl_subsystems = {
+    'timer': SDL_INIT_TIMER,
+    'audio': SDL_INIT_AUDIO,
+    'video': SDL_INIT_VIDEO,
+    'joystick': SDL_INIT_JOYSTICK,
+    'haptic': SDL_INIT_HAPTIC,
+    'gamecontroller': SDL_INIT_GAMECONTROLLER,
+    'events': SDL_INIT_EVENTS,
+    'sensor': SDL_INIT_SENSOR,
+}
 
 
 class SDLError(Exception):
@@ -48,19 +63,71 @@ def raise_sdl_err(desc=None):
     raise SDLError(e)
 
 
-def init():
-    """Initializes the SDL2 video subsystem.
+def init(
+    video=True, audio=False, timer=False, joystick=False, controller=False,
+    haptic=False, sensor=False, events=True
+):
+    """Initializes SDL and its optional subsystems.
+
+    By default, only the video and events subsystems are initialized. Note that
+    the sensor subsystem requires SDL 2.0.9 or later.
+
+    Args:
+        video (bool, optional): Whether to initialize the SDL video subsystem.
+            If True, the events subsystem will also be initialized. Defaults
+            to True.
+        audio (bool, optional): Whether to initialize the SDL audio subsystem.
+            Defaults to False.
+        timer (bool, optional): Whether to initialize the SDL timer subsystem.
+            Defaults to False.
+        joystick (bool, optional): Whether to initialize the SDL joystick
+            subsystem. If True, the events subsystem will also be initialized.
+            Defaults to False.
+        controller (bool, optional): Whether to initialize the SDL gamecontroller
+            subsystem. If True, the joystick subsystem will also be initialized.
+            Defaults to False.
+        haptic (bool, optional): Whether to initialize the SDL haptic (force
+            feedback) subsystem. Defaults to False.
+        sensor (bool, optional): Whether to initialize the SDL sensor subsystem.
+            Defaults to False.
+        events (bool, optional): Whether to initialize the SDL events subsystem.
+            Will automatically be initialized if the video, joystick, or
+            gamecontroller subsystems are enabled. Defaults to False.
 
     See :ref:`pygamers_pygame` for a comparison between this function and
     ``pygame.init()``.
 
     Raises:
-        :exc:`SDLError`: If the SDL2 video subsystem cannot be initialized.
+        :exc:`SDLError`: If a requested SDL subsystem cannot be initialized.
 
     """
-    # TODO: More subsystems?
-    if SDL_Init(SDL_INIT_VIDEO) != 0:
-        raise SDLError()
+    subsystems = []
+    if events:
+        subsystems.append("events")
+    if video:
+        subsystems.append("video")
+    if audio:
+        subsystems.append("audio")
+    if timer:
+        subsystems.append("timer")
+    if joystick:
+        subsystems.append("joystick")
+    if controller:
+        subsystems.append("gamecontroller")
+    if haptic:
+        subsystems.append("haptic")
+    if sensor:
+        subsystems.append("sensor")
+
+    if SDL_Init(0) != 0:
+        raise_sdl_err("initializing SDL2")
+
+    for s in subsystems:
+        if s == "sensor" and dll.version < 2009:
+            e = "The sensor subsystem requires SDL 2.0.9 or later."
+            raise RuntimeError(e)
+        if SDL_InitSubSystem(_sdl_subsystems[s]) != 0:
+            raise_sdl_err("initializing the {0} subsystem".format(s))
 
 
 def quit():

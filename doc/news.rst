@@ -5,10 +5,16 @@ This describes the latest changes between the PySDL2 releases.
 0.9.14 (Unreleased)
 -------------------
 
+New Features:
+
 * Added a new function :func:`~sdl2.ext.get_displays` and class
   :class:`~sdl2.ext.DisplayInfo` to provide an easier and more Pythonic API for
   getting information about the names, locations, and supported video modes
   of the connected displays.
+* Extended :func:`~sdl2.ext.init` to allow initializing all SDL2 subsystems
+  individually using keyword arguments (e.g. ``sdl2.ext.init(audio=True)`` to
+  initialize the audio subsystem as well as the default video subsystem).
+  Previously, this function only initailized the video subsystem.
 
 
 0.9.13
@@ -45,7 +51,6 @@ New Features:
   wrappers around the ctypes bindings), and also allows developers to write code
   that will not break when other SDL2 modules are eventually migrated to similar
   Python-wrapped bindings.
-
 
 Fixed Bugs:
 
