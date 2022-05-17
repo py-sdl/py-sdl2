@@ -19,7 +19,7 @@ def test_Mix_Linked_Version():
     v = sdlmixer.Mix_Linked_Version()
     assert isinstance(v.contents, version.SDL_version)
     assert v.contents.major == 2
-    assert v.contents.minor == 0
+    assert v.contents.minor >= 0
     assert v.contents.patch >= 0
 
 @pytest.mark.skipif(sdlmixer.dll.version < 2004, reason="Broken in official binaries")

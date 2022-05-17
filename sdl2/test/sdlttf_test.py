@@ -66,7 +66,7 @@ def test_TTF_Linked_Version(with_sdl_ttf):
     v = sdlttf.TTF_Linked_Version()
     assert isinstance(v.contents, version.SDL_version)
     assert v.contents.major == 2
-    assert v.contents.minor == 0
+    assert v.contents.minor >= 0
     assert v.contents.patch >= 12
 
 @pytest.mark.skipif(sdlttf.dll.version < 2018, reason="not available")

@@ -22,6 +22,7 @@ New Features:
 * Added an informative warning for users using pysdl2-dll with PySDL2 on an
   Apple Silicon Mac.
 
+
 Fixed Bugs:
 
 * Fixed a bug in :func:`~sdl2.rw_from_object` where calling 
@@ -46,6 +47,8 @@ Fixed Bugs:
   the SDL2 headers.
 * Fixed export of ``SDL_TIMER_RESOLUTION`` hint (was previously not accessable
   through the ``sdl2`` namespace).
+* Updated ``sdl2.dll.version`` to better handle SDL2's new versioning format
+  and fixed unit tests accordingly (issue #228).
 
 
 0.9.11
