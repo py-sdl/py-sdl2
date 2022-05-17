@@ -5,6 +5,16 @@ import sdl2
 from sdl2 import dll, __version__, version_info
 
 
+def test__version_tuple():
+    # Note that this is not public API.
+    assert dll._version_tuple_to_int((2, 0, 18)) == 2018
+    assert dll._version_tuple_to_int((2, 24, 1)) == 2241
+    # Micro version stops at 9 in this encoding
+    assert dll._version_tuple_to_int((2, 24, 15)) == 2249
+    assert dll._version_tuple_to_int((2, 99, 9)) == 2999
+    # Minor version stops at 99 in this encoding
+    assert dll._version_tuple_to_int((2, 103, 6)) == 2999
+
 def test_SDL_version():
     v = sdl2.SDL_version(0, 0, 0)
     assert v.major == 0
@@ -19,6 +29,7 @@ def test_SDL_GetVersion():
     assert v.minor >= 0
     assert v.patch >= 0
     assert (v.major, v.minor, v.patch) >= (2, 0, 5)
+    assert (v.major, v.minor, v.patch) == dll.version_tuple
 
 def test_SDL_VERSIONNUM():
     assert sdl2.SDL_VERSIONNUM(1, 2, 3) == 1203
@@ -42,13 +53,13 @@ def test_SDL_GetRevision():
     rev = sdl2.SDL_GetRevision()
     # If revision not empty string (e.g. Conda), test the prefix
     if len(rev):
-        if dll.version >= 2016:
+        if dll.version_tuple >= (2, 0, 16):
             assert rev[0:4] == b"http"
         else:
             assert rev[0:3] == b"hg-"
 
 def test_SDL_GetRevisionNumber():
-    if sys.platform in ("win32",) or dll.version >= 2016:
+    if sys.platform in ("win32",) or dll.version_tuple >= (2, 0, 16):
         # HG tip on Win32 does not set any revision number
         assert sdl2.SDL_GetRevisionNumber() >= 0
     else:

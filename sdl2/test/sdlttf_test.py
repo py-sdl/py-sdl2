@@ -70,6 +70,7 @@ def test_TTF_Linked_Version(with_sdl_ttf):
     assert v.contents.patch >= 0
     t = (v.contents.major, v.contents.minor, v.contents.patch)
     assert t >= (2, 0, 12)
+    assert t == sdlttf.dll.version_tuple
 
 @pytest.mark.skipif(sdlttf.dll.version < 2018, reason="not available")
 def test_TTF_GetFreeTypeVersion(with_sdl_ttf):
@@ -240,7 +241,7 @@ def test_TTF_GetSetFontHinting(with_font):
         sdlttf.TTF_HINTING_NORMAL, sdlttf.TTF_HINTING_LIGHT,
         sdlttf.TTF_HINTING_MONO, sdlttf.TTF_HINTING_NONE
     ]
-    if sdlttf.dll.version >= 2018:
+    if sdlttf.dll.version_tuple >= (2, 0, 18):
         hints.append(sdlttf.TTF_HINTING_LIGHT_SUBPIXEL)
     assert sdlttf.TTF_GetFontHinting(font) == sdlttf.TTF_HINTING_NORMAL
     for hint in hints:
