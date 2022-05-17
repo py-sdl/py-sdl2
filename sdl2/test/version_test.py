@@ -25,6 +25,12 @@ def test_SDL_VERSIONNUM():
     assert sdl2.SDL_VERSIONNUM(2, 0, 0) == 2000
     assert sdl2.SDL_VERSIONNUM(17, 42, 3) == 21203
 
+    # This is a bit weird now that SDL uses the minor version more often,
+    # but does sort in the correct order against all versions of SDL 2.
+    assert sdl2.SDL_VERSIONNUM(2, 23, 0) == 4300
+    # This is the highest possible SDL 2 version
+    assert sdl2.SDL_VERSIONNUM(2, 255, 99) == 27599
+
 def test_SDL_VERSION_ATLEAST():
     assert sdl2.SDL_VERSION_ATLEAST(1, 2, 3)
     assert sdl2.SDL_VERSION_ATLEAST(2, 0, 0)
