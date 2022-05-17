@@ -90,7 +90,7 @@ def test_IMG_Linked_Version():
     v = sdlimage.IMG_Linked_Version()
     assert isinstance(v.contents, version.SDL_version)
     assert v.contents.major == 2
-    assert v.contents.minor == 0
+    assert v.contents.minor >= 0
     assert v.contents.patch >= 1
 
 def test_IMG_Init():

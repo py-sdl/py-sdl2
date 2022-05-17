@@ -63,12 +63,23 @@ class SDL_version(Structure):
     ]
 
 def _version_str_to_int(s):
+    # Convert an SDL version string to an integer (e.g. "2.0.18" to 2018)
     v = [int(n) for n in s.split('.')]
-    return v[0] * 1000 + v[1] * 100 + v[2]
+    if v[1] > 0:
+        # For SDL2 >= 2.23.0 (new version scheme): 2.23.0 -> 2230
+        return v[0] * 1000 + v[1] * 10 + v[2]
+    else:
+        # For SDL2 <= 2.0.22 (old version scheme): 2.0.22 -> 2022
+        return v[0] * 1000 + v[1] * 100 + v[2]
 
 def _version_int_to_str(i):
     v = str(i)
-    v = [v[0], v[1], str(int(v[2:4]))]
+    if int(v[1]) > 0:
+        # For SDL2 >= 2.23.0 (new version scheme): 2230 -> 2.23.0
+        v = [v[0], str(int(v[1:3])), v[3]]
+    else:
+        # For SDL2 <= 2.0.22 (old version scheme): 2022 -> 2.0.22
+        v = [v[0], v[1], str(int(v[2:4]))]
     return ".".join(v)
 
 def _so_version_num(libname):
@@ -322,7 +333,7 @@ class DLL(object):
     @property
     def version(self):
         """int: The version of the loaded library in the form of a 4-digit
-        integer (e.g. '2008' for SDL 2.0.8, '2010' for SDL 2.0.10).
+        integer (e.g. '2008' for SDL 2.0.8, '2231' for SDL 2.23.1).
         """
         return self._version
 

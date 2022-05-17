@@ -16,7 +16,7 @@ def test_SDL_GetVersion():
     sdl2.SDL_GetVersion(ctypes.byref(v))
     assert type(v) == sdl2.SDL_version
     assert v.major == 2
-    assert v.minor == 0
+    assert v.minor >= 0
     assert v.patch >= 5
 
 def test_SDL_VERSIONNUM():
