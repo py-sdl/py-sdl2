@@ -91,7 +91,9 @@ def test_IMG_Linked_Version():
     assert isinstance(v.contents, version.SDL_version)
     assert v.contents.major == 2
     assert v.contents.minor >= 0
-    assert v.contents.patch >= 1
+    assert v.contents.patch >= 0
+    t = (v.contents.major, v.contents.minor, v.contents.patch)
+    assert t >= (2, 0, 1)
 
 def test_IMG_Init():
     SDL_Init(0)
