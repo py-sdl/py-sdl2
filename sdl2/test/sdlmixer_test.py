@@ -21,8 +21,11 @@ def test_Mix_Linked_Version():
     assert v.contents.major == 2
     assert v.contents.minor >= 0
     assert v.contents.patch >= 0
+    t = (v.contents.major, v.contents.minor, v.contents.patch)
+    assert t >= (2, 0, 0)
+    assert t == sdlmixer.dll.version_tuple
 
-@pytest.mark.skipif(sdlmixer.dll.version < 2004, reason="Broken in official binaries")
+@pytest.mark.skipif(sdlmixer.dll.version_tuple < (2, 0, 4), reason="Broken in official binaries")
 def test_Mix_Init():
     SDL_Init(sdl2.SDL_INIT_AUDIO)
     supported = []

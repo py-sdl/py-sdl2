@@ -62,25 +62,29 @@ class SDL_version(Structure):
         ("patch", c_uint8),
     ]
 
-def _version_str_to_int(s):
-    # Convert an SDL version string to an integer (e.g. "2.0.18" to 2018)
-    v = [int(n) for n in s.split('.')]
-    if v[1] > 0:
+def _version_tuple_to_int(v):
+    # Convert a tuple to an integer (e.g. (2,0,18) to 2018, (2,24,1) to 2241)
+    if v[1] > 99:
+        # Cap the minor version at 99 to avoid ambiguity: in practice
+        # the version number is unlikely to reach 2.99.z.
+        return v[0] * 1000 + 999
+    elif v[1] > 0:
         # For SDL2 >= 2.23.0 (new version scheme): 2.23.0 -> 2230
-        return v[0] * 1000 + v[1] * 10 + v[2]
+        # Note that this is not the same encoding as SDL_VERSIONNUM.
+        # Cap the micro version at 9 to avoid ambiguity: we're unlikely
+        # to need to distinguish between 2.y.9 and 2.y.10, since those
+        # would be patch/bugfix releases from the same branch anyway.
+        return v[0] * 1000 + v[1] * 10 + min(v[2], 9)
     else:
         # For SDL2 <= 2.0.22 (old version scheme): 2.0.22 -> 2022
+        # This is the same encoding as SDL_VERSIONNUM.
         return v[0] * 1000 + v[1] * 100 + v[2]
 
-def _version_int_to_str(i):
-    v = str(i)
-    if int(v[1]) > 0:
-        # For SDL2 >= 2.23.0 (new version scheme): 2230 -> 2.23.0
-        v = [v[0], str(int(v[1:3])), v[3]]
-    else:
-        # For SDL2 <= 2.0.22 (old version scheme): 2022 -> 2.0.22
-        v = [v[0], v[1], str(int(v[2:4]))]
-    return ".".join(v)
+def _version_tuple_to_str(v):
+    return ".".join(map(str, v))
+
+def _version_str_to_tuple(s):
+    return tuple(map(int, s.split('.')))
 
 def _so_version_num(libname):
     """Extracts the version number from an .so filename as a list of ints."""
@@ -235,11 +239,11 @@ class DLL(object):
         self._libname = libinfo
         self._version = None
         minversions = {
-            "SDL2": 2005,
-            "SDL2_mixer": 2001,
-            "SDL2_ttf": 2014,
-            "SDL2_image": 2001,
-            "SDL2_gfx": 1003
+            "SDL2": (2, 0, 5),
+            "SDL2_mixer": (2, 0, 1),
+            "SDL2_ttf": (2, 0, 14),
+            "SDL2_image": (2, 0, 1),
+            "SDL2_gfx": (1, 0, 3)
         }
         foundlibs = _findlib(libnames, path)
         dllmsg = "PYSDL2_DLL_PATH: %s" % (os.getenv("PYSDL2_DLL_PATH") or "unset")
@@ -250,10 +254,10 @@ class DLL(object):
             try:
                 self._dll = CDLL(libfile)
                 self._libfile = libfile
-                self._version = self._get_version(libinfo, self._dll)
-                if self._version < minversions[libinfo]:
-                    versionstr = _version_int_to_str(self._version)
-                    minimumstr = _version_int_to_str(minversions[libinfo])
+                self._version_tuple = self._get_version_tuple(libinfo, self._dll)
+                if self._version_tuple < minversions[libinfo]:
+                    versionstr = _version_tuple_to_str(self._version_tuple)
+                    minimumstr = _version_tuple_to_str(minversions[libinfo])
                     err = "{0} (v{1}) is too old to be used by py-sdl2"
                     err += " (minimum v{0})".format(minimumstr)
                     raise RuntimeError(err.format(libfile, versionstr))
@@ -290,10 +294,10 @@ class DLL(object):
                 function was added, in the format '2.x.x'.
         """
         func = getattr(self._dll, funcname, None)
-        min_version = _version_str_to_int(added) if added else None
+        min_version = _version_str_to_tuple(added) if added else None
         if not func:
-            versionstr = _version_int_to_str(self._version)
-            if min_version and min_version > self._version:
+            versionstr = _version_tuple_to_str(self._version_tuple)
+            if min_version and min_version > self._version_tuple:
                 e = "'{0}' requires {1} <= {2}, but the loaded version is {3}."
                 errmsg = e.format(funcname, self._libname, added, versionstr)
                 return _unavailable(errmsg)
@@ -305,7 +309,7 @@ class DLL(object):
         func.restype = returns
         return func
 
-    def _get_version(self, libname, dll):
+    def _get_version_tuple(self, libname, dll):
         """Gets the version of the linked SDL library"""
         if libname == "SDL2":
             dll.SDL_GetVersion.argtypes = [POINTER(SDL_version)]
@@ -323,7 +327,8 @@ class DLL(object):
             func.argtypes = None
             func.restype = POINTER(SDL_version)
             v = func().contents
-        return v.major * 1000 + v.minor * 100 + v.patch
+
+        return (v.major, v.minor, v.patch)
 
     @property
     def libfile(self):
@@ -331,12 +336,22 @@ class DLL(object):
         return self._libfile
 
     @property
+    def version_tuple(self):
+        """tuple: The version of the loaded library in the form of a
+        tuple of integers (e.g. (2, 24, 1) for SDL 2.24.1).
+        """
+        return self._version_tuple
+
+    @property
     def version(self):
         """int: The version of the loaded library in the form of a 4-digit
         integer (e.g. '2008' for SDL 2.0.8, '2231' for SDL 2.23.1).
-        """
-        return self._version
 
+        Note that this is not the same version encoding as SDL_VERSIONNUM,
+        and the exact encoding used is not guaranteed.
+        In new code, use version_tuple instead.
+        """
+        return _version_tuple_to_int(self._version_tuple)
 
 
 # Once the DLL class is defined, try loading the main SDL2 library
@@ -352,3 +367,4 @@ def get_dll_file():
 
 _bind = dll.bind_function
 version = dll.version
+version_tuple = dll.version_tuple

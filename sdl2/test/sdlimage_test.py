@@ -54,7 +54,7 @@ if bad_webp:
     formats.remove("webp")
 
 # JPG saving requires SDL2_image >= 2.0.2 and isn't in official mac binaries
-no_jpeg_save = sdlimage.dll.version < 2002 or ismacos
+no_jpeg_save = sdlimage.dll.version_tuple < (2, 0, 2) or ismacos
 
 @pytest.fixture(scope="module")
 def with_sdl_image(with_sdl):
@@ -91,7 +91,10 @@ def test_IMG_Linked_Version():
     assert isinstance(v.contents, version.SDL_version)
     assert v.contents.major == 2
     assert v.contents.minor >= 0
-    assert v.contents.patch >= 1
+    assert v.contents.patch >= 0
+    t = (v.contents.major, v.contents.minor, v.contents.patch)
+    assert t >= (2, 0, 1)
+    assert t == sdlimage.dll.version_tuple
 
 def test_IMG_Init():
     SDL_Init(0)
