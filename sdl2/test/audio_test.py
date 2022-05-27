@@ -5,6 +5,7 @@ import pytest
 import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_INIT_AUDIO
+from sdl2.audio import FORMAT_NAME_MAP
 from sdl2.error import SDL_GetError, SDL_ClearError
 
 # NOTE: This module is missing a lot of tests, but is also going to be tricky
@@ -278,7 +279,7 @@ def test_SDL_GetAudioDeviceSpec(with_sdl_audio):
     assert ret == 0
     # Validate frequency and channel count were set
     hz = outspec.freq
-    fmt = sdl2.FORMAT_NAME_MAP[outspec.format] if outspec.format > 0 else 'unknown'
+    fmt = FORMAT_NAME_MAP[outspec.format] if outspec.format > 0 else 'unknown'
     chans = outspec.channels
     bufsize = outspec.samples if outspec.samples > 0 else 'unknown'
     if driver != b"dummy":
