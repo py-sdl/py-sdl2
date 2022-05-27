@@ -9,9 +9,6 @@ from sdl2.stdinc import Uint8, Uint16, Uint32
 
 RGBA32 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF]
 RGBX32 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0]
-if sys.byteorder == "big":
-    RGBA32.reverse()
-    RGBX32.reverse()
 
 
 # Test custom macros

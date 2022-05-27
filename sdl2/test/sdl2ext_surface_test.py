@@ -2,6 +2,7 @@ import pytest
 from sdl2.surface import SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.rect import SDL_Rect
 from sdl2.ext.draw import prepare_color, fill
+from sdl2.ext.surface import _create_surface
 from sdl2 import ext as sdl2ext
 
 try:
@@ -14,7 +15,7 @@ except:
 @pytest.mark.skipif(not _HASNUMPY, reason="Numpy not available")
 def test_subsurface(with_sdl):
     # Initialize colour and surface/view
-    sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+    sf = _create_surface((10, 10), fmt="RGBA32")
     WHITE = prepare_color((255, 255, 255), sf)
 
     # Test creation of subsurface from parent

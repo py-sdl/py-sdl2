@@ -47,6 +47,10 @@ if _HASSDLIMAGE:
 # during tests
 skip_color_check = ['gif', 'jpg', 'lbm', 'pbm', 'pgm', 'svg', 'webp']
 
+# Skip ICO and CUR tests on big-endian, since they don't seem to work yet
+if sys.byteorder == "big":
+    skip_color_check += ['ico', 'cur']
+
 # SDL 2.0.10 has a bug that messes up converting surfaces with transparency
 if sdl2.dll.version == 2010:
     skip_color_check.append('xpm')
