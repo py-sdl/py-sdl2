@@ -35,7 +35,12 @@ class TestExtWindow(object):
         assert window.title == "Window"
         window.title = b"Test1234"
         assert window.title == "Test1234"
+        video.SDL_SetWindowTitle(window.window, b"manual override")
+        assert window.title == "manual override"
         window.close()
+        assert window.title == "Test1234"
+        window.title = "set when closed"
+        assert window.title == "set when closed"
 
     def test_show_hide(self, with_sdl):
         get_flags = video.SDL_GetWindowFlags
@@ -46,6 +51,11 @@ class TestExtWindow(object):
         window.hide()
         assert get_flags(window.window) & SDL_WINDOW_SHOWN != SDL_WINDOW_SHOWN
         window.close()
+        # Test informative exceptions for closed window
+        with pytest.raises(RuntimeError):
+            window.show()
+        with pytest.raises(RuntimeError):
+            window.hide()
 
     @pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
     def test_maximize(self, with_sdl):
@@ -59,6 +69,9 @@ class TestExtWindow(object):
         if not DRIVER_DUMMY:
             assert get_flags(window.window) & max_flag == max_flag
         window.close()
+        # Test informative exception for closed window
+        with pytest.raises(RuntimeError):
+            window.maximize()
 
     @pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
     def test_minimize_restore(self, with_sdl):
@@ -73,6 +86,11 @@ class TestExtWindow(object):
         window.restore()
         assert get_flags(window.window) & min_flag != min_flag
         window.close()
+        # Test informative exceptions for closed window
+        with pytest.raises(RuntimeError):
+            window.minimize()
+        with pytest.raises(RuntimeError):
+            window.restore()
 
     @pytest.mark.skip("not implemented")
     def test_refresh(self, with_sdl):
@@ -83,6 +101,9 @@ class TestExtWindow(object):
         sf = window.get_surface()
         assert isinstance(sf, surface.SDL_Surface)
         window.close()
+        # Test informative exception for closed window
+        with pytest.raises(RuntimeError):
+            sf = window.get_surface()
 
     def test_open_close(self, with_sdl):
         get_flags = video.SDL_GetWindowFlags

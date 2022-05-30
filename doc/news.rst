@@ -18,6 +18,9 @@ New Features:
 * Updated to wrap new functions and constants in SDL2 2.24.0 (PR #246).
 * Added the error-handling :func:`sdl2.ext.raise_sdl_err` function to the public
   API.
+* Added informative exceptions when trying perform operations (e.g. show, hide,
+  minimize) on a closed :obj:`sdl2.ext.Window`, and generally improved memory
+  safety of the Window class.
 
 Fixed Bugs:
 
@@ -29,6 +32,8 @@ API Changes:
 
 * Moved :class:`sdl2.ext.SDLError` and :func:`sdl2.ext.raise_sdl_err`
   internally to a new submodule :mod:`sdl2.ext.err`.
+* :obj:`sdl2.ext.Window` objects can now be repositioned when closed (would
+  previously raise an ``SDLError`` exception).
 
 
 0.9.13
