@@ -5,6 +5,8 @@ import struct
 import pytest
 from sdl2.ext import array as sdlextarray
 
+BIG_ENDIAN = sys.byteorder == "big"
+
 singlebyteseq = [x for x in range(0x100)]
 doublebyteseq = [x for x in range(0x10000)]
 quadbyteseq = [
@@ -92,7 +94,7 @@ def create_64b(seq, size, offset):
                     seq[offset + 2] << 16 |
                     seq[offset + 3])
         elif size == 4:
-            return (seq[offset] << 32 | seq[offset])
+            return (seq[offset] << 32 | seq[offset + 1])
 
 def lobyte16(val):
     return val & 0x00FF
@@ -187,12 +189,14 @@ class TestExtCTypesView(object):
             offset = 0
             cnt = 0
             for val in singlebytes.to_bytes():
+                hi = hibyte16(doublebyteseq[offset])
+                lo = lobyte16(doublebyteseq[offset])
                 if cnt > 0:
-                    assert val == hibyte16(doublebyteseq[offset])
+                    assert val == (lo if BIG_ENDIAN else hi)
                     cnt = 0
                     offset += 1
                 else:
-                    assert val == lobyte16(doublebyteseq[offset])
+                    assert val == (hi if BIG_ENDIAN else lo)
                     cnt += 1
 
             offset = 0
@@ -232,12 +236,14 @@ class TestExtCTypesView(object):
             cnt = 0
             offset = 0
             for val in singlebytes.to_uint16():
+                hi = hibytes32(quadbyteseq[offset])
+                lo = lobytes32(quadbyteseq[offset])
                 if cnt > 0:
-                    assert val == hibytes32(quadbyteseq[offset])
+                    assert val == (lo if BIG_ENDIAN else hi)
                     cnt = 0
                     offset += 1
                 else:
-                    assert val == lobytes32(quadbyteseq[offset])
+                    assert val == (hi if BIG_ENDIAN else lo)
                     cnt += 1
 
             offset = 0
@@ -367,9 +373,9 @@ def test_create_array():
         if i == 1:
             assert parr[0] == 0x0
         elif i == 2:
-            assert parr[0] == 0x0100
+            assert parr[0] == struct.unpack("=H", barr[0:2])[0]
         elif i == 4:
-            assert parr[0] == 0x03020100
+            assert parr[0] == struct.unpack("=I", barr[0:4])[0]
     for i in (0, 3, 5, 6, 7, 9, 10, 12, "test"):
         with pytest.raises(TypeError):
             sdlextarray.create_array(barr, i)

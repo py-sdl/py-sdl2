@@ -16,7 +16,7 @@ except:
 
 @pytest.fixture
 def testsurf(with_sdl):
-    sf = SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
+    sf = _create_surface((10, 10), fmt="RGBA32")
     assert SDL_GetError() == b""
     yield sf
     SDL_FreeSurface(sf)
