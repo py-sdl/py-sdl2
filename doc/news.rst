@@ -49,6 +49,7 @@ Fixed Bugs:
   through the ``sdl2`` namespace).
 * Updated ``sdl2.dll.version`` to better handle SDL2's new versioning format
   and fixed unit tests accordingly (issue #228).
+* Fixed various unit tests on big-endian platforms (PR #232).
 
 
 0.9.11
