@@ -23,7 +23,7 @@ SDL_TimerCallback = CFUNCTYPE(Uint32, Uint32, c_void_p)
 # Macros & inline functions
 
 def SDL_TICKS_PASSED(A, B):
-    return (B - A) <= 0
+    return ((A - B) & 0xFFFFFFFF) <= 0x80000000
 
 
 # Raw ctypes function definitions
