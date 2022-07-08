@@ -23,14 +23,14 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['2.7', '3.6', '3.7', '3.8', '3.9', '3.10']
-        sdl2: ['2.0.20']
+        sdl2: ['2.0.22']
         name-prefix: ['Linux (Python ']
         include:
           - python-version: 'pypy-2.7'
-            sdl2: '2.0.20'
+            sdl2: '2.0.22'
             name-prefix: 'Experimental / Linux ('
           - python-version: 'pypy-3.7'
-            sdl2: '2.0.20'
+            sdl2: '2.0.22'
             name-prefix: 'Experimental / Linux ('
 
     env:
