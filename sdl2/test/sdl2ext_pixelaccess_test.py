@@ -30,7 +30,7 @@ def imgsurf(with_sdl):
 
 @pytest.fixture
 def rgbasurf(imgsurf):
-    rgba = pixels.SDL_PIXELFORMAT_ABGR8888
+    rgba = pixels.SDL_PIXELFORMAT_RGBA32
     rgbasurf = surface.SDL_ConvertSurfaceFormat(imgsurf.contents, rgba, 0)
     yield rgbasurf
     surface.SDL_FreeSurface(rgbasurf)

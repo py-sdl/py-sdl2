@@ -7,11 +7,8 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING, SDL_TRUE
 from sdl2 import SDL_Color
 from sdl2.stdinc import Uint8, Uint16, Uint32
 
-RGBA32 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF]
-RGBX32 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0]
-if sys.byteorder == "big":
-    RGBA32.reverse()
-    RGBX32.reverse()
+RGBA8888 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF]
+RGBX8888 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0]
 
 
 # Test custom macros
@@ -143,8 +140,8 @@ def test_SDL_GetPixelFormatName():
 
 def test_SDL_MasksToPixelFormatEnum():
     formats = [
-        (sdl2.SDL_PIXELFORMAT_RGBA8888, [32] + RGBA32),
-        (sdl2.SDL_PIXELFORMAT_RGBX8888, [32] + RGBX32),
+        (sdl2.SDL_PIXELFORMAT_RGBA8888, [32] + RGBA8888),
+        (sdl2.SDL_PIXELFORMAT_RGBX8888, [32] + RGBX8888),
         (sdl2.SDL_PIXELFORMAT_INDEX1MSB, [1, 0, 0, 0, 0]),
     ]
     for fmt, expected in formats:
@@ -157,8 +154,8 @@ def test_SDL_MasksToPixelFormatEnum():
 
 def test_SDL_PixelFormatEnumToMasks():
     formats = [
-        (sdl2.SDL_PIXELFORMAT_RGBA8888, [32] + RGBA32),
-        (sdl2.SDL_PIXELFORMAT_RGBX8888, [32] + RGBX32),
+        (sdl2.SDL_PIXELFORMAT_RGBA8888, [32] + RGBA8888),
+        (sdl2.SDL_PIXELFORMAT_RGBX8888, [32] + RGBX8888),
         (sdl2.SDL_PIXELFORMAT_INDEX1LSB, [1, 0, 0, 0, 0]),
         (sdl2.SDL_PIXELFORMAT_INDEX1MSB, [1, 0, 0, 0, 0]),
         (sdl2.SDL_PIXELFORMAT_UNKNOWN, [0, 0, 0, 0, 0]),
