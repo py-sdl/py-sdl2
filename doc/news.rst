@@ -9,6 +9,7 @@ Released on XXXX-XX-XX.
 
 New Features:
 
+* Updated to wrap new functions and constants in SDL2 2.0.22 (PR #226)
 * Added a new stable API for accessing the raw ctypes function bindings for each
   submodule. Each submodule (e.g. ``sdl2.sdlttf``, ``sdl2.video``) now contains
   a ``_ctypes`` object through which the raw ctypes function objects can be

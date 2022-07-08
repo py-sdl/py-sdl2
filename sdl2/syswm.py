@@ -166,6 +166,11 @@ if sdl_version >= 2016:
     ]
 if sdl_version >= 2018:
     _wl_fields += [("xdg_toplevel", c_void_p)]
+if sdl_version >= 2022:
+    _wl_fields += [
+        ("xdg_popup", c_void_p),
+        ("xdg_positioner", c_void_p)
+    ]
 class _wl(Structure):
     """Window information for Wayland."""
     _fields_ = _wl_fields

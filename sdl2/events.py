@@ -14,7 +14,8 @@ from .syswm import SDL_SysWMmsg
 __all__ = [
     # Structs, Unions, & Opaque Types
     "SDL_CommonEvent", "SDL_DisplayEvent", "SDL_WindowEvent", 
-    "SDL_KeyboardEvent", "SDL_TextEditingEvent", "SDL_TextInputEvent",
+    "SDL_KeyboardEvent", "SDL_TextEditingEvent",
+    "SDL_TextEditingExtEvent", "SDL_TextInputEvent",
     "SDL_MouseMotionEvent", "SDL_MouseButtonEvent", "SDL_MouseWheelEvent",
     "SDL_JoyAxisEvent", "SDL_JoyBallEvent", "SDL_JoyHatEvent",
     "SDL_JoyButtonEvent", "SDL_JoyDeviceEvent", "SDL_ControllerAxisEvent",
@@ -38,7 +39,8 @@ __all__ = [
     "SDL_LOCALECHANGED", "SDL_DISPLAYEVENT",
     "SDL_WINDOWEVENT", "SDL_SYSWMEVENT",
     "SDL_KEYDOWN", "SDL_KEYUP", "SDL_TEXTEDITING", "SDL_TEXTINPUT",
-    "SDL_KEYMAPCHANGED", "SDL_MOUSEMOTION", "SDL_MOUSEBUTTONDOWN",
+    "SDL_KEYMAPCHANGED", "SDL_TEXTEDITING_EXT",
+    "SDL_MOUSEMOTION", "SDL_MOUSEBUTTONDOWN",
     "SDL_MOUSEBUTTONUP", "SDL_MOUSEWHEEL",
     "SDL_JOYAXISMOTION", "SDL_JOYBALLMOTION",
     "SDL_JOYHATMOTION", "SDL_JOYBUTTONDOWN", "SDL_JOYBUTTONUP",
@@ -90,6 +92,7 @@ SDL_KEYUP = 0x301
 SDL_TEXTEDITING = 0x302
 SDL_TEXTINPUT = 0x303
 SDL_KEYMAPCHANGED = 0x304
+SDL_TEXTEDITING_EXT = 0x305
 SDL_MOUSEMOTION = 0x400
 SDL_MOUSEBUTTONDOWN = 0x401
 SDL_MOUSEBUTTONUP = 0x402
@@ -196,6 +199,16 @@ class SDL_TextEditingEvent(Structure):
         ("timestamp", Uint32),
         ("windowID", Uint32),
         ("text", (c_char * SDL_TEXTEDITINGEVENT_TEXT_SIZE)),
+        ("start", Sint32),
+        ("length", Sint32),
+    ]
+
+class SDL_TextEditingExtEvent(Structure):
+    _fields_ = [
+        ("type", Uint32),
+        ("timestamp", Uint32),
+        ("windowID", Uint32),
+        ("text", c_char_p),
         ("start", Sint32),
         ("length", Sint32),
     ]
@@ -468,6 +481,7 @@ class SDL_Event(Union):
         ("window", SDL_WindowEvent),
         ("key", SDL_KeyboardEvent),
         ("edit", SDL_TextEditingEvent),
+        ("editExt", SDL_TextEditingExtEvent),
         ("text", SDL_TextInputEvent),
         ("motion", SDL_MouseMotionEvent),
         ("button", SDL_MouseButtonEvent),

@@ -149,6 +149,15 @@ def test_SDL_StartStopTextInput(with_sdl):
     assert SDL_GetError() == b""
     assert sdl2.SDL_IsTextInputActive() == SDL_TRUE
 
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_ClearComposition(with_sdl):
+    sdl2.SDL_ClearComposition() # Not sure how else to test
+
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_IsTextInputShown(with_sdl):
+    ret = sdl2.SDL_IsTextInputShown()
+    assert ret in [SDL_TRUE, SDL_FALSE]
+
 def test_SDL_SetTextInputRect(with_sdl):
     sdl2.SDL_StartTextInput()
     coords = [(0, 0, 0, 0), (-10, -70, 3, 6), (10, 10, 10, 10)]

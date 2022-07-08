@@ -35,6 +35,15 @@ def test_SDL_GetTouchDevice():
         assert SDL_GetError() == b""
         assert dev_id != 0
 
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+@pytest.mark.skipif(devices == 0, reason="No available touch devices")
+def test_SDL_GetTouchName(with_sdl):
+    count = sdl2.SDL_GetNumTouchDevices()
+    for i in range(count):
+        name = sdl2.SDL_GetTouchName(i)
+        assert SDL_GetError() == b""
+        assert len(name) > 0
+
 @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
 @pytest.mark.skipif(devices == 0, reason="No available touch devices")
 def test_SDL_GetTouchDeviceType():

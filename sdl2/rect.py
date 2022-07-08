@@ -1,7 +1,7 @@
 from ctypes import Structure, c_int, c_float
 from ctypes import POINTER as _P
 from .dll import _bind, SDLFunc, AttributeDict
-from .stdinc import SDL_bool
+from .stdinc import SDL_bool, SDL_FLT_EPSILON
 
 __all__ = [
     # Structs
@@ -9,6 +9,8 @@ __all__ = [
 
     # Macro Functions
     "SDL_PointInRect", "SDL_RectEmpty", "SDL_RectEquals",
+    "SDL_PointInFRect", "SDL_FRectEmpty", "SDL_FRectEqualsEpsilon",
+    "SDL_FRectEquals"
 ]
 
 
@@ -145,6 +147,20 @@ def SDL_RectEquals(a, b):
 def SDL_PointInRect(p, r):
     return (p.x >= r.x) and (p.x < (r.x+r.w)) and (p.y >= r.y) and (p.y < (r.y+r.h))
 
+SDL_PointInFRect = SDL_PointInRect
+SDL_FRectEmpty = SDL_RectEmpty
+
+def SDL_FRectEqualsEpsilon(a, b, epsilon):
+    return (a and b and a == b) or (
+        abs(a.x - b.x) <= epsilon and
+        abs(a.y - b.y) <= epsilon and
+        abs(a.w - b.w) <= epsilon and
+        abs(a.h - b.h) <= epsilon
+    )
+
+def SDL_FRectEquals(a, b):
+    return SDL_FRectEqualsEpsilon(a, b, SDL_FLT_EPSILON)
+
 
 # Raw ctypes function definitions
 
@@ -156,6 +172,20 @@ _funcdefs = [
     SDLFunc("SDL_IntersectRectAndLine",
         [_P(SDL_Rect), _P(c_int), _P(c_int), _P(c_int), _P(c_int)],
         returns = SDL_bool
+    ),
+    SDLFunc("SDL_HasIntersectionF", [_P(SDL_FRect), _P(SDL_FRect)], SDL_bool, added='2.0.22'),
+    SDLFunc("SDL_IntersectFRect",
+        [_P(SDL_FRect), _P(SDL_FRect), _P(SDL_FRect)],
+        returns = SDL_bool, added = '2.0.22'
+    ),
+    SDLFunc("SDL_UnionFRect", [_P(SDL_FRect), _P(SDL_FRect), _P(SDL_FRect)], added='2.0.22'),
+    SDLFunc("SDL_EncloseFPoints",
+        [_P(SDL_FPoint), c_int, _P(SDL_FRect), _P(SDL_FRect)],
+        returns = SDL_bool, added = '2.0.22'
+    ),
+    SDLFunc("SDL_IntersectFRectAndLine",
+        [_P(SDL_FRect), _P(c_float), _P(c_float), _P(c_float), _P(c_float)],
+        returns = SDL_bool, added = '2.0.22'
     ),
 ]
 _ctypes = AttributeDict()
@@ -171,3 +201,8 @@ SDL_IntersectRect = _ctypes["SDL_IntersectRect"]
 SDL_UnionRect = _ctypes["SDL_UnionRect"]
 SDL_EnclosePoints = _ctypes["SDL_EnclosePoints"]
 SDL_IntersectRectAndLine = _ctypes["SDL_IntersectRectAndLine"]
+SDL_HasIntersectionF = _ctypes["SDL_HasIntersectionF"]
+SDL_IntersectFRect = _ctypes["SDL_IntersectFRect"]
+SDL_UnionFRect = _ctypes["SDL_UnionFRect"]
+SDL_EncloseFPoints = _ctypes["SDL_EncloseFPoints"]
+SDL_IntersectFRectAndLine = _ctypes["SDL_IntersectFRectAndLine"]

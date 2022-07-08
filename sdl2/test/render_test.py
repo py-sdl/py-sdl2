@@ -232,6 +232,23 @@ def test_SDL_GetRenderer(with_sdl):
         video.SDL_DestroyWindow(window)
     assert usable > 0
 
+@pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
+def test_SDL_RenderGetWindow(with_sdl):
+    flags = _get_renderflags()
+    rcount = sdl2.SDL_GetNumRenderDrivers()
+    for i in range(rcount):
+        window = _create_window((30, 30), (100, 100))
+        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
+        if (renderer and renderer.contents):
+            win = sdl2.SDL_RenderGetWindow(renderer)
+            assert SDL_GetError() == b""
+            assert isinstance(win.contents, sdl2.SDL_Window)
+            assert sdl2.SDL_GetWindowID(window) == sdl2.SDL_GetWindowID(win)
+            sdl2.SDL_DestroyRenderer(renderer)
+            assert not sdl2.SDL_GetRenderer(win)
+        video.SDL_DestroyWindow(window)
+
+
 def test_SDL_GetRendererInfo(with_sdl):
     renderers = []
     max_sizes = {}
