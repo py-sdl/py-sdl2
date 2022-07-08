@@ -323,7 +323,7 @@ class DLL(object):
             elif libname == "SDL2_image":
                 func = dll.IMG_Linked_Version
             elif libname == "SDL2_gfx":
-                return 1004 # not supported in SDL2_gfx, so just assume latest
+                return (1, 0, 4) # not supported in SDL2_gfx, so just assume latest
             func.argtypes = None
             func.restype = POINTER(SDL_version)
             v = func().contents
