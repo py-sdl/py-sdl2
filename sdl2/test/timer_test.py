@@ -7,6 +7,13 @@ if sys.version_info[0] >= 3:
     long = int
 
 
+def test_SDL_TICKS_PASSED(with_sdl):
+    for A in (0, 9999, 0xFFFF0000, 0xFFFFFFFF):
+        assert sdl2.SDL_TICKS_PASSED(A, A)
+        for delta in (1, 100, 1000000, 0x7FFFFFFF):
+            assert sdl2.SDL_TICKS_PASSED(A, (A - delta) & 0xFFFFFFFF)
+            assert not sdl2.SDL_TICKS_PASSED(A, (A + delta) & 0xFFFFFFFF)
+
 def test_SDL_GetTicks(with_sdl):
     ticks = sdl2.SDL_GetTicks()
     time.sleep(0.05)
@@ -71,10 +78,3 @@ def test_SDL_AddRemoveTimer(with_sdl):
     assert len(calls) == orig_calls
     # Wait a bit, so the last executing handlers can finish
     sdl2.SDL_Delay(10)
-
-def test_SDL_TICKS_PASSED(with_sdl):
-    for A in (0, 9999, 0xFFFF0000, 0xFFFFFFFF):
-        assert sdl2.SDL_TICKS_PASSED(A, A)
-        for delta in (1, 100, 1000000, 0x7FFFFFFF):
-            assert sdl2.SDL_TICKS_PASSED(A, (A - delta) & 0xFFFFFFFF)
-            assert not sdl2.SDL_TICKS_PASSED(A, (A + delta) & 0xFFFFFFFF)

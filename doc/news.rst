@@ -51,6 +51,7 @@ Fixed Bugs:
 * Updated ``sdl2.dll.version`` to better handle SDL2's new versioning format
   and fixed unit tests accordingly (issue #228).
 * Fixed various unit tests on big-endian platforms (PR #232).
+* Fixed 32-bit wraparound behaviour for ``SDL_TICKS_PASSED`` (PR #235).
 
 
 0.9.11
