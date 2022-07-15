@@ -71,7 +71,7 @@ def is_virtual(stick):
             virtual = sdl2.SDL_JoystickIsVirtual(stick) == SDL_TRUE
     elif isinstance(stick.contents, sdl2.SDL_Joystick):
         name = sdl2.SDL_JoystickName(stick)
-        virtual = name == b"Virtual Joystick"
+        virtual = name in [b"Virtual Joystick", b"Virtual Controller"]
     return virtual
 
 
