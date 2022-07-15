@@ -52,6 +52,8 @@ Fixed Bugs:
   and fixed unit tests accordingly (issue #228).
 * Fixed various unit tests on big-endian platforms (PR #232).
 * Fixed 32-bit wraparound behaviour for ``SDL_TICKS_PASSED`` (PR #235).
+* Fixed ``SDL_MUSTLOCK`` to allow checking surface pointers in addition to
+  surfaces.
 
 
 0.9.11

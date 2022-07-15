@@ -43,7 +43,10 @@ SDL_YUV_CONVERSION_AUTOMATIC = 3
 
 # Macros & inline functions
 
-SDL_MUSTLOCK = lambda s: ((s.flags & SDL_RLEACCEL) != 0)
+def SDL_MUSTLOCK(surf):
+    if hasattr(surf, "contents"):
+        surf = surf.contents
+    return surf.flags & SDL_RLEACCEL != 0
 
 
 # Structs & opaque typedefs
