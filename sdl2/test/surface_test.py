@@ -6,26 +6,61 @@ from ctypes import c_int, byref, cast, POINTER, c_void_p
 import sdl2
 from sdl2.ext import CTypesView
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING
-from sdl2.stdinc import Uint8, Uint32, SDL_TRUE, SDL_FALSE
-from sdl2 import blendmode, pixels, rect, rwops, error
+from sdl2.stdinc import Uint8, Uint16, Uint32, SDL_TRUE, SDL_FALSE
+from sdl2 import blendmode, endian, pixels, rect, rwops, error
+
+
+@pytest.fixture
+def test_surf_argb(with_sdl):
+    w, h = 32, 32
+    fmt = pixels.SDL_PIXELFORMAT_ARGB8888
+    sf = sdl2.SDL_CreateRGBSurfaceWithFormat(0, w, h, 0, fmt)
+    assert sdl2.SDL_GetError() == b""
+    assert isinstance(sf.contents, sdl2.SDL_Surface)
+    yield sf
+    sdl2.SDL_FreeSurface(sf)
+
+
+def create_pixel_buffer(w, h, fmt):
+    bpp = c_int()
+    rmask, gmask, bmask, amask = Uint32(0), Uint32(0), Uint32(0), Uint32(0)
+    ret = pixels.SDL_PixelFormatEnumToMasks(
+        fmt, byref(bpp), byref(rmask), byref(gmask), byref(bmask), byref(amask)
+    )
+    assert ret == SDL_TRUE
+    out = {
+        'w': w,
+        'h': h,
+        'bpp': bpp.value,
+        'pitch': w * int(bpp.value / 8),
+        'masks': [x.value for x in (rmask, gmask, bmask, amask)],
+        'fmt': fmt,
+    }
+    # NOTE: Currently only supports formats with bpp of 16 or 32
+    arrtype = Uint16 if out['bpp'] == 16 else Uint32
+    buf = [x << (bpp.value - 8) for x in range(w * h)]
+    out['pixels'] = (arrtype * len(buf))(*buf)
+    out['ptr'] = cast(out['pixels'], POINTER(Uint8))
+    return out
+
 
 to_ctypes = lambda seq, dtype: (dtype * len(seq))(*seq)
 
-alldepths = (1, 4, 8, 12, 15, 16, 24, 32)
-indexdepths = (1, 4, 8)
-rgbdepths = (8, 12, 15, 16)
-rgbadepths = (16, 24, 32)
+pixel_buffers = {
+    'RGBA16': create_pixel_buffer(16, 16, pixels.SDL_PIXELFORMAT_RGBA4444),
+    'RGBA32': create_pixel_buffer(16, 16, pixels.SDL_PIXELFORMAT_RGBA8888),
+}
 
-rgba_pixelations_16x16 = (
-    # 32-bit 16x16 RGBA surface
-    ([x << 24 for x in range(16 * 16)], 32, 16,
-     (0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF),
-     pixels.SDL_PIXELFORMAT_RGBA8888),
-    # 16-bit 16x16 RGBA surface
-    ([x << 8 for x in range(16 * 16)], 16, 16,
-     (0xF000, 0x0F00, 0x00F0, 0x000F),
-     pixels.SDL_PIXELFORMAT_RGB444),
-    )
+bmp_testfile = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "resources", "surfacetest.bmp"
+)
+
+indexdepths = [1, 4, 8]
+rgbdepths = [8, 12, 15, 16]
+rgbadepths = [16, 24, 32]
+alldepths = list(set(indexdepths + rgbdepths + rgbadepths))
+
+test_sizes = ((1, 1), (7, 17), (32, 32), (100, 10), (640, 480))
 
 blitsizes = ((2, 2), (5, 5), (10, 10), (20, 20),
              (2, 4), (5, 3), (8, 12), (27, 9),
@@ -45,43 +80,232 @@ blitpositions = (
     )
 
 
+
+def test_SDL_Surface():
+    sf = sdl2.SDL_Surface()
+    assert isinstance(sf, sdl2.SDL_Surface)
+
+
+def test_SDL_CreateFreeRGBSurface(with_sdl):
+    # Test creating surfaces without colour masks
+    for w, h in test_sizes:
+        for bpp in alldepths:
+            sdl2.SDL_ClearError()
+            sf = sdl2.SDL_CreateRGBSurface(0, w, h, bpp, 0, 0, 0, 0)
+            assert sdl2.SDL_GetError() == b""
+            assert isinstance(sf.contents, sdl2.SDL_Surface)
+            sdl2.SDL_FreeSurface(sf)
+
+    # Test creating surfaces with colour masks
+    bpp = c_int()
+    rmask, gmask, bmask, amask = Uint32(0), Uint32(0), Uint32(0), Uint32(0)
+    for fmt_name, fmt in pixels.NAME_MAP.items():
+        if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+            continue
+        ret = pixels.SDL_PixelFormatEnumToMasks(
+            fmt, byref(bpp), byref(rmask), byref(gmask), byref(bmask), byref(amask)
+        )
+        assert sdl2.SDL_GetError() == b""
+        assert ret == SDL_TRUE
+        sf = sdl2.SDL_CreateRGBSurface(
+            0, 16, 16, bpp, rmask, gmask, bmask, amask
+        )
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(sf.contents, sdl2.SDL_Surface)
+        sdl2.SDL_FreeSurface(sf)
+
+
+def test_SDL_CreateRGBSurfaceWithFormat(with_sdl):
+    for w, h in test_sizes:
+        for fmt in pixels.ALL_PIXELFORMATS:
+            if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+                continue
+            sdl2.SDL_ClearError()
+            sf = sdl2.SDL_CreateRGBSurfaceWithFormat(0, w, h, 0, fmt)
+            assert sdl2.SDL_GetError() == b""
+            assert isinstance(sf.contents, sdl2.SDL_Surface)
+            sdl2.SDL_FreeSurface(sf)
+
+
+def test_SDL_CreateRGBSurfaceFrom(with_sdl):
+    for name, buf in pixel_buffers.items():
+        rmask, gmask, bmask, amask = buf['masks']
+        sdl2.SDL_ClearError()
+        sf = sdl2.SDL_CreateRGBSurfaceFrom(
+            buf['ptr'], buf['w'], buf['h'], buf['bpp'], buf['pitch'],
+            rmask, gmask, bmask, amask
+        )
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(sf.contents, sdl2.SDL_Surface)
+        sdl2.SDL_FreeSurface(sf)
+
+
+def test_SDL_CreateRGBSurfaceWithFormatFrom(with_sdl):
+    for name, buf in pixel_buffers.items():
+        sdl2.SDL_ClearError()
+        sf = sdl2.SDL_CreateRGBSurfaceWithFormatFrom(
+            buf['ptr'], buf['w'], buf['h'], buf['bpp'], buf['pitch'], buf['fmt']
+        )
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(sf.contents, sdl2.SDL_Surface)
+        sdl2.SDL_FreeSurface(sf)
+
+
+def test_SDL_ConvertPixels(with_sdl):
+    # Test conversion of pixels to surface of same format
+    for name, buf in pixel_buffers.items():
+        dtype = Uint16 if buf['bpp'] == 16 else Uint32
+        dst = (dtype * len(buf['pixels']))()
+        dst_ptr = cast(dst, POINTER(Uint8))
+        sdl2.SDL_ClearError()
+        ret = sdl2.SDL_ConvertPixels(
+            buf['w'], buf['h'], buf['fmt'], buf['ptr'], buf['pitch'],
+            buf['fmt'], dst_ptr, buf['pitch'],
+        )
+        assert sdl2.SDL_GetError() == b""
+        assert ret == 0
+        for index, val in enumerate(dst):
+            assert val == buf['pixels'][index]
+    
+    # Test conversion of pixels to surface of different format
+    buf = pixel_buffers['RGBA32']
+    dtype = Uint16 if buf['bpp'] == 16 else Uint32
+    dst = (dtype * len(buf['pixels']))()
+    dst_ptr = cast(dst, POINTER(Uint8))
+    sdl2.SDL_ClearError()
+    ret = sdl2.SDL_ConvertPixels(
+        buf['w'], buf['h'], buf['fmt'], buf['ptr'], buf['pitch'],
+        pixels.SDL_PIXELFORMAT_ABGR8888, dst_ptr, buf['pitch'],
+    )
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    for index, val in enumerate(dst):
+        assert sdl2.SDL_Swap32(val) == buf['pixels'][index]
+
+
+@pytest.mark.skip("not implemented")
+def test_SDL_SetSurfacePalette(with_sdl):
+    pass
+
+
+def test_SDL_LockUnlockSurface(test_surf_argb):
+    sf = test_surf_argb
+    sdl2.SDL_LockSurface(sf)
+    assert sf.contents.locked
+    sdl2.SDL_UnlockSurface(sf)
+    assert not sf.contents.locked
+
+
+def test_SDL_LoadBMP_RW(with_sdl):
+    with open(bmp_testfile, "rb") as f:
+        imgrw = rwops.rw_from_object(f)
+        imgsurface = sdl2.SDL_LoadBMP_RW(imgrw, 0)
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(imgsurface.contents, sdl2.SDL_Surface)
+        sdl2.SDL_FreeSurface(imgsurface)
+
+
+def test_SDL_LoadBMP(with_sdl):
+    imgsurface = sdl2.SDL_LoadBMP(bmp_testfile.encode("utf-8"))
+    assert sdl2.SDL_GetError() == b""
+    assert isinstance(imgsurface.contents, sdl2.SDL_Surface)
+    sdl2.SDL_FreeSurface(imgsurface)
+
+
+@pytest.mark.skip("not implemented")
+def test_SDL_SaveBMP_RW(with_sdl):
+    pass
+
+
+@pytest.mark.skip("not implemented")
+def test_SDL_SaveBMP(with_sdl):
+    pass
+
+
+def test_SDL_SetSurfaceRLEMUSTLOCK(test_surf_argb):
+    # NOTE: As of SDL 2.0.22, SDL_MUSTLOCK doesn't work properly
+    sf = test_surf_argb
+    # Test that surface requires locking after RLE set
+    ret = sdl2.SDL_SetSurfaceRLE(sf, 1)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    #assert sdl2.SDL_MUSTLOCK(sf)
+    # Try disabling RLE
+    ret = sdl2.SDL_SetSurfaceRLE(sf, 0)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    #assert not sdl2.SDL_MUSTLOCK(sf)
+
+
+@pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+def test_SDL_HasSurfaceRLE(test_surf_argb):
+    sf = test_surf_argb
+    # Test for success before and after setting RLE
+    assert sdl2.SDL_HasSurfaceRLE(sf) == SDL_FALSE
+    ret = sdl2.SDL_SetSurfaceRLE(sf, 1)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    assert sdl2.SDL_HasSurfaceRLE(sf) == SDL_TRUE
+    # Disable RLE on surface again
+    ret = sdl2.SDL_SetSurfaceRLE(sf, 0)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    assert sdl2.SDL_HasSurfaceRLE(sf) == SDL_FALSE
+
+
+def test_SDL_GetSetColorKey(with_sdl):
+    # NOTE: Not sure if we really need to test with all pixel formats
+    colorkeys = (
+        (0, 0, 0),
+        (32, 64, 128),
+        (1, 2, 4),
+        (255, 255, 255),
+        (128, 128, 128),
+    )
+    currentkey = Uint32()
+    for fmt in pixels.ALL_PIXELFORMATS:
+        if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
+            continue
+        sdl2.SDL_ClearError()
+        sf = sdl2.SDL_CreateRGBSurfaceWithFormat(0, 10, 10, 0, fmt)
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(sf.contents, sdl2.SDL_Surface)
+        pixfmt = sdl2.SDL_AllocFormat(fmt)
+        for r, g, b in colorkeys:
+            key = pixels.SDL_MapRGB(pixfmt, r, g, b)
+            ret = sdl2.SDL_SetColorKey(sf, 1, key)
+            assert sdl2.SDL_GetError() == b""
+            assert ret == 0
+            ret = sdl2.SDL_GetColorKey(sf, byref(currentkey))
+            assert sdl2.SDL_GetError() == b""
+            assert ret == 0
+        pixels.SDL_FreeFormat(pixfmt)
+        sdl2.SDL_FreeSurface(sf)
+
+
+@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+def test_SDL_HasColorKey(test_surf_argb):
+    sf = test_surf_argb
+    assert sdl2.SDL_HasColorKey(sf) == SDL_FALSE
+    key = pixels.SDL_MapRGB(sf.contents.format, 255, 255, 255)
+    ret = sdl2.SDL_SetColorKey(sf, 1, key)
+    assert sdl2.SDL_GetError() == b""
+    assert ret == 0
+    assert sdl2.SDL_HasColorKey(sf) == SDL_TRUE
+
+
+
 # TODO: mostly covers positive tests right now - fix this!
 class TestSDLSurface(object):
     __tags__ = ["sdl"]
 
     @classmethod
     def setup_class(cls):
-        cls.testfile = os.path.join(os.path.dirname
-                                     (os.path.abspath(__file__)),
-                                     "resources", "surfacetest.bmp")
         SDL_Init(SDL_INIT_EVERYTHING)
 
     @classmethod
     def teardown_class(cls):
         SDL_Quit()
-
-    def test_SDL_Surface(self):
-        sf = sdl2.SDL_Surface()
-        assert isinstance(sf, sdl2.SDL_Surface)
-        # TODO: property checks
-
-    def test_SDL_ConvertPixels(self):
-        for buf, bpp, pitch, masks, fmt in rgba_pixelations_16x16:
-            bytecount = bpp // 8
-            arflag = None
-            if bpp == 32:
-                arflag = "I"
-            elif bpp == 16:
-                arflag = "H"
-            src = CTypesView(array.array(arflag, buf), bytecount)
-            srcp = cast(src.to_bytes(), POINTER(Uint8))
-            dst = (Uint8 * len(src))()
-            dstp = cast(dst, POINTER(Uint8))
-            ret = sdl2.SDL_ConvertPixels(16, 16, fmt, srcp, 16 * bytecount,
-                                            fmt, dstp, 16 * bytecount)
-            assert ret == 0
-            for index, val in enumerate(dst):
-                assert val == src.view[index]
 
     def test_SDL_ConvertSurface(self):
         tenbit = [pixels.SDL_PACKEDLAYOUT_2101010, pixels.SDL_PACKEDLAYOUT_1010102]
@@ -165,96 +389,6 @@ class TestSDLSurface(object):
                 assert isinstance(csf.contents, sdl2.SDL_Surface)
                 sdl2.SDL_FreeSurface(sf)
                 sdl2.SDL_FreeSurface(csf)
-
-    def test_SDL_CreateRGBSurface(self):
-        for w in range(1, 100, 5):
-            for h in range(1, 100, 5):
-                for bpp in alldepths:
-                    sf = sdl2.SDL_CreateRGBSurface(0, w, h, bpp, 0, 0, 0, 0)
-                    assert isinstance(sf.contents, sdl2.SDL_Surface)
-                    sdl2.SDL_FreeSurface(sf)
-
-        bpp = c_int()
-        rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
-        for fmt in pixels.ALL_PIXELFORMATS:
-            if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
-                continue
-            for w in range(1, 100, 5):
-                for h in range(1, 100, 5):
-                    ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
-                                                            byref(rmask),
-                                                            byref(gmask),
-                                                            byref(bmask),
-                                                            byref(amask))
-                    assert ret == SDL_TRUE
-                    sf = sdl2.SDL_CreateRGBSurface(0, 10, 20, bpp, rmask,
-                                                      gmask, bmask, amask)
-                    assert isinstance(sf.contents, sdl2.SDL_Surface)
-                    sdl2.SDL_FreeSurface(sf)
-
-        # Broken ones
-        # sizes = [(0, 0), (65536, 65536)]
-        # for (w, h) in sizes:
-        #    for bpp in alldepths:
-        #        print w, h, bpp
-        #        sf = sdl2.create_rgb_surface(w, h, bpp)
-        #        self.assertIsInstance(sf, sdl2.SDL_Surface)
-        #        sdl2.free_surface(sf)
-
-        # TODO: raises a SDL Out of memory error, but 65536 works?!
-        #
-        # sf = sdl2.create_rgb_surface(65535, 65535, 32)
-        # self.assertIsInstance(sf, sdl2.SDL_Surface)
-
-        #self.assertRaises(sdl.SDLError, sdl2.create_rgb_surface, 1, 1, 66)
-        #self.assertRaises(sdl.SDLError, sdl2.create_rgb_surface, 1, 1, 0)
-        #self.assertRaises(sdl.SDLError, sdl2.create_rgb_surface, 1, 1, 8,
-        #                  0xf0, 0x0f, 0x01, 0x02)
-        #self.assertRaises(sdl.SDLError, sdl2.create_rgb_surface, 1, 1, 16,
-        #                  0xf0, 0x0f, 0x01, 0x02)
-        #self.assertRaises(sdl.SDLError, sdl2.create_rgb_surface, 1, 1, 24,
-        #                  0xf0, 0x0f, 0x01, 0x02)
-        #self.assertRaises(sdl.SDLError, sdl2.create_rgb_surface, 1, 1, 32,
-        #                  0xf0, 0x0f, 0x01, 0x02)
-
-    def test_SDL_CreateRGBSurfaceWithFormat(self):
-        for w in range(1, 100, 5):
-            for h in range(1, 100, 5):
-                for bpp in alldepths:
-                    for fmt in pixels.ALL_PIXELFORMATS:
-                        if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
-                            continue
-                        sf = sdl2.SDL_CreateRGBSurfaceWithFormat(0, w, h,
-                                                                    bpp, fmt)
-                        assert isinstance(sf.contents, sdl2.SDL_Surface)
-                        sdl2.SDL_FreeSurface(sf)
-
-    def test_SDL_CreateRGBSurfaceWithFormatFrom(self):
-        for buf, bpp, pitch, masks, fmt in rgba_pixelations_16x16:
-            if bpp == 32:
-                arflag = "I"
-            elif bpp == 16:
-                arflag = "H"
-            bytebuf = CTypesView(array.array(arflag, buf))
-            bufptr = cast(bytebuf.to_bytes(), POINTER(Uint8))
-            sf = sdl2.SDL_CreateRGBSurfaceWithFormatFrom(bufptr, 16, 16,
-                    bpp, pitch, fmt)
-            assert isinstance(sf.contents, sdl2.SDL_Surface)
-            sdl2.SDL_FreeSurface(sf)
-
-    def test_SDL_CreateRGBSurfaceFrom(self):
-        for buf, bpp, pitch, masks, fmt in rgba_pixelations_16x16:
-            if bpp == 32:
-                arflag = "I"
-            elif bpp == 16:
-                arflag = "H"
-            bytebuf = CTypesView(array.array(arflag, buf))
-            bufptr = cast(bytebuf.to_bytes(), POINTER(Uint8))
-            sf = sdl2.SDL_CreateRGBSurfaceFrom(bufptr, 16, 16, bpp,
-                                                  pitch, masks[0], masks[1],
-                                                  masks[2], masks[3])
-            assert isinstance(sf.contents, sdl2.SDL_Surface)
-            sdl2.SDL_FreeSurface(sf)
 
     @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
     def test_SDL_PremultiplyAlpha(self):
@@ -368,49 +502,6 @@ class TestSDLSurface(object):
             assert (clip == r) == cmpval, "clip: " + err
         sdl2.SDL_FreeSurface(sf)
 
-    @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
-    def test_SDL_HasColorKey(self):
-        sf = sdl2.SDL_CreateRGBSurface(0, 10, 10, 32, 0, 0, 0, 0)
-        assert sdl2.SDL_HasColorKey(sf) == SDL_FALSE
-        key = pixels.SDL_MapRGB(sf.contents.format, 255, 255, 255)
-        sdl2.SDL_SetColorKey(sf, 1, key)
-        assert sdl2.SDL_HasColorKey(sf) == SDL_TRUE
-        sdl2.SDL_FreeSurface(sf)
-
-    def test_SDL_GetSetColorKey(self):
-        colorkeys = ((0, 0, 0),
-                     (32, 64, 128),
-                     (10, 20, 30),
-                     (1, 2, 4),
-                     (255, 255, 255),
-                     (128, 128, 128),
-                     (127, 127, 127),
-                     )
-        bpp = c_int()
-        rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
-        for fmt in pixels.ALL_PIXELFORMATS:
-            if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
-                continue
-            pformat = pixels.SDL_AllocFormat(fmt)
-            assert isinstance(pformat.contents, pixels.SDL_PixelFormat)
-            ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
-                                                    byref(rmask), byref(gmask),
-                                                    byref(bmask), byref(amask))
-            assert ret == SDL_TRUE
-            sf = sdl2.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
-                                              bmask, amask)
-            for r, g, b in colorkeys:
-                key = pixels.SDL_MapRGB(pformat, r, g, b)
-                sdl2.SDL_SetColorKey(sf, 1, key)
-                skey = Uint32()
-                ret = sdl2.SDL_GetColorKey(sf, byref(skey))
-                errmsg = "Could not set color key (%d, %d, %d)" % (r, g, b)
-                assert ret == 0
-                assert skey.value == key, errmsg
-                    
-            pixels.SDL_FreeFormat(pformat)
-            sdl2.SDL_FreeSurface(sf)
-
     def test_SDL_GetSetSurfaceAlphaMod(self):
         bpp = c_int()
         rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
@@ -487,35 +578,6 @@ class TestSDLSurface(object):
                                                      byref(sb))
                 assert ret == 0
                 assert (sr.value, sg.value, sb.value) == (r, g, b)
-            sdl2.SDL_FreeSurface(sf)
-
-    def test_SDL_LockUnlockMUSTLOCKSurface(self):
-        bpp = c_int()
-        rmask, gmask, bmask, amask = Uint32(), Uint32(), Uint32(), Uint32()
-        for fmt in pixels.ALL_PIXELFORMATS:
-            if pixels.SDL_ISPIXELFORMAT_FOURCC(fmt):
-                continue
-            ret = pixels.SDL_PixelFormatEnumToMasks(fmt, byref(bpp),
-                                                    byref(rmask), byref(gmask),
-                                                    byref(bmask), byref(amask))
-            assert ret == SDL_TRUE
-            sf = sdl2.SDL_CreateRGBSurface(0, 10, 10, bpp, rmask, gmask,
-                                              bmask, amask)
-            # TODO: locking seems to be only necessary for RLE surfaces...
-            if sdl2.SDL_MUSTLOCK(sf.contents):
-                assert not sf.contents.locked
-                sdl2.SDL_LockSurface(sf)
-                assert sf.contents.locked
-                sdl2.SDL_LockSurface(sf)
-                assert sf.contents.locked
-                sdl2.SDL_LockSurface(sf)
-                assert sf.contents.locked
-                sdl2.SDL_LockSurface(sf)
-                assert sf.contents.locked
-                sdl2.SDL_LockSurface(sf)
-                assert sf.contents.locked
-                sdl2.SDL_UnlockSurface(sf)
-                assert not sf.contents.locked
             sdl2.SDL_FreeSurface(sf)
 
     def test_SDL_LowerBlit(self):
@@ -659,70 +721,6 @@ class TestSDLSurface(object):
     @pytest.mark.skip("not implemented")
     @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
     def test_SDL_SoftStretchLinear(self):
-        pass
-
-    def test_SDL_SetSurfacePalette(self):
-        invpalette = pixels.SDL_AllocPalette(10)
-        palette = pixels.SDL_AllocPalette(1 << 16)
-        sf = sdl2.SDL_CreateRGBSurface(0, 10, 10, 16, 0, 0, 0, 0)
-
-        assert not sf.contents.format.contents.palette
-        sdl2.SDL_SetSurfacePalette(sf, palette)
-        assert sf.contents.format.contents.palette.contents is not None
-        assert sf.contents.format.contents.palette.contents is not None
-        sdl2.SDL_SetSurfacePalette(sf, None)
-        assert not sf.contents.format.contents.palette
-
-        sdl2.SDL_FreeSurface(sf)
-        pixels.SDL_FreePalette(invpalette)
-        pixels.SDL_FreePalette(palette)
-
-    def test_SDL_SetSurfaceRLE(self):
-        masks = (0xFF000000, 0x00FF0000, 0x0000FF00, 0x00000000)
-        tst = sdl2.SDL_CreateRGBSurface(
-            0, 16, 16, 32, masks[0], masks[1], masks[2], masks[3]
-        )
-        assert isinstance(tst.contents, sdl2.SDL_Surface)
-        # Test for success when setting RLE after locking
-        sdl2.SDL_LockSurface(tst)
-        ret = sdl2.SDL_SetSurfaceRLE(tst, 1)
-        assert ret == 0
-        sdl2.SDL_FreeSurface(tst)
-
-    @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
-    def test_SDL_HasSurfaceRLE(self):
-        masks = (0xFF000000, 0x00FF0000, 0x0000FF00, 0x00000000)
-        tst = sdl2.SDL_CreateRGBSurface(
-            0, 16, 16, 32, masks[0], masks[1], masks[2], masks[3]
-        )
-        assert isinstance(tst.contents, sdl2.SDL_Surface)
-        # Test for success before and after setting RLE
-        assert sdl2.SDL_HasSurfaceRLE(tst) == SDL_FALSE
-        sdl2.SDL_LockSurface(tst)
-        ret = sdl2.SDL_SetSurfaceRLE(tst, 1)
-        assert ret == 0
-        assert sdl2.SDL_HasSurfaceRLE(tst) == SDL_TRUE
-        sdl2.SDL_FreeSurface(tst)
-
-    def test_SDL_LoadBMP_RW(self):
-        fp = open(self.testfile, "rb")
-        imgrw = rwops.rw_from_object(fp)
-        imgsurface = sdl2.SDL_LoadBMP_RW(imgrw, 0)
-        assert isinstance(imgsurface.contents, sdl2.SDL_Surface)
-        sdl2.SDL_FreeSurface(imgsurface)
-        imgrw.close(imgrw)
-
-    def test_SDL_LoadBMP(self):
-        imgsurface = sdl2.SDL_LoadBMP(self.testfile.encode("utf-8"))
-        assert isinstance(imgsurface.contents, sdl2.SDL_Surface)
-        sdl2.SDL_FreeSurface(imgsurface)
-
-    @pytest.mark.skip("not implemented")
-    def test_SDL_SaveBMP_RW(self):
-        pass
-
-    @pytest.mark.skip("not implemented")
-    def test_SDL_SaveBMP(self):
         pass
 
     @pytest.mark.skip("not implemented")
