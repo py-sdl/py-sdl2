@@ -17,13 +17,15 @@ try:
     postpath = os.getenv('PYSDL2_DLL_PATH')
     if prepath != postpath:
         msg = "Using SDL2 binaries from pysdl2-dll {0}"
-        prettywarn(msg.format(sdl2dll.__version__), UserWarning)
-        if sys.platform == "darwin" and cpu_arch() == "arm64":
-            msg = "The sdlimage, sdlmixer, and sdlgfx modules are currently\n"
-            msg += "unavailable via py-sdl2 on ARM64 Macs. "
-            msg += "If you require any of these\n"
-            msg += "modules, please uninstall pysdl2-dll and install SDL2 "
-            msg += "using Homebrew."
+        vstr = sdl2dll.__version__
+        prettywarn(msg.format(vstr), UserWarning)
+        # Warn if on Apple Silicon and pysdl2-dll isn't fully native
+        vernum = tuple([int(i) for i in vstr.split(".")[:3]])
+        need_update = vernum <= (2, 0, 22) and "post" not in vstr
+        if sys.platform == "darwin" and cpu_arch() == "arm64" and need_update:
+            msg = "The installed version of pysdl2-dll does not fully support\n"
+            msg += "Apple Silicon. Please update to the latest version for "
+            msg += "full compatibility."
             prettywarn(msg.format(sdl2dll.__version__), UserWarning)
 
 except ImportError:
