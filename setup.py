@@ -5,7 +5,7 @@ import re
 # from distutils.core import setup
 from setuptools import setup
 
-VERSION = "0.9.11"
+VERSION = "0.9.12"
 
 if __name__ == "__main__":
 

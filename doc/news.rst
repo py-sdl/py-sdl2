@@ -5,7 +5,7 @@ This describes the latest changes between the PySDL2 releases.
 0.9.12
 ------
 
-Released on XXXX-XX-XX.
+Released on 2022-07-18.
 
 New Features:
 
@@ -20,8 +20,6 @@ New Features:
   wrappers around the ctypes bindings), and also allows developers to write code
   that will not break when other SDL2 modules are eventually migrated to similar
   Python-wrapped bindings.
-* Added an informative warning for users using pysdl2-dll with PySDL2 on an
-  Apple Silicon Mac.
 
 
 Fixed Bugs:
