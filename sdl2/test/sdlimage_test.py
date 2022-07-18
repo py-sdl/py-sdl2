@@ -14,42 +14,47 @@ ismacos = sys.platform == "darwin"
 iswindows = "win" in sys.platform
 isconda = os.getenv("CONDA_PREFIX") != None
 
-formats = ["bmp",
-           "cur",
-           "gif",
-           "ico",
-           "jpg",
-           "lbm",
-           "pbm",
-           "pcx",
-           "pgm",
-           "png",
-           "pnm",
-           "ppm",
-           "svg",
-           "tga",
-           "tif",
-           "webp",
-           "xcf",
-           "xpm",
-           #"xv",
-           #"qoi", # TODO: add one
-           ]
+formats = [
+    "bmp",
+    "cur",
+    "gif",
+    "ico",
+    "jpg",
+    "lbm",
+    "pbm",
+    "pcx",
+    "pgm",
+    "png",
+    "pnm",
+    "ppm",
+    "svg",
+    "tga",
+    "tif",
+    "webp",
+    "xcf",
+    "xpm",
+    #"xv", # no idea how to create one, seems like a long-dead format?
+    "qoi",
+]
 
-# QOI unsupported on SDL2_image < 2.0.6
-#if sdlimage.dll.version < 2006:
-#    formats.remove("qoi")
+animation_formats = [
+    "gif",
+]
+
+# QOI unsupported on SDL2_image < 2.6.0
+if sdlimage.dll.version < 2060:
+    formats.remove("qoi")
 
 # SVG unsupported on SDL2_image < 2.0.2 as well as in Conda's current (2.0.5)
 # Windows binaries
 if sdlimage.dll.version < 2002 or (isconda and iswindows):
     formats.remove("svg")
 
-# As of SDL2_image 2.0.5, XCF support seems to be broken on 32-bit builds
-# XCF support is also broken in official SDL2_image macOS .frameworks and
-# Conda's SDL2_image Windows binaries
+# Prior to 2.6.0, XCF was broken on official 32-bit builds and macOS frameworks. 
+# It is also currently broken in Conda's SDL2_image Windows binaries
 bad_xcf = False
-if is32bit or ismacos or (isconda and iswindows):
+xcf_broken = sdlimage.dll.version <= 2005 and (is32bit or ismacos)
+if xcf_broken or (isconda and iswindows):
     formats.remove("xcf")
     bad_xcf = True
 
@@ -59,8 +64,9 @@ bad_webp = (is32bit and dll_ver == 2002) or (ismacos and dll_ver == 2060)
 if bad_webp:
     formats.remove("webp")
 
-# JPG saving requires SDL2_image >= 2.0.2 and isn't in official mac binaries
-no_jpeg_save = sdlimage.dll.version_tuple < (2, 0, 2) or ismacos
+# JPG saving requires SDL2_image >= 2.0.2 and is broken in older macOS binaries
+imgver = sdlimage.dll.version_tuple
+no_jpeg_save = imgver < (2, 0, 2) or (ismacos and imgver < (2, 6, 0))
 
 @pytest.fixture(scope="module")
 def with_sdl_image(with_sdl):
@@ -89,11 +95,25 @@ def _get_image_rw(fmt):
     fpath = _get_image_path(fmt).encode('utf-8')
     return sdl2.SDL_RWFromFile(fpath, b"r")
 
+def _get_animation_path(fmt):
+    fname = "animationtest.{0}".format(fmt)
+    testdir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(testdir, "resources", fname)
+
 def _verify_img_load(surf):
     if not surf:
         assert sdlimage.IMG_GetError() == b""
         assert surf
     assert isinstance(surf.contents, surface.SDL_Surface)
+
+def _verify_anim_load(anim):
+    if not anim:
+        assert sdlimage.IMG_GetError() == b""
+        assert anim
+    assert isinstance(anim.contents, sdlimage.IMG_Animation)
+    assert anim.contents.w == 32
+    assert anim.contents.h == 32
+    assert anim.contents.count == 4
 
 
 def test_IMG_Linked_Version():
@@ -280,8 +300,8 @@ def test_IMG_LoadSVG_RW(with_sdl_image):
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
-@pytest.mark.skipif(sdlimage.dll.version < 2006, reason="Added in 2.0.6")
-def test_IMG_LoadSVG_RW(with_sdl_image):
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadQOI_RW(with_sdl_image):
     fp = open(_get_image_path("qoi"), "rb")
     sf = sdlimage.IMG_LoadQOI_RW(rwops.rw_from_object(fp))
     fp.close()
@@ -435,7 +455,7 @@ def test_IMG_isSVG(with_sdl_image):
             else:
                 assert not sdlimage.IMG_isSVG(imgrw)
 
-@pytest.mark.skipif(sdlimage.dll.version < 2006, reason="Added in 2.0.2")
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
 def test_IMG_isQOI(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
@@ -532,7 +552,6 @@ def test_IMG_SavePNG(tmpdir):
     assert os.path.exists(outpath)
     surface.SDL_FreeSurface(sf)
 
-@pytest.mark.skip("not working yet")
 def test_IMG_SavePNG_RW(tmpdir):
     # Open a PNG that we can re-save
     fpath = _get_image_path("png")
@@ -543,12 +562,13 @@ def test_IMG_SavePNG_RW(tmpdir):
     outpath = os.path.join(str(tmpdir), "save_test.png")
     rw = rwops.SDL_RWFromFile(outpath.encode("utf-8"), b"wb")
     ret = sdlimage.IMG_SavePNG_RW(sf, rw, 0)
+    sdl2.SDL_RWclose(rw)
     assert sdl2.SDL_GetError() == b""
     assert ret == 0
     assert os.path.exists(outpath)
 
     # Try reopening the RW as a PNG
-    sf2 = sdlimage.IMG_LoadPNG_RW(rw)
+    sf2 = sdlimage.IMG_Load(outpath.encode("utf-8"))
     assert sdl2.SDL_GetError() == b""
     assert isinstance(sf2.contents, surface.SDL_Surface)
     surface.SDL_FreeSurface(sf)
@@ -569,7 +589,6 @@ def test_IMG_SaveJPG(tmpdir):
     assert os.path.exists(outpath)
     surface.SDL_FreeSurface(sf)
 
-@pytest.mark.skip("not working yet")
 @pytest.mark.skipif(no_jpeg_save, reason="Added in 2.0.2, not in macOS bnaries")
 def test_IMG_SaveJPG_RW(tmpdir):
     # Open a PNG that we can save to JPG
@@ -581,13 +600,56 @@ def test_IMG_SaveJPG_RW(tmpdir):
     outpath = os.path.join(str(tmpdir), "save_test.jpg")
     rw = rwops.SDL_RWFromFile(outpath.encode("utf-8"), b"wb")
     ret = sdlimage.IMG_SaveJPG_RW(sf, rw, 0, 90)
+    sdl2.SDL_RWclose(rw)
     assert sdl2.SDL_GetError() == b""
     assert ret == 0
     assert os.path.exists(outpath)
 
     # Try reopening the RW as a JPG
-    sf2 = sdlimage.IMG_LoadJPG_RW(rw)
+    sf2 = sdlimage.IMG_Load(outpath.encode("utf-8"))
     assert sdl2.SDL_GetError() == b""
     assert isinstance(sf2.contents, surface.SDL_Surface)
     surface.SDL_FreeSurface(sf)
     surface.SDL_FreeSurface(sf2)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadFreeAnimation(with_sdl_image):
+    for fmt in animation_formats:
+        fpath = _get_animation_path(fmt)
+        anim = sdlimage.IMG_LoadAnimation(fpath.encode("utf-8"))
+        _verify_anim_load(anim)
+        # Do full test of IMG_Animation structure
+        for frame in range(anim.contents.count):
+            assert anim.contents.delays[frame] == 1000
+            framesurf = anim.contents.frames[frame].contents
+            assert isinstance(framesurf, surface.SDL_Surface)
+            assert framesurf.w == 32
+        sdlimage.IMG_FreeAnimation(anim)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadAnimation_RW():
+    for fmt in animation_formats:
+        fpath = _get_animation_path(fmt)
+        with open(fpath, "rb") as fp:
+            anim = sdlimage.IMG_LoadAnimation_RW(rwops.rw_from_object(fp), 0)
+            _verify_anim_load(anim)
+            sdlimage.IMG_FreeAnimation(anim)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadAnimationTyped_RW():
+    for fmt in animation_formats:
+        fpath = _get_animation_path(fmt)
+        with open(fpath, "rb") as fp:
+            anim = sdlimage.IMG_LoadAnimationTyped_RW(
+                rwops.rw_from_object(fp), 0, fmt.upper().encode("utf-8")
+            )
+            _verify_anim_load(anim)
+            sdlimage.IMG_FreeAnimation(anim)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadGIFAnimation_RW():
+    fp = open(_get_animation_path("gif"), "rb")
+    anim = sdlimage.IMG_LoadGIFAnimation_RW(rwops.rw_from_object(fp))
+    fp.close()
+    _verify_anim_load(anim)
+    sdlimage.IMG_FreeAnimation(anim)

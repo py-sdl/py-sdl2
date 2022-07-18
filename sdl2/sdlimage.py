@@ -29,8 +29,9 @@ __all__ = [
 
 
 try:
-    dll = DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],
-              os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL(
+        "SDL2_image", ["SDL2_image", "SDL2_image-2.0"], os.getenv("PYSDL2_DLL_PATH")
+    )
 except RuntimeError as exc:
     raise ImportError(exc)
 
@@ -45,8 +46,8 @@ _bind = dll.bind_function
 # Constants, enums, type definitions, and macros
 
 SDL_IMAGE_MAJOR_VERSION = 2
-SDL_IMAGE_MINOR_VERSION = 0
-SDL_IMAGE_PATCHLEVEL = 5
+SDL_IMAGE_MINOR_VERSION = 6
+SDL_IMAGE_PATCHLEVEL = 0
 
 def SDL_IMAGE_VERSION(x):
     x.major = SDL_IMAGE_MAJOR_VERSION
@@ -67,7 +68,7 @@ class IMG_Animation(Structure):
         ("w", c_int),
         ("h", c_int),
         ("count", c_int),
-        ("frames", POINTER(SDL_Surface)), # NOTE: C struct has double-pointer, need to test
+        ("frames", POINTER(POINTER(SDL_Surface))),
         ("delays", POINTER(c_int)),
     ]
 
@@ -94,7 +95,7 @@ _funcdefs = [
     SDLFunc("IMG_isPNG", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isPNM", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isSVG", [_P(SDL_RWops)], c_int, added='2.0.2'),
-    SDLFunc("IMG_isQOI", [_P(SDL_RWops)], c_int, added='2.0.6'),
+    SDLFunc("IMG_isQOI", [_P(SDL_RWops)], c_int, added='2.6.0'),
     SDLFunc("IMG_isTIF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXCF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXPM", [_P(SDL_RWops)], c_int),
@@ -110,7 +111,7 @@ _funcdefs = [
     SDLFunc("IMG_LoadPNG_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadPNM_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadSVG_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.0.2'),
-    SDLFunc("IMG_LoadQOI_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.0.6'),
+    SDLFunc("IMG_LoadQOI_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_LoadTGA_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadTIF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadXCF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
@@ -122,11 +123,11 @@ _funcdefs = [
     SDLFunc("IMG_SaveJPG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int, c_int], c_int, added='2.0.2'),
     SDLFunc("IMG_SavePNG", [_P(SDL_Surface), c_char_p], c_int),
     SDLFunc("IMG_SavePNG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int], c_int),
-    SDLFunc("IMG_LoadAnimation", [c_char_p], _P(IMG_Animation), added='2.0.6'),
-    SDLFunc("IMG_LoadAnimation_RW", [_P(SDL_RWops), c_int], _P(IMG_Animation), added='2.0.6'),
-    SDLFunc("IMG_LoadAnimationTyped_RW", [_P(SDL_RWops), c_int, c_char_p], _P(IMG_Animation), added='2.0.6'),
-    SDLFunc("IMG_FreeAnimation", [_P(IMG_Animation)], added='2.0.6'),
-    SDLFunc("IMG_LoadGIFAnimation_RW", [_P(SDL_RWops)], _P(IMG_Animation), added='2.0.6'),
+    SDLFunc("IMG_LoadAnimation", [c_char_p], _P(IMG_Animation), added='2.6.0'),
+    SDLFunc("IMG_LoadAnimation_RW", [_P(SDL_RWops), c_int], _P(IMG_Animation), added='2.6.0'),
+    SDLFunc("IMG_LoadAnimationTyped_RW", [_P(SDL_RWops), c_int, c_char_p], _P(IMG_Animation), added='2.6.0'),
+    SDLFunc("IMG_FreeAnimation", [_P(IMG_Animation)], added='2.6.0'),
+    SDLFunc("IMG_LoadGIFAnimation_RW", [_P(SDL_RWops)], _P(IMG_Animation), added='2.6.0'),
 ]
 _ctypes = AttributeDict()
 for f in _funcdefs:
@@ -235,7 +236,7 @@ def IMG_LoadTyped_RW(src, freesrc, type):
     b"QOI"         Quite OK Image
     =============  ===========================
 
-    Note that support for the QOI format requires SDL_image 2.0.6 or newer.
+    Note that support for the QOI format requires SDL_image 2.6.0 or newer.
     See :func:`IMG_Load` for more information.
 
     Args:
@@ -510,7 +511,7 @@ def IMG_isSVG(src):
 def IMG_isQOI(src):
     """Tests whether a file object contains a QOI image.
 
-    `Note: Added in SDL_image 2.0.6`
+    `Note: Added in SDL_image 2.6.0`
 
     Args:
         src (:obj:`SDL_RWops`): The file object to check.
@@ -519,7 +520,7 @@ def IMG_isQOI(src):
         int: 1 if QOI is supported and file is a valid QOI, otherwise 0.
 
     """
-    return _funcs["IMG_isQOI"](src)
+    return _ctypes["IMG_isQOI"](src)
 
 def IMG_isTIF(src):
     """Tests whether a file object contains a TIFF image.
@@ -741,7 +742,7 @@ def IMG_LoadQOI_RW(src):
 
     Use the :func:`IMG_GetError` function to check for any errors.
 
-    `Note: Added in SDL_image 2.0.6`
+    `Note: Added in SDL_image 2.6.0`
 
     Args:
         src (:obj:`SDL_RWops`): The file object from which to load the QOI.
@@ -751,7 +752,7 @@ def IMG_LoadQOI_RW(src):
         image, or ``None`` if there was an error.
 
     """
-    return _funcs["IMG_LoadQOI_RW"](src)
+    return _ctypes["IMG_LoadQOI_RW"](src)
 
 def IMG_LoadTGA_RW(src):
     """Loads a TGA (TrueVision Targa) image from an SDL file object.
@@ -955,19 +956,19 @@ def IMG_SaveJPG_RW(surface, dst, freedst, quality):
 
 
 def IMG_LoadAnimation(file):
-    return _funcs["IMG_LoadAnimation"](file)
+    return _ctypes["IMG_LoadAnimation"](file)
 
 def IMG_LoadAnimation_RW(src, freesrc):
-    return _funcs["IMG_LoadAnimation_RW"](src, freesrc)
+    return _ctypes["IMG_LoadAnimation_RW"](src, freesrc)
 
 def IMG_LoadAnimationTyped_RW(src, freesrc, type):
-    return _funcs["IMG_LoadAnimationTyped_RW"](src, freesrc, type)
+    return _ctypes["IMG_LoadAnimationTyped_RW"](src, freesrc, type)
 
 def IMG_FreeAnimation(anim):
-    return _funcs["IMG_FreeAnimation"](anim)
+    return _ctypes["IMG_FreeAnimation"](anim)
 
-def IMG_LoadAnimationGIF_RW(src):
-    return _funcs["IMG_LoadAnimationGIF_RW"](src)
+def IMG_LoadGIFAnimation_RW(src):
+    return _ctypes["IMG_LoadGIFAnimation_RW"](src)
 
 
 IMG_SetError = SDL_SetError
