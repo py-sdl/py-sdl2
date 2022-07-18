@@ -79,6 +79,10 @@ def _get_image_path(fmt):
     testdir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(testdir, "resources", fname)
 
+def _get_image_rw(fmt):
+    fpath = _get_image_path(fmt).encode('utf-8')
+    return sdl2.SDL_RWFromFile(fpath, b"r")
+
 def _verify_img_load(surf):
     if not surf:
         assert sdlimage.IMG_GetError() == b""
@@ -132,9 +136,9 @@ def test_IMG_Load_RW(with_sdl_image):
     for fmt in formats:
         if fmt in skip:
             continue
-        fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
-            sf = sdlimage.IMG_Load_RW(rwops.rw_from_object(fp), False)
+        rw = _get_image_rw(fmt)
+        sf = sdlimage.IMG_Load_RW(rw, False)
+        sdl2.SDL_RWclose(rw)
         _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
@@ -189,13 +193,11 @@ def test_IMG_LoadTyped_RW(with_sdl_image):
     for fmt in formats:
         if fmt in skip:
             continue
-        fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
-            sf = sdlimage.IMG_LoadTyped_RW(
-                rwops.rw_from_object(fp), False, fmt.upper().encode("utf-8")
-            )
-            _verify_img_load(sf)
-            surface.SDL_FreeSurface(sf)
+        rw = _get_image_rw(fmt)
+        sf = sdlimage.IMG_LoadTyped_RW(rw, False, fmt.upper().encode("utf-8"))
+        sdl2.SDL_RWclose(rw)
+        _verify_img_load(sf)
+        surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadBMP_RW(with_sdl_image):
     fp = open(_get_image_path("bmp"), "rb")
@@ -263,9 +265,9 @@ def test_IMG_LoadPNM_RW(with_sdl_image):
 @pytest.mark.skipif(sdlimage.dll.version < 2002, reason="Added in 2.0.2")
 @pytest.mark.xfail(isconda and iswindows, reason="Broken w/ win64 Conda")
 def test_IMG_LoadSVG_RW(with_sdl_image):
-    fp = open(_get_image_path("svg"), "rb")
-    sf = sdlimage.IMG_LoadSVG_RW(rwops.rw_from_object(fp))
-    fp.close()
+    rw = _get_image_rw("svg")
+    sf = sdlimage.IMG_LoadSVG_RW(rw)
+    sdl2.SDL_RWclose(rw)
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
