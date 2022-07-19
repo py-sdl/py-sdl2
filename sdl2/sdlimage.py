@@ -15,6 +15,7 @@ __all__ = [
     # Enums
     "IMG_InitFlags",
     "IMG_INIT_JPG", "IMG_INIT_PNG", "IMG_INIT_TIF", "IMG_INIT_WEBP",
+    "IMG_INIT_JXL", "IMG_INIT_AVIF",
     
     # Macro Functions
     "SDL_IMAGE_VERSION", "SDL_IMAGE_COMPILEDVERSION",
@@ -62,6 +63,8 @@ IMG_INIT_JPG = 0x00000001
 IMG_INIT_PNG = 0x00000002
 IMG_INIT_TIF = 0x00000004
 IMG_INIT_WEBP = 0x00000008
+IMG_INIT_JXL = 0x00000010
+IMG_INIT_AVIF = 0x00000020
 
 class IMG_Animation(Structure):
     _fields_ = [
@@ -85,11 +88,13 @@ _funcdefs = [
     SDLFunc("IMG_LoadTexture", [_P(SDL_Renderer), c_char_p], _P(SDL_Texture)),
     SDLFunc("IMG_LoadTexture_RW", [_P(SDL_Renderer), _P(SDL_RWops), c_int], _P(SDL_Texture)),
     SDLFunc("IMG_LoadTextureTyped_RW", [_P(SDL_Renderer), _P(SDL_RWops), c_int, c_char_p], _P(SDL_Texture)),
+    SDLFunc("IMG_isAVIF", [_P(SDL_RWops)], c_int, added='2.6.0'),
     SDLFunc("IMG_isICO", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isCUR", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isBMP", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isGIF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isJPG", [_P(SDL_RWops)], c_int),
+    SDLFunc("IMG_isJXL", [_P(SDL_RWops)], c_int, added='2.6.0'),
     SDLFunc("IMG_isLBM", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isPCX", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isPNG", [_P(SDL_RWops)], c_int),
@@ -101,11 +106,13 @@ _funcdefs = [
     SDLFunc("IMG_isXPM", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXV", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isWEBP", [_P(SDL_RWops)], c_int),
+    SDLFunc("IMG_LoadAVIF_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_LoadICO_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadCUR_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadBMP_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadGIF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadJPG_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
+    SDLFunc("IMG_LoadJXL_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_LoadLBM_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadPCX_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadPNG_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
@@ -118,7 +125,9 @@ _funcdefs = [
     SDLFunc("IMG_LoadXPM_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadXV_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadWEBP_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
+    SDLFunc("IMG_LoadSizedSVG_RW", [_P(SDL_RWops), c_int, c_int], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_ReadXPMFromArray", [_P(c_char_p)], _P(SDL_Surface)),
+    SDLFunc("IMG_ReadXPMFromArrayToRGB888", [_P(c_char_p)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_SaveJPG", [_P(SDL_Surface), c_char_p, c_int], c_int, added='2.0.2'),
     SDLFunc("IMG_SaveJPG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int, c_int], c_int, added='2.0.2'),
     SDLFunc("IMG_SavePNG", [_P(SDL_Surface), c_char_p], c_int),
@@ -156,14 +165,16 @@ def IMG_Init(flags):
 
     The following init flags are supported:
 
-    ====== =================
-    Format Init flag
-    ====== =================
-    JPEG   ``IMG_INIT_JPG``
-    PNG    ``IMG_INIT_PNG``
-    TIFF   ``IMG_INIT_TIF``
-    WebP   ``IMG_INIT_WEBP``
-    ====== =================
+    ======= =================
+    Format  Init flag
+    ======= =================
+    JPEG    ``IMG_INIT_JPG``
+    PNG     ``IMG_INIT_PNG``
+    TIFF    ``IMG_INIT_TIF``
+    WebP    ``IMG_INIT_WEBP``
+    JPEG XL ``IMG_INIT_JXL``
+    AVIF    ``IMG_INIT_AVIF``
+    ======= =================
 
     This can be called multiple times to enable support for these formats
     separately, or can initialize multiple formats at once by passing a set of
@@ -234,10 +245,12 @@ def IMG_LoadTyped_RW(src, freesrc, type):
     b"XV"          XV Thumbnail
     b"WEBP"        WebP
     b"QOI"         Quite OK Image
+    b"JXL"         JPEG XL
+    b"AVIF"        AV1 Image File Format
     =============  ===========================
 
-    Note that support for the QOI format requires SDL_image 2.6.0 or newer.
-    See :func:`IMG_Load` for more information.
+    Note that loading QOI, JXL, and AVIF images requires SDL_image 2.6.0 or
+    newer. See :func:`IMG_Load` for more information.
 
     Args:
         src (:obj:`SDL_RWops`): The file object from which to load the image.
@@ -384,10 +397,22 @@ def IMG_LoadTextureTyped_RW(renderer, src, freesrc, type):
     return _ctypes["IMG_LoadTextureTyped_RW"](renderer, src, freesrc, type)
 
 
+def IMG_isAVIF(src):
+    """Tests whether a file object contains an AVIF image.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object to check.
+
+    Returns:
+        int: 1 if AVIFs are supported and file is a valid AVIF, otherwise 0.
+
+    """
+    return _ctypes["IMG_isAVIF"](src)
+
 def IMG_isICO(src):
     """Tests whether a file object contains an ICO (Windows icon) image.
-
-    The ICO format 
 
     Args:
         src (:obj:`SDL_RWops`): The file object to check.
@@ -445,6 +470,20 @@ def IMG_isJPG(src):
 
     """
     return _ctypes["IMG_isJPG"](src)
+
+def IMG_isJXL(src):
+    """Tests whether a file object contains a JPEG XL image.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object to check.
+
+    Returns:
+        int: 1 if JPEG XL is supported and file is a valid JXL, otherwise 0.
+
+    """
+    return _ctypes["IMG_isJXL"](src)
 
 def IMG_isLBM(src):
     """Tests whether a file object contains an LBM (Interleaved Bitmap) image.
@@ -585,6 +624,23 @@ def IMG_isWEBP(src):
     return _ctypes["IMG_isWEBP"](src)
 
 
+def IMG_LoadAVIF_RW(src):
+    """Loads an AVIF image from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the AVIF.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_LoadAVIF_RW"](src)
+
 def IMG_LoadICO_RW(src):
     """Loads an ICO (Windows icon) image from an SDL file object.
 
@@ -660,6 +716,23 @@ def IMG_LoadJPG_RW(src):
     """
     return _ctypes["IMG_LoadJPG_RW"](src)
 
+def IMG_LoadJXL_RW(src):
+    """Loads a JPEG XL image from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the JPEG XL.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_LoadJXL_RW"](src)
+
 def IMG_LoadLBM_RW(src):
     """Loads an LBM (Interleaved Bitmap) image from an SDL file object.
 
@@ -723,6 +796,8 @@ def IMG_LoadPNM_RW(src):
 def IMG_LoadSVG_RW(src):
     """Loads an SVG image from an SDL file object.
 
+    Note that this function only loads SVGs at their self-reported resolutions.
+    To load an SVG at an arbitrary resolution, see :func:`IMG_LoadSizedSVG_RW`.
     Use the :func:`IMG_GetError` function to check for any errors.
 
     `Note: Added in SDL_image 2.0.2`
@@ -844,6 +919,23 @@ def IMG_LoadWEBP_RW(src):
     """
     return _ctypes["IMG_LoadWEBP_RW"](src)
 
+def IMG_LoadSizedSVG_RW(src, width, height):
+    """Loads an SVG image at a given size from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the SVG.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_LoadSizedSVG_RW"](src, width, height)
+
 
 def IMG_ReadXPMFromArray(xpm):
     """Loads an X11 Pixmap from an array to a new surface.
@@ -856,6 +948,10 @@ def IMG_ReadXPMFromArray(xpm):
     (pointer to a character array) and passed by reference using
     :func:`ctypes.byref`.
 
+    Note that this function will return an 8-bit indexed (palette) surface when
+    possible. To obtain a 32-bit RGB surface from an XPM array, use the
+    :func:`IMG_ReadXPMFromArrayToRGB888` function.
+
     Args:
         xpm (byref(:obj:`ctypes.c_char_p`)): A pointer to a ctypes string
             defining an XPM image.
@@ -866,6 +962,25 @@ def IMG_ReadXPMFromArray(xpm):
 
     """
     return _ctypes["IMG_ReadXPMFromArray"](xpm)
+
+def IMG_ReadXPMFromArrayToRGB888(xpm):
+    """Loads an X11 Pixmap from an array to a new 32-bit surface.
+    
+    This function is the same as :func:`IMG_ReadXPMFromArray` except that it
+    always returns a 32-bit ARGB surface.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        xpm (byref(:obj:`ctypes.c_char_p`)): A pointer to a ctypes string
+            defining an XPM image.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_ReadXPMFromArrayToRGB888"](xpm)
 
 
 def IMG_SavePNG(surface, file):

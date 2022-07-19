@@ -60,8 +60,10 @@ These functions are used to check whether an SDL file object
 (:obj:`SDL_RWops`) is a valid image file of a given format. Note that
 all of these functions will return 0 if SDL2_image was not built with
 support for that format, even if it is a valid image of that type, so be
-cautious when using these for formats like WEBP, JPEG, PNG, and TIFF, which
+cautious when using these for formats like WEBP, AVIF, JXL, and TIFF, which
 are optional when building SDL2_image.
+
+.. autofunction:: IMG_isAVIF
 
 .. autofunction:: IMG_isICO
 
@@ -72,6 +74,8 @@ are optional when building SDL2_image.
 .. autofunction:: IMG_isGIF
 
 .. autofunction:: IMG_isJPG
+
+.. autofunction:: IMG_isJXL
 
 .. autofunction:: IMG_isLBM
 
@@ -115,6 +119,8 @@ General image loading functions
 Format-specific image loading functions
 ---------------------------------------
 
+.. autofunction:: IMG_LoadAVIF_RW
+
 .. autofunction:: IMG_LoadICO_RW
 
 .. autofunction:: IMG_LoadCUR_RW
@@ -125,6 +131,8 @@ Format-specific image loading functions
 
 .. autofunction:: IMG_LoadJPG_RW
 
+.. autofunction:: IMG_LoadJXL_RW
+
 .. autofunction:: IMG_LoadLBM_RW
 
 .. autofunction:: IMG_LoadPCX_RW
@@ -134,6 +142,8 @@ Format-specific image loading functions
 .. autofunction:: IMG_LoadPNM_RW
 
 .. autofunction:: IMG_LoadSVG_RW
+
+.. autofunction:: IMG_LoadSizedSVG_RW
 
 .. autofunction:: IMG_LoadQOI_RW
 
@@ -150,6 +160,8 @@ Format-specific image loading functions
 .. autofunction:: IMG_LoadWEBP_RW
 
 .. autofunction:: IMG_ReadXPMFromArray
+
+.. autofunction:: IMG_ReadXPMFromArrayToRGB888
 
 
 Image writing functions
@@ -194,3 +206,11 @@ Module constants
 .. data:: IMG_INIT_WEBP
 
     :func:`IMG_Init` flag to enable support for the WEBP image format.
+
+.. data:: IMG_INIT_JXL
+
+    :func:`IMG_Init` flag to enable support for the JPEG XL image format.
+
+.. data:: IMG_INIT_AVIF
+
+    :func:`IMG_Init` flag to enable support for the AVIF image format.

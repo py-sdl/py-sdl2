@@ -35,6 +35,8 @@ formats = [
     "xpm",
     #"xv", # no idea how to create one, seems like a long-dead format?
     "qoi",
+    #"jxl", # not yet available in official Windows/macOS binaries
+    #"avif", # not yet available in official Windows/macOS binaries
 ]
 
 animation_formats = [
@@ -134,7 +136,9 @@ def test_IMG_Init():
         'JPEG': sdlimage.IMG_INIT_JPG,
         'PNG': sdlimage.IMG_INIT_PNG,
         'TIFF': sdlimage.IMG_INIT_TIF,
-        'WEBP': sdlimage.IMG_INIT_WEBP
+        'WEBP': sdlimage.IMG_INIT_WEBP,
+        'JPEG XL': sdlimage.IMG_INIT_JXL,
+        'AVIF': sdlimage.IMG_INIT_AVIF,
     }
     for lib in libs.keys():
         flags = libs[lib]
@@ -228,6 +232,15 @@ def test_IMG_LoadTyped_RW(with_sdl_image):
         _verify_img_load(sf)
         surface.SDL_FreeSurface(sf)
 
+@pytest.mark.skip("not yet available in official binaries")
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadAVIF_RW(with_sdl_image):
+    fp = open(_get_image_path("avif"), "rb")
+    sf = sdlimage.IMG_LoadBMP_RW(rwops.rw_from_object(fp))
+    fp.close()
+    _verify_img_load(sf)
+    surface.SDL_FreeSurface(sf)
+
 def test_IMG_LoadBMP_RW(with_sdl_image):
     fp = open(_get_image_path("bmp"), "rb")
     sf = sdlimage.IMG_LoadBMP_RW(rwops.rw_from_object(fp))
@@ -259,6 +272,15 @@ def test_IMG_LoadICO_RW(with_sdl_image):
 def test_IMG_LoadJPG_RW(with_sdl_image):
     fp = open(_get_image_path("jpg"), "rb")
     sf = sdlimage.IMG_LoadJPG_RW(rwops.rw_from_object(fp))
+    fp.close()
+    _verify_img_load(sf)
+    surface.SDL_FreeSurface(sf)
+
+@pytest.mark.skip("not yet available in official binaries")
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadJXL_RW(with_sdl_image):
+    fp = open(_get_image_path("jxl"), "rb")
+    sf = sdlimage.IMG_LoadBMP_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
@@ -353,6 +375,28 @@ def test_IMG_LoadXV_RW(with_sdl_image):
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
+@pytest.mark.xfail(isconda and iswindows, reason="Broken w/ win64 Conda")
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_LoadSizedSVG_RW(with_sdl_image):
+    rw = _get_image_rw("svg")
+    sf = sdlimage.IMG_LoadSizedSVG_RW(rw, 100, 0)
+    sdl2.SDL_RWclose(rw)
+    _verify_img_load(sf)
+    assert sf.contents.w == 100
+    assert sf.contents.h == 100
+    surface.SDL_FreeSurface(sf)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_isAVIF(with_sdl_image):
+    for fmt in formats:
+        fpath = _get_image_path(fmt)
+        with open(fpath, "rb") as fp:
+            imgrw = rwops.rw_from_object(fp)
+            if fmt == "avif":
+                assert sdlimage.IMG_isAVIF(imgrw)
+            else:
+                assert not sdlimage.IMG_isAVIF(imgrw)
+
 def test_IMG_isBMP(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
@@ -402,6 +446,17 @@ def test_IMG_isJPG(with_sdl_image):
                 assert sdlimage.IMG_isJPG(imgrw)
             else:
                 assert not sdlimage.IMG_isJPG(imgrw)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_isJXL(with_sdl_image):
+    for fmt in formats:
+        fpath = _get_image_path(fmt)
+        with open(fpath, "rb") as fp:
+            imgrw = rwops.rw_from_object(fp)
+            if fmt == "jxl":
+                assert sdlimage.IMG_isJXL(imgrw)
+            else:
+                assert not sdlimage.IMG_isJXL(imgrw)
 
 def test_IMG_isLBM(with_sdl_image):
     for fmt in formats:
@@ -536,6 +591,25 @@ def test_IMG_ReadXPMFromArray(with_sdl_image):
     pxpm = ctypes.c_char_p(xpm)
     sf = sdlimage.IMG_ReadXPMFromArray(ctypes.byref(pxpm))
     _verify_img_load(sf)
+    surface.SDL_FreeSurface(sf)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
+def test_IMG_ReadXPMFromArrayToRGB888(with_sdl_image):
+    fp = open(_get_image_path("xpm"), "rb")
+    xpm = b""
+    fp.readline()  # /* XPM */
+    fp.readline()  # static char * surfacetest_xpm[] = {
+    lbuf = fp.readlines()
+    fp.close()
+    for line in lbuf:
+        if line.endswith(b"};"):
+            xpm += line[1:-4]
+        else:
+            xpm += line[1:-3]
+    pxpm = ctypes.c_char_p(xpm)
+    sf = sdlimage.IMG_ReadXPMFromArrayToRGB888(ctypes.byref(pxpm))
+    _verify_img_load(sf)
+    assert sf.contents.format.contents.format == sdl2.SDL_PIXELFORMAT_ARGB8888
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_SavePNG(tmpdir):
