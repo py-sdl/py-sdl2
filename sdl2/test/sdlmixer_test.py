@@ -160,6 +160,16 @@ class TestSDLMixer(object):
             decoders.append(name.decode('utf-8'))
         print("Available MixMusic decoders:\n{0}".format(str(decoders)))
 
+    @pytest.mark.skipif(sdlmixer.dll.version < 2060, reason="Added in 2.6.0")
+    def test_Mix_HasMusicDecoder(self):
+        num = sdlmixer.Mix_GetNumMusicDecoders()
+        assert num > 0
+        for i in range(0, num):
+            name = sdlmixer.Mix_GetMusicDecoder(i)
+            assert name is not None
+            assert sdlmixer.Mix_HasMusicDecoder(name) == SDL_TRUE
+        assert sdlmixer.Mix_HasMusicDecoder(b'blah') == SDL_FALSE
+
     @pytest.mark.skip("not implemented")
     def test_Mix_LoadWAV(self):
         pass
