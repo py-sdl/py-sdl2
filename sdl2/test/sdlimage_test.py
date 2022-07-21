@@ -101,6 +101,7 @@ def test_IMG_Linked_Version():
     assert t == sdlimage.dll.version_tuple
 
 def test_IMG_Init():
+    global formats
     SDL_Init(0)
     supported = []
     libs = {
@@ -119,10 +120,12 @@ def test_IMG_Init():
             sdl2.SDL_ClearError()
         if ret & flags == flags:
             supported.append(lib)
+        elif lib.lower() in formats:
+            formats.remove(lib.lower())
         sdlimage.IMG_Quit()
     print("Supported image libraries:")
     print(supported)
-    assert len(supported) == len(libs.keys())
+    assert len(supported) # Only fail if none supported
 
 def test_IMG_Load(with_sdl_image):
     for fmt in formats:
@@ -285,7 +288,7 @@ def test_IMG_LoadTIF_RW(with_sdl_image):
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
-@pytest.mark.xfail(bad_webp, reason="WEBP broken in 2.0.2 binaries for 32-bit Windows")
+@pytest.mark.skipif("webp" not in formats, reason="WEBP not availale or broken")
 def test_IMG_LoadWEBP_RW(with_sdl_image):
     fp = open(_get_image_path("webp"), "rb")
     sf = sdlimage.IMG_LoadWEBP_RW(rwops.rw_from_object(fp))
@@ -428,6 +431,7 @@ def test_IMG_isTIF(with_sdl_image):
             else:
                 assert not sdlimage.IMG_isTIF(imgrw)
 
+@pytest.mark.skipif("webp" not in formats, reason="WEBP not availale or broken")
 def test_IMG_isWEBP(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
