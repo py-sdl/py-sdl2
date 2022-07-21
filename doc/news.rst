@@ -2,6 +2,14 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.13 (Unreleased)
+-------------------
+
+New Features:
+
+* Updated to wrap new functions and constants in SDL2_ttf 2.20.0 (PR #236)
+
+
 0.9.12
 ------
 
