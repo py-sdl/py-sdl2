@@ -50,7 +50,7 @@ if is32bit or ismacos or (isconda and iswindows):
 
 # WEBP support seems to be broken in the 32-bit Windows SDL2_image 2.0.2 binary
 dll_ver = sdlimage.dll.version
-bad_webp = (is32bit and dll_ver == 2002) or (ismacos and dll_ver == 2600)
+bad_webp = (is32bit and dll_ver == 2002) or (ismacos and dll_ver == 2060)
 if bad_webp:
     formats.remove("webp")
 
