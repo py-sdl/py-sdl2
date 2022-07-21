@@ -14,6 +14,11 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 fontfile = os.path.join(parent_dir, "resources", "tuffy.ttf").encode("utf-8")
 font_test_sizes = [6, 16, 26]
 
+def _has_harfbuzz():
+    major, minor, patch = c_int(0), c_int(0), c_int(0)
+    sdlttf.TTF_GetHarfBuzzVersion(byref(major), byref(minor), byref(patch))
+    return major.value > 0
+
 def to_utf16(x):
     # Converts a unicode Python string to a ctypes UTF-16 array
     strlen = len(x) + 1 # +1 for byte-order mark
@@ -247,6 +252,18 @@ def test_TTF_GetSetFontHinting(with_font):
     for hint in hints:
         sdlttf.TTF_SetFontHinting(font, hint)
         assert sdlttf.TTF_GetFontHinting(font) == hint
+
+@pytest.mark.skipif(sdlttf.dll.version < 2200, reason="not available")
+def test_TTF_GetSetFontWrappedAlign(with_font):
+    font = with_font
+    alignments = [
+        sdlttf.TTF_WRAPPED_ALIGN_LEFT, sdlttf.TTF_WRAPPED_ALIGN_CENTER,
+        sdlttf.TTF_WRAPPED_ALIGN_RIGHT,
+    ]
+    assert sdlttf.TTF_GetFontWrappedAlign(font) == sdlttf.TTF_WRAPPED_ALIGN_LEFT
+    for align in alignments:
+        sdlttf.TTF_SetFontWrappedAlign(font, align)
+        assert sdlttf.TTF_GetFontWrappedAlign(font) == align
 
 def test_TTF_FontHeight(with_sdl_ttf):
     last = cur = 0
@@ -562,6 +579,52 @@ def test_TTF_Render_Blended_Wrapped(with_font):
     assert isinstance(sf.contents, surface.SDL_Surface)
     assert sf.contents.h > 30
 
+@pytest.mark.skipif(sdlttf.dll.version < 2200, reason="not available")
+def test_TTF_Render_LCD(with_font):
+    font = with_font
+    color = SDL_Color(0, 0, 0)
+    bgcolor = SDL_Color(255, 255, 255, 255)
+    # Test TTF_RenderText_LCD
+    sf = sdlttf.TTF_RenderText_LCD(font, b"Hi there!", color, bgcolor)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    # Test TTF_RenderUTF8_LCD
+    teststr = u"Hï thère!".encode('utf-8')
+    sf = sdlttf.TTF_RenderUTF8_LCD(font, teststr, color, bgcolor)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    # Test TTF_RenderUNICODE_LCD
+    # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+    strarr = to_utf16(u"Hi there!")
+    sf = sdlttf.TTF_RenderUNICODE_LCD(font, strarr, color, bgcolor)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    # Test TTF_RenderGlyph_LCD
+    sf = sdlttf.TTF_RenderGlyph_LCD(font, ord("A"), color, bgcolor)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    # Test TTF_RenderGlyph32_LCD
+    sf = sdlttf.TTF_RenderGlyph32_LCD(font, ord("A"), color, bgcolor)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+
+@pytest.mark.skipif(sdlttf.dll.version < 2200, reason="not available")
+def test_TTF_Render_LCD_Wrapped(with_font):
+    font = with_font
+    color = SDL_Color(0, 0, 0, 255)
+    bgcolor = SDL_Color(255, 255, 255, 255)
+    # Test TTF_RenderText_LCD_Wrapped
+    teststr = b"Hi there, this is a long line!"
+    sf = sdlttf.TTF_RenderText_LCD_Wrapped(font, teststr, color, bgcolor, 100)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    assert sf.contents.h > 30
+    # Test TTF_RenderUTF8_LCD_Wrapped
+    teststr = u"Hï thère, this is a long line!".encode('utf-8')
+    sf = sdlttf.TTF_RenderUTF8_LCD_Wrapped(font, teststr, color, bgcolor, 100)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    assert sf.contents.h > 30
+    # Test TTF_RenderUNICODE_LCD_Wrapped
+    # NOTE: no unicode chars because number -> glyph lookup is os-dependent
+    strarr = to_utf16(u"Hi there, this is a long line!")
+    sf = sdlttf.TTF_RenderUNICODE_LCD_Wrapped(font, strarr, color, bgcolor, 100)
+    assert isinstance(sf.contents, surface.SDL_Surface)
+    assert sf.contents.h > 30
+
 @pytest.mark.skipif(sdlttf.dll.version < 2018, reason="not available")
 def test_TTF_RenderGlyph32(with_font):
     font = with_font
@@ -584,9 +647,7 @@ def test_TTF_SetDirection(with_font):
     HB_DIRECTION_LTR = 4
     HB_DIRECTION_TTB = 6
     # Only available if compiled with HarfBuzz
-    major, minor, patch = c_int(0), c_int(0), c_int(0)
-    sdlttf.TTF_GetHarfBuzzVersion(byref(major), byref(minor), byref(patch))
-    if major.value == 0:
+    if not _has_harfbuzz():
         pytest.skip("No HarfBuzz")
     # Try setting the script direction
     ret = sdlttf.TTF_SetDirection(HB_DIRECTION_LTR)
@@ -604,15 +665,42 @@ def test_TTF_SetDirection(with_font):
 @pytest.mark.skipif(sdlttf.dll.version < 2018, reason="not available")
 def test_TTF_SetScript(with_font):
     # Only available if compiled with HarfBuzz
-    major, minor, patch = c_int(0), c_int(0), c_int(0)
-    sdlttf.TTF_GetHarfBuzzVersion(byref(major), byref(minor), byref(patch))
-    if major.value == 0:
+    if not _has_harfbuzz():
         pytest.skip("No HarfBuzz")
     # Try setting the script language to Arabic and back
     ret = sdlttf.TTF_SetScript(sdlttf.HB_TAG("A", "r", "a", "b"))
     assert ret == 0
     # NOTE: I have no clue how to write a proper test to see if this worked
     ret = sdlttf.TTF_SetScript(sdlttf.HB_TAG("Z", "y", "y", "y"))
+    assert ret == 0
+
+@pytest.mark.skipif(sdlttf.dll.version < 2200, reason="not available")
+def test_TTF_SetFontDirection(with_font):
+    font = with_font
+    # Only available if compiled with HarfBuzz
+    if not _has_harfbuzz():
+        pytest.skip("No HarfBuzz")
+    # Try setting the script direction
+    ret = sdlttf.TTF_SetFontDirection(font, sdlttf.TTF_DIRECTION_LTR)
+    assert ret == 0
+    # Try changing the script direction to see if it has any effect
+    w1, h1, w2, h2 = c_int(0), c_int(0), c_int(0), c_int(0)
+    sdlttf.TTF_SizeText(font, b"Hi there!", byref(w1), byref(h1))
+    ret = sdlttf.TTF_SetFontDirection(font, sdlttf.TTF_DIRECTION_TTB)
+    assert ret == 0
+    sdlttf.TTF_SizeText(font, b"Hi there!", byref(w2), byref(h2))
+    assert w1.value > w2.value
+    assert h1.value < h2.value
+
+@pytest.mark.skipif(sdlttf.dll.version < 2200, reason="not available")
+def test_TTF_SetFontScriptName(with_font):
+    # NOTE: I have no clue how to write a proper test to see if this works
+    font = with_font
+    # Only available if compiled with HarfBuzz
+    if not _has_harfbuzz():
+        pytest.skip("No HarfBuzz")
+    # Try setting the script language to Arabic
+    ret = sdlttf.TTF_SetFontScriptName(font, b"Arab")
     assert ret == 0
 
 @pytest.mark.skipif(sdlttf.dll.version < 2014, reason="not available")
