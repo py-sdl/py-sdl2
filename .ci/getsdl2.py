@@ -130,9 +130,9 @@ libversions = {
 
 def download_lib(lib, version, suffix):
     try:
-        file = urlopen(sdl2_urls[lib].format(libversion, suffix))
+        file = urlopen(sdl2_urls[lib].format(version, suffix))
     except HTTPError:
-        file = urlopen(sdl2_alt_urls[lib].format(libversion, suffix))
+        file = urlopen(sdl2_alt_urls[lib].format(version, suffix))
     return file
 
 
