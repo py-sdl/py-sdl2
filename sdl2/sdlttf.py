@@ -69,7 +69,9 @@ TTF_MINOR_VERSION = SDL_TTF_MINOR_VERSION
 TTF_PATCHLEVEL = SDL_TTF_PATCHLEVEL
 TTF_VERSION = SDL_TTF_VERSION
 
-SDL_TTF_COMPILEDVERSION = SDL_VERSIONNUM(SDL_TTF_MAJOR_VERSION, SDL_TTF_MINOR_VERSION, SDL_TTF_PATCHLEVEL)
+SDL_TTF_COMPILEDVERSION = SDL_VERSIONNUM(
+    SDL_TTF_MAJOR_VERSION, SDL_TTF_MINOR_VERSION, SDL_TTF_PATCHLEVEL
+)
 SDL_TTF_VERSION_ATLEAST = lambda x, y, z: (SDL_TTF_COMPILEDVERSION >= SDL_VERSIONNUM(x, y, z))
 
 UNICODE_BOM_NATIVE = 0xFEFF
@@ -139,9 +141,18 @@ _funcdefs = [
     SDLFunc("TTF_OpenFontRW", [_P(SDL_RWops), c_int, c_int], _P(TTF_Font)),
     SDLFunc("TTF_OpenFontIndexRW", [_P(SDL_RWops), c_int, c_int, c_long], _P(TTF_Font)),
     SDLFunc("TTF_OpenFontDPI", [c_char_p, c_int, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
-    SDLFunc("TTF_OpenFontIndexDPI", [c_char_p, c_int, c_long, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
-    SDLFunc("TTF_OpenFontDPIRW", [_P(SDL_RWops), c_int, c_int, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
-    SDLFunc("TTF_OpenFontIndexDPIRW", [_P(SDL_RWops), c_int, c_int, c_long, c_uint, c_uint], _P(TTF_Font), added='2.0.18'),
+    SDLFunc("TTF_OpenFontIndexDPI",
+        [c_char_p, c_int, c_long, c_uint, c_uint],
+        returns = _P(TTF_Font), added = '2.0.18'
+    ),
+    SDLFunc("TTF_OpenFontDPIRW",
+        [_P(SDL_RWops), c_int, c_int, c_uint, c_uint],
+        returns = _P(TTF_Font), added = '2.0.18'
+    ),
+    SDLFunc("TTF_OpenFontIndexDPIRW",
+        [_P(SDL_RWops), c_int, c_int, c_long, c_uint, c_uint],
+        returns = _P(TTF_Font), added = '2.0.18'
+    ),
     SDLFunc("TTF_SetFontSize", [_P(TTF_Font), c_int], c_int, added='2.0.18'),
     SDLFunc("TTF_SetFontSizeDPI", [_P(TTF_Font), c_int, c_uint, c_uint], c_int, added='2.0.18'),
     SDLFunc("TTF_GetFontStyle", [_P(TTF_Font)], c_int),
@@ -162,46 +173,115 @@ _funcdefs = [
     SDLFunc("TTF_FontFaceStyleName", [_P(TTF_Font)], c_char_p),
     SDLFunc("TTF_GlyphIsProvided", [_P(TTF_Font), Uint16], c_int),
     SDLFunc("TTF_GlyphIsProvided32", [_P(TTF_Font), Uint32], c_int, added='2.0.18'),
-    SDLFunc("TTF_GlyphMetrics", [_P(TTF_Font), Uint16, _P(c_int), _P(c_int), _P(c_int), _P(c_int), _P(c_int)], c_int),
-    SDLFunc("TTF_GlyphMetrics32", [_P(TTF_Font), Uint32, _P(c_int), _P(c_int), _P(c_int), _P(c_int), _P(c_int)], c_int, added='2.0.18'),
+    SDLFunc("TTF_GlyphMetrics",
+        [_P(TTF_Font), Uint16, _P(c_int), _P(c_int), _P(c_int), _P(c_int), _P(c_int)],
+        returns = c_int
+    ),
+    SDLFunc("TTF_GlyphMetrics32",
+        [_P(TTF_Font), Uint32, _P(c_int), _P(c_int), _P(c_int), _P(c_int), _P(c_int)],
+        returns = c_int, added = '2.0.18'
+    ),
     SDLFunc("TTF_SizeText", [_P(TTF_Font), c_char_p, _P(c_int), _P(c_int)], c_int),
     SDLFunc("TTF_SizeUTF8", [_P(TTF_Font), c_char_p, _P(c_int), _P(c_int)], c_int),
     SDLFunc("TTF_SizeUNICODE", [_P(TTF_Font), _P(Uint16), _P(c_int), _P(c_int)], c_int),
-    SDLFunc("TTF_MeasureText", [_P(TTF_Font), c_char_p, c_int, _P(c_int), _P(c_int)], c_int, added='2.0.18'),
-    SDLFunc("TTF_MeasureUTF8", [_P(TTF_Font), c_char_p, c_int, _P(c_int), _P(c_int)], c_int, added='2.0.18'),
-    SDLFunc("TTF_MeasureUNICODE", [_P(TTF_Font), _P(Uint16), c_int, _P(c_int), _P(c_int)], c_int, added='2.0.18'),
+    SDLFunc("TTF_MeasureText",
+        [_P(TTF_Font), c_char_p, c_int, _P(c_int), _P(c_int)],
+        returns = c_int, added = '2.0.18'
+    ),
+    SDLFunc("TTF_MeasureUTF8",
+        [_P(TTF_Font), c_char_p, c_int, _P(c_int), _P(c_int)],
+        returns = c_int, added = '2.0.18'
+    ),
+    SDLFunc("TTF_MeasureUNICODE",
+        [_P(TTF_Font), _P(Uint16), c_int, _P(c_int), _P(c_int)],
+        returns = c_int, added = '2.0.18'
+    ),
     SDLFunc("TTF_RenderText_Solid", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUTF8_Solid", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUNICODE_Solid", [_P(TTF_Font), _P(Uint16), SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderText_Solid_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
-    SDLFunc("TTF_RenderUTF8_Solid_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
-    SDLFunc("TTF_RenderUNICODE_Solid_Wrapped", [_P(TTF_Font), _P(Uint16), SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_RenderText_Solid_Wrapped",
+        [_P(TTF_Font), c_char_p, SDL_Color, Uint32],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
+    SDLFunc("TTF_RenderUTF8_Solid_Wrapped",
+        [_P(TTF_Font), c_char_p, SDL_Color, Uint32],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
+    SDLFunc("TTF_RenderUNICODE_Solid_Wrapped",
+        [_P(TTF_Font), _P(Uint16), SDL_Color, Uint32],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
     SDLFunc("TTF_RenderGlyph_Solid", [_P(TTF_Font), Uint16, SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderGlyph32_Solid", [_P(TTF_Font), Uint32, SDL_Color], _P(SDL_Surface), added='2.0.18'),
-    SDLFunc("TTF_RenderText_Shaded", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderUTF8_Shaded", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderUNICODE_Shaded", [_P(TTF_Font), _P(Uint16), SDL_Color, SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderText_Shaded_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
-    SDLFunc("TTF_RenderUTF8_Shaded_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
-    SDLFunc("TTF_RenderUNICODE_Shaded_Wrapped", [_P(TTF_Font), _P(Uint16), SDL_Color, SDL_Color, Uint32], _P(SDL_Surface), added='2.0.18'),
-    SDLFunc("TTF_RenderGlyph_Shaded", [_P(TTF_Font), Uint16, SDL_Color, SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderGlyph32_Shaded", [_P(TTF_Font), Uint32, SDL_Color, SDL_Color], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_RenderGlyph32_Solid",
+        [_P(TTF_Font), Uint32, SDL_Color],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
+    SDLFunc("TTF_RenderText_Shaded",
+        [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color],
+        returns = _P(SDL_Surface)
+    ),
+    SDLFunc("TTF_RenderUTF8_Shaded",
+        [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color],
+        returns = _P(SDL_Surface)
+    ),
+    SDLFunc("TTF_RenderUNICODE_Shaded",
+        [_P(TTF_Font), _P(Uint16), SDL_Color, SDL_Color],
+        returns = _P(SDL_Surface)
+    ),
+    SDLFunc("TTF_RenderText_Shaded_Wrapped",
+        [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color, Uint32],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
+    SDLFunc("TTF_RenderUTF8_Shaded_Wrapped",
+        [_P(TTF_Font), c_char_p, SDL_Color, SDL_Color, Uint32],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
+    SDLFunc("TTF_RenderUNICODE_Shaded_Wrapped",
+        [_P(TTF_Font), _P(Uint16), SDL_Color, SDL_Color, Uint32],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
+    SDLFunc("TTF_RenderGlyph_Shaded",
+        [_P(TTF_Font), Uint16, SDL_Color, SDL_Color],
+        returns = _P(SDL_Surface)
+    ),
+    SDLFunc("TTF_RenderGlyph32_Shaded",
+        [_P(TTF_Font), Uint32, SDL_Color, SDL_Color],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
     SDLFunc("TTF_RenderText_Blended", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUTF8_Blended", [_P(TTF_Font), c_char_p, SDL_Color], _P(SDL_Surface)),
     SDLFunc("TTF_RenderUNICODE_Blended", [_P(TTF_Font), _P(Uint16), SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderText_Blended_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, Uint32], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderUTF8_Blended_Wrapped", [_P(TTF_Font), c_char_p, SDL_Color, Uint32], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderUNICODE_Blended_Wrapped", [_P(TTF_Font), _P(Uint16), SDL_Color, Uint32], _P(SDL_Surface)),
+    SDLFunc("TTF_RenderText_Blended_Wrapped",
+        [_P(TTF_Font), c_char_p, SDL_Color, Uint32],
+        returns = _P(SDL_Surface)
+    ),
+    SDLFunc("TTF_RenderUTF8_Blended_Wrapped",
+        [_P(TTF_Font), c_char_p, SDL_Color, Uint32],
+        returns = _P(SDL_Surface)
+    ),
+    SDLFunc("TTF_RenderUNICODE_Blended_Wrapped",
+        [_P(TTF_Font), _P(Uint16), SDL_Color, Uint32],
+        returns = _P(SDL_Surface)
+    ),
     SDLFunc("TTF_RenderGlyph_Blended", [_P(TTF_Font), Uint16, SDL_Color], _P(SDL_Surface)),
-    SDLFunc("TTF_RenderGlyph32_Blended", [_P(TTF_Font), Uint32, SDL_Color], _P(SDL_Surface), added='2.0.18'),
+    SDLFunc("TTF_RenderGlyph32_Blended",
+        [_P(TTF_Font), Uint32, SDL_Color],
+        returns = _P(SDL_Surface), added = '2.0.18'
+    ),
     SDLFunc("TTF_SetDirection", [c_int], c_int, added='2.0.18'),
     SDLFunc("TTF_SetScript", [c_int], c_int, added='2.0.18'),
     SDLFunc("TTF_CloseFont", [_P(TTF_Font)]),
     SDLFunc("TTF_Quit"),
     SDLFunc("TTF_WasInit", None, c_int),
     SDLFunc("TTF_GetFontKerningSize", [_P(TTF_Font), c_int, c_int], c_int),
-    SDLFunc("TTF_GetFontKerningSizeGlyphs", [_P(TTF_Font), Uint16, Uint16], c_int, added='2.0.14'),
-    SDLFunc("TTF_GetFontKerningSizeGlyphs32", [_P(TTF_Font), Uint32, Uint32], c_int, added='2.0.18'),
+    SDLFunc("TTF_GetFontKerningSizeGlyphs",
+        [_P(TTF_Font), Uint16, Uint16],
+        returns = c_int, added = '2.0.14'
+    ),
+    SDLFunc("TTF_GetFontKerningSizeGlyphs32",
+        [_P(TTF_Font), Uint32, Uint32],
+        returns = c_int, added = '2.0.18'
+    ),
     SDLFunc("TTF_SetFontSDF", [_P(TTF_Font), SDL_bool], c_int, added='2.0.18'),
     SDLFunc("TTF_GetFontSDF", [_P(TTF_Font)], SDL_bool, added='2.0.18'),
 ]
