@@ -49,7 +49,8 @@ if is32bit or ismacos or (isconda and iswindows):
     bad_xcf = True
 
 # WEBP support seems to be broken in the 32-bit Windows SDL2_image 2.0.2 binary
-bad_webp = is32bit and sdlimage.dll.version == 2002
+dll_ver = sdlimage.dll.version
+bad_webp = (is32bit and dll_ver == 2002) or (ismacos and dll_ver == 2600)
 if bad_webp:
     formats.remove("webp")
 
@@ -288,7 +289,7 @@ def test_IMG_LoadTIF_RW(with_sdl_image):
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
-@pytest.mark.skipif("webp" not in formats, reason="WEBP not availale or broken")
+@pytest.mark.xfail(bad_webp, reason="WEBP not availale or broken")
 def test_IMG_LoadWEBP_RW(with_sdl_image):
     fp = open(_get_image_path("webp"), "rb")
     sf = sdlimage.IMG_LoadWEBP_RW(rwops.rw_from_object(fp))
@@ -431,7 +432,7 @@ def test_IMG_isTIF(with_sdl_image):
             else:
                 assert not sdlimage.IMG_isTIF(imgrw)
 
-@pytest.mark.skipif("webp" not in formats, reason="WEBP not availale or broken")
+@pytest.mark.xfail(bad_webp, reason="WEBP not availale or broken")
 def test_IMG_isWEBP(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
