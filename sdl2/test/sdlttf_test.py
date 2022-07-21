@@ -14,10 +14,13 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 fontfile = os.path.join(parent_dir, "resources", "tuffy.ttf").encode("utf-8")
 font_test_sizes = [6, 16, 26]
 
-def _has_harfbuzz():
+def _harfbuzz_version():
     major, minor, patch = c_int(0), c_int(0), c_int(0)
     sdlttf.TTF_GetHarfBuzzVersion(byref(major), byref(minor), byref(patch))
-    return major.value > 0
+    return (major.value, minor.value, patch.value)
+
+def _has_harfbuzz():
+    return _harfbuzz_version()[0] > 0
 
 def to_utf16(x):
     # Converts a unicode Python string to a ctypes UTF-16 array
@@ -180,6 +183,9 @@ def test_TTF_OpenFontIndexDPIRW(with_sdl_ttf):
 
 @pytest.mark.skipif(sdlttf.dll.version < 2018, reason="not available")
 def test_TTF_SetFontSize(with_font):
+    if _harfbuzz_version() >= (4, 4, 0):
+        # Character spacing currently broken for some reason
+        pytest.skip("Incompatible HarfBuzz")
     font = with_font
     w1, h1, w2, h2 = c_int(0), c_int(0), c_int(0), c_int(0)
     sdlttf.TTF_SizeText(font, b"Hi there!", byref(w1), byref(h1))
@@ -200,6 +206,9 @@ def test_TTF_SetFontSize(with_font):
 
 @pytest.mark.skipif(sdlttf.dll.version < 2018, reason="not available")
 def test_TTF_SetFontSizeDPI(with_font):
+    if _harfbuzz_version() >= (4, 4, 0):
+        # Character spacing currently broken for some reason
+        pytest.skip("Incompatible HarfBuzz")
     font = with_font
     w1, h1, w2, h2 = c_int(0), c_int(0), c_int(0), c_int(0)
     sdlttf.TTF_SizeText(font, b"Hi there!", byref(w1), byref(h1))
