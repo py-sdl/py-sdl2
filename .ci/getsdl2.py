@@ -178,11 +178,17 @@ def getDLLs(platform_name, version):
             with open(outpath, 'wb') as out:
                 out.write(dllzip.read())
             
-            # Extract dlls and license files from archive
+            # Extract dlls from the archive
             with ZipFile(outpath, 'r') as z:
                 for name in z.namelist():
                     if name[-4:] == '.dll':
                         z.extract(name, dlldir)
+
+            # Move any optional dlls into the root dll folder
+            optdir = os.path.join(dlldir, 'optional')
+            if os.path.isdir(optdir):
+                for f in os.listdir(optdir):
+                    shutil.move(os.path.join(optdir, f), os.path.join(d, f))
                         
     else:
 
