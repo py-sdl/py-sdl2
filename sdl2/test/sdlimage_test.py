@@ -9,11 +9,6 @@ from sdl2 import SDL_Init, SDL_Quit, version, surface, rwops, render
 sdlimage = pytest.importorskip("sdl2.sdlimage")
 
 
-is32bit = sys.maxsize <= 2**32
-ismacos = sys.platform == "darwin"
-iswindows = "win" in sys.platform
-isconda = os.getenv("CONDA_PREFIX") != None
-
 formats = [
     "bmp",
     "cur",
@@ -43,32 +38,41 @@ animation_formats = [
     "gif",
 ]
 
+
+### Disable problem formats on specific versions/platforms ###
+
+img_ver = sdlimage.dll.version
+is32bit = sys.maxsize <= 2**32
+ismacos = sys.platform == "darwin"
+iswindows = "win" in sys.platform
+isconda = os.getenv("CONDA_PREFIX") != None
+
 # QOI unsupported on SDL2_image < 2.6.0
-if sdlimage.dll.version < 2060:
+if img_ver < 2060:
     formats.remove("qoi")
 
 # SVG unsupported on SDL2_image < 2.0.2 as well as in Conda's current (2.0.5)
 # Windows binaries
-if sdlimage.dll.version < 2002 or (isconda and iswindows):
+if img_ver < 2002 or (isconda and iswindows):
     formats.remove("svg")
 
 # Prior to 2.6.0, XCF was broken on official 32-bit builds and macOS frameworks. 
 # It is also currently broken in Conda's SDL2_image Windows binaries
 bad_xcf = False
-xcf_broken = sdlimage.dll.version <= 2005 and (is32bit or ismacos)
+xcf_broken = img_ver <= 2005 and (is32bit or ismacos)
 if xcf_broken or (isconda and iswindows):
     formats.remove("xcf")
     bad_xcf = True
 
 # WEBP support seems to be broken in the 32-bit Windows SDL2_image 2.0.2 binary
-dll_ver = sdlimage.dll.version
-bad_webp = (is32bit and dll_ver == 2002) or (ismacos and dll_ver == 2060)
+# and is missing in the official macOS 2.6.0 binary
+bad_webp = (is32bit and img_ver == 2002) or (ismacos and img_ver == 2060)
 if bad_webp:
     formats.remove("webp")
 
 # JPG saving requires SDL2_image >= 2.0.2 and is broken in older macOS binaries
-imgver = sdlimage.dll.version_tuple
-no_jpeg_save = imgver < (2, 0, 2) or (ismacos and imgver < (2, 6, 0))
+no_jpeg_save = img_ver < 2002 or (ismacos and img_ver < 2060)
+
 
 @pytest.fixture(scope="module")
 def with_sdl_image(with_sdl):
