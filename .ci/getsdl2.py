@@ -10,21 +10,37 @@ import subprocess as sub
 
 try:
     from urllib.request import urlopen # Python 3.x
+    from urllib.error import HTTPError
 except ImportError:
-    from urllib2 import urlopen # Python 2
+    from urllib2 import urlopen, HTTPError # Python 2
 
 
 libraries = ['SDL2', 'SDL2_mixer', 'SDL2_ttf', 'SDL2_image', 'SDL2_gfx']
 
+git_fmt = 'https://github.com/libsdl-org/SDL{LIB}/releases/download/release-{0}/SDL2{LIB}-{0}{1}'
 sdl2_urls = {
     'SDL2': 'https://www.libsdl.org/release/SDL2-{0}{1}',
     'SDL2_mixer': 'https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-{0}{1}',
     'SDL2_ttf': 'https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-{0}{1}',
     'SDL2_image': 'https://www.libsdl.org/projects/SDL_image/release/SDL2_image-{0}{1}',
-    'SDL2_gfx': 'https://github.com/a-hurst/sdl2gfx-builds/releases/download/{0}/SDL2_gfx-{0}{1}'
+    'SDL2_gfx': 'https://github.com/a-hurst/sdl2gfx-builds/releases/download/{0}/SDL2_gfx-{0}{1}',
+}
+sdl2_alt_urls = {
+    'SDL2': git_fmt.replace('{LIB}', ''),
+    'SDL2_mixer': git_fmt.replace('{LIB}', '_mixer'),
+    'SDL2_ttf': git_fmt.replace('{LIB}', '_ttf'),
+    'SDL2_image': git_fmt.replace('{LIB}', '_image'),
+    'SDL2_gfx': 'http://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-{0}{1}',
 }
 
 libversions = {
+    '2.0.22.post1': { # NOTE: Temporary until SDL2 2.24.0 is released
+        'SDL2': '2.0.22',
+        'SDL2_mixer': '2.6.0',
+        'SDL2_ttf': '2.20.0',
+        'SDL2_image': '2.6.0',
+        'SDL2_gfx': '1.0.4'
+    },
     '2.0.22': {
         'SDL2': '2.0.22',
         'SDL2_mixer': '2.0.4',
@@ -112,6 +128,14 @@ libversions = {
 }
 
 
+def download_lib(lib, version, suffix):
+    try:
+        file = urlopen(sdl2_urls[lib].format(version, suffix))
+    except HTTPError:
+        file = urlopen(sdl2_alt_urls[lib].format(version, suffix))
+    return file
+
+
 def getDLLs(platform_name, version):
     
     dlldir = os.path.join('dlls')
@@ -131,7 +155,7 @@ def getDLLs(platform_name, version):
             
             # Download disk image containing library
             libversion = libversions[version][lib]
-            dmg = urlopen(sdl2_urls[lib].format(libversion, '.dmg'))
+            dmg = download_lib(lib, libversion, suffix='.dmg')
             outpath = os.path.join('temp', lib + '.dmg')
             with open(outpath, 'wb') as out:
                 out.write(dmg.read())
@@ -149,21 +173,25 @@ def getDLLs(platform_name, version):
             
             # Download zip archive containing library
             libversion = libversions[version][lib]
-            dllzip = urlopen(sdl2_urls[lib].format(libversion, suffix))
+            dllzip = download_lib(lib, libversion, suffix)
             outpath = os.path.join('temp', lib + '.zip')
             with open(outpath, 'wb') as out:
                 out.write(dllzip.read())
             
-            # Extract dlls and license files from archive
+            # Extract dlls from the archive
             with ZipFile(outpath, 'r') as z:
                 for name in z.namelist():
                     if name[-4:] == '.dll':
                         z.extract(name, dlldir)
+
+            # Move any optional dlls into the root dll folder
+            optdir = os.path.join(dlldir, 'optional')
+            if os.path.isdir(optdir):
+                for f in os.listdir(optdir):
+                    shutil.move(os.path.join(optdir, f), os.path.join(d, f))
                         
     else:
 
-        suffix = '.tar.gz' # source code
-        gfxsrc = 'http://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-{0}.tar.gz'
         cfgurl = 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f={0};hb=HEAD'
         basedir = os.getcwd()
         arch = os.uname()[-1]
@@ -185,11 +213,8 @@ def getDLLs(platform_name, version):
             print('\n======= Downloading {0} {1} =======\n'.format(lib, libversion))
             
             # Download tar archive containing source
-            liburl = sdl2_urls[lib].format(libversion, suffix)
-            if lib == 'SDL2_gfx':
-                liburl = gfxsrc.format(libversion)
-            srctar = urlopen(liburl)
-            outpath = os.path.join('temp', lib + suffix)
+            srctar = download_lib(lib, libversion, suffix='.tar.gz')
+            outpath = os.path.join('temp', lib + '.tar.gz')
             with open(outpath, 'wb') as out:
                 out.write(srctar.read())
             
@@ -213,7 +238,7 @@ def getDLLs(platform_name, version):
                 ['make'],
                 ['make', 'install']
             ]
-            if lib == 'SDL2_gfx' and not arch in ['i386', 'x86_64']:
+            if lib == 'SDL2_gfx' and not arch in ['i686', 'x86_64']:
                 buildcmds[0].append('--disable-mmx')
             os.chdir(sourcepath)
             for cmd in buildcmds:

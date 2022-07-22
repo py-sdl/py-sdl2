@@ -154,9 +154,19 @@ Render settings functions
 
 .. autofunction:: TTF_SetFontHinting
 
+.. autofunction:: TTF_GetFontHinting
+
 .. autofunction:: TTF_SetFontSDF
 
 .. autofunction:: TTF_GetFontSDF
+
+.. autofunction:: TTF_SetFontWrappedAlign
+
+.. autofunction:: TTF_GetFontWrappedAlign
+
+.. autofunction:: TTF_SetFontDirection
+
+.. autofunction:: TTF_SetFontScriptName
 
 
 Text rendering functions
@@ -238,6 +248,26 @@ Blended rendering functions
 .. autofunction:: TTF_RenderUNICODE_Blended_Wrapped
 
 
+LCD rendering functions
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: TTF_RenderText_LCD
+
+.. autofunction:: TTF_RenderUTF8_LCD
+
+.. autofunction:: TTF_RenderUNICODE_LCD
+
+.. autofunction:: TTF_RenderGlyph_LCD
+
+.. autofunction:: TTF_RenderGlyph32_LCD
+
+.. autofunction:: TTF_RenderText_LCD_Wrapped
+
+.. autofunction:: TTF_RenderUTF8_LCD_Wrapped
+
+.. autofunction:: TTF_RenderUNICODE_LCD_Wrapped
+
+
 Renderer configuration functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -284,60 +314,88 @@ Module constants
 
 .. data:: TTF_STYLE_NORMAL
 
-    Used to indicate regular, normal, plain rendering style. 
+    Indicates normal (i.e. regular) rendering style. 
 
 .. data:: TTF_STYLE_BOLD
 
-    Used to indicate bold rendering style. This is used in a bitmask along
+    Indicates bold rendering style. This is used in a bitmask along
     with other styles.
 
 .. data:: TTF_STYLE_ITALIC
 
-    Used to indicate italicized rendering style. This is used in a bitmask
+    Indicates italicized rendering style. This is used in a bitmask
     along with other styles.
 
 .. data:: TTF_STYLE_UNDERLINE
 
-    Used to indicate underlined rendering style. This is used in a bitmask
+    Indicates underlined rendering style. This is used in a bitmask
     along with other styles.
 
 .. data:: TTF_STYLE_STRIKETHROUGH
 
-    Used to indicate strikethrough rendering style. This is used in a bitmask
+    Indicates strikethrough rendering style. This is used in a bitmask
     along with other styles.
 
 .. data:: TTF_HINTING_NORMAL
 
-    Used to indicate set hinting type to normal.
+    Indicates normal font hinting.
     This corresponds to the default hinting algorithm, optimized for standard
     gray-level rendering.                              
 
 .. data:: TTF_HINTING_LIGHT
 
-    Used to indicate set hinting type to light.
+    Indicates light font hinting.
     A lighter hinting algorithm for non-monochrome modes. Many generated
     glyphs are more fuzzy but better resemble its original shape. A bit like
     rendering on macOS.
 
 .. data:: TTF_HINTING_MONO
 
-    Used to indicate set hinting type to monochrome.
+    Indicates monochrome font hinting.
     Strong hinting algorithm that should only be used for monochrome output.
     The result is probably unpleasant if the glyph is rendered in
     non-monochrome modes.
 
 .. data:: TTF_HINTING_NONE
 
-    Used to indicate set hinting type to none.
+    Indicates disabled font hinting.
     No hinting is used, so the font may become very blurry or messy at
     smaller sizes.
 
 .. data:: TTF_HINTING_LIGHT_SUBPIXEL
 
-    Used to indicate set hinting type to light subpixel.
+    Indicates light subpixel font hinting.
     This produces better results for small text sizes: glyph are rendered at
     subpixel positions, so they look blurrier but are uniformly positioned.
     This mode is slower than others since glyphs are rendered on the fly.
+
+.. data:: TTF_WRAPPED_ALIGN_LEFT
+
+    Indicates left-justified alignment for wrapped multi-line text.
+
+.. data:: TTF_WRAPPED_ALIGN_CENTER
+
+    Indicates centered alignment for wrapped multi-line text.
+
+.. data:: TTF_WRAPPED_ALIGN_RIGHT
+
+    Indicates right-justified alignment for wrapped multi-line text.
+
+.. data:: TTF_DIRECTION_LTR
+
+    Indicates left-to-right text rendering.
+
+.. data:: TTF_DIRECTION_RTL
+
+    Indicates right-to-left text rendering.
+
+.. data:: TTF_DIRECTION_TTB
+
+    Indicates top-to-bottom text rendering.
+
+.. data:: TTF_DIRECTION_BTT
+
+    Indicates bottom-to-top text rendering.
 
 
 HarfBuzz functions and constants
@@ -351,6 +409,11 @@ macros for input.
 To make these easier to use, the ``sdlttf`` module defines and implements the
 constants and macro functions necessary to make full use of the SDL2_ttf
 library.
+
+.. note:: In version 2.20.0, SDL2_ttf added new functions for configuring
+          HarfBuzz settings that avoid the need for these macros and constants
+          entirely. For new projects, please use those functions
+          (``TTF_SetFontDirection`` and ``TTF_SetFontScriptName``) instead.
 
 .. autofunction:: HB_TAG
 
