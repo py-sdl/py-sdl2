@@ -980,9 +980,51 @@ def Mix_GroupNewer(tag):
 
 
 def Mix_PlayChannelTimed(channel, chunk, loops, ticks):
+    """Play an audio chunk on a specific channel for a given duration.
+
+    This function is the same as :func:`Mix_PlayChannel` except that you can
+    specify the maximum number of milliseconds for the sound to be played before
+    it is halted.
+
+    Args:
+        channel (int): The channel on which to play the new chunk.
+        chunk (:obj:`Mix_Chunk`): The sound to play.
+        loops (int): The number of times the chunk should loop (0 to play once,
+            -1 to loop infinitely).
+        ticks (int): The maximum number of milliseconds to play the chunk
+            on the channel before halting.
+    
+    Returns:
+        int: The index of the channel used to play the sound, or -1 if the sound
+        could not be played.
+
+    """
     return _ctypes["Mix_PlayChannelTimed"](channel, chunk, loops, ticks)
 
 def Mix_PlayChannel(channel, chunk, loops):
+    """Play an audio chunk on a specific channel.
+
+    If the specified channel is -1, the chunk will be played on the first free
+    channel (if no free channel is available, an error is returned).
+
+    If a specific channel was requested and there is a chunk already playing
+    there, that chunk will be halted and the new chunk will take its place.
+
+    If ``loops`` is greater than zero, the chunk will loop the specified
+    number of times. If ``loops`` is set to -1, the chunk will loop
+    "infinitely" (~65000 times).
+
+    Args:
+        channel (int): The channel on which to play the new chunk.
+        chunk (:obj:`Mix_Chunk`): The sound to play.
+        loops (int): The number of times the chunk should loop (0 to play once,
+            -1 to loop infinitely).
+    
+    Returns:
+        int: The index of the channel used to play the sound, or -1 if the sound
+        could not be played.
+
+    """
     if dll.version_tuple >= (2, 6, 0):
         return _ctypes["Mix_PlayChannel"](channel, chunk, loops)
     else:
@@ -1025,6 +1067,23 @@ def Mix_MasterVolume(volume):
 
 
 def Mix_HaltChannel(channel):
+    """Halt playback of a particular channel.
+
+    This will stop playback on the specified channel until a new chunk is
+    played there. Specifying a channel of -1 will halt `all` non-music channels.
+
+    Any halted channels will have any currently-registered effects deregistered,
+    and will call any callback specified by :func:`Mix_ChannelFinished` before
+    this function returns.
+
+    Args:
+        channel (int): The index of the channel to halt, or -1 to halt all
+            channels.
+
+    Returns:
+        int: 0 on success, or -1 on error.
+
+    """
     return _ctypes["Mix_HaltChannel"](channel)
 
 def Mix_HaltGroup(tag):
