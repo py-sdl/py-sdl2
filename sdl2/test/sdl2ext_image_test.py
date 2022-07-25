@@ -164,6 +164,36 @@ def test_load_img(with_sdl):
         sdl2ext.load_img(bad_type)
 
 
+@pytest.mark.skipif(not _HASSDLIMAGE, reason="Requires SDL2_image")
+def test_load_svg(with_sdl):
+    # Function requires SDL_image >= 2.6.0
+    if sdlimage.dll.version_tuple < (2, 6, 0):
+        pytest.skip("Requires SDL2_image >= 2.6.0")
+
+    # Test loading SVG without size
+    svg_path = os.path.join(resource_path, "surfacetest.svg")
+    sf = sdl2ext.load_svg(svg_path)
+    assert isinstance(sf, surf.SDL_Surface)
+    assert sf.format.contents.format == pixels.SDL_PIXELFORMAT_ARGB8888
+    surf.SDL_FreeSurface(sf)
+
+    # Test loading SVG at a specific size
+    sf = sdl2ext.load_svg(svg_path, width = 100)
+    assert isinstance(sf, surf.SDL_Surface)
+    assert sf.w == 100
+    surf.SDL_FreeSurface(sf)
+
+    # Test exception on missing file
+    bad_path = os.path.join(resource_path, "doesnt_exist.svg")
+    with pytest.raises(IOError):
+        sdl2ext.load_svg(bad_path)
+
+    # Test exception on bad file type
+    bad_type = os.path.join(resource_path, "tuffy.ttf")
+    with pytest.raises(sdl2ext.SDLError):
+        sdl2ext.load_svg(bad_type)
+
+
 @pytest.mark.skipif(not _HASPIL, reason="Pillow library is not installed")
 def test_pillow_to_image(with_sdl):
     # Import an image using Pillow
