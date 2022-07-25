@@ -321,9 +321,9 @@ def test_IMG_LoadPNM_RW(with_sdl_image):
 @pytest.mark.skipif(sdlimage.dll.version < 2002, reason="Added in 2.0.2")
 @pytest.mark.xfail(isconda and iswindows, reason="Broken w/ win64 Conda")
 def test_IMG_LoadSVG_RW(with_sdl_image):
-    rw = _get_image_rw("svg")
-    sf = sdlimage.IMG_LoadSVG_RW(rw)
-    sdl2.SDL_RWclose(rw)
+    fp = io.open(_get_image_path("svg"), "rb")
+    sf = sdlimage.IMG_LoadSVG_RW(rwops.rw_from_object(fp))
+    fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
@@ -383,9 +383,9 @@ def test_IMG_LoadXV_RW(with_sdl_image):
 @pytest.mark.xfail(isconda and iswindows, reason="Broken w/ win64 Conda")
 @pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
 def test_IMG_LoadSizedSVG_RW(with_sdl_image):
-    rw = _get_image_rw("svg")
-    sf = sdlimage.IMG_LoadSizedSVG_RW(rw, 100, 0)
-    sdl2.SDL_RWclose(rw)
+    fp = io.open(_get_image_path("svg"), "rb")
+    sf = sdlimage.IMG_LoadSizedSVG_RW(rwops.rw_from_object(fp), 100, 0)
+    fp.close()
     _verify_img_load(sf)
     assert sf.contents.w == 100
     assert sf.contents.h == 100
