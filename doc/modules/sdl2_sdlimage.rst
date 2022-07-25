@@ -20,6 +20,7 @@ documentation.
    input (e.g. PyOpenGL), the Pillow imaging library may be a better fit for
    your project.
 
+
 Initialization and library information functions
 ------------------------------------------------
 
@@ -174,6 +175,22 @@ Image writing functions
 .. autofunction:: IMG_SaveJPG
 
 .. autofunction:: IMG_SaveJPG_RW
+
+
+Animation objects and functions
+-------------------------------
+
+.. autoclass:: IMG_Animation
+
+.. autofunction:: IMG_LoadAnimation
+
+.. autofunction:: IMG_LoadAnimation_RW
+
+.. autofunction:: IMG_LoadAnimationTyped_RW
+
+.. autofunction:: IMG_LoadGIFAnimation_RW
+
+.. autofunction:: IMG_FreeAnimation
 
 
 Module constants

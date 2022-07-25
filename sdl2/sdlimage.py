@@ -67,6 +67,42 @@ IMG_INIT_JXL = 0x00000010
 IMG_INIT_AVIF = 0x00000020
 
 class IMG_Animation(Structure):
+    """A structure containing the frame data for an animation.
+
+    When working with this data structure in Python, you need to be careful not
+    to access an out-of-range frame or delay number to avoid illegal memory
+    access problems. To convert the animation data to a more Pythonic format,
+    you can do something similar to the example below::
+
+       # Load animation and verify it loaded correctly
+       anim = sdlimage.IMG_LoadAnimation("test.gif").contents
+       if not anim:
+           err = sdlimage.IMG_GetError()
+           raise RuntimeError(err.encode("utf-8"))
+
+       # Load frames/delays from the IMG_Animation structure to lists
+       frames = []
+       delays = []
+       for frame in range(anim.count):
+           frames.append(anim.frames[frame].contents)
+           delays.append(anim.delays[frame])
+
+    Note that even if you copy the frame surfaces into a Python list, the
+    pixel data will still be stored within the animation object. As such, you
+    cannot call :func:`IMG_FreeAnimation` on an object until you are fully
+    done with its data.
+
+    Attributes:
+        w (int): The width (in pixels) of the animation.
+        h (int): The height (in pixels) of the animation.
+        count (int): The number of frames in the animation.
+        frames (POINTER(POINTER(:obj:`SDL_Surface`))): An array of pointers
+            (of length ``count``) to the SDL surfaces for the frames of the
+            animation.
+        delays (POINTER(int)): An array (of length ``count``) containing the
+            delays (in milliseconds) between each frame in the animation.
+
+    """
     _fields_ = [
         ("w", c_int),
         ("h", c_int),
@@ -147,17 +183,17 @@ for f in _funcdefs:
 # Python wrapper functions
 
 def IMG_Linked_Version():
-    """Gets the version of the dynamically-linked **SDL2_image** library.
+    """Gets the version of the dynamically-linked **SDL_image** library.
 
     Returns:
         POINTER(:obj:`SDL_version`): A pointer to a structure containing the
-        version of the SDL2_image library currently in use.
+        version of the SDL_image library currently in use.
 
     """
     return _ctypes.IMG_Linked_Version()
 
 def IMG_Init(flags):
-    """Initializes the SDL2_image library.
+    """Initializes the SDL_image library.
     
     Calling this function enables support for the JPEG, PNG, TIF, WebP, JPEG XL,
     and/or AVIF image formats as requested by the init flags. All other image
@@ -210,7 +246,7 @@ def IMG_Init(flags):
     return _ctypes["IMG_Init"](flags)
 
 def IMG_Quit():
-    """De-initializes the SDL2_image library.
+    """De-initializes the SDL_image library.
     
     Calling this function disables JPEG, PNG, TIF, and WEBP support and frees
     all associated memory. Once this has been called, you can re-initialize
@@ -224,7 +260,7 @@ def IMG_Quit():
     return _ctypes["IMG_Quit"]()
 
 def IMG_LoadTyped_RW(src, freesrc, type):
-    """Loads an image file from an SDL2 file object as a specific format.
+    """Loads an image file from an SDL file object as a specific format.
     
     This function allows you to explicitly specify the format type of the image
     to load. Here are the different possible image format strings:
@@ -306,7 +342,7 @@ def IMG_Load(file):
     return _ctypes["IMG_Load"](file)
 
 def IMG_Load_RW(src, freesrc):
-    """Loads an image file from an SDL2 file object to a new surface.
+    """Loads an image file from an SDL file object to a new surface.
 
     This can load all supported formats, *except* TGA. See :func:`IMG_Load` 
     for more information.
@@ -1033,8 +1069,8 @@ def IMG_SaveJPG(surface, file, quality):
     error that can be retrieved with :func:`IMG_GetError`.
 
     .. note::
-       As of SDL_image 2.0.5, JPEG saving is not supported by the official
-       libsdl.org macOS binaries.
+       JPEG saving was not supported in the official libsdl.org macOS binaries
+       until SDL_image 2.6.0.
 
     Args:
         surface (:obj:`SDL_Surface`): The surface to be saved to JPEG.
@@ -1075,18 +1111,103 @@ def IMG_SaveJPG_RW(surface, dst, freedst, quality):
 
 
 def IMG_LoadAnimation(file):
+    """Loads an animated image from a file.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, this currently
+    only supports GIF animations.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        file (bytes): A UTF8-encoded bytestring containing the path to the 
+            animation file to load.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        null pointer if there was an error.
+
+    """
     return _ctypes["IMG_LoadAnimation"](file)
 
 def IMG_LoadAnimation_RW(src, freesrc):
+    """Loads an animated image from an SDL file object.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, this currently
+    only supports GIF animations.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the
+            animation.
+        freesrc (int): If non-zero, the input file object will be closed and
+            freed after it has been read.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        null pointer if there was an error.
+
+    """
     return _ctypes["IMG_LoadAnimation_RW"](src, freesrc)
 
 def IMG_LoadAnimationTyped_RW(src, freesrc, type):
+    """Loads an animated image from an SDL file object as a specific format.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, the only
+    supported animation type is ``b'GIF'``.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the
+            animation.
+        freesrc (int): If non-zero, the input file object will be closed and
+            freed after it has been read.
+        type (bytes): A bytestring indicating the animation format with which
+            the file object should be loaded.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        null pointer if there was an error.
+
+    """
     return _ctypes["IMG_LoadAnimationTyped_RW"](src, freesrc, type)
 
 def IMG_FreeAnimation(anim):
+    """Closes and frees the memory associated with a given animation.
+
+    This function should be called on an animation after you are done with it.
+    An :obj:`IMG_Animation` and its frame data cannot be used after it has been
+    closed.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        anim (:obj:`IMG_Animation`): The animation object to close.
+
+    """
     return _ctypes["IMG_FreeAnimation"](anim)
 
 def IMG_LoadGIFAnimation_RW(src):
+    """Loads a GIF animation from an SDL file object.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. Use the :func:`IMG_GetError`
+    function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the GIF.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        a null pointer if there was an error.
+
+    """
     return _ctypes["IMG_LoadGIFAnimation_RW"](src)
 
 
