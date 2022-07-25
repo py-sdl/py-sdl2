@@ -1,3 +1,4 @@
+import io
 import os
 import sys
 import ctypes
@@ -200,7 +201,7 @@ def test_IMG_LoadTexture_RW(sw_renderer):
         if fmt in skip:
             continue
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             tex = sdlimage.IMG_LoadTexture_RW(rd, rwops.rw_from_object(fp), 0)
             if not tex:
                 assert sdlimage.IMG_GetError() == b""
@@ -215,7 +216,7 @@ def test_IMG_LoadTextureTyped_RW(sw_renderer):
         if fmt in skip:
             continue
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             rw = rwops.rw_from_object(fp)
             fmtx = fmt.upper().encode("utf-8")
             tex = sdlimage.IMG_LoadTextureTyped_RW(rd, rw, 0, fmtx)
@@ -239,42 +240,42 @@ def test_IMG_LoadTyped_RW(with_sdl_image):
 @pytest.mark.skip("not yet available in official binaries")
 @pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
 def test_IMG_LoadAVIF_RW(with_sdl_image):
-    fp = open(_get_image_path("avif"), "rb")
+    fp = io.open(_get_image_path("avif"), "rb")
     sf = sdlimage.IMG_LoadBMP_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadBMP_RW(with_sdl_image):
-    fp = open(_get_image_path("bmp"), "rb")
+    fp = io.open(_get_image_path("bmp"), "rb")
     sf = sdlimage.IMG_LoadBMP_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadCUR_RW(with_sdl_image):
-    fp = open(_get_image_path("cur"), "rb")
+    fp = io.open(_get_image_path("cur"), "rb")
     sf = sdlimage.IMG_LoadCUR_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadGIF_RW(with_sdl_image):
-    fp = open(_get_image_path("gif"), "rb")
+    fp = io.open(_get_image_path("gif"), "rb")
     sf = sdlimage.IMG_LoadGIF_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadICO_RW(with_sdl_image):
-    fp = open(_get_image_path("ico"), "rb")
+    fp = io.open(_get_image_path("ico"), "rb")
     sf = sdlimage.IMG_LoadICO_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadJPG_RW(with_sdl_image):
-    fp = open(_get_image_path("jpg"), "rb")
+    fp = io.open(_get_image_path("jpg"), "rb")
     sf = sdlimage.IMG_LoadJPG_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
@@ -283,35 +284,35 @@ def test_IMG_LoadJPG_RW(with_sdl_image):
 @pytest.mark.skip("not yet available in official binaries")
 @pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
 def test_IMG_LoadJXL_RW(with_sdl_image):
-    fp = open(_get_image_path("jxl"), "rb")
+    fp = io.open(_get_image_path("jxl"), "rb")
     sf = sdlimage.IMG_LoadBMP_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadLBM_RW(with_sdl_image):
-    fp = open(_get_image_path("lbm"), "rb")
+    fp = io.open(_get_image_path("lbm"), "rb")
     sf = sdlimage.IMG_LoadLBM_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadPCX_RW(with_sdl_image):
-    fp = open(_get_image_path("pcx"), "rb")
+    fp = io.open(_get_image_path("pcx"), "rb")
     sf = sdlimage.IMG_LoadPCX_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadPNG_RW(with_sdl_image):
-    fp = open(_get_image_path("png"), "rb")
+    fp = io.open(_get_image_path("png"), "rb")
     sf = sdlimage.IMG_LoadPNG_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadPNM_RW(with_sdl_image):
-    fp = open(_get_image_path("pnm"), "rb")
+    fp = io.open(_get_image_path("pnm"), "rb")
     sf = sdlimage.IMG_LoadPNM_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
@@ -328,21 +329,21 @@ def test_IMG_LoadSVG_RW(with_sdl_image):
 
 @pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
 def test_IMG_LoadQOI_RW(with_sdl_image):
-    fp = open(_get_image_path("qoi"), "rb")
+    fp = io.open(_get_image_path("qoi"), "rb")
     sf = sdlimage.IMG_LoadQOI_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadTGA_RW(with_sdl_image):
-    fp = open(_get_image_path("tga"), "rb")
+    fp = io.open(_get_image_path("tga"), "rb")
     sf = sdlimage.IMG_LoadTGA_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadTIF_RW(with_sdl_image):
-    fp = open(_get_image_path("tif"), "rb")
+    fp = io.open(_get_image_path("tif"), "rb")
     sf = sdlimage.IMG_LoadTIF_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
@@ -350,7 +351,7 @@ def test_IMG_LoadTIF_RW(with_sdl_image):
 
 @pytest.mark.xfail(bad_webp, reason="WEBP not availale or broken")
 def test_IMG_LoadWEBP_RW(with_sdl_image):
-    fp = open(_get_image_path("webp"), "rb")
+    fp = io.open(_get_image_path("webp"), "rb")
     sf = sdlimage.IMG_LoadWEBP_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
@@ -358,14 +359,14 @@ def test_IMG_LoadWEBP_RW(with_sdl_image):
 
 @pytest.mark.xfail(bad_xcf, reason="XCF currently broken on some platforms")
 def test_IMG_LoadXCF_RW(with_sdl_image):
-    fp = open(_get_image_path("xcf"), "rb")
+    fp = io.open(_get_image_path("xcf"), "rb")
     sf = sdlimage.IMG_LoadXCF_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
     surface.SDL_FreeSurface(sf)
 
 def test_IMG_LoadXPM_RW(with_sdl_image):
-    fp = open(_get_image_path("xpm"), "rb")
+    fp = io.open(_get_image_path("xpm"), "rb")
     sf = sdlimage.IMG_LoadXPM_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
@@ -373,7 +374,7 @@ def test_IMG_LoadXPM_RW(with_sdl_image):
 
 @pytest.mark.skip("not implemented")
 def test_IMG_LoadXV_RW(with_sdl_image):
-    fp = open(_get_image_path("xv"), "rb")
+    fp = io.open(_get_image_path("xv"), "rb")
     sf = sdlimage.IMG_LoadXV_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_img_load(sf)
@@ -394,7 +395,7 @@ def test_IMG_LoadSizedSVG_RW(with_sdl_image):
 def test_IMG_isAVIF(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "avif":
                 assert sdlimage.IMG_isAVIF(imgrw)
@@ -404,7 +405,7 @@ def test_IMG_isAVIF(with_sdl_image):
 def test_IMG_isBMP(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "bmp":
                 assert sdlimage.IMG_isBMP(imgrw)
@@ -414,7 +415,7 @@ def test_IMG_isBMP(with_sdl_image):
 def test_IMG_isCUR(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "cur":
                 assert sdlimage.IMG_isCUR(imgrw)
@@ -424,7 +425,7 @@ def test_IMG_isCUR(with_sdl_image):
 def test_IMG_isGIF(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "gif":
                 assert sdlimage.IMG_isGIF(imgrw)
@@ -434,7 +435,7 @@ def test_IMG_isGIF(with_sdl_image):
 def test_IMG_isICO(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "ico":
                 assert sdlimage.IMG_isICO(imgrw)
@@ -444,7 +445,7 @@ def test_IMG_isICO(with_sdl_image):
 def test_IMG_isJPG(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "jpg":
                 assert sdlimage.IMG_isJPG(imgrw)
@@ -455,7 +456,7 @@ def test_IMG_isJPG(with_sdl_image):
 def test_IMG_isJXL(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "jxl":
                 assert sdlimage.IMG_isJXL(imgrw)
@@ -465,7 +466,7 @@ def test_IMG_isJXL(with_sdl_image):
 def test_IMG_isLBM(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "lbm":
                 assert sdlimage.IMG_isLBM(imgrw)
@@ -475,7 +476,7 @@ def test_IMG_isLBM(with_sdl_image):
 def test_IMG_isPCX(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "pcx":
                 assert sdlimage.IMG_isPCX(imgrw)
@@ -485,7 +486,7 @@ def test_IMG_isPCX(with_sdl_image):
 def test_IMG_isPNG(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "png":
                 assert sdlimage.IMG_isPNG(imgrw)
@@ -495,7 +496,7 @@ def test_IMG_isPNG(with_sdl_image):
 def test_IMG_isPNM(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt in ("pnm", "pbm", "ppm", "pgm"):
                 assert sdlimage.IMG_isPNM(imgrw)
@@ -507,7 +508,7 @@ def test_IMG_isPNM(with_sdl_image):
 def test_IMG_isSVG(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "svg":
                 assert sdlimage.IMG_isSVG(imgrw)
@@ -518,7 +519,7 @@ def test_IMG_isSVG(with_sdl_image):
 def test_IMG_isQOI(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "qoi":
                 assert sdlimage.IMG_isQOI(imgrw)
@@ -528,7 +529,7 @@ def test_IMG_isQOI(with_sdl_image):
 def test_IMG_isTIF(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "tif":
                 assert sdlimage.IMG_isTIF(imgrw)
@@ -539,7 +540,7 @@ def test_IMG_isTIF(with_sdl_image):
 def test_IMG_isWEBP(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "webp":
                 assert sdlimage.IMG_isWEBP(imgrw)
@@ -550,7 +551,7 @@ def test_IMG_isWEBP(with_sdl_image):
 def test_IMG_isXCF(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "xcf":
                 assert sdlimage.IMG_isXCF(imgrw)
@@ -560,7 +561,7 @@ def test_IMG_isXCF(with_sdl_image):
 def test_IMG_isXPM(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "xpm":
                 assert sdlimage.IMG_isXPM(imgrw)
@@ -571,7 +572,7 @@ def test_IMG_isXPM(with_sdl_image):
 def test_IMG_isXV(with_sdl_image):
     for fmt in formats:
         fpath = _get_image_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             imgrw = rwops.rw_from_object(fp)
             if fmt == "xv":
                 assert sdlimage.IMG_isXV(imgrw)
@@ -581,7 +582,7 @@ def test_IMG_isXV(with_sdl_image):
 @pytest.mark.skipif(hasattr(sys, "pypy_version_info"),
     reason="PyPy's ctypes fails to pass a correct string array")
 def test_IMG_ReadXPMFromArray(with_sdl_image):
-    fp = open(_get_image_path("xpm"), "rb")
+    fp = io.open(_get_image_path("xpm"), "rb")
     xpm = b""
     fp.readline()  # /* XPM */
     fp.readline()  # static char * surfacetest_xpm[] = {
@@ -599,7 +600,7 @@ def test_IMG_ReadXPMFromArray(with_sdl_image):
 
 @pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
 def test_IMG_ReadXPMFromArrayToRGB888(with_sdl_image):
-    fp = open(_get_image_path("xpm"), "rb")
+    fp = io.open(_get_image_path("xpm"), "rb")
     xpm = b""
     fp.readline()  # /* XPM */
     fp.readline()  # static char * surfacetest_xpm[] = {
@@ -706,7 +707,7 @@ def test_IMG_LoadFreeAnimation(with_sdl_image):
 def test_IMG_LoadAnimation_RW():
     for fmt in animation_formats:
         fpath = _get_animation_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             anim = sdlimage.IMG_LoadAnimation_RW(rwops.rw_from_object(fp), 0)
             _verify_anim_load(anim)
             sdlimage.IMG_FreeAnimation(anim)
@@ -715,7 +716,7 @@ def test_IMG_LoadAnimation_RW():
 def test_IMG_LoadAnimationTyped_RW():
     for fmt in animation_formats:
         fpath = _get_animation_path(fmt)
-        with open(fpath, "rb") as fp:
+        with io.open(fpath, "rb") as fp:
             anim = sdlimage.IMG_LoadAnimationTyped_RW(
                 rwops.rw_from_object(fp), 0, fmt.upper().encode("utf-8")
             )
@@ -724,7 +725,7 @@ def test_IMG_LoadAnimationTyped_RW():
 
 @pytest.mark.skipif(sdlimage.dll.version < 2060, reason="Added in 2.6.0")
 def test_IMG_LoadGIFAnimation_RW():
-    fp = open(_get_animation_path("gif"), "rb")
+    fp = io.open(_get_animation_path("gif"), "rb")
     anim = sdlimage.IMG_LoadGIFAnimation_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_anim_load(anim)
