@@ -29,9 +29,7 @@ corresponding functions. All other audio playback is performed using
    can be used in the meantime to fill in any gaps.
 
 The official documentation for the SDL_mixer library can be found `here
-<http://www.libsdl.org/projects/SDL_mixer/docs/index.html>`_. Note that
-not all functions may be documented, as the official doucmentation is
-currently several releases out-of-date.
+<https://wiki.libsdl.org/SDL_mixer/FrontPage>`_.
 
 
 Main data types
@@ -123,7 +121,23 @@ Decoder availability & info functions
 
 .. autofunction:: Mix_GetMusicDecoder
 
+.. autofunction:: Mix_HasMusicDecoder
+
 .. autofunction:: Mix_GetMusicType
+
+
+Music metadata functions
+------------------------
+
+.. autofunction:: Mix_GetMusicTitle
+
+.. autofunction:: Mix_GetMusicTitleTag
+
+.. autofunction:: Mix_GetMusicArtistTag
+
+.. autofunction:: Mix_GetMusicAlbumTag
+
+.. autofunction:: Mix_GetMusicCopyrightTag
 
 
 Channel functions
@@ -201,6 +215,8 @@ Music playback
 
 .. autofunction:: Mix_RewindMusic
 
+.. autofunction:: Mix_ModMusicJumpToOrder
+
 .. autofunction:: Mix_SetMusicPosition
 
 .. autofunction:: Mix_HaltMusic
@@ -219,6 +235,10 @@ Volume functions
 
 .. autofunction:: Mix_VolumeMusic
 
+.. autofunction:: Mix_GetMusicVolume
+
+.. autofunction:: Mix_MasterVolume
+
 
 Playback status functions
 -------------------------
@@ -236,6 +256,16 @@ Playback status functions
 .. autofunction:: Mix_PausedMusic
 
 .. autofunction:: Mix_FadingMusic
+
+.. autofunction:: Mix_GetMusicPosition
+
+.. autofunction:: Mix_MusicDuration
+
+.. autofunction:: Mix_GetMusicLoopStartTime
+
+.. autofunction:: Mix_GetMusicLoopEndTime
+
+.. autofunction:: Mix_GetMusicLoopLengthTime
 
 
 Effects-processing functions
@@ -279,8 +309,8 @@ MikMod configuration functions
 .. autofunction:: Mix_GetSynchroValue
 
 
-MIDI SoundFont functions
-^^^^^^^^^^^^^^^^^^^^^^^^
+MIDI configuration functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: Mix_SetSoundFonts
 
@@ -288,3 +318,6 @@ MIDI SoundFont functions
 
 .. autofunction:: Mix_EachSoundFont
 
+.. autofunction:: Mix_SetTimidityCfg
+
+.. autofunction:: Mix_GetTimidityCfg

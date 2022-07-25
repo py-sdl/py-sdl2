@@ -8,6 +8,7 @@ This describes the latest changes between the PySDL2 releases.
 New Features:
 
 * Updated to wrap new functions and constants in SDL2_ttf 2.20.0 (PR #236).
+* Updated to wrap new functions and constants in SDL2_mixer 2.6.0 (PR #237).
 * Updated to wrap new functions and constants in SDL2_image 2.6.0 (PR #238).
 * Added a new function :func:`sdl2.ext.load_svg` that allows loading simple SVG
   images at arbitrary resolutions with SDL2_image 2.6.0 or later (PR #238).

@@ -7,7 +7,7 @@ from .audio import AUDIO_S16LSB, AUDIO_S16MSB, SDL_MIX_MAXVOLUME
 from .stdinc import Uint8, Uint16, Uint32, Sint16, SDL_bool
 from .endian import SDL_LIL_ENDIAN, SDL_BYTEORDER
 from .rwops import SDL_RWops, SDL_RWFromFile
-from .error import SDL_SetError, SDL_GetError, SDL_ClearError
+from .error import SDL_SetError, SDL_GetError, SDL_ClearError, SDL_OutOfMemory
 
 __all__ = [
     # Structs
@@ -66,8 +66,8 @@ _bind = dll.bind_function
 # Constants, enums, type definitions, and macros
 
 SDL_MIXER_MAJOR_VERSION = 2
-SDL_MIXER_MINOR_VERSION = 0
-SDL_MIXER_PATCHLEVEL = 4
+SDL_MIXER_MINOR_VERSION = 6
+SDL_MIXER_PATCHLEVEL = 1
 
 def SDL_MIXER_VERSION(x):
     x.major = SDL_MIXER_MAJOR_VERSION
@@ -109,7 +109,7 @@ MUS_MODPLUG_UNUSED = 10
 MUS_OPUS = 11
 
 MIX_CHANNELS = 8
-MIX_DEFAULT_FREQUENCY = 22050
+MIX_DEFAULT_FREQUENCY = 44100
 if SDL_BYTEORDER == SDL_LIL_ENDIAN:
     MIX_DEFAULT_FORMAT = AUDIO_S16LSB
 else:
@@ -189,7 +189,13 @@ _funcdefs = [
     SDLFunc("Mix_HasChunkDecoder", [c_char_p], SDL_bool, added='2.0.2'),
     SDLFunc("Mix_GetNumMusicDecoders", None, c_int),
     SDLFunc("Mix_GetMusicDecoder", [c_int], c_char_p),
+    SDLFunc("Mix_HasMusicDecoder", [c_char_p], SDL_bool, added='2.6.0'),
     SDLFunc("Mix_GetMusicType", [_P(Mix_Music)], Mix_MusicType),
+    SDLFunc("Mix_GetMusicTitle", [_P(Mix_Music)], c_char_p, added='2.6.0'),
+    SDLFunc("Mix_GetMusicTitleTag", [_P(Mix_Music)], c_char_p, added='2.6.0'),
+    SDLFunc("Mix_GetMusicArtistTag", [_P(Mix_Music)], c_char_p, added='2.6.0'),
+    SDLFunc("Mix_GetMusicAlbumTag", [_P(Mix_Music)], c_char_p, added='2.6.0'),
+    SDLFunc("Mix_GetMusicCopyrightTag", [_P(Mix_Music)], c_char_p, added='2.6.0'),
     SDLFunc("Mix_SetPostMix", [mix_func, c_void_p]),
     SDLFunc("Mix_HookMusic", [mix_func, c_void_p]),
     SDLFunc("Mix_HookMusicFinished", [music_finished]),
@@ -209,14 +215,18 @@ _funcdefs = [
     SDLFunc("Mix_GroupCount", [c_int], c_int),
     SDLFunc("Mix_GroupOldest", [c_int], c_int),
     SDLFunc("Mix_GroupNewer", [c_int], c_int),
+    SDLFunc("Mix_PlayChannel", [c_int, _P(Mix_Chunk), c_int], c_int, added='2.6.0'),
     SDLFunc("Mix_PlayChannelTimed", [c_int, _P(Mix_Chunk), c_int, c_int], c_int),
     SDLFunc("Mix_PlayMusic", [_P(Mix_Music), c_int], c_int),
     SDLFunc("Mix_FadeInMusic", [_P(Mix_Music), c_int, c_int], c_int),
     SDLFunc("Mix_FadeInMusicPos", [_P(Mix_Music), c_int, c_int, c_double], c_int),
+    SDLFunc("Mix_FadeInChannel", [c_int, _P(Mix_Chunk), c_int, c_int], c_int, added='2.6.0'),
     SDLFunc("Mix_FadeInChannelTimed", [c_int, _P(Mix_Chunk), c_int, c_int, c_int], c_int),
     SDLFunc("Mix_Volume", [c_int, c_int], c_int),
     SDLFunc("Mix_VolumeChunk", [_P(Mix_Chunk), c_int], c_int),
     SDLFunc("Mix_VolumeMusic", [c_int], c_int),
+    SDLFunc("Mix_GetMusicVolume", [_P(Mix_Music)], c_int, added='2.6.0'),
+    SDLFunc("Mix_MasterVolume", [c_int], c_int, added='2.6.0'),
     SDLFunc("Mix_HaltChannel", [c_int], c_int),
     SDLFunc("Mix_HaltGroup", [c_int], c_int),
     SDLFunc("Mix_HaltMusic", None, c_int),
@@ -233,7 +243,13 @@ _funcdefs = [
     SDLFunc("Mix_ResumeMusic"),
     SDLFunc("Mix_RewindMusic"),
     SDLFunc("Mix_PausedMusic", None, c_int),
+    SDLFunc("Mix_ModMusicJumpToOrder", [c_int], c_int, added='2.6.0'),
     SDLFunc("Mix_SetMusicPosition", [c_double], c_int),
+    SDLFunc("Mix_GetMusicPosition", [_P(Mix_Music)], c_double, added='2.6.0'),
+    SDLFunc("Mix_MusicDuration", [_P(Mix_Music)], c_double, added='2.6.0'),
+    SDLFunc("Mix_GetMusicLoopStartTime", [_P(Mix_Music)], c_double, added='2.6.0'),
+    SDLFunc("Mix_GetMusicLoopEndTime", [_P(Mix_Music)], c_double, added='2.6.0'),
+    SDLFunc("Mix_GetMusicLoopLengthTime", [_P(Mix_Music)], c_double, added='2.6.0'),
     SDLFunc("Mix_Playing", [c_int], c_int),
     SDLFunc("Mix_PlayingMusic", None, c_int),
     SDLFunc("Mix_SetMusicCMD", [c_char_p], c_int),
@@ -242,6 +258,8 @@ _funcdefs = [
     SDLFunc("Mix_SetSoundFonts", [c_char_p], c_int),
     SDLFunc("Mix_GetSoundFonts", None, c_char_p),
     SDLFunc("Mix_EachSoundFont", [soundfont_function, c_void_p], c_int),
+    SDLFunc("Mix_SetTimidityCfg", [c_char_p], c_int, added='2.6.0'),
+    SDLFunc("Mix_GetTimidityCfg", None, c_char_p, added='2.6.0'),
     SDLFunc("Mix_GetChunk", [c_int], _P(Mix_Chunk)),
     SDLFunc("Mix_CloseAudio"),
 ]
@@ -266,9 +284,9 @@ def Mix_Linked_Version():
 def Mix_Init(flags):
     """Initializes the SDL2_mixer library.
     
-    Calling this function enables support for the FLAC, MOD, MP3, and/or Ogg
-    Vorbis audio formats as requested by the init flags. All other audio file
-    formats can be loaded or used regardless of whether this has been called.
+    Calling this function enables support for various audio formats as requested
+    by the init flags. All other audio file formats can be loaded or used
+    regardless of whether this has been called.
 
     The following init flags are supported:
 
@@ -278,7 +296,9 @@ def Mix_Init(flags):
     FLAC       ``MIX_INIT_FLAC``
     MOD        ``MIX_INIT_MID``
     MP3        ``MIX_INIT_MP3``
+    MIDI       ``MIX_INIT_MID``
     Ogg Vorbis ``MIX_INIT_OGG``
+    Opus       ``MIX_INIT_OPUS``
     ========== =================
 
     This can be called multiple times to enable support for these formats
@@ -316,11 +336,11 @@ def Mix_Init(flags):
     return _ctypes["Mix_Init"](flags)
 
 def Mix_Quit():
-    """De-initializes the SDL2_mixer library.
+    """De-initializes the SDL_mixer library.
     
-    Calling this function disables FLAC, MOD, MP3, and Ogg support and frees
-    all associated memory. Once this has been called, you can re-initialize
-    support for those audio decoders using :func:`Mix_Init` and the
+    Calling this function disables support for any formats initialized by
+    :func:`Mix_Init` and frees all associated memory. You can re-initialize
+    support for those decoders by calling :func:`Mix_Init` again with the
     corresponding init flags.
 
     You only need to call this function once, no matter how many times
@@ -768,13 +788,10 @@ def Mix_GetMusicDecoder(index):
     Decoder Name  Format Type                   Notes
     ============= ============================= =============================
     b"FLAC"       Free Lossless Audio Codec
-    b"MODPLUG"    Amiga MOD (via libmodplug)
-    b"MOD"        Amiga MOD (via libmikmod)
+    b"MOD"        Amiga MOD
     b"MP3"        MP3 format
-    b"MPG123"     MP3 format (duplicate)
     b"OGG"        Ogg Vorbis
     b"MIDI"       MIDI format                   Not always available on Linux
-    b"NATIVEMIDI" MIDI format (OS native)       Not available on Linux
     b"OPUS"       Opus Interactive Audio Codec  Added in SDL_mixer 2.0.4
     b"CMD         External music command        Not available on Windows
     b"WAVE"       Waveform Audio File Format
@@ -789,6 +806,20 @@ def Mix_GetMusicDecoder(index):
 
     """
     return _ctypes["Mix_GetMusicDecoder"](index)
+
+def Mix_HasMusicDecoder(name):
+    """Checks whether a specific music decoder is available.
+
+    See :func:`Mix_GetMusicDecoder` for a list of valid decoder names.
+
+    Args:
+        name (bytes): A bytestring of the name of the decoder to query.
+
+    Returns:
+        int: 1 if the decoder is present, or 0 if unavailable.
+
+    """
+    return _ctypes["Mix_HasMusicDecoder"](name)
 
 def Mix_GetMusicType(music):
     """Gets the format of a given music object.
@@ -806,6 +837,88 @@ def Mix_GetMusicType(music):
     """
     return _ctypes["Mix_GetMusicType"](music)
 
+def Mix_GetMusicTitle(music):
+    """Gets the song title for a given music object.
+
+    If a title is not available in the music metadata, the file name will be
+    returned instead. If no music is playing, this will return an empty string.
+
+    Args:
+        music (:obj:`Mix_Music`): The music object from which to retrieve the
+            title.
+
+    Returns:
+        bytes: The song title of the music object.
+
+    """
+    return _ctypes["Mix_GetMusicTitle"](music)
+
+def Mix_GetMusicTitleTag(music):
+    """Gets the song title for a given music object.
+
+    Unlike :func:`Mix_GetMusicTitle`, this function only checks for a title in
+    the music metadata and will return an empty string instead of the file name
+    if no title tag is present.
+    
+    If no music is playing, this will return an empty string.
+
+    Args:
+        music (:obj:`Mix_Music`): The music object from which to retrieve the
+            title.
+
+    Returns:
+        bytes: The song title of the music object.
+
+    """
+    return _ctypes["Mix_GetMusicTitleTag"](music)
+
+def Mix_GetMusicArtistTag(music):
+    """Gets the artist name for a given music object.
+    
+    If the music metadata has no artist tag or no music is playing, this will
+    return an empty string.
+
+    Args:
+        music (:obj:`Mix_Music`): The music object from which to retrieve the
+            artist.
+
+    Returns:
+        bytes: The artist name for the music object.
+
+    """
+    return _ctypes["Mix_GetMusicArtistTag"](music)
+
+def Mix_GetMusicAlbumTag(music):
+    """Gets the album name for a given music object.
+    
+    If the music metadata has no album tag or no music is playing, this will
+    return an empty string.
+
+    Args:
+        music (:obj:`Mix_Music`): The music object from which to retrieve the
+            album name.
+
+    Returns:
+        bytes: The album name for the music object.
+
+    """
+    return _ctypes["Mix_GetMusicAlbumTag"](music)
+
+def Mix_GetMusicCopyrightTag(music):
+    """Gets the copyright text for a given music object.
+    
+    If the music metadata has no copyright tag or no music is playing, this will
+    return an empty string.
+
+    Args:
+        music (:obj:`Mix_Music`): The music object from which to retrieve the
+            copyright text.
+
+    Returns:
+        bytes: The copyright text for the music object.
+
+    """
+    return _ctypes["Mix_GetMusicCopyrightTag"](music)
 
 def Mix_SetPostMix(mix_func, arg):
     return _ctypes["Mix_SetPostMix"](mix_func, arg)
@@ -869,12 +982,77 @@ def Mix_GroupNewer(tag):
 
 
 def Mix_PlayChannelTimed(channel, chunk, loops, ticks):
+    """Play an audio chunk on a specific channel for a given duration.
+
+    This function is the same as :func:`Mix_PlayChannel` except that you can
+    specify the maximum number of milliseconds for the sound to be played before
+    it is halted.
+
+    Args:
+        channel (int): The channel on which to play the new chunk.
+        chunk (:obj:`Mix_Chunk`): The sound to play.
+        loops (int): The number of times the chunk should loop (0 to play once,
+            -1 to loop infinitely).
+        ticks (int): The maximum number of milliseconds to play the chunk
+            on the channel before halting.
+    
+    Returns:
+        int: The index of the channel used to play the sound, or -1 if the sound
+        could not be played.
+
+    """
     return _ctypes["Mix_PlayChannelTimed"](channel, chunk, loops, ticks)
 
 def Mix_PlayChannel(channel, chunk, loops):
-    return Mix_PlayChannelTimed(channel, chunk, loops, -1)
+    """Play an audio chunk on a specific channel.
+
+    If the specified channel is -1, the chunk will be played on the first free
+    channel (if no free channel is available, an error is returned).
+
+    If a specific channel was requested and there is a chunk already playing
+    there, that chunk will be halted and the new chunk will take its place.
+
+    If ``loops`` is greater than zero, the chunk will loop the specified
+    number of times. If ``loops`` is set to -1, the chunk will loop
+    "infinitely" (~65000 times).
+
+    Args:
+        channel (int): The channel on which to play the new chunk.
+        chunk (:obj:`Mix_Chunk`): The sound to play.
+        loops (int): The number of times the chunk should loop (0 to play once,
+            -1 to loop infinitely).
+    
+    Returns:
+        int: The index of the channel used to play the sound, or -1 if the sound
+        could not be played.
+
+    """
+    if dll.version_tuple >= (2, 6, 0):
+        return _ctypes["Mix_PlayChannel"](channel, chunk, loops)
+    else:
+        return Mix_PlayChannelTimed(channel, chunk, loops, -1)
 
 def Mix_PlayMusic(music, loops):
+    """Play a new music object.
+
+    In SDL_mixer there is only ever one music object playing at a time; if this
+    is called while another music object is playing, the previous music will be
+    replaced with the new music.
+
+    Please note that if the currently-playing music is in the process of fading
+    out (via :func:`Mix_FadeOutMusic`), this function will block until the fade
+    completes. If you need to avoid this, be sure to call :func:`Mix_HaltMusic`
+    before calling this function.
+
+    Args:
+        music (:obj:`Mix_Music`): The new music to play on the music channel.
+        loops (int): The number of loops to play the music for (if 0, will only
+            play once).
+
+    Returns:
+        int: 0 on success, or -1 on error.
+
+    """
     return _ctypes["Mix_PlayMusic"](music, loops)
 
 
@@ -888,7 +1066,10 @@ def Mix_FadeInChannelTimed(channel, chunk, loops, ms, ticks):
     return _ctypes["Mix_FadeInChannelTimed"](channel, chunk, loops, ms, ticks)
 
 def Mix_FadeInChannel(channel, chunk, loops, ms):
-    return Mix_FadeInChannelTimed(channel, chunk, loops, ms, -1)
+    if dll.version_tuple >= (2, 6, 0):
+        return _ctypes["Mix_FadeInChannel"](channel, chunk, loops, ms)
+    else:
+        return Mix_FadeInChannelTimed(channel, chunk, loops, ms, -1)
 
 
 def Mix_Volume(channel, volume):
@@ -900,14 +1081,48 @@ def Mix_VolumeChunk(chunk, volume):
 def Mix_VolumeMusic(volume):
     return _ctypes["Mix_VolumeMusic"](volume)
 
+def Mix_GetMusicVolume(music):
+    return _ctypes["Mix_GetMusicVolume"](music)
+
+def Mix_MasterVolume(volume):
+    return _ctypes["Mix_MasterVolume"](volume)
+
 
 def Mix_HaltChannel(channel):
+    """Halt playback of a particular channel.
+
+    This will stop playback on the specified channel until a new chunk is
+    played there. Specifying a channel of -1 will halt `all` non-music channels.
+
+    Any halted channels will have any currently-registered effects deregistered,
+    and will call any callback specified by :func:`Mix_ChannelFinished` before
+    this function returns.
+
+    Args:
+        channel (int): The index of the channel to halt, or -1 to halt all
+            channels.
+
+    Returns:
+        int: 0 on success, or -1 on error.
+
+    """
     return _ctypes["Mix_HaltChannel"](channel)
 
 def Mix_HaltGroup(tag):
     return _ctypes["Mix_HaltGroup"](tag)
 
 def Mix_HaltMusic():
+    """Halt playback of the music channel.
+
+    This will stop playback on music channel until a new music object is played.
+
+    Halting the music channnel will call any callback set by
+    :func:`Mix_HookMusicFinished` before this function returns.
+
+    Returns:
+        int: 0, regardless of whether any music was halted.
+
+    """
     return _ctypes["Mix_HaltMusic"]()
 
 def Mix_ExpireChannel(channel, ticks):
@@ -931,34 +1146,138 @@ def Mix_FadingChannel(which):
 
 
 def Mix_Pause(channel):
+    """Pauses playback of a given mixer channel.
+
+    This temporarily stops playback on the given channel. When resumed via
+    :func:`Mix_Resume`, the channel will continue to play where it left off.
+
+    Playing a new chunk on a channel when the channel is paused  will replace
+    the the chunk and unpause the channel.
+    
+    Args:
+        channel (int): The index of the channel to pause (or -1 to pause all
+            channels).
+
+    """
     return _ctypes["Mix_Pause"](channel)
 
 def Mix_Resume(channel):
+    """Resumes playback of a given mixer channel.
+
+    This will resume playback of the channel if it has been paused. If the
+    channel is already playing, this will have no effect.
+    
+    Args:
+        channel (int): The index of the channel to resume (or -1 to resume all
+            channels).
+
+    """
     return _ctypes["Mix_Resume"](channel)
 
 def Mix_Paused(channel):
+    """Checks whether a given mixer channel is currently paused.
+
+    Args:
+        channel (int): The index of the channel to query (or -1 to count the
+            total number of paused channels).
+
+    Returns:
+        int: 1 if the channel is paused, otherwise 0. Alternatively, if channel
+        is ``-1``, returns the number of currently paused mixer channels.
+
+    """
     return _ctypes["Mix_Paused"](channel)
 
 def Mix_PauseMusic():
+    """Pauses playback of the music channel.
+
+    This temporarily stops playback on the music channel. When resumed via
+    :func:`Mix_ResumeMusic`, the music will continue to play where it left off.
+    
+    Playing a new music object when the music channel is paused will replace
+    the current music and unpause the music stream.
+
+    """
     return _ctypes["Mix_PauseMusic"]()
 
 def Mix_ResumeMusic():
+    """Resumes playback of the music channel.
+
+    This will resume playback of the music channel if it has been paused. If
+    the music channel is already playing, this will have no effect.
+
+    """
     return _ctypes["Mix_ResumeMusic"]()
 
 def Mix_RewindMusic():
+    """Sets the music channel to the beginning of the currently loaded music.
+
+    This can be called regardless of whether music is currently playing.
+
+    """
     return _ctypes["Mix_RewindMusic"]()
 
 def Mix_PausedMusic():
+    """Checks whether the music channel is currently paused.
+
+    Returns:
+        int: 1 if the music channel is paused, otherwise 0.
+
+    """
     return _ctypes["Mix_PausedMusic"]()
 
+
+def Mix_ModMusicJumpToOrder(order):
+    return _ctypes["Mix_ModMusicJumpToOrder"](order)
 
 def Mix_SetMusicPosition(position):
     return _ctypes["Mix_SetMusicPosition"](position)
 
+def Mix_GetMusicPosition(music):
+    return _ctypes["Mix_GetMusicPosition"](music)
+
+def Mix_MusicDuration(music):
+    return _ctypes["Mix_MusicDuration"](music)
+
+def Mix_GetMusicLoopStartTime(music):
+    return _ctypes["Mix_GetMusicLoopStartTime"](music)
+
+def Mix_GetMusicLoopEndTime(music):
+    return _ctypes["Mix_GetMusicLoopEndTime"](music)
+
+def Mix_GetMusicLoopLengthTime(music):
+    return _ctypes["Mix_GetMusicLoopLengthTime"](music)
+
 def Mix_Playing(channel):
+    """Checks whether a chunk has been loaded into a given channel.
+
+    Note that this will return 1 even if the channel is paused: this only
+    checks whether the channel is ready for playback or not. It will return 0
+    if no chunk is currently loaded into the channel.
+
+    Args:
+        channel (int): The index of the channel to query (or -1 to count the
+            total number of playback-ready channels).
+
+    Returns:
+        int: 1 if a chunk is loaded in the given channel, otherwise 0.
+        Alternatively, if channel is ``-1``, returns the number of mixer
+        channels ready for playback.
+
+    """
     return _ctypes["Mix_Playing"](channel)
 
 def Mix_PlayingMusic():
+    """Checks whether music has been loaded into the music channel.
+
+    Note that this will return 1 even if the channel is paused: this only
+    checks whether the music channel is ready for playback or not. It will
+    return 0 if no music is currently loaded into the channel.
+
+    Returns:
+        int: 1 if music is loaded in the music channel, otherwise 0.
+
+    """
     return _ctypes["Mix_PlayingMusic"]()
 
 def Mix_SetMusicCMD(command):
@@ -979,6 +1298,12 @@ def Mix_GetSoundFonts():
 
 def Mix_EachSoundFont(function, data):
     return _ctypes["Mix_EachSoundFont"](function, data)
+
+def Mix_SetTimidityCfg(path):
+    return _ctypes["Mix_SetTimidityCfg"](path)
+
+def Mix_GetTimidityCfg():
+    return _ctypes["Mix_GetTimidityCfg"]()
 
 
 def Mix_GetChunk(channel):
@@ -1002,3 +1327,4 @@ def Mix_CloseAudio():
 Mix_SetError = SDL_SetError
 Mix_GetError = SDL_GetError
 Mix_ClearError = SDL_ClearError
+Mix_OutOfMemory = SDL_OutOfMemory
