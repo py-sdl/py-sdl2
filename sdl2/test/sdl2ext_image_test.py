@@ -41,6 +41,10 @@ if _HASSDLIMAGE:
     # WEBP support is broken in the 32-bit Windows SDL2_image 2.0.2 binary
     if is32bit and sdlimage.dll.version == 2002:
         skip_formats.append("webp")
+    
+    # QOI support requires SDL2_image 2.6.0 or newer
+    if sdlimage.dll.version < 2060:
+        skip_formats.append("qoi")
 
 
 # List of lossy/non-color formats that shouldn't be compared against reference

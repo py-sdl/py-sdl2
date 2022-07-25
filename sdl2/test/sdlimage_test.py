@@ -647,8 +647,7 @@ def test_IMG_SavePNG_RW(tmpdir):
 
     # Try reopening the RW as a PNG
     sf2 = sdlimage.IMG_Load(outpath.encode("utf-8"))
-    assert sdl2.SDL_GetError() == b""
-    assert isinstance(sf2.contents, surface.SDL_Surface)
+    _verify_img_load(sf2)
     surface.SDL_FreeSurface(sf)
     surface.SDL_FreeSurface(sf2)
 
@@ -685,8 +684,7 @@ def test_IMG_SaveJPG_RW(tmpdir):
 
     # Try reopening the RW as a JPG
     sf2 = sdlimage.IMG_Load(outpath.encode("utf-8"))
-    assert sdl2.SDL_GetError() == b""
-    assert isinstance(sf2.contents, surface.SDL_Surface)
+    _verify_img_load(sf2)
     surface.SDL_FreeSurface(sf)
     surface.SDL_FreeSurface(sf2)
 
