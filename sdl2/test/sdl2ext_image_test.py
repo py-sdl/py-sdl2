@@ -198,6 +198,11 @@ def test_load_svg(with_sdl):
 def test_pillow_to_image(with_sdl):
     # Import an image using Pillow
     from PIL import Image
+    try:
+        from PIL.Image import Palette
+        WEB_PALETTE = Palette.WEB
+    except ImportError:
+        WEB_PALETTE = Image.WEB
     img_path = os.path.join(resource_path, "surfacetest.bmp")
     pil_img = Image.open(img_path)
 
@@ -208,7 +213,7 @@ def test_pillow_to_image(with_sdl):
     surf.SDL_FreeSurface(sf)
 
     # Try converting a palette image
-    palette_img = pil_img.convert("P", palette=Image.WEB)
+    palette_img = pil_img.convert("P", palette=WEB_PALETTE)
     sfp = sdl2ext.pillow_to_surface(palette_img)
     pxformat = sfp.format.contents
     assert isinstance(sfp, surf.SDL_Surface)
