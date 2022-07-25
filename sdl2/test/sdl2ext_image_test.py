@@ -203,7 +203,7 @@ def test_pillow_to_image(with_sdl):
     test_imgs = [f for f in resources if f[:11] == "surfacetest"]
     for img in test_imgs:
         fmt = img.split(".")[-1]
-        if fmt in ("webp", "xcf", "lbm", "svg"):
+        if fmt in ("webp", "xcf", "lbm", "svg", "qoi"):
             continue
         pil_img = Image.open(os.path.join(resource_path, img))
         sf = sdl2ext.pillow_to_surface(pil_img)
@@ -212,6 +212,7 @@ def test_pillow_to_image(with_sdl):
         if fmt not in skip_color_check:
             check_image_contents(sf)
         surf.SDL_FreeSurface(sf)
+
 
 @pytest.mark.skipif(not _HASSDLIMAGE, reason="Requires SDL2_image")
 def test_load_image(with_sdl):
@@ -228,7 +229,7 @@ def test_load_image(with_sdl):
         assert isinstance(sf, surf.SDL_Surface)
 
         # Force only PIL
-        if _HASPIL and fmt not in ("webp", "xcf", "lbm", "svg"):
+        if _HASPIL and fmt not in ("webp", "xcf", "lbm", "svg", "qoi"):
             sf = sdl2ext.load_image(img_path, enforce="PIL")
             assert isinstance(sf, surf.SDL_Surface)
 
