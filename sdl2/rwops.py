@@ -206,6 +206,10 @@ def rw_from_object(obj):
         Note: The write() method is optional and only necessary, if the passed
         object should be able to write data.
 
+    .. note:: Under Python 2.7, file objects created with ``open()`` can have
+              problems with certain functions in newer versions of SDL2. If
+              you encounter any issues, try using ``io.open()`` instead.
+
     The returned SDL_RWops is a pure Python object and must not be freed via
     free_rw().
 

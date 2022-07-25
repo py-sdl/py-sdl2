@@ -1,5 +1,5 @@
 import os
-from ctypes import POINTER, c_int, c_char_p
+from ctypes import POINTER, Structure, c_int, c_char_p
 from ctypes import POINTER as _P
 from .dll import DLL, SDLFunc, AttributeDict
 from .version import SDL_version, SDL_VERSIONNUM
@@ -15,6 +15,7 @@ __all__ = [
     # Enums
     "IMG_InitFlags",
     "IMG_INIT_JPG", "IMG_INIT_PNG", "IMG_INIT_TIF", "IMG_INIT_WEBP",
+    "IMG_INIT_JXL", "IMG_INIT_AVIF",
     
     # Macro Functions
     "SDL_IMAGE_VERSION", "SDL_IMAGE_COMPILEDVERSION",
@@ -29,8 +30,9 @@ __all__ = [
 
 
 try:
-    dll = DLL("SDL2_image", ["SDL2_image", "SDL2_image-2.0"],
-              os.getenv("PYSDL2_DLL_PATH"))
+    dll = DLL(
+        "SDL2_image", ["SDL2_image", "SDL2_image-2.0"], os.getenv("PYSDL2_DLL_PATH")
+    )
 except RuntimeError as exc:
     raise ImportError(exc)
 
@@ -45,8 +47,8 @@ _bind = dll.bind_function
 # Constants, enums, type definitions, and macros
 
 SDL_IMAGE_MAJOR_VERSION = 2
-SDL_IMAGE_MINOR_VERSION = 0
-SDL_IMAGE_PATCHLEVEL = 5
+SDL_IMAGE_MINOR_VERSION = 6
+SDL_IMAGE_PATCHLEVEL = 0
 
 def SDL_IMAGE_VERSION(x):
     x.major = SDL_IMAGE_MAJOR_VERSION
@@ -61,6 +63,53 @@ IMG_INIT_JPG = 0x00000001
 IMG_INIT_PNG = 0x00000002
 IMG_INIT_TIF = 0x00000004
 IMG_INIT_WEBP = 0x00000008
+IMG_INIT_JXL = 0x00000010
+IMG_INIT_AVIF = 0x00000020
+
+class IMG_Animation(Structure):
+    """A structure containing the frame data for an animation.
+
+    When working with this data structure in Python, you need to be careful not
+    to access an out-of-range frame or delay number to avoid illegal memory
+    access problems. To convert the animation data to a more Pythonic format,
+    you can do something similar to the example below::
+
+       # Load animation and verify it loaded correctly
+       anim = sdlimage.IMG_LoadAnimation("test.gif").contents
+       if not anim:
+           err = sdlimage.IMG_GetError()
+           raise RuntimeError(err.encode("utf-8"))
+
+       # Load frames/delays from the IMG_Animation structure to lists
+       frames = []
+       delays = []
+       for frame in range(anim.count):
+           frames.append(anim.frames[frame].contents)
+           delays.append(anim.delays[frame])
+
+    Note that even if you copy the frame surfaces into a Python list, the
+    pixel data will still be stored within the animation object. As such, you
+    cannot call :func:`IMG_FreeAnimation` on an object until you are fully
+    done with its data.
+
+    Attributes:
+        w (int): The width (in pixels) of the animation.
+        h (int): The height (in pixels) of the animation.
+        count (int): The number of frames in the animation.
+        frames (POINTER(POINTER(:obj:`SDL_Surface`))): An array of pointers
+            (of length ``count``) to the SDL surfaces for the frames of the
+            animation.
+        delays (POINTER(int)): An array (of length ``count``) containing the
+            delays (in milliseconds) between each frame in the animation.
+
+    """
+    _fields_ = [
+        ("w", c_int),
+        ("h", c_int),
+        ("count", c_int),
+        ("frames", POINTER(POINTER(SDL_Surface))),
+        ("delays", POINTER(c_int)),
+    ]
 
 
 # Raw ctypes function definitions
@@ -75,42 +124,55 @@ _funcdefs = [
     SDLFunc("IMG_LoadTexture", [_P(SDL_Renderer), c_char_p], _P(SDL_Texture)),
     SDLFunc("IMG_LoadTexture_RW", [_P(SDL_Renderer), _P(SDL_RWops), c_int], _P(SDL_Texture)),
     SDLFunc("IMG_LoadTextureTyped_RW", [_P(SDL_Renderer), _P(SDL_RWops), c_int, c_char_p], _P(SDL_Texture)),
+    SDLFunc("IMG_isAVIF", [_P(SDL_RWops)], c_int, added='2.6.0'),
     SDLFunc("IMG_isICO", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isCUR", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isBMP", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isGIF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isJPG", [_P(SDL_RWops)], c_int),
+    SDLFunc("IMG_isJXL", [_P(SDL_RWops)], c_int, added='2.6.0'),
     SDLFunc("IMG_isLBM", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isPCX", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isPNG", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isPNM", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isSVG", [_P(SDL_RWops)], c_int, added='2.0.2'),
+    SDLFunc("IMG_isQOI", [_P(SDL_RWops)], c_int, added='2.6.0'),
     SDLFunc("IMG_isTIF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXCF", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXPM", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isXV", [_P(SDL_RWops)], c_int),
     SDLFunc("IMG_isWEBP", [_P(SDL_RWops)], c_int),
+    SDLFunc("IMG_LoadAVIF_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_LoadICO_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadCUR_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadBMP_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadGIF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadJPG_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
+    SDLFunc("IMG_LoadJXL_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_LoadLBM_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadPCX_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadPNG_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadPNM_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadSVG_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.0.2'),
+    SDLFunc("IMG_LoadQOI_RW", [_P(SDL_RWops)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_LoadTGA_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadTIF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadXCF_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadXPM_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadXV_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
     SDLFunc("IMG_LoadWEBP_RW", [_P(SDL_RWops)], _P(SDL_Surface)),
+    SDLFunc("IMG_LoadSizedSVG_RW", [_P(SDL_RWops), c_int, c_int], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_ReadXPMFromArray", [_P(c_char_p)], _P(SDL_Surface)),
+    SDLFunc("IMG_ReadXPMFromArrayToRGB888", [_P(c_char_p)], _P(SDL_Surface), added='2.6.0'),
     SDLFunc("IMG_SaveJPG", [_P(SDL_Surface), c_char_p, c_int], c_int, added='2.0.2'),
     SDLFunc("IMG_SaveJPG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int, c_int], c_int, added='2.0.2'),
     SDLFunc("IMG_SavePNG", [_P(SDL_Surface), c_char_p], c_int),
     SDLFunc("IMG_SavePNG_RW", [_P(SDL_Surface), _P(SDL_RWops), c_int], c_int),
+    SDLFunc("IMG_LoadAnimation", [c_char_p], _P(IMG_Animation), added='2.6.0'),
+    SDLFunc("IMG_LoadAnimation_RW", [_P(SDL_RWops), c_int], _P(IMG_Animation), added='2.6.0'),
+    SDLFunc("IMG_LoadAnimationTyped_RW", [_P(SDL_RWops), c_int, c_char_p], _P(IMG_Animation), added='2.6.0'),
+    SDLFunc("IMG_FreeAnimation", [_P(IMG_Animation)], added='2.6.0'),
+    SDLFunc("IMG_LoadGIFAnimation_RW", [_P(SDL_RWops)], _P(IMG_Animation), added='2.6.0'),
 ]
 _ctypes = AttributeDict()
 for f in _funcdefs:
@@ -121,32 +183,34 @@ for f in _funcdefs:
 # Python wrapper functions
 
 def IMG_Linked_Version():
-    """Gets the version of the dynamically-linked **SDL2_image** library.
+    """Gets the version of the dynamically-linked **SDL_image** library.
 
     Returns:
         POINTER(:obj:`SDL_version`): A pointer to a structure containing the
-        version of the SDL2_image library currently in use.
+        version of the SDL_image library currently in use.
 
     """
     return _ctypes.IMG_Linked_Version()
 
 def IMG_Init(flags):
-    """Initializes the SDL2_image library.
+    """Initializes the SDL_image library.
     
-    Calling this function enables support for the JPEG, PNG, TIF, and/or WebP
-    image formats as requested by the init flags. All other image formats can
-    be loaded or used regardless of whether this has been called.
+    Calling this function enables support for the JPEG, PNG, TIF, WebP, JPEG XL,
+    and/or AVIF image formats as requested by the init flags. All other image
+    formats can be loaded or used regardless of whether this has been called.
 
     The following init flags are supported:
 
-    ====== =================
-    Format Init flag
-    ====== =================
-    JPEG   ``IMG_INIT_JPG``
-    PNG    ``IMG_INIT_PNG``
-    TIFF   ``IMG_INIT_TIF``
-    WebP   ``IMG_INIT_WEBP``
-    ====== =================
+    ======= ================= ======
+    Format  Init flag         Since
+    ======= ================= ======
+    JPEG    ``IMG_INIT_JPG``  2.0.0
+    PNG     ``IMG_INIT_PNG``  2.0.0
+    TIFF    ``IMG_INIT_TIF``  2.0.0
+    WebP    ``IMG_INIT_WEBP`` 2.0.0
+    JPEG XL ``IMG_INIT_JXL``  2.6.0
+    AVIF    ``IMG_INIT_AVIF`` 2.6.0
+    ======= ================= ======
 
     This can be called multiple times to enable support for these formats
     separately, or can initialize multiple formats at once by passing a set of
@@ -167,6 +231,10 @@ def IMG_Init(flags):
        if IMG_Init(0) != flags: # verify both libraries loaded properly
            print(IMG_GetError())
 
+    .. note:: AVIF and JPEG XL support are not included in the official
+              SDL_image binaries, and are likewise not enabled on most Linux
+              distributions.
+
     Args:
         flags (int): A bitwise OR'd set of the flags of the image formats to
             load support for.
@@ -178,7 +246,7 @@ def IMG_Init(flags):
     return _ctypes["IMG_Init"](flags)
 
 def IMG_Quit():
-    """De-initializes the SDL2_image library.
+    """De-initializes the SDL_image library.
     
     Calling this function disables JPEG, PNG, TIF, and WEBP support and frees
     all associated memory. Once this has been called, you can re-initialize
@@ -192,7 +260,7 @@ def IMG_Quit():
     return _ctypes["IMG_Quit"]()
 
 def IMG_LoadTyped_RW(src, freesrc, type):
-    """Loads an image file from an SDL2 file object as a specific format.
+    """Loads an image file from an SDL file object as a specific format.
     
     This function allows you to explicitly specify the format type of the image
     to load. Here are the different possible image format strings:
@@ -216,9 +284,13 @@ def IMG_LoadTyped_RW(src, freesrc, type):
     b"XPM"         X11 Pixmap
     b"XV"          XV Thumbnail
     b"WEBP"        WebP
+    b"QOI"         Quite OK Image
+    b"JXL"         JPEG XL
+    b"AVIF"        AV1 Image File Format
     =============  ===========================
 
-    See :func:`IMG_Load` for more information.
+    Note that loading QOI, JXL, and AVIF images requires SDL_image 2.6.0 or
+    newer. See :func:`IMG_Load` for more information.
 
     Args:
         src (:obj:`SDL_RWops`): The file object from which to load the image.
@@ -270,7 +342,7 @@ def IMG_Load(file):
     return _ctypes["IMG_Load"](file)
 
 def IMG_Load_RW(src, freesrc):
-    """Loads an image file from an SDL2 file object to a new surface.
+    """Loads an image file from an SDL file object to a new surface.
 
     This can load all supported formats, *except* TGA. See :func:`IMG_Load` 
     for more information.
@@ -365,10 +437,22 @@ def IMG_LoadTextureTyped_RW(renderer, src, freesrc, type):
     return _ctypes["IMG_LoadTextureTyped_RW"](renderer, src, freesrc, type)
 
 
+def IMG_isAVIF(src):
+    """Tests whether a file object contains an AVIF image.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object to check.
+
+    Returns:
+        int: 1 if AVIFs are supported and file is a valid AVIF, otherwise 0.
+
+    """
+    return _ctypes["IMG_isAVIF"](src)
+
 def IMG_isICO(src):
     """Tests whether a file object contains an ICO (Windows icon) image.
-
-    The ICO format 
 
     Args:
         src (:obj:`SDL_RWops`): The file object to check.
@@ -427,6 +511,20 @@ def IMG_isJPG(src):
     """
     return _ctypes["IMG_isJPG"](src)
 
+def IMG_isJXL(src):
+    """Tests whether a file object contains a JPEG XL image.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object to check.
+
+    Returns:
+        int: 1 if JPEG XL is supported and file is a valid JXL, otherwise 0.
+
+    """
+    return _ctypes["IMG_isJXL"](src)
+
 def IMG_isLBM(src):
     """Tests whether a file object contains an LBM (Interleaved Bitmap) image.
 
@@ -478,7 +576,7 @@ def IMG_isPNM(src):
 def IMG_isSVG(src):
     """Tests whether a file object contains an SVG image.
 
-    .. note:: This function is only available in SDL_image 2.0.2 or later.
+    `Note: Added in SDL_image 2.0.2`
 
     Args:
         src (:obj:`SDL_RWops`): The file object to check.
@@ -488,6 +586,20 @@ def IMG_isSVG(src):
 
     """
     return _ctypes["IMG_isSVG"](src)
+
+def IMG_isQOI(src):
+    """Tests whether a file object contains a QOI image.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object to check.
+
+    Returns:
+        int: 1 if QOI is supported and file is a valid QOI, otherwise 0.
+
+    """
+    return _ctypes["IMG_isQOI"](src)
 
 def IMG_isTIF(src):
     """Tests whether a file object contains a TIFF image.
@@ -551,6 +663,23 @@ def IMG_isWEBP(src):
     """
     return _ctypes["IMG_isWEBP"](src)
 
+
+def IMG_LoadAVIF_RW(src):
+    """Loads an AVIF image from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the AVIF.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_LoadAVIF_RW"](src)
 
 def IMG_LoadICO_RW(src):
     """Loads an ICO (Windows icon) image from an SDL file object.
@@ -627,6 +756,23 @@ def IMG_LoadJPG_RW(src):
     """
     return _ctypes["IMG_LoadJPG_RW"](src)
 
+def IMG_LoadJXL_RW(src):
+    """Loads a JPEG XL image from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the JPEG XL.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_LoadJXL_RW"](src)
+
 def IMG_LoadLBM_RW(src):
     """Loads an LBM (Interleaved Bitmap) image from an SDL file object.
 
@@ -690,9 +836,11 @@ def IMG_LoadPNM_RW(src):
 def IMG_LoadSVG_RW(src):
     """Loads an SVG image from an SDL file object.
 
-    .. note:: This function is only available in SDL_image 2.0.2 or later.
-
+    Note that this function only loads SVGs at their self-reported resolutions.
+    To load an SVG at an arbitrary resolution, see :func:`IMG_LoadSizedSVG_RW`.
     Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.0.2`
 
     Args:
         src (:obj:`SDL_RWops`): The file object from which to load the SVG.
@@ -703,6 +851,23 @@ def IMG_LoadSVG_RW(src):
 
     """
     return _ctypes["IMG_LoadSVG_RW"](src)
+
+def IMG_LoadQOI_RW(src):
+    """Loads a QOI image from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the QOI.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_LoadQOI_RW"](src)
 
 def IMG_LoadTGA_RW(src):
     """Loads a TGA (TrueVision Targa) image from an SDL file object.
@@ -794,6 +959,23 @@ def IMG_LoadWEBP_RW(src):
     """
     return _ctypes["IMG_LoadWEBP_RW"](src)
 
+def IMG_LoadSizedSVG_RW(src, width, height):
+    """Loads an SVG image at a given size from an SDL file object.
+
+    Use the :func:`IMG_GetError` function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the SVG.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_LoadSizedSVG_RW"](src, width, height)
+
 
 def IMG_ReadXPMFromArray(xpm):
     """Loads an X11 Pixmap from an array to a new surface.
@@ -806,6 +988,10 @@ def IMG_ReadXPMFromArray(xpm):
     (pointer to a character array) and passed by reference using
     :func:`ctypes.byref`.
 
+    Note that this function will return an 8-bit indexed (palette) surface when
+    possible. To obtain a 32-bit RGB surface from an XPM array, use the
+    :func:`IMG_ReadXPMFromArrayToRGB888` function.
+
     Args:
         xpm (byref(:obj:`ctypes.c_char_p`)): A pointer to a ctypes string
             defining an XPM image.
@@ -816,6 +1002,25 @@ def IMG_ReadXPMFromArray(xpm):
 
     """
     return _ctypes["IMG_ReadXPMFromArray"](xpm)
+
+def IMG_ReadXPMFromArrayToRGB888(xpm):
+    """Loads an X11 Pixmap from an array to a new 32-bit surface.
+    
+    This function is the same as :func:`IMG_ReadXPMFromArray` except that it
+    always returns a 32-bit ARGB surface.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        xpm (byref(:obj:`ctypes.c_char_p`)): A pointer to a ctypes string
+            defining an XPM image.
+
+    Returns:
+        POINTER(:obj:`SDL_Surface`): A pointer to a new surface containing the
+        image, or ``None`` if there was an error.
+
+    """
+    return _ctypes["IMG_ReadXPMFromArrayToRGB888"](xpm)
 
 
 def IMG_SavePNG(surface, file):
@@ -864,8 +1069,8 @@ def IMG_SaveJPG(surface, file, quality):
     error that can be retrieved with :func:`IMG_GetError`.
 
     .. note::
-       As of SDL_image 2.0.5, JPEG saving is not supported by the official
-       libsdl.org macOS binaries.
+       JPEG saving was not supported in the official libsdl.org macOS binaries
+       until SDL_image 2.6.0.
 
     Args:
         surface (:obj:`SDL_Surface`): The surface to be saved to JPEG.
@@ -903,6 +1108,107 @@ def IMG_SaveJPG_RW(surface, dst, freedst, quality):
     """
     # NOTE: Not available in official macOS binaries
     return _ctypes["IMG_SaveJPG_RW"](surface, dst, freedst, quality)
+
+
+def IMG_LoadAnimation(file):
+    """Loads an animated image from a file.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, this currently
+    only supports GIF animations.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        file (bytes): A UTF8-encoded bytestring containing the path to the 
+            animation file to load.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        null pointer if there was an error.
+
+    """
+    return _ctypes["IMG_LoadAnimation"](file)
+
+def IMG_LoadAnimation_RW(src, freesrc):
+    """Loads an animated image from an SDL file object.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, this currently
+    only supports GIF animations.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the
+            animation.
+        freesrc (int): If non-zero, the input file object will be closed and
+            freed after it has been read.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        null pointer if there was an error.
+
+    """
+    return _ctypes["IMG_LoadAnimation_RW"](src, freesrc)
+
+def IMG_LoadAnimationTyped_RW(src, freesrc, type):
+    """Loads an animated image from an SDL file object as a specific format.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, the only
+    supported animation type is ``b'GIF'``.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the
+            animation.
+        freesrc (int): If non-zero, the input file object will be closed and
+            freed after it has been read.
+        type (bytes): A bytestring indicating the animation format with which
+            the file object should be loaded.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        null pointer if there was an error.
+
+    """
+    return _ctypes["IMG_LoadAnimationTyped_RW"](src, freesrc, type)
+
+def IMG_FreeAnimation(anim):
+    """Closes and frees the memory associated with a given animation.
+
+    This function should be called on an animation after you are done with it.
+    An :obj:`IMG_Animation` and its frame data cannot be used after it has been
+    closed.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        anim (:obj:`IMG_Animation`): The animation object to close.
+
+    """
+    return _ctypes["IMG_FreeAnimation"](anim)
+
+def IMG_LoadGIFAnimation_RW(src):
+    """Loads a GIF animation from an SDL file object.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. Use the :func:`IMG_GetError`
+    function to check for any errors.
+
+    `Note: Added in SDL_image 2.6.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the GIF.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        a null pointer if there was an error.
+
+    """
+    return _ctypes["IMG_LoadGIFAnimation_RW"](src)
 
 
 IMG_SetError = SDL_SetError

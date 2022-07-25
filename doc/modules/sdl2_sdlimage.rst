@@ -8,6 +8,9 @@ that adds support for loading a wide range of different common (and uncommon)
 image formats for easy use with SDL2. In addition, SDL2_image includes functions
 for saving :obj:`SDL_Surface` objects to PNG and/or JPEG images.
 
+For a list of supported image formats, see the :func:`IMG_LoadTyped_RW`
+documentation.
+
 .. contents:: Table Of Contents
    :depth: 1
    :local:
@@ -16,6 +19,7 @@ for saving :obj:`SDL_Surface` objects to PNG and/or JPEG images.
    If using an alternative rendering system that doesn't use SDL surfaces as
    input (e.g. PyOpenGL), the Pillow imaging library may be a better fit for
    your project.
+
 
 Initialization and library information functions
 ------------------------------------------------
@@ -57,8 +61,10 @@ These functions are used to check whether an SDL file object
 (:obj:`SDL_RWops`) is a valid image file of a given format. Note that
 all of these functions will return 0 if SDL2_image was not built with
 support for that format, even if it is a valid image of that type, so be
-cautious when using these for formats like WEBP, JPEG, PNG, and TIFF, which
+cautious when using these for formats like WEBP, AVIF, JXL, and TIFF, which
 are optional when building SDL2_image.
+
+.. autofunction:: IMG_isAVIF
 
 .. autofunction:: IMG_isICO
 
@@ -70,6 +76,8 @@ are optional when building SDL2_image.
 
 .. autofunction:: IMG_isJPG
 
+.. autofunction:: IMG_isJXL
+
 .. autofunction:: IMG_isLBM
 
 .. autofunction:: IMG_isPCX
@@ -79,6 +87,8 @@ are optional when building SDL2_image.
 .. autofunction:: IMG_isPNM
 
 .. autofunction:: IMG_isSVG
+
+.. autofunction:: IMG_isQOI
 
 .. autofunction:: IMG_isTIF
 
@@ -110,6 +120,8 @@ General image loading functions
 Format-specific image loading functions
 ---------------------------------------
 
+.. autofunction:: IMG_LoadAVIF_RW
+
 .. autofunction:: IMG_LoadICO_RW
 
 .. autofunction:: IMG_LoadCUR_RW
@@ -120,6 +132,8 @@ Format-specific image loading functions
 
 .. autofunction:: IMG_LoadJPG_RW
 
+.. autofunction:: IMG_LoadJXL_RW
+
 .. autofunction:: IMG_LoadLBM_RW
 
 .. autofunction:: IMG_LoadPCX_RW
@@ -129,6 +143,10 @@ Format-specific image loading functions
 .. autofunction:: IMG_LoadPNM_RW
 
 .. autofunction:: IMG_LoadSVG_RW
+
+.. autofunction:: IMG_LoadSizedSVG_RW
+
+.. autofunction:: IMG_LoadQOI_RW
 
 .. autofunction:: IMG_LoadTGA_RW
 
@@ -144,6 +162,8 @@ Format-specific image loading functions
 
 .. autofunction:: IMG_ReadXPMFromArray
 
+.. autofunction:: IMG_ReadXPMFromArrayToRGB888
+
 
 Image writing functions
 -----------------------
@@ -155,6 +175,22 @@ Image writing functions
 .. autofunction:: IMG_SaveJPG
 
 .. autofunction:: IMG_SaveJPG_RW
+
+
+Animation objects and functions
+-------------------------------
+
+.. autoclass:: IMG_Animation
+
+.. autofunction:: IMG_LoadAnimation
+
+.. autofunction:: IMG_LoadAnimation_RW
+
+.. autofunction:: IMG_LoadAnimationTyped_RW
+
+.. autofunction:: IMG_LoadGIFAnimation_RW
+
+.. autofunction:: IMG_FreeAnimation
 
 
 Module constants
@@ -187,3 +223,11 @@ Module constants
 .. data:: IMG_INIT_WEBP
 
     :func:`IMG_Init` flag to enable support for the WEBP image format.
+
+.. data:: IMG_INIT_JXL
+
+    :func:`IMG_Init` flag to enable support for the JPEG XL image format.
+
+.. data:: IMG_INIT_AVIF
+
+    :func:`IMG_Init` flag to enable support for the AVIF image format.

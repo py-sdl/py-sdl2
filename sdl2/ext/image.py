@@ -1,5 +1,5 @@
 import os
-from .. import endian, surface, pixels, error
+from .. import endian, surface, pixels, error, rwops
 from .common import raise_sdl_err
 from .compat import UnsupportedError, byteify, stringify
 from .resources import _validate_path
@@ -18,7 +18,7 @@ except ImportError:
     _HASSDLIMAGE = False
 
 __all__ = [
-    "get_image_formats", "load_bmp", "load_img", "save_bmp",
+    "get_image_formats", "load_bmp", "load_img", "load_svg", "save_bmp",
     "pillow_to_surface", "load_image"
 ]
 
@@ -62,6 +62,22 @@ def _get_mode_properties(mode):
     else:
         raise TypeError("Cannot convert {0} data to surface.".format(mode))
     return (rmask, gmask, bmask, amask, depth)
+
+
+def _ensure_argb32(sf, fname):
+    # Check if image already ARGB32 and return if True
+    ARGB32 = pixels.SDL_PIXELFORMAT_ARGB8888
+    if sf.contents.format.contents.format == ARGB32:
+        return sf
+
+    # Convert the image to ARGB32. Note that this frees the original surface.
+    out_fmt = pixels.SDL_AllocFormat(ARGB32)
+    converted = surface.SDL_ConvertSurface(sf, out_fmt, 0)
+    surface.SDL_FreeSurface(sf)
+    if not converted:
+        raise_sdl_err("converting '{0}' to ARGB format".format(fname))
+
+    return converted
 
 
 def get_image_formats():
@@ -161,19 +177,62 @@ def load_img(path, as_argb=True):
     if not img_surf:
         raise_sdl_err("importing '{0}' using SDL_image".format(fname))
 
-    # Determine whether to use 32-bit ARGB or original pixel format
-    ARGB32 = pixels.SDL_PIXELFORMAT_ARGB8888
-    out_fmt = img_surf.contents.format
-    if as_argb and out_fmt.contents.format != ARGB32:
-        out_fmt = pixels.SDL_AllocFormat(ARGB32)
-        surfcopy = surface.SDL_ConvertSurface(img_surf, out_fmt, 0)
-        surface.SDL_FreeSurface(img_surf)
-        img_surf = surfcopy
-        if not img_surf:
-            raise_sdl_err("converting '{0}' to ARGB format".format(fname))
-        error.SDL_ClearError() # Clear any non-critical errors during loading
+    # If requested, ensure output surface is 32-bit ARGB
+    if as_argb:
+        img_surf = _ensure_argb32(img_surf, fname)
 
+    error.SDL_ClearError() # Clear any non-critical errors during loading
     return img_surf.contents
+
+
+def load_svg(path, width=0, height=0, as_argb=True):
+    """Loads an SVG image at a given resolution, preserving aspect ratio.
+
+    Only one dimension (height or width) will have any effect on a given image
+    as the aspect ratio will always be preserved (e.g. setting an output size
+    of 200x150 on a 100x100 SVG will result in a 200x200 surface).
+    
+    If both dimensions are specified, whichever one results in a larger output
+    surface will be used. If neither height or width are specified, the SVG
+    will be loaded at its original internal resolution.
+
+    .. note:: SVG support in SDL2_image is currently focused on simple images
+              and does not support font rendering. More complex or modern SVG
+              files may not render correctly.
+
+    `Note: This function requires SDL2_image 2.6.0 or newer`.
+
+    Args:
+        path (str): The relative (or absolute) path to the image to import.
+        width (int, optional): The width (in pixels) at which to load the SVG.
+        height (int, optional): The height (in pixels) at which to load the SVG.
+        as_argb (bool, optional): Whether the obtained surface should be
+            converted to 32-bit ARGB pixel format or left as-is. Defaults to
+            ``True`` (convert to ARGB).
+
+    Returns:
+        :obj:`~sdl2.SDL_Surface`: An SDL surface containing the imported SVG.
+    
+    """
+    if not _HASSDLIMAGE:
+        err = "'{0}' requires the SDL_image library, which could not be found."
+        raise RuntimeError(err.format("load_svg"))
+
+    # Import the image file using the scaled SVG loader
+    fullpath, fname = _validate_path(path, "an SVG")
+    _sdl_image_init()
+    rw = rwops.SDL_RWFromFile(byteify(fullpath), b"r")
+    svg_surf = sdlimage.IMG_LoadSizedSVG_RW(rw, width, height)
+    rwops.SDL_RWclose(rw)
+    if not svg_surf:
+        raise_sdl_err("importing '{0}' using SDL_image".format(fname))
+
+    # If requested, ensure output surface is 32-bit ARGB
+    if as_argb:
+        svg_surf = _ensure_argb32(svg_surf, fname)
+    
+    error.SDL_ClearError() # Clear any non-critical errors during loading
+    return svg_surf.contents
 
 
 def pillow_to_surface(img, as_argb=True):

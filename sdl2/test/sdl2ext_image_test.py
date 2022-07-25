@@ -41,6 +41,10 @@ if _HASSDLIMAGE:
     # WEBP support is broken in the 32-bit Windows SDL2_image 2.0.2 binary
     if is32bit and sdlimage.dll.version == 2002:
         skip_formats.append("webp")
+    
+    # QOI support requires SDL2_image 2.6.0 or newer
+    if sdlimage.dll.version < 2060:
+        skip_formats.append("qoi")
 
 
 # List of lossy/non-color formats that shouldn't be compared against reference
@@ -164,10 +168,45 @@ def test_load_img(with_sdl):
         sdl2ext.load_img(bad_type)
 
 
+@pytest.mark.skipif(not _HASSDLIMAGE, reason="Requires SDL2_image")
+def test_load_svg(with_sdl):
+    # Function requires SDL_image >= 2.6.0
+    if sdlimage.dll.version_tuple < (2, 6, 0):
+        pytest.skip("Requires SDL2_image >= 2.6.0")
+
+    # Test loading SVG without size
+    svg_path = os.path.join(resource_path, "surfacetest.svg")
+    sf = sdl2ext.load_svg(svg_path)
+    assert isinstance(sf, surf.SDL_Surface)
+    assert sf.format.contents.format == pixels.SDL_PIXELFORMAT_ARGB8888
+    surf.SDL_FreeSurface(sf)
+
+    # Test loading SVG at a specific size
+    sf = sdl2ext.load_svg(svg_path, width = 100)
+    assert isinstance(sf, surf.SDL_Surface)
+    assert sf.w == 100
+    surf.SDL_FreeSurface(sf)
+
+    # Test exception on missing file
+    bad_path = os.path.join(resource_path, "doesnt_exist.svg")
+    with pytest.raises(IOError):
+        sdl2ext.load_svg(bad_path)
+
+    # Test exception on bad file type
+    bad_type = os.path.join(resource_path, "tuffy.ttf")
+    with pytest.raises(sdl2ext.SDLError):
+        sdl2ext.load_svg(bad_type)
+
+
 @pytest.mark.skipif(not _HASPIL, reason="Pillow library is not installed")
 def test_pillow_to_image(with_sdl):
     # Import an image using Pillow
     from PIL import Image
+    try:
+        from PIL.Image import Palette
+        WEB_PALETTE = Palette.WEB
+    except ImportError:
+        WEB_PALETTE = Image.WEB
     img_path = os.path.join(resource_path, "surfacetest.bmp")
     pil_img = Image.open(img_path)
 
@@ -178,7 +217,7 @@ def test_pillow_to_image(with_sdl):
     surf.SDL_FreeSurface(sf)
 
     # Try converting a palette image
-    palette_img = pil_img.convert("P", palette=Image.WEB)
+    palette_img = pil_img.convert("P", palette=WEB_PALETTE)
     sfp = sdl2ext.pillow_to_surface(palette_img)
     pxformat = sfp.format.contents
     assert isinstance(sfp, surf.SDL_Surface)
@@ -203,7 +242,7 @@ def test_pillow_to_image(with_sdl):
     test_imgs = [f for f in resources if f[:11] == "surfacetest"]
     for img in test_imgs:
         fmt = img.split(".")[-1]
-        if fmt in ("webp", "xcf", "lbm", "svg"):
+        if fmt in ("webp", "xcf", "lbm", "svg", "qoi"):
             continue
         pil_img = Image.open(os.path.join(resource_path, img))
         sf = sdl2ext.pillow_to_surface(pil_img)
@@ -212,6 +251,7 @@ def test_pillow_to_image(with_sdl):
         if fmt not in skip_color_check:
             check_image_contents(sf)
         surf.SDL_FreeSurface(sf)
+
 
 @pytest.mark.skipif(not _HASSDLIMAGE, reason="Requires SDL2_image")
 def test_load_image(with_sdl):
@@ -228,7 +268,7 @@ def test_load_image(with_sdl):
         assert isinstance(sf, surf.SDL_Surface)
 
         # Force only PIL
-        if _HASPIL and fmt not in ("webp", "xcf", "lbm", "svg"):
+        if _HASPIL and fmt not in ("webp", "xcf", "lbm", "svg", "qoi"):
             sf = sdl2ext.load_image(img_path, enforce="PIL")
             assert isinstance(sf, surf.SDL_Surface)
 
