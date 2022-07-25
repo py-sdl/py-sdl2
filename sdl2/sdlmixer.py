@@ -1031,6 +1031,26 @@ def Mix_PlayChannel(channel, chunk, loops):
         return Mix_PlayChannelTimed(channel, chunk, loops, -1)
 
 def Mix_PlayMusic(music, loops):
+    """Play a new music object.
+
+    In SDL_mixer there is only ever one music object playing at a time; if this
+    is called while another music object is playing, the previous music will be
+    replaced with the new music.
+
+    Please note that if the currently-playing music is in the process of fading
+    out (via :func:`Mix_FadeOutMusic`), this function will block until the fade
+    completes. If you need to avoid this, be sure to call :func:`Mix_HaltMusic`
+    before calling this function.
+
+    Args:
+        music (:obj:`Mix_Music`): The new music to play on the music channel.
+        loops (int): The number of loops to play the music for (if 0, will only
+            play once).
+
+    Returns:
+        int: 0 on success, or -1 on error.
+
+    """
     return _ctypes["Mix_PlayMusic"](music, loops)
 
 
@@ -1090,6 +1110,17 @@ def Mix_HaltGroup(tag):
     return _ctypes["Mix_HaltGroup"](tag)
 
 def Mix_HaltMusic():
+    """Halt playback of the music channel.
+
+    This will stop playback on music channel until a new music object is played.
+
+    Halting the music channnel will call any callback set by
+    :func:`Mix_HookMusicFinished` before this function returns.
+
+    Returns:
+        int: 0, regardless of whether any music was halted.
+
+    """
     return _ctypes["Mix_HaltMusic"]()
 
 def Mix_ExpireChannel(channel, ticks):
@@ -1113,24 +1144,84 @@ def Mix_FadingChannel(which):
 
 
 def Mix_Pause(channel):
+    """Pauses playback of a given mixer channel.
+
+    This temporarily stops playback on the given channel. When resumed via
+    :func:`Mix_Resume`, the channel will continue to play where it left off.
+
+    Playing a new chunk on a channel when the channel is paused  will replace
+    the the chunk and unpause the channel.
+    
+    Args:
+        channel (int): The index of the channel to pause (or -1 to pause all
+            channels).
+
+    """
     return _ctypes["Mix_Pause"](channel)
 
 def Mix_Resume(channel):
+    """Resumes playback of a given mixer channel.
+
+    This will resume playback of the channel if it has been paused. If the
+    channel is already playing, this will have no effect.
+    
+    Args:
+        channel (int): The index of the channel to resume (or -1 to resume all
+            channels).
+
+    """
     return _ctypes["Mix_Resume"](channel)
 
 def Mix_Paused(channel):
+    """Checks whether a given mixer channel is currently paused.
+
+    Args:
+        channel (int): The index of the channel to query (or -1 to count the
+            total number of paused channels).
+
+    Returns:
+        int: 1 if the channel is paused, otherwise 0. Alternatively, if channel
+        is ``-1``, returns the number of currently paused mixer channels.
+
+    """
     return _ctypes["Mix_Paused"](channel)
 
 def Mix_PauseMusic():
+    """Pauses playback of the music channel.
+
+    This temporarily stops playback on the music channel. When resumed via
+    :func:`Mix_ResumeMusic`, the music will continue to play where it left off.
+    
+    Playing a new music object when the music channel is paused will replace
+    the current music and unpause the music stream.
+
+    """
     return _ctypes["Mix_PauseMusic"]()
 
 def Mix_ResumeMusic():
+    """Resumes playback of the music channel.
+
+    This will resume playback of the music channel if it has been paused. If
+    the music channel is already playing, this will have no effect.
+
+    """
     return _ctypes["Mix_ResumeMusic"]()
 
 def Mix_RewindMusic():
+    """Sets the music channel to the beginning of the currently loaded music.
+
+    This can be called regardless of whether music is currently playing.
+
+    """
     return _ctypes["Mix_RewindMusic"]()
 
 def Mix_PausedMusic():
+    """Checks whether the music channel is currently paused.
+
+    Returns:
+        int: 1 if the music channel is paused, otherwise 0.
+
+    """
     return _ctypes["Mix_PausedMusic"]()
 
 
@@ -1156,9 +1247,35 @@ def Mix_GetMusicLoopLengthTime(music):
     return _ctypes["Mix_GetMusicLoopLengthTime"](music)
 
 def Mix_Playing(channel):
+    """Checks whether a chunk has been loaded into a given channel.
+
+    Note that this will return 1 even if the channel is paused: this only
+    checks whether the channel is ready for playback or not. It will return 0
+    if no chunk is currently loaded into the channel.
+
+    Args:
+        channel (int): The index of the channel to query (or -1 to count the
+            total number of playback-ready channels).
+
+    Returns:
+        int: 1 if a chunk is loaded in the given channel, otherwise 0.
+        Alternatively, if channel is ``-1``, returns the number of mixer
+        channels ready for playback.
+
+    """
     return _ctypes["Mix_Playing"](channel)
 
 def Mix_PlayingMusic():
+    """Checks whether music has been loaded into the music channel.
+
+    Note that this will return 1 even if the channel is paused: this only
+    checks whether the music channel is ready for playback or not. It will
+    return 0 if no music is currently loaded into the channel.
+
+    Returns:
+        int: 1 if music is loaded in the music channel, otherwise 0.
+
+    """
     return _ctypes["Mix_PlayingMusic"]()
 
 def Mix_SetMusicCMD(command):
