@@ -29,9 +29,7 @@ corresponding functions. All other audio playback is performed using
    can be used in the meantime to fill in any gaps.
 
 The official documentation for the SDL_mixer library can be found `here
-<http://www.libsdl.org/projects/SDL_mixer/docs/index.html>`_. Note that
-not all functions may be documented, as the official doucmentation is
-currently several releases out-of-date.
+<https://wiki.libsdl.org/SDL_mixer/FrontPage>`_.
 
 
 Main data types

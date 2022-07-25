@@ -284,9 +284,9 @@ def Mix_Linked_Version():
 def Mix_Init(flags):
     """Initializes the SDL2_mixer library.
     
-    Calling this function enables support for the FLAC, MOD, MP3, and/or Ogg
-    Vorbis audio formats as requested by the init flags. All other audio file
-    formats can be loaded or used regardless of whether this has been called.
+    Calling this function enables support for various audio formats as requested
+    by the init flags. All other audio file formats can be loaded or used
+    regardless of whether this has been called.
 
     The following init flags are supported:
 
@@ -296,7 +296,9 @@ def Mix_Init(flags):
     FLAC       ``MIX_INIT_FLAC``
     MOD        ``MIX_INIT_MID``
     MP3        ``MIX_INIT_MP3``
+    MIDI       ``MIX_INIT_MID``
     Ogg Vorbis ``MIX_INIT_OGG``
+    Opus       ``MIX_INIT_OPUS``
     ========== =================
 
     This can be called multiple times to enable support for these formats
@@ -334,11 +336,11 @@ def Mix_Init(flags):
     return _ctypes["Mix_Init"](flags)
 
 def Mix_Quit():
-    """De-initializes the SDL2_mixer library.
+    """De-initializes the SDL_mixer library.
     
-    Calling this function disables FLAC, MOD, MP3, and Ogg support and frees
-    all associated memory. Once this has been called, you can re-initialize
-    support for those audio decoders using :func:`Mix_Init` and the
+    Calling this function disables support for any formats initialized by
+    :func:`Mix_Init` and frees all associated memory. You can re-initialize
+    support for those decoders by calling :func:`Mix_Init` again with the
     corresponding init flags.
 
     You only need to call this function once, no matter how many times
