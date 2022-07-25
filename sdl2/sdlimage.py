@@ -159,22 +159,22 @@ def IMG_Linked_Version():
 def IMG_Init(flags):
     """Initializes the SDL2_image library.
     
-    Calling this function enables support for the JPEG, PNG, TIF, and/or WebP
-    image formats as requested by the init flags. All other image formats can
-    be loaded or used regardless of whether this has been called.
+    Calling this function enables support for the JPEG, PNG, TIF, WebP, JPEG XL,
+    and/or AVIF image formats as requested by the init flags. All other image
+    formats can be loaded or used regardless of whether this has been called.
 
     The following init flags are supported:
 
-    ======= =================
-    Format  Init flag
-    ======= =================
-    JPEG    ``IMG_INIT_JPG``
-    PNG     ``IMG_INIT_PNG``
-    TIFF    ``IMG_INIT_TIF``
-    WebP    ``IMG_INIT_WEBP``
-    JPEG XL ``IMG_INIT_JXL``
-    AVIF    ``IMG_INIT_AVIF``
-    ======= =================
+    ======= ================= ======
+    Format  Init flag         Since
+    ======= ================= ======
+    JPEG    ``IMG_INIT_JPG``  2.0.0
+    PNG     ``IMG_INIT_PNG``  2.0.0
+    TIFF    ``IMG_INIT_TIF``  2.0.0
+    WebP    ``IMG_INIT_WEBP`` 2.0.0
+    JPEG XL ``IMG_INIT_JXL``  2.6.0
+    AVIF    ``IMG_INIT_AVIF`` 2.6.0
+    ======= ================= ======
 
     This can be called multiple times to enable support for these formats
     separately, or can initialize multiple formats at once by passing a set of
@@ -194,6 +194,10 @@ def IMG_Init(flags):
        IMG_Init(flags)
        if IMG_Init(0) != flags: # verify both libraries loaded properly
            print(IMG_GetError())
+
+    .. note:: AVIF and JPEG XL support are not included in the official
+              SDL_image binaries, and are likewise not enabled on most Linux
+              distributions.
 
     Args:
         flags (int): A bitwise OR'd set of the flags of the image formats to
