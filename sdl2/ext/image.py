@@ -64,6 +64,22 @@ def _get_mode_properties(mode):
     return (rmask, gmask, bmask, amask, depth)
 
 
+def _ensure_argb32(sf, fname):
+    # Check if image already ARGB32 and return if True
+    ARGB32 = pixels.SDL_PIXELFORMAT_ARGB8888
+    if sf.contents.format.contents.format == ARGB32:
+        return sf
+
+    # Convert the image to ARGB32. Note that this frees the original surface.
+    out_fmt = pixels.SDL_AllocFormat(ARGB32)
+    converted = surface.SDL_ConvertSurface(sf, out_fmt, 0)
+    surface.SDL_FreeSurface(sf)
+    if not converted:
+        raise_sdl_err("converting '{0}' to ARGB format".format(fname))
+
+    return converted
+
+
 def get_image_formats():
     # This function is deprecated and gives inaccurate results
     if not _HASPIL and not _HASSDLIMAGE:
@@ -161,18 +177,11 @@ def load_img(path, as_argb=True):
     if not img_surf:
         raise_sdl_err("importing '{0}' using SDL_image".format(fname))
 
-    # Determine whether to use 32-bit ARGB or original pixel format
-    ARGB32 = pixels.SDL_PIXELFORMAT_ARGB8888
-    out_fmt = img_surf.contents.format
-    if as_argb and out_fmt.contents.format != ARGB32:
-        out_fmt = pixels.SDL_AllocFormat(ARGB32)
-        surfcopy = surface.SDL_ConvertSurface(img_surf, out_fmt, 0)
-        surface.SDL_FreeSurface(img_surf)
-        img_surf = surfcopy
-        if not img_surf:
-            raise_sdl_err("converting '{0}' to ARGB format".format(fname))
-        error.SDL_ClearError() # Clear any non-critical errors during loading
+    # If requested, ensure output surface is 32-bit ARGB
+    if as_argb:
+        img_surf = _ensure_argb32(img_surf, fname)
 
+    error.SDL_ClearError() # Clear any non-critical errors during loading
     return img_surf.contents
 
 
