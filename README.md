@@ -1,6 +1,6 @@
 # PySDL2
 
-[![Tests](https://github.com/marcusva/py-sdl2/actions/workflows/run_tests.yml/badge.svg)](https://github.com/marcusva/py-sdl2/actions/workflows/run_tests.yml)
+[![Tests](https://github.com/py-sdl/py-sdl2/actions/workflows/run_tests.yml/badge.svg)](https://github.com/py-sdl/py-sdl2/actions/workflows/run_tests.yml)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pysdl2)
 [![PyPI Version](https://img.shields.io/pypi/v/PySDL2.svg)](https://pypi.python.org/pypi/PySDL2)
 
@@ -21,7 +21,7 @@ following commands in a terminal:
 pip install -U pysdl2
 
 # Install latest development verion from GitHub
-pip install -U git+https://github.com/marcusva/py-sdl2.git
+pip install -U git+https://github.com/py-sdl/py-sdl2.git
 ```
 
 **Note**: If installing on Python 3 on a computer where both Python 2 and 3
@@ -31,7 +31,8 @@ are installed, replace `pip` with `pip3` in the above commands.
 
 In order for PySDL2 to work, the binaries for SDL2 (and any SDL2 addon modules
 you wish to use, e.g. SDL2\_mixer) need to be installed on your system. On
-macOS and Windows, the recommended way to install the SDL2 binaries is via the `pysdl2-dll` package using pip:
+macOS, Windows, and most x86 and ARM64 distributions of Linux, the recommended
+way to install the SDL2 binaries is via the `pysdl2-dll` package using pip:
 
 ```bash
 pip install pysdl2-dll
@@ -39,7 +40,7 @@ pip install pysdl2-dll
 
 This will install pre-built binaries for all supported SDL2 libraries as
 a Python package, which PySDL2 will automatically load if available.
-On Linux and other Unix-like OSes, you can install the SDL2 binaries using
+On systems not supported by `pysdl2-dll`, you can install the SDL2 binaries using
 your system's package manager (which may be out of date), or alternatively
 build and install the latest versions yourself from source.
 
