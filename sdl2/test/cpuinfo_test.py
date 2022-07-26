@@ -82,6 +82,16 @@ def test_SDL_HasNEON():
     ret = sdl2.SDL_HasNEON()
     assert ret in (0, 1)
 
+@pytest.mark.skipif(sdl2.dll.version < 2231, reason="not available")
+def test_SDL_HasLSX():
+    ret = sdl2.SDL_HasLSX()
+    assert ret in (0, 1)
+
+@pytest.mark.skipif(sdl2.dll.version < 2231, reason="not available")
+def test_SDL_HasLASX():
+    ret = sdl2.SDL_HasLASX()
+    assert ret in (0, 1)
+
 @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
 def test_SDL_SIMDGetAlignment():
     ret = sdl2.SDL_SIMDGetAlignment()

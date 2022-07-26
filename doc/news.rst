@@ -12,6 +12,8 @@ New Features:
 * Updated to wrap new functions and constants in SDL2_image 2.6.0 (PR #238).
 * Added a new function :func:`sdl2.ext.load_svg` that allows loading simple SVG
   images at arbitrary resolutions with SDL2_image 2.6.0 or later (PR #238).
+* Added experimental bindings for the new functions and constants in the
+  SDL2 2.23.1 pre-release (PR #240).
 
 
 0.9.12

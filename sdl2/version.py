@@ -19,8 +19,8 @@ __all__ = [
 # Constants, enums, & macros
 
 SDL_MAJOR_VERSION = 2
-SDL_MINOR_VERSION = 0
-SDL_PATCHLEVEL = 22
+SDL_MINOR_VERSION = 23
+SDL_PATCHLEVEL = 1
 
 def SDL_VERSION(x):
     x.major = SDL_MAJOR_VERSION
@@ -29,7 +29,13 @@ def SDL_VERSION(x):
 
 SDL_VERSIONNUM = lambda x, y, z: (x * 1000 + y * 100 + z)
 SDL_COMPILEDVERSION = SDL_VERSIONNUM(SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL)
-SDL_VERSION_ATLEAST = lambda x, y, z: (SDL_COMPILEDVERSION >= SDL_VERSIONNUM(x, y, z))
+
+def SDL_VERSION_ATLEAST(X, Y, Z):
+    return (
+        (SDL_MAJOR_VERSION >= X) and
+        (SDL_MAJOR_VERSION > X or SDL_MINOR_VERSION >= Y) and
+        (SDL_MAJOR_VERSION > X or SDL_MINOR_VERSION > Y or SDL_PATCHLEVEL >= Z)
+    )
 
 
 # Struct definitions

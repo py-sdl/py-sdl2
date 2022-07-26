@@ -61,7 +61,7 @@ def gamepads(with_sdl):
 def is_virtual(pad):
     stick = sdl2.SDL_GameControllerGetJoystick(pad)
     name = joystick.SDL_JoystickName(stick)
-    return name in [b"Virtual Joystick", b"Virtual Controller"]
+    return b"Virtual " in name
 
 
 # Test if SDL_GameControllerMappingForGUID is able to be tested
@@ -70,6 +70,14 @@ if sys.version_info >= (3, 8, 0) or sdl2.dll.version >= 2006:
 else:
     has_mapping_for_guid = False
 
+
+@pytest.mark.skip("not implemented")
+def test_SDL_GameControllerAddMappingsFromRW(gamepads):
+    pass
+
+@pytest.mark.skip("not implemented")
+def test_SDL_GameControllerAddMappingsFromFile(gamepads):
+    pass
 
 def test_SDL_GameControllerAddMapping(with_sdl):
     newmap = (
@@ -88,6 +96,24 @@ def test_SDL_GameControllerAddMapping(with_sdl):
         ret = sdl2.SDL_GameControllerAddMapping(newmap)
         assert ret != -1
 
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
+def test_SDL_GameControllerNumMappings(with_sdl):
+    num = sdl2.SDL_GameControllerNumMappings()
+    assert num > 0
+
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
+def test_SDL_GameControllerMappingForIndex(with_sdl):
+    newmap = (
+        b"030000005e0400002700000006010000,Microsoft SideWinder,"
+        b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
+        b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
+    )
+    ret = sdl2.SDL_GameControllerAddMapping(newmap)
+    assert ret >= 0
+    num = sdl2.SDL_GameControllerNumMappings()
+    retmap = sdl2.SDL_GameControllerMappingForIndex(num - 1)
+    assert newmap == retmap
+
 @pytest.mark.skipif(not has_mapping_for_guid, reason="not available")
 def test_SDL_GameControllerMappingForGUID(with_sdl):
     newmap = (
@@ -104,6 +130,12 @@ def test_SDL_GameControllerMappingForGUID(with_sdl):
     retmap = sdl2.SDL_GameControllerMappingForGUID(guid)
     assert retmap == newmap
 
+def test_SDL_GameControllerMapping(gamepads):
+    for pad in gamepads:
+        mapping = sdl2.SDL_GameControllerMapping(pad)
+        assert SDL_GetError() == b""
+        assert mapping == None or type(mapping) in (str, bytes)
+
 def test_SDL_IsGameController(with_sdl):
     count = joystick.SDL_NumJoysticks()
     for index in range(count):
@@ -118,12 +150,24 @@ def test_SDL_GameControllerNameForIndex(with_sdl):
         assert sdl2.SDL_GetError() == b""
         assert name == None or type(name) in (str, bytes)
 
+@pytest.mark.skipif(sdl2.dll.version < 2231, reason="not available")
+def test_SDL_GameControllerPathForIndex(with_sdl):
+    count = joystick.SDL_NumJoysticks()
+    for index in range(count):
+        name = sdl2.SDL_GameControllerPathForIndex(index)
+        assert name == None or type(name) in (str, bytes)
+
 @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
 def test_SDL_GameControllerTypeForIndex(with_sdl):
     count = joystick.SDL_NumJoysticks()
     for index in range(count):
         padtype = sdl2.SDL_GameControllerTypeForIndex(index)
         assert padtype in gamepad_types
+
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+def test_SDL_GameControllerMappingForDeviceIndex(with_sdl):
+    pass
 
 def test_SDL_GameControllerOpenClose(with_sdl):
     count = joystick.SDL_NumJoysticks()
@@ -134,11 +178,24 @@ def test_SDL_GameControllerOpenClose(with_sdl):
             assert isinstance(pad.contents, sdl2.SDL_GameController)
             sdl2.SDL_GameControllerClose(pad)
 
-def test_SDL_GameControllerMapping(gamepads):
+def test_SDL_GameControllerFromInstanceID(gamepads):
     for pad in gamepads:
-        mapping = sdl2.SDL_GameControllerMapping(pad)
-        assert SDL_GetError() == b""
-        assert mapping == None or type(mapping) in (str, bytes)
+        stick = sdl2.SDL_GameControllerGetJoystick(pad)
+        iid = joystick.SDL_JoystickInstanceID(stick)
+        assert iid >= 0
+        pad2 = sdl2.SDL_GameControllerFromInstanceID(iid)
+        name = sdl2.SDL_GameControllerName(pad)
+        assert sdl2.SDL_GameControllerName(pad2) == name
+
+@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+def test_SDL_GameControllerFromPlayerIndex(gamepads):
+    i = 0
+    for pad in gamepads:
+        sdl2.SDL_GameControllerSetPlayerIndex(pad, i)
+        pad2 = sdl2.SDL_GameControllerFromPlayerIndex(i)
+        name = sdl2.SDL_GameControllerName(pad)
+        assert sdl2.SDL_GameControllerName(pad2) == name
+        i += 1
 
 def test_SDL_GameControllerName(gamepads):
     names = []
@@ -148,6 +205,17 @@ def test_SDL_GameControllerName(gamepads):
         names.append(name.decode('utf-8'))
     print(names)
 
+@pytest.mark.skipif(sdl2.dll.version < 2231, reason="not available")
+def test_SDL_GameControllerPath(gamepads):
+    paths = []
+    for pad in gamepads:
+        path = sdl2.SDL_GameControllerPath(pad)
+        if not (is_virtual(pad) or sys.platform == "darwin"):
+            assert type(path) in (str, bytes)
+            paths.append(path.decode('utf-8'))
+    if len(paths):
+        print(paths)
+
 @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
 def test_SDL_GameControllerGetType(gamepads):
     for pad in gamepads:
@@ -156,6 +224,58 @@ def test_SDL_GameControllerGetType(gamepads):
         assert padtype in gamepad_types
         if is_virtual(pad):
             assert padtype == sdl2.SDL_CONTROLLER_TYPE_VIRTUAL
+
+@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+def test_SDL_GameControllerGetPlayerIndex(gamepads):
+    for pad in gamepads:
+        player = sdl2.SDL_GameControllerGetPlayerIndex(pad)
+        assert player in [-1, 0, 1, 2, 3]
+
+@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+def test_SDL_GameControllerSetPlayerIndex(gamepads):
+    i = 0
+    for pad in gamepads:
+        sdl2.SDL_GameControllerSetPlayerIndex(pad, i)
+        player = sdl2.SDL_GameControllerGetPlayerIndex(pad)
+        assert player == i
+        i += 1
+
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
+def test_SDL_GameControllerGetVendor(gamepads):
+    for pad in gamepads:
+        vid = sdl2.SDL_GameControllerGetVendor(pad)
+        assert SDL_GetError() == b""
+        if not is_virtual(pad):
+            assert vid > 0
+
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
+def test_SDL_GameControllerGetProduct(gamepads):
+    for pad in gamepads:
+        pid = sdl2.SDL_GameControllerGetProduct(pad)
+        assert SDL_GetError() == b""
+        if not is_virtual(pad):
+            assert pid > 0
+
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
+def test_SDL_GameControllerGetProductVersion(gamepads):
+    for pad in gamepads:
+        pver = sdl2.SDL_GameControllerGetProductVersion(pad)
+        assert SDL_GetError() == b""
+        assert pver >= 0
+
+@pytest.mark.skipif(sdl2.dll.version < 2231, reason="not available")
+def test_SDL_GameControllerGetFirmwareVersion(gamepads):
+    for pad in gamepads:
+        fw_ver = sdl2.SDL_GameControllerGetFirmwareVersion(pad)
+        assert SDL_GetError() == b""
+        assert fw_ver >= 0
+
+@pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+def test_SDL_GameControllerGetSerial(gamepads):
+    for pad in gamepads:
+        serial = sdl2.SDL_GameControllerGetSerial(pad)
+        assert SDL_GetError() == b""
+        assert serial == None or type(serial) in (str, bytes)
 
 def test_SDL_GameControllerGetAttached(gamepads):
     for pad in gamepads:
@@ -284,101 +404,6 @@ def test_SDL_GameControllerGetSensorDataRate(gamepads):
 @pytest.mark.skip("not implemented")
 @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
 def test_SDL_GameControllerGetSensorData(gamepads):
-    pass
-
-@pytest.mark.skip("not implemented")
-def test_SDL_GameControllerAddMappingsFromRW(gamepads):
-    pass
-
-@pytest.mark.skip("not implemented")
-def test_SDL_GameControllerAddMappingsFromFile(gamepads):
-    pass
-
-def test_SDL_GameControllerFromInstanceID(gamepads):
-    for pad in gamepads:
-        stick = sdl2.SDL_GameControllerGetJoystick(pad)
-        iid = joystick.SDL_JoystickInstanceID(stick)
-        assert iid >= 0
-        pad2 = sdl2.SDL_GameControllerFromInstanceID(iid)
-        name = sdl2.SDL_GameControllerName(pad)
-        assert sdl2.SDL_GameControllerName(pad2) == name
-
-@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
-def test_SDL_GameControllerFromPlayerIndex(gamepads):
-    i = 0
-    for pad in gamepads:
-        sdl2.SDL_GameControllerSetPlayerIndex(pad, i)
-        pad2 = sdl2.SDL_GameControllerFromPlayerIndex(i)
-        name = sdl2.SDL_GameControllerName(pad)
-        assert sdl2.SDL_GameControllerName(pad2) == name
-        i += 1
-
-@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
-def test_SDL_GameControllerGetPlayerIndex(gamepads):
-    for pad in gamepads:
-        player = sdl2.SDL_GameControllerGetPlayerIndex(pad)
-        assert player in [-1, 0, 1, 2, 3]
-
-@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
-def test_SDL_GameControllerSetPlayerIndex(gamepads):
-    i = 0
-    for pad in gamepads:
-        sdl2.SDL_GameControllerSetPlayerIndex(pad, i)
-        player = sdl2.SDL_GameControllerGetPlayerIndex(pad)
-        assert player == i
-        i += 1
-
-@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
-def test_SDL_GameControllerGetVendor(gamepads):
-    for pad in gamepads:
-        vid = sdl2.SDL_GameControllerGetVendor(pad)
-        assert SDL_GetError() == b""
-        if not is_virtual(pad):
-            assert vid > 0
-
-@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
-def test_SDL_GameControllerGetProduct(gamepads):
-    for pad in gamepads:
-        pid = sdl2.SDL_GameControllerGetProduct(pad)
-        assert SDL_GetError() == b""
-        if not is_virtual(pad):
-            assert pid > 0
-
-@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
-def test_SDL_GameControllerGetProductVersion(gamepads):
-    for pad in gamepads:
-        pver = sdl2.SDL_GameControllerGetProductVersion(pad)
-        assert SDL_GetError() == b""
-        assert pver >= 0
-
-@pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
-def test_SDL_GameControllerGetSerial(gamepads):
-    for pad in gamepads:
-        serial = sdl2.SDL_GameControllerGetSerial(pad)
-        assert SDL_GetError() == b""
-        assert serial == None or type(serial) in (str, bytes)
-
-@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
-def test_SDL_GameControllerNumMappings(with_sdl):
-    num = sdl2.SDL_GameControllerNumMappings()
-    assert num > 0
-
-@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
-def test_SDL_GameControllerMappingForIndex(with_sdl):
-    newmap = (
-        b"030000005e0400002700000006010000,Microsoft SideWinder,"
-        b"platform:Mac OS X,a:b0,b:b1,x:b2,y:b3,dpup:-a1,dpdown:+a1,"
-        b"dpleft:-a0,dpright:+a0,lefttrigger:b4,righttrigger:b5"
-    )
-    ret = sdl2.SDL_GameControllerAddMapping(newmap)
-    assert ret >= 0
-    num = sdl2.SDL_GameControllerNumMappings()
-    retmap = sdl2.SDL_GameControllerMappingForIndex(num - 1)
-    assert newmap == retmap
-
-@pytest.mark.skip("not implemented")
-@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
-def test_SDL_GameControllerMappingForDeviceIndex(with_sdl):
     pass
 
 @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
