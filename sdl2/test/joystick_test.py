@@ -77,18 +77,11 @@ def is_virtual(stick):
 
 # TODO: Make one of the tests gather/print out current joystick info
 
-def test_SDL_JoystickGetGUIDFromString():
-    guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
-    expected = [3, 0, 0, 0, 126, 5, 0, 0, 6, 3, 0, 0, 28, 58, 0, 0]
-    guid = sdl2.SDL_JoystickGetGUIDFromString(guid_str)
-    assert list(guid.data) == expected
-
-def test_SDL_JoystickGetGUIDString():
-    guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
-    guid = sdl2.SDL_JoystickGetGUIDFromString(guid_str)
-    buff = create_string_buffer(33)
-    sdl2.SDL_JoystickGetGUIDString(guid, buff, 33) # Get GUID string
-    assert guid_str == buff.value
+@pytest.mark.skipif(sdl2.dll.version < 2007, reason="not available")
+def test_SDL_LockUnlockJoysticks(with_sdl):
+    # NOTE: Not sure how to test these more comprehensively
+    sdl2.SDL_LockJoysticks()
+    sdl2.SDL_UnlockJoysticks()
 
 def test_SDL_NumJoysticks():
     if SDL_Init(SDL_INIT_JOYSTICK) != 0:
@@ -103,20 +96,12 @@ def test_SDL_JoystickNameForIndex(with_sdl):
         name = sdl2.SDL_JoystickNameForIndex(index)
         assert type(name) in (str, bytes)
 
-def test_SDL_JoystickOpenClose(with_sdl):
+@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+def test_SDL_JoystickGetDevicePlayerIndex(with_sdl):
     count = sdl2.SDL_NumJoysticks()
     for index in range(count):
-        stick = sdl2.SDL_JoystickOpen(index)
-        assert isinstance(stick.contents, sdl2.SDL_Joystick)
-        sdl2.SDL_JoystickClose(stick)
-
-def test_SDL_JoystickName(joysticks):
-    names = []
-    for stick in joysticks:
-        name = sdl2.SDL_JoystickName(stick)
-        assert type(name) in (str, bytes)
-        names.append(name.decode('utf-8'))
-    print(names)
+        player = sdl2.SDL_JoystickGetDevicePlayerIndex(index)
+        assert player in [-1, 0, 1, 2, 3]
 
 def test_SDL_JoystickGetDeviceGUID(with_sdl):
     count = sdl2.SDL_NumJoysticks()
@@ -126,12 +111,180 @@ def test_SDL_JoystickGetDeviceGUID(with_sdl):
         guidlist = list(guid.data)
         assert isinstance(guidlist[0], int)
 
+def test_SDL_JoystickGetDeviceVendor(with_sdl):
+    count = sdl2.SDL_NumJoysticks()
+    for index in range(count):
+        vid = sdl2.SDL_JoystickGetDeviceVendor(index)
+        assert SDL_GetError() == b""
+        if not is_virtual(index):
+            assert vid > 0
+
+def test_SDL_JoystickGetDeviceProduct(with_sdl):
+    count = sdl2.SDL_NumJoysticks()
+    for index in range(count):
+        pid = sdl2.SDL_JoystickGetDeviceProduct(index)
+        assert SDL_GetError() == b""
+        if not is_virtual(index):
+            assert pid > 0
+
+def test_SDL_JoystickGetDeviceProductVersion(with_sdl):
+    count = sdl2.SDL_NumJoysticks()
+    for index in range(count):
+        pver = sdl2.SDL_JoystickGetDeviceProductVersion(index)
+        assert SDL_GetError() == b""
+        assert pver >= 0
+
+def test_SDL_JoystickGetDeviceType(with_sdl):
+    count = sdl2.SDL_NumJoysticks()
+    for index in range(count):
+        jtype = sdl2.SDL_JoystickGetDeviceType(index)
+        assert SDL_GetError() == b""
+        assert jtype in joystick_types
+        if is_virtual(index):
+            assert jtype == sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER
+
+@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
+def test_SDL_JoystickGetDeviceInstanceID(joysticks):
+    for index in range(len(joysticks)):
+        iid = sdl2.SDL_JoystickGetDeviceInstanceID(index)
+        assert SDL_GetError() == b""
+        stick = joysticks[index]
+        assert iid == sdl2.SDL_JoystickInstanceID(stick)
+
+def test_SDL_JoystickOpenClose(with_sdl):
+    count = sdl2.SDL_NumJoysticks()
+    for index in range(count):
+        stick = sdl2.SDL_JoystickOpen(index)
+        assert isinstance(stick.contents, sdl2.SDL_Joystick)
+        sdl2.SDL_JoystickClose(stick)
+
+def test_SDL_JoystickFromInstanceID(joysticks):
+    for stick in joysticks:
+        iid = sdl2.SDL_JoystickInstanceID(stick)
+        assert iid >= 0
+        stick2 = sdl2.SDL_JoystickFromInstanceID(iid)
+        name = sdl2.SDL_JoystickName(stick)
+        assert sdl2.SDL_JoystickName(stick2) == name
+
+@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+def test_SDL_JoystickFromPlayerIndex(joysticks):
+    i = 0
+    for stick in joysticks:
+        sdl2.SDL_JoystickSetPlayerIndex(stick, i)
+        stick2 = sdl2.SDL_JoystickFromPlayerIndex(i)
+        name = sdl2.SDL_JoystickName(stick)
+        assert sdl2.SDL_JoystickName(stick2) == name
+        i += 1
+
+@pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+def test_SDL_JoystickVirtual(with_sdl):
+    jcount = sdl2.SDL_NumJoysticks()
+    jtype = sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER
+    index = sdl2.SDL_JoystickAttachVirtual(jtype, 1, 2, 1)
+    assert index >= 0
+    assert sdl2.SDL_JoystickIsVirtual(index) == SDL_TRUE
+    assert sdl2.SDL_NumJoysticks() == (jcount + 1)
+    stick = sdl2.SDL_JoystickOpen(index)
+    # Test joystick configuration
+    assert sdl2.SDL_JoystickNumAxes(stick) == 1
+    assert sdl2.SDL_JoystickNumButtons(stick) == 2
+    assert sdl2.SDL_JoystickNumHats(stick) == 1
+    # Try setting and checking for some virtual values
+    assert sdl2.SDL_JoystickSetVirtualAxis(stick, 0, -30) == 0
+    assert sdl2.SDL_JoystickSetVirtualButton(stick, 0, 255) == 0
+    assert sdl2.SDL_JoystickSetVirtualButton(stick, 1, 128) == 0
+    assert sdl2.SDL_JoystickSetVirtualHat(stick, 0, 36) == 0
+    sdl2.SDL_JoystickUpdate()
+    # NOTE: SDL2 doesn't update joystick values unless it has a window that
+    # has input focus. There's a hint to disable that but it doesn't seem to
+    # work, so for now these tests are disabled.
+    #assert sdl2.SDL_JoystickGetAxis(stick, 0) == -30
+    #assert sdl2.SDL_JoystickGetButton(stick, 0) == 255
+    #assert sdl2.SDL_JoystickGetButton(stick, 1) == 128
+    #assert sdl2.SDL_JoystickGetHat(stick, 0) == 36
+    # Check that removing the virtual joystick works properly
+    sdl2.SDL_JoystickClose(stick)
+    jcount = sdl2.SDL_NumJoysticks()
+    assert sdl2.SDL_JoystickDetachVirtual(index) == 0
+    assert sdl2.SDL_NumJoysticks() == (jcount - 1)
+
+def test_SDL_JoystickName(joysticks):
+    names = []
+    for stick in joysticks:
+        name = sdl2.SDL_JoystickName(stick)
+        assert type(name) in (str, bytes)
+        names.append(name.decode('utf-8'))
+    print(names)
+
+@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
+def test_SDL_JoystickGetPlayerIndex(joysticks):
+    for stick in joysticks:
+        player = sdl2.SDL_JoystickGetPlayerIndex(stick)
+        assert player in [-1, 0, 1, 2, 3]
+
+@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
+def test_SDL_JoystickSetPlayerIndex(joysticks):
+    i = 0
+    for stick in joysticks:
+        sdl2.SDL_JoystickSetPlayerIndex(stick, i)
+        player = sdl2.SDL_JoystickGetPlayerIndex(stick)
+        assert player == i
+        i += 1
+
 def test_SDL_JoystickGetGUID(joysticks):
     for stick in joysticks:
         guid = sdl2.SDL_JoystickGetGUID(stick)
         assert isinstance(guid, sdl2.SDL_JoystickGUID)
         guidlist = list(guid.data)
         assert isinstance(guidlist[0], int)
+
+def test_SDL_JoystickGetVendor(joysticks):
+    for stick in joysticks:
+        vid = sdl2.SDL_JoystickGetVendor(stick)
+        assert SDL_GetError() == b""
+        if not is_virtual(stick):
+            assert vid > 0
+
+def test_SDL_JoystickGetProduct(joysticks):
+    for stick in joysticks:
+        pid = sdl2.SDL_JoystickGetProduct(stick)
+        assert SDL_GetError() == b""
+        if not is_virtual(stick):
+            assert pid > 0
+
+def test_SDL_JoystickGetProductVersion(joysticks):
+    for stick in joysticks:
+        pver = sdl2.SDL_JoystickGetProductVersion(stick)
+        assert SDL_GetError() == b""
+        assert pver >= 0
+
+@pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
+def test_SDL_JoystickGetSerial(joysticks):
+    for stick in joysticks:
+        serial = sdl2.SDL_JoystickGetSerial(stick)
+        assert SDL_GetError() == b""
+        assert serial == None or type(serial) in (str, bytes)
+
+def test_SDL_JoystickGetType(joysticks):
+    for stick in joysticks:
+        jtype = sdl2.SDL_JoystickGetType(stick)
+        assert SDL_GetError() == b""
+        assert jtype in joystick_types
+        if is_virtual(stick):
+            assert jtype == sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER
+
+def test_SDL_JoystickGetGUIDString():
+    guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
+    guid = sdl2.SDL_JoystickGetGUIDFromString(guid_str)
+    buff = create_string_buffer(33)
+    sdl2.SDL_JoystickGetGUIDString(guid, buff, 33) # Get GUID string
+    assert guid_str == buff.value
+
+def test_SDL_JoystickGetGUIDFromString():
+    guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
+    expected = [3, 0, 0, 0, 126, 5, 0, 0, 6, 3, 0, 0, 28, 58, 0, 0]
+    guid = sdl2.SDL_JoystickGetGUIDFromString(guid_str)
+    assert list(guid.data) == expected
 
 def test_SDL_JoystickGetAttached(joysticks):
     for stick in joysticks:
@@ -191,17 +344,16 @@ def test_SDL_JoystickGetAxis(joysticks):
             val = sdl2.SDL_JoystickGetAxis(stick, axis)
             assert -32768 <= val <= 32767
 
-def test_SDL_JoystickGetBall(joysticks):
-    numball = [sdl2.SDL_JoystickNumBalls(s) for s in joysticks]
-    if not any(numball):
-        pytest.skip("no trackball on any connected controller")
-    dx, dy = c_int(0), c_int(0)
-    get_ball = sdl2.SDL_JoystickGetBall
-    for stick in sticks:
-        for ball in range(sdl2.SDL_JoystickNumBalls(stick)):
-            ret = get_ball(stick, ball, byref(dx), byref(dy))
+def test_SDL_JoystickGetAxisInitialState(joysticks):
+    init_state = c_int16(0)
+    for stick in joysticks:
+        for axis in range(sdl2.SDL_JoystickNumAxes(stick)):
+            ret = sdl2.SDL_JoystickGetAxisInitialState(
+                stick, axis, byref(init_state)
+            )
             assert SDL_GetError() == b""
-            assert ret == 0
+            assert -32768 <= init_state.value <= 32767
+            assert ret in [SDL_TRUE, SDL_FALSE]
 
 def test_SDL_JoystickGetHat(joysticks):
     hatvals = [
@@ -215,158 +367,23 @@ def test_SDL_JoystickGetHat(joysticks):
             val = sdl2.SDL_JoystickGetHat(stick, hat)
             assert val in hatvals
 
+def test_SDL_JoystickGetBall(joysticks):
+    numball = [sdl2.SDL_JoystickNumBalls(s) for s in joysticks]
+    if not any(numball):
+        pytest.skip("no trackball on any connected controller")
+    dx, dy = c_int(0), c_int(0)
+    get_ball = sdl2.SDL_JoystickGetBall
+    for stick in sticks:
+        for ball in range(sdl2.SDL_JoystickNumBalls(stick)):
+            ret = get_ball(stick, ball, byref(dx), byref(dy))
+            assert SDL_GetError() == b""
+            assert ret == 0
+
 def test_SDL_JoystickGetButton(joysticks):
     for stick in joysticks:
         for button in range(sdl2.SDL_JoystickNumButtons(stick)):
             val = sdl2.SDL_JoystickGetButton(stick, button)
             assert val in [0, 1]
-
-def test_SDL_JoystickCurrentPowerLevel(joysticks):
-    levels = [
-        sdl2.SDL_JOYSTICK_POWER_UNKNOWN,
-        sdl2.SDL_JOYSTICK_POWER_EMPTY,
-        sdl2.SDL_JOYSTICK_POWER_LOW,
-        sdl2.SDL_JOYSTICK_POWER_MEDIUM,
-        sdl2.SDL_JOYSTICK_POWER_FULL,
-        sdl2.SDL_JOYSTICK_POWER_WIRED,
-        sdl2.SDL_JOYSTICK_POWER_MAX,
-    ]
-    for stick in joysticks:
-        pwr = sdl2.SDL_JoystickCurrentPowerLevel(stick)
-        assert SDL_GetError() == b""
-        assert pwr in levels
-
-def test_SDL_JoystickFromInstanceID(joysticks):
-    for stick in joysticks:
-        iid = sdl2.SDL_JoystickInstanceID(stick)
-        assert iid >= 0
-        stick2 = sdl2.SDL_JoystickFromInstanceID(iid)
-        name = sdl2.SDL_JoystickName(stick)
-        assert sdl2.SDL_JoystickName(stick2) == name
-
-@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
-def test_SDL_JoystickFromPlayerIndex(joysticks):
-    i = 0
-    for stick in joysticks:
-        sdl2.SDL_JoystickSetPlayerIndex(stick, i)
-        stick2 = sdl2.SDL_JoystickFromPlayerIndex(i)
-        name = sdl2.SDL_JoystickName(stick)
-        assert sdl2.SDL_JoystickName(stick2) == name
-        i += 1
-
-def test_SDL_JoystickGetVendor(joysticks):
-    for stick in joysticks:
-        vid = sdl2.SDL_JoystickGetVendor(stick)
-        assert SDL_GetError() == b""
-        if not is_virtual(stick):
-            assert vid > 0
-
-def test_SDL_JoystickGetProduct(joysticks):
-    for stick in joysticks:
-        pid = sdl2.SDL_JoystickGetProduct(stick)
-        assert SDL_GetError() == b""
-        if not is_virtual(stick):
-            assert pid > 0
-
-def test_SDL_JoystickGetProductVersion(joysticks):
-    for stick in joysticks:
-        pver = sdl2.SDL_JoystickGetProductVersion(stick)
-        assert SDL_GetError() == b""
-        assert pver >= 0
-
-@pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
-def test_SDL_JoystickGetSerial(joysticks):
-    for stick in joysticks:
-        serial = sdl2.SDL_JoystickGetSerial(stick)
-        assert SDL_GetError() == b""
-        assert serial == None or type(serial) in (str, bytes)
-
-def test_SDL_JoystickGetAxisInitialState(joysticks):
-    init_state = c_int16(0)
-    for stick in joysticks:
-        for axis in range(sdl2.SDL_JoystickNumAxes(stick)):
-            ret = sdl2.SDL_JoystickGetAxisInitialState(
-                stick, axis, byref(init_state)
-            )
-            assert SDL_GetError() == b""
-            assert -32768 <= init_state.value <= 32767
-            assert ret in [SDL_TRUE, SDL_FALSE]
-
-def test_SDL_JoystickGetType(joysticks):
-    for stick in joysticks:
-        jtype = sdl2.SDL_JoystickGetType(stick)
-        assert SDL_GetError() == b""
-        assert jtype in joystick_types
-        if is_virtual(stick):
-            assert jtype == sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER
-
-def test_SDL_JoystickGetDeviceVendor(with_sdl):
-    count = sdl2.SDL_NumJoysticks()
-    for index in range(count):
-        vid = sdl2.SDL_JoystickGetDeviceVendor(index)
-        assert SDL_GetError() == b""
-        if not is_virtual(index):
-            assert vid > 0
-
-def test_SDL_JoystickGetDeviceProduct(with_sdl):
-    count = sdl2.SDL_NumJoysticks()
-    for index in range(count):
-        pid = sdl2.SDL_JoystickGetDeviceProduct(index)
-        assert SDL_GetError() == b""
-        if not is_virtual(index):
-            assert pid > 0
-
-def test_SDL_JoystickGetDeviceProductVersion(with_sdl):
-    count = sdl2.SDL_NumJoysticks()
-    for index in range(count):
-        pver = sdl2.SDL_JoystickGetDeviceProductVersion(index)
-        assert SDL_GetError() == b""
-        assert pver >= 0
-
-def test_SDL_JoystickGetDeviceType(with_sdl):
-    count = sdl2.SDL_NumJoysticks()
-    for index in range(count):
-        jtype = sdl2.SDL_JoystickGetDeviceType(index)
-        assert SDL_GetError() == b""
-        assert jtype in joystick_types
-        if is_virtual(index):
-            assert jtype == sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER
-
-@pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
-def test_SDL_JoystickGetDeviceInstanceID(joysticks):
-    for index in range(len(joysticks)):
-        iid = sdl2.SDL_JoystickGetDeviceInstanceID(index)
-        assert SDL_GetError() == b""
-        stick = joysticks[index]
-        assert iid == sdl2.SDL_JoystickInstanceID(stick)
-
-@pytest.mark.skipif(sdl2.dll.version < 2007, reason="not available")
-def test_SDL_LockUnlockJoysticks(with_sdl):
-    # NOTE: Not sure how to test these more comprehensively
-    sdl2.SDL_LockJoysticks()
-    sdl2.SDL_UnlockJoysticks()
-
-@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
-def test_SDL_JoystickGetPlayerIndex(joysticks):
-    for stick in joysticks:
-        player = sdl2.SDL_JoystickGetPlayerIndex(stick)
-        assert player in [-1, 0, 1, 2, 3]
-
-@pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
-def test_SDL_JoystickSetPlayerIndex(joysticks):
-    i = 0
-    for stick in joysticks:
-        sdl2.SDL_JoystickSetPlayerIndex(stick, i)
-        player = sdl2.SDL_JoystickGetPlayerIndex(stick)
-        assert player == i
-        i += 1
-
-@pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
-def test_SDL_JoystickGetDevicePlayerIndex(with_sdl):
-    count = sdl2.SDL_NumJoysticks()
-    for index in range(count):
-        player = sdl2.SDL_JoystickGetDevicePlayerIndex(index)
-        assert player in [-1, 0, 1, 2, 3]
 
 @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
 def test_SDL_JoystickRumble(joysticks):
@@ -417,34 +434,17 @@ def test_SDL_JoystickSendEffect(joysticks):
     # to each controller type, so can't easily test this.
     pass
 
-@pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
-def test_SDL_JoystickVirtual(with_sdl):
-    jcount = sdl2.SDL_NumJoysticks()
-    jtype = sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER
-    index = sdl2.SDL_JoystickAttachVirtual(jtype, 1, 2, 1)
-    assert index >= 0
-    assert sdl2.SDL_JoystickIsVirtual(index) == SDL_TRUE
-    assert sdl2.SDL_NumJoysticks() == (jcount + 1)
-    stick = sdl2.SDL_JoystickOpen(index)
-    # Test joystick configuration
-    assert sdl2.SDL_JoystickNumAxes(stick) == 1
-    assert sdl2.SDL_JoystickNumButtons(stick) == 2
-    assert sdl2.SDL_JoystickNumHats(stick) == 1
-    # Try setting and checking for some virtual values
-    assert sdl2.SDL_JoystickSetVirtualAxis(stick, 0, -30) == 0
-    assert sdl2.SDL_JoystickSetVirtualButton(stick, 0, 255) == 0
-    assert sdl2.SDL_JoystickSetVirtualButton(stick, 1, 128) == 0
-    assert sdl2.SDL_JoystickSetVirtualHat(stick, 0, 36) == 0
-    sdl2.SDL_JoystickUpdate()
-    # NOTE: SDL2 doesn't update joystick values unless it has a window that
-    # has input focus. There's a hint to disable that but it doesn't seem to
-    # work, so for now these tests are disabled.
-    #assert sdl2.SDL_JoystickGetAxis(stick, 0) == -30
-    #assert sdl2.SDL_JoystickGetButton(stick, 0) == 255
-    #assert sdl2.SDL_JoystickGetButton(stick, 1) == 128
-    #assert sdl2.SDL_JoystickGetHat(stick, 0) == 36
-    # Check that removing the virtual joystick works properly
-    sdl2.SDL_JoystickClose(stick)
-    jcount = sdl2.SDL_NumJoysticks()
-    assert sdl2.SDL_JoystickDetachVirtual(index) == 0
-    assert sdl2.SDL_NumJoysticks() == (jcount - 1)
+def test_SDL_JoystickCurrentPowerLevel(joysticks):
+    levels = [
+        sdl2.SDL_JOYSTICK_POWER_UNKNOWN,
+        sdl2.SDL_JOYSTICK_POWER_EMPTY,
+        sdl2.SDL_JOYSTICK_POWER_LOW,
+        sdl2.SDL_JOYSTICK_POWER_MEDIUM,
+        sdl2.SDL_JOYSTICK_POWER_FULL,
+        sdl2.SDL_JOYSTICK_POWER_WIRED,
+        sdl2.SDL_JOYSTICK_POWER_MAX,
+    ]
+    for stick in joysticks:
+        pwr = sdl2.SDL_JoystickCurrentPowerLevel(stick)
+        assert SDL_GetError() == b""
+        assert pwr in levels
