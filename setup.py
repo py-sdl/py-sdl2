@@ -2,18 +2,11 @@
 import os
 import sys
 import re
-# from distutils.core import setup
 from setuptools import setup
 
-VERSION = "0.9.12"
+VERSION = "0.9.13"
 
 if __name__ == "__main__":
-
-    if "--format=msi" in sys.argv or "bdist_msi" in sys.argv:
-        # hack the version name to a format msi doesn't have trouble with
-        VERSION = VERSION.replace("-alpha", "a")
-        VERSION = VERSION.replace("-beta", "b")
-        VERSION = VERSION.replace("-rc", "r")
 
     fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.md")
     with open(fname, "r") as readme:
