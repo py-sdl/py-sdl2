@@ -137,6 +137,7 @@ _funcdefs = [
     SDLFunc("SDL_GameControllerMapping", [_P(SDL_GameController)], c_char_p),
     SDLFunc("SDL_IsGameController", [c_int], SDL_bool),
     SDLFunc("SDL_GameControllerNameForIndex", [c_int], c_char_p),
+    SDLFunc("SDL_GameControllerPathForIndex", [c_int], c_char_p, added='2.23.1'),
     SDLFunc("SDL_GameControllerTypeForIndex", [c_int], SDL_GameControllerType, added='2.0.12'),
     SDLFunc("SDL_GameControllerMappingForDeviceIndex", [c_int], c_char_p, added='2.0.9'),
     SDLFunc("SDL_GameControllerOpen", [c_int], _P(SDL_GameController)),
@@ -146,6 +147,7 @@ _funcdefs = [
     ),
     SDLFunc("SDL_GameControllerFromPlayerIndex", [c_int], _P(SDL_GameController), added='2.0.12'),
     SDLFunc("SDL_GameControllerName", [_P(SDL_GameController)], c_char_p),
+    SDLFunc("SDL_GameControllerPath", [_P(SDL_GameController)], c_char_p, added='2.23.1'),
     SDLFunc("SDL_GameControllerGetType",
         [_P(SDL_GameController)],
         returns = SDL_GameControllerType, added = '2.0.12'
@@ -157,6 +159,10 @@ _funcdefs = [
     SDLFunc("SDL_GameControllerGetProductVersion",
         [_P(SDL_GameController)],
         returns = Uint16, added = '2.0.6'
+    ),
+    SDLFunc("SDL_GameControllerGetFirmwareVersion",
+        [_P(SDL_GameController)],
+        returns = Uint16, added = '2.23.1'
     ),
     SDLFunc("SDL_GameControllerGetSerial", [_P(SDL_GameController)], c_char_p, added='2.0.14'),
     SDLFunc("SDL_GameControllerGetAttached", [_P(SDL_GameController)], SDL_bool),
@@ -262,9 +268,11 @@ SDL_GameControllerAddMapping = _ctypes["SDL_GameControllerAddMapping"]
 SDL_GameControllerMapping = _ctypes["SDL_GameControllerMapping"]
 SDL_IsGameController = _ctypes["SDL_IsGameController"]
 SDL_GameControllerNameForIndex = _ctypes["SDL_GameControllerNameForIndex"]
+SDL_GameControllerPathForIndex = _ctypes["SDL_GameControllerPathForIndex"]
 SDL_GameControllerTypeForIndex = _ctypes["SDL_GameControllerTypeForIndex"]
 SDL_GameControllerOpen = _ctypes["SDL_GameControllerOpen"]
 SDL_GameControllerName = _ctypes["SDL_GameControllerName"]
+SDL_GameControllerPath = _ctypes["SDL_GameControllerPath"]
 SDL_GameControllerGetType = _ctypes["SDL_GameControllerGetType"]
 SDL_GameControllerGetAttached = _ctypes["SDL_GameControllerGetAttached"]
 SDL_GameControllerGetJoystick = _ctypes["SDL_GameControllerGetJoystick"]
@@ -297,6 +305,7 @@ SDL_GameControllerSetPlayerIndex = _ctypes["SDL_GameControllerSetPlayerIndex"]
 SDL_GameControllerGetVendor = _ctypes["SDL_GameControllerGetVendor"]
 SDL_GameControllerGetProduct = _ctypes["SDL_GameControllerGetProduct"]
 SDL_GameControllerGetProductVersion = _ctypes["SDL_GameControllerGetProductVersion"]
+SDL_GameControllerGetFirmwareVersion = _ctypes["SDL_GameControllerGetFirmwareVersion"]
 SDL_GameControllerGetSerial = _ctypes["SDL_GameControllerGetSerial"]
 SDL_GameControllerNumMappings = _ctypes["SDL_GameControllerNumMappings"]
 SDL_GameControllerMappingForIndex = _ctypes["SDL_GameControllerMappingForIndex"]

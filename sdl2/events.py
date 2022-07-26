@@ -6,7 +6,7 @@ from .dll import version as sdl_version
 from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Sint16, Sint32, Uint8, Uint16, Uint32, SDL_bool
 from .keyboard import SDL_Keysym
-from .joystick import SDL_JoystickID
+from .joystick import SDL_JoystickID, SDL_JoystickPowerLevel
 from .touch import SDL_FingerID, SDL_TouchID
 from .gesture import SDL_GestureID
 from .syswm import SDL_SysWMmsg
@@ -18,9 +18,10 @@ __all__ = [
     "SDL_TextEditingExtEvent", "SDL_TextInputEvent",
     "SDL_MouseMotionEvent", "SDL_MouseButtonEvent", "SDL_MouseWheelEvent",
     "SDL_JoyAxisEvent", "SDL_JoyBallEvent", "SDL_JoyHatEvent",
-    "SDL_JoyButtonEvent", "SDL_JoyDeviceEvent", "SDL_ControllerAxisEvent",
-    "SDL_ControllerButtonEvent", "SDL_ControllerDeviceEvent",
-    "SDL_ControllerTouchpadEvent", "SDL_ControllerSensorEvent",
+    "SDL_JoyButtonEvent", "SDL_JoyDeviceEvent", "SDL_JoyBatteryEvent",
+    "SDL_ControllerAxisEvent", "SDL_ControllerButtonEvent",
+    "SDL_ControllerDeviceEvent", "SDL_ControllerTouchpadEvent",
+    "SDL_ControllerSensorEvent",
     "SDL_AudioDeviceEvent",
     "SDL_TouchFingerEvent", "SDL_MultiGestureEvent", "SDL_DollarGestureEvent",
     "SDL_DropEvent", "SDL_QuitEvent", "SDL_OSEvent", "SDL_UserEvent", 
@@ -44,7 +45,7 @@ __all__ = [
     "SDL_MOUSEBUTTONUP", "SDL_MOUSEWHEEL",
     "SDL_JOYAXISMOTION", "SDL_JOYBALLMOTION",
     "SDL_JOYHATMOTION", "SDL_JOYBUTTONDOWN", "SDL_JOYBUTTONUP",
-    "SDL_JOYDEVICEADDED", "SDL_JOYDEVICEREMOVED", 
+    "SDL_JOYDEVICEADDED", "SDL_JOYDEVICEREMOVED", "SDL_JOYBATTERYUPDATED",
     "SDL_CONTROLLERAXISMOTION", "SDL_CONTROLLERBUTTONDOWN",
     "SDL_CONTROLLERBUTTONUP", "SDL_CONTROLLERDEVICEADDED",
     "SDL_CONTROLLERDEVICEREMOVED", "SDL_CONTROLLERDEVICEREMAPPED",
@@ -104,6 +105,7 @@ SDL_JOYBUTTONDOWN = 0x603
 SDL_JOYBUTTONUP = 0x604
 SDL_JOYDEVICEADDED = 0x605
 SDL_JOYDEVICEREMOVED = 0x606
+SDL_JOYBATTERYUPDATED = 0x607
 SDL_CONTROLLERAXISMOTION = 0x650
 SDL_CONTROLLERBUTTONDOWN = 0x651
 SDL_CONTROLLERBUTTONUP = 0x652
@@ -320,6 +322,14 @@ class SDL_JoyDeviceEvent(Structure):
         ("which", Sint32),
     ]
 
+class SDL_JoyBatteryEvent(Structure):
+    _fields_ = [
+        ("type", Uint32),
+        ("timestamp", Uint32),
+        ("which", SDL_JoystickID),
+        ("level", SDL_JoystickPowerLevel),
+    ]
+
 class SDL_ControllerAxisEvent(Structure):
     _fields_ = [
         ("type", Uint32),
@@ -491,6 +501,7 @@ class SDL_Event(Union):
         ("jhat", SDL_JoyHatEvent),
         ("jbutton", SDL_JoyButtonEvent),
         ("jdevice", SDL_JoyDeviceEvent),
+        ("jbattery", SDL_JoyBatteryEvent),
         ("caxis", SDL_ControllerAxisEvent),
         ("cbutton", SDL_ControllerButtonEvent),
         ("cdevice", SDL_ControllerDeviceEvent),

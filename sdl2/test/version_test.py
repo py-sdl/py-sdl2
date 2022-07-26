@@ -47,7 +47,10 @@ def test_SDL_VERSION_ATLEAST():
     assert sdl2.SDL_VERSION_ATLEAST(1, 2, 3)
     assert sdl2.SDL_VERSION_ATLEAST(2, 0, 0)
     assert sdl2.SDL_VERSION_ATLEAST(2, 0, 1)
-    assert not sdl2.SDL_VERSION_ATLEAST(2, 0, 100)
+    assert sdl2.SDL_VERSION_ATLEAST(
+        sdl2.SDL_MAJOR_VERSION, sdl2.SDL_MINOR_VERSION, sdl2.SDL_PATCHLEVEL
+    )
+    assert not sdl2.SDL_VERSION_ATLEAST(4, 0, 0)
 
 def test_SDL_GetRevision():
     rev = sdl2.SDL_GetRevision()

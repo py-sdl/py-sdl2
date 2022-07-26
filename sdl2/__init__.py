@@ -12,6 +12,7 @@ from .events import *
 from .filesystem import *
 from .gamecontroller import *
 from .gesture import *
+from .guid import *
 from .haptic import *
 from .hidapi import *
 from .hints import *
