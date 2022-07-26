@@ -62,6 +62,9 @@ class FPSManager(Structure):
     (:attr:`baseticks`) and the duration per frame to try to present frames
     at consistent intervals from that initial point.
 
+    After an FPSManager is created, it needs to be initialized with
+    :func:`SDL_initFramerate` before it can be used.
+
     .. note::
         This method of frame pacing may not play nicely with vsync in SDL2.
 
