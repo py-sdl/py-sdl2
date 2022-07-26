@@ -61,7 +61,7 @@ def gamepads(with_sdl):
 def is_virtual(pad):
     stick = sdl2.SDL_GameControllerGetJoystick(pad)
     name = joystick.SDL_JoystickName(stick)
-    return name in [b"Virtual Joystick", b"Virtual Controller"]
+    return b"Virtual " in name
 
 
 # Test if SDL_GameControllerMappingForGUID is able to be tested
