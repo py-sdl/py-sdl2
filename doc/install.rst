@@ -16,7 +16,7 @@ If not, please read through the Prerequisites section below.
 Installing from source
 ----------------------
 You can download the official releases of PySDL2 from
-https://github.com/marcusva/py-sdl2/releases. Download the most
+https://github.com/py-sdl/py-sdl2/releases. Download the most
 recent release, unpack it and make sure that you installed the relevant
 prerequisites before continuing with the installation.
 

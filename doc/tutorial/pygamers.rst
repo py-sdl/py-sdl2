@@ -118,17 +118,21 @@ pygame.event      sdl2
 
 pygame.font
 ^^^^^^^^^^^
+
+PySDL2 has its own Pythonic and flexible font rendering API based on the
+`SDL_ttf` library. See :class:`sdl2.ext.FontTTF` for more information.
+
 ====================== =================================================
 pygame.font            sdl2
 ====================== =================================================
 ``init()``             :func:`sdl2.sdlttf.TTF_Init()`
 ``quit()``             :func:`sdl2.sdlttf.TTF_Quit()`
 ``get_init()``         :func:`sdl2.sdlttf.TTF_WasInit()`
-``get_default_font()`` No equivalent planned [#f1]_
-``get_fonts()``        No equivalent planned [#f1]_
-``match_font()``       No equivalent planned [#f1]_
-``SysFont``            No equivalent planned [#f1]_
-``Font``               No equivalent planned [#f1]_
+``get_default_font()`` No equivalent planned
+``get_fonts()``        No equivalent planned
+``match_font()``       No equivalent planned
+``SysFont``            No equivalent planned
+``Font``               No equivalent planned
 ====================== =================================================
 
 pygame.freetype
@@ -145,8 +149,9 @@ pygame.image
 pygame.image       sdl2
 ================== =================================================
 ``load()``         :func:`sdl2.sdlimage.IMG_Load()`,
-                   :func:`sdl2.ext.load_image()`
+                   :func:`sdl2.ext.load_img()`
 ``save()``         :func:`sdl2.surface.SDL_SaveBMP()`,
+                   :func:`sdl2.ext.save_bmp()`
                    :func:`sdl2.sdlimage.IMG_SavePNG()`
 ``get_extended()`` :func:`sdl2.sdlimage.IMG_isBMP()` et al.
 ``tostring()``     No equivalent yet
@@ -368,7 +373,3 @@ pygame.version  sdl2
 ``vernum``      :attr:`sdl2.version_info`
 =============== =================================================
 
-.. rubric:: Footnotes
-
-.. [#f1] Check https://bitbucket.org/marcusva/python-utils for an easy
-         to use system font detection module

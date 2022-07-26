@@ -18,4 +18,4 @@
 [what-is-ci]: https://help.github.com/en/actions/building-and-testing-code-with-continuous-integration/about-continuous-integration
 [auto-close-documentation]: https://help.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword
 [what-is-api]: https://en.wikipedia.org/wiki/Application_programming_interface
-[news-file]: https://github.com/marcusva/py-sdl2/blob/master/doc/news.rst
+[news-file]: https://github.com/py-sdl/py-sdl2/blob/master/doc/news.rst

@@ -23,7 +23,7 @@ if __name__ == "__main__":
         "author": "Marcus von Appen",
         "author_email": "marcus@sysfault.org",
         "license": "Public Domain / zlib",
-        "url": "https://github.com/marcusva/py-sdl2",
+        "url": "https://github.com/py-sdl/py-sdl2",
         "download_url": "https://pypi.python.org/pypi/PySDL2",
         "package_dir": {"sdl2.examples": "examples"},
         "package_data": {"sdl2.test": ["resources/*.*"],
