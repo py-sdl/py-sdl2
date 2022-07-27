@@ -1,7 +1,8 @@
 """Window routines to manage on-screen windows."""
 from ctypes import c_int, byref
 from .compat import stringify, utf8
-from .common import SDLError
+from .common import SDLError, raise_sdl_err
+from .displays import _check_video_init
 from .. import video
 
 __all__ = ["Window"]
@@ -88,6 +89,7 @@ class Window(object):
                   video.SDL_WINDOWPOS_UNDEFINED)
 
     def __init__(self, title, size, position=None, flags=None):
+        _check_video_init("creating a window")
         if position is None:
             position = self.DEFAULTPOS
         if flags is None:
@@ -136,8 +138,8 @@ class Window(object):
 
     @property
     def size(self):
-        """tuple: The dimensions of the window (in pixels) in the form
-        (width, height).
+        """tuple: The current dimensions of the window (in pixels) in the form
+        ``(width, height)``.
         
         """
         w, h = c_int(), c_int()
