@@ -2,6 +2,15 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.14 (Unreleased)
+-------------------
+
+* Added a new function :func:`~sdl2.ext.get_displays` and class
+  :class:`~sdl2.ext.DisplayInfo` to provide an easier and more Pythonic API for
+  getting information about the names, locations, and supported video modes
+  of the connected displays.
+
+
 0.9.13
 ------
 

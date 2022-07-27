@@ -264,8 +264,8 @@ class SDL_DisplayMode(Structure):
         self.refresh_rate = refresh_rate
 
     def __repr__(self):
-        return "SDL_DisplayMode(format=%d, w=%d, h=%d, refresh_rate=%d)" % \
-            (self.format, self.w, self.h, self.refresh_rate)
+        s = "SDL_DisplayMode({0}x{1} @ {2}Hz)"
+        return s.format(self.w, self.h, self.refresh_rate)
 
     def __eq__(self, mode):
         return self.format == mode.format and self.w == mode.w and \

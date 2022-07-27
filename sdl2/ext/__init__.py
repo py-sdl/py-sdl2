@@ -24,3 +24,4 @@ from .sprite import *
 from .spritesystem import *
 from .surface import *
 from .window import *
+from .displays import *
