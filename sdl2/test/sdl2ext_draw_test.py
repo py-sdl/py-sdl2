@@ -13,7 +13,30 @@ try:
 except:
     _HASNUMPY = False
 
+def test_drawline_bpp1():
+    window = sdl2ext.Window("Test window", size=(800, 600))
+    RESOURCES = sdl2ext.Resources(__file__, "resources")
+    factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+    sf = factory.from_image(RESOURCES.get_path("textsurf_bbp1.bmp"))
+    sdl2ext.line(sf, sdl2ext.Color(0,0,0), (10, 10, 20, 20))
+    SDL_FreeSurface(sf)
 
+def test_drawline_bpp2():
+    window = sdl2ext.Window("Test window", size=(800, 600))
+    RESOURCES = sdl2ext.Resources(__file__, "resources")
+    factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+    sf = factory.from_image(RESOURCES.get_path("textsurf_bbp2.bmp"))
+    sdl2ext.line(sf, sdl2ext.Color(0,0,0), (10, 10, 20, 20))
+    SDL_FreeSurface(sf)
+
+def test_drawline_bpp4():
+    window = sdl2ext.Window("Test window", size=(800, 600))
+    RESOURCES = sdl2ext.Resources(__file__, "resources")
+    factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
+    sf = window.get_surface() #usualy return a bbp 4 surface
+    sdl2ext.line(sf, sdl2ext.Color(0,0,0), (10, 10, 20, 20))
+    SDL_FreeSurface(sf)
+    
 @pytest.fixture
 def testsurf(with_sdl):
     sf = _create_surface((10, 10), fmt="RGBA32")
