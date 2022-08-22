@@ -455,7 +455,9 @@ def test_Mix_MusicDuration(with_music):
     mus = with_music
     duration = sdlmixer.Mix_MusicDuration(mus)
     assert duration != 0
-    assert 0.2 < duration < 0.21
+    # NOTE: Actually about 0.15s, but the dr_mp3 backend in SDL_mixer
+    # reports it as just over 0.2s
+    assert 0.14 < duration < 0.21
 
 @pytest.mark.skip("not implemented")
 def test_Mix_GetMusicLoopStartTime(with_sdl_mixer):
