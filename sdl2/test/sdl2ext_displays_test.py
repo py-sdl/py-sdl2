@@ -7,7 +7,7 @@ DRIVER_DUMMY = False
 DRIVER_X11 = False
 try:
     sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
-    driver_name = video.SDL_GetCurrentVideoDriver()
+    driver_name = sdl2.SDL_GetCurrentVideoDriver()
     sdl2.SDL_Quit()
     DRIVER_DUMMY = driver_name == b"dummy"
     DRIVER_X11 = driver_name == b"x11"
