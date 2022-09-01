@@ -86,7 +86,7 @@ def gl_window(with_sdl_gl):
     sdl2.SDL_DestroyWindow(w)
 
 def _create_window(name, h, w, x, y, flags):
-    window = sdl2.SDL_CreateWindow(name, 10, 40, 12, 13, flags)
+    window = sdl2.SDL_CreateWindow(name, h, w, x, y, flags)
     if not isinstance(window.contents, sdl2.SDL_Window):
         assert SDL_GetError() == b""
         assert isinstance(window.contents, sdl2.SDL_Window)
