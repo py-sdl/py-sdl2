@@ -19,6 +19,14 @@ def _get_sound_path(fmt):
     testdir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(testdir, "resources", fname)
 
+def _has_decoder(decoder):
+    decoders = []
+    num = sdlmixer.Mix_GetNumChunkDecoders()
+    for i in range(0, num):
+        name = sdlmixer.Mix_GetChunkDecoder(i)
+        decoders.append(name.decode('utf-8'))
+    return decoder.upper() in decoders
+
 @pytest.fixture(scope="module")
 def with_sdl_mixer():
     # Initialize SDL2 with video and audio subsystems
@@ -41,6 +49,8 @@ def with_sdl_mixer():
 
 @pytest.fixture
 def with_mixchunk(with_sdl_mixer):
+    if not _has_decoder("mp3"):
+        pytest.skip("No MP3 decoder available for SDL_mixer")
     fpath = _get_sound_path("mp3")
     chk = sdlmixer.Mix_LoadWAV(fpath.encode("utf-8"))
     err = sdlmixer.Mix_GetError()
@@ -51,6 +61,8 @@ def with_mixchunk(with_sdl_mixer):
 
 @pytest.fixture
 def with_music(with_sdl_mixer):
+    if not _has_decoder("mp3"):
+        pytest.skip("No MP3 decoder available for SDL_mixer")
     fpath = _get_sound_path("mp3")
     mus = sdlmixer.Mix_LoadMUS(fpath.encode("utf-8"))
     err = sdlmixer.Mix_GetError()
@@ -140,6 +152,8 @@ def test_Mix_QuerySpec(with_sdl_mixer):
     assert fmt.value in audio.AUDIO_FORMATS
 
 def test_Mix_LoadFreeWAV(with_sdl_mixer):
+    if not _has_decoder("mp3"):
+        pytest.skip("No MP3 decoder available for SDL_mixer")
     fpath = _get_sound_path("mp3")
     chk = sdlmixer.Mix_LoadWAV(fpath.encode("utf-8"))
     assert isinstance(chk.contents, sdlmixer.Mix_Chunk)
@@ -147,6 +161,8 @@ def test_Mix_LoadFreeWAV(with_sdl_mixer):
     sdlmixer.Mix_FreeChunk(chk)
 
 def test_Mix_LoadWAV_RW(with_sdl_mixer):
+    if not _has_decoder("mp3"):
+        pytest.skip("No MP3 decoder available for SDL_mixer")
     fpath = _get_sound_path("mp3")
     rw = sdl2.SDL_RWFromFile(fpath.encode("utf-8"), b"r")
     chk = sdlmixer.Mix_LoadWAV_RW(rw, 1)
@@ -155,6 +171,8 @@ def test_Mix_LoadWAV_RW(with_sdl_mixer):
     sdlmixer.Mix_FreeChunk(chk)
 
 def test_Mix_LoadFreeMUS(with_sdl_mixer):
+    if not _has_decoder("mp3"):
+        pytest.skip("No MP3 decoder available for SDL_mixer")
     fpath = _get_sound_path("mp3")
     mus = sdlmixer.Mix_LoadMUS(fpath.encode("utf-8"))
     assert isinstance(mus.contents, sdlmixer.Mix_Music)
@@ -162,6 +180,8 @@ def test_Mix_LoadFreeMUS(with_sdl_mixer):
     sdlmixer.Mix_FreeMusic(mus)
 
 def test_Mix_LoadMUS_RW(with_sdl_mixer):
+    if not _has_decoder("mp3"):
+        pytest.skip("No MP3 decoder available for SDL_mixer")
     fpath = _get_sound_path("mp3")
     rw = sdl2.SDL_RWFromFile(fpath.encode("utf-8"), b"r")
     mus = sdlmixer.Mix_LoadMUS_RW(rw, 1)
