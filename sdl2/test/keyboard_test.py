@@ -11,8 +11,10 @@ byteify = lambda x: x.encode("utf-8")
 def window(with_sdl):
     flag = video.SDL_WINDOW_INPUT_FOCUS
     w = video.SDL_CreateWindow(b"Test", 10, 40, 32, 24, flag)
-    assert SDL_GetError() == b""
-    assert isinstance(w.contents, video.SDL_Window)
+    if not isinstance(w.contents, sdl2.SDL_Window):
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(w.contents, sdl2.SDL_Window)
+    sdl2.SDL_ClearError()
     yield w
     video.SDL_DestroyWindow(w)
 
@@ -55,6 +57,11 @@ def test_SDL_GetKeyboardState(with_sdl):
     assert numkeys.value > 0
     for key in keystates[:numkeys.value]:
         assert key in [0, 1]
+
+@pytest.mark.skipif(sdl2.dll.version < 2240, reason="not available")
+def test_SDL_ResetKeyboard(with_sdl):
+    # Not entirely sure how to test this without user interaction
+    sdl2.SDL_ResetKeyboard()
 
 def test_SDL_GetSetModState(with_sdl):
     test_states = [

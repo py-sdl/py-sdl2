@@ -19,8 +19,8 @@ __all__ = [
 # Constants, enums, & macros
 
 SDL_MAJOR_VERSION = 2
-SDL_MINOR_VERSION = 23
-SDL_PATCHLEVEL = 1
+SDL_MINOR_VERSION = 24
+SDL_PATCHLEVEL = 0
 
 def SDL_VERSION(x):
     x.major = SDL_MAJOR_VERSION

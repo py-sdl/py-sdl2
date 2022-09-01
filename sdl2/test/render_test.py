@@ -21,8 +21,10 @@ def _create_window(pos, size, flags=video.SDL_WINDOW_HIDDEN):
     window = video.SDL_CreateWindow(
         b"Test", pos[0], pos[1], size[0], size[1], video.SDL_WINDOW_HIDDEN
     )
-    assert SDL_GetError() == b""
-    assert isinstance(window.contents, video.SDL_Window)
+    if not isinstance(window.contents, video.SDL_Window):
+        assert SDL_GetError() == b""
+        assert isinstance(window.contents, video.SDL_Window)
+    sdl2.SDL_ClearError()
     return window
 
 def _get_renderflags():
@@ -60,7 +62,10 @@ def with_renderer(with_sdl):
     window = video.SDL_CreateWindow(
         b"Test", 30, 30, 100, 100, video.SDL_WINDOW_HIDDEN
     )
-    assert SDL_GetError() == b""
+    if not isinstance(window.contents, sdl2.SDL_Window):
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(window.contents, sdl2.SDL_Window)
+    sdl2.SDL_ClearError()
     renderer = sdl2.SDL_CreateRenderer(window, -1, flags)
     assert SDL_GetError() == b""
     yield (renderer, window)
@@ -186,8 +191,9 @@ def test_SDL_CreateWindowAndRenderer(with_sdl):
     )
     sdl2.SDL_DestroyRenderer(renderer)
     video.SDL_DestroyWindow(window)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    if ret != 0:
+        assert SDL_GetError() == b""
+        assert ret == 0
 
 def test_SDL_CreateDestroyRenderer(with_sdl):
     flags = _get_renderflags()

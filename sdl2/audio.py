@@ -186,6 +186,10 @@ _funcdefs = [
     SDLFunc("SDL_GetNumAudioDevices", [c_int], c_int),
     SDLFunc("SDL_GetAudioDeviceName", [c_int, c_int], c_char_p),
     SDLFunc("SDL_GetAudioDeviceSpec", [c_int, c_int, _P(SDL_AudioSpec)], c_int, added='2.0.16'),
+    SDLFunc("SDL_GetDefaultAudioInfo",
+        [_P(c_char_p), _P(SDL_AudioSpec), c_int],
+        returns = c_int, added = '2.24.0'
+    ),
     SDLFunc("SDL_OpenAudioDevice",
         [c_char_p, c_int, _P(SDL_AudioSpec), _P(SDL_AudioSpec), c_int],
         returns = SDL_AudioDeviceID
@@ -243,6 +247,7 @@ SDL_OpenAudio = _ctypes["SDL_OpenAudio"]
 SDL_GetNumAudioDevices = _ctypes["SDL_GetNumAudioDevices"]
 SDL_GetAudioDeviceName = _ctypes["SDL_GetAudioDeviceName"]
 SDL_GetAudioDeviceSpec = _ctypes["SDL_GetAudioDeviceSpec"]
+SDL_GetDefaultAudioInfo = _ctypes["SDL_GetDefaultAudioInfo"]
 SDL_OpenAudioDevice = _ctypes["SDL_OpenAudioDevice"]
 SDL_GetAudioStatus = _ctypes["SDL_GetAudioStatus"]
 SDL_GetAudioDeviceStatus = _ctypes["SDL_GetAudioDeviceStatus"]

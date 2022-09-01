@@ -65,6 +65,7 @@ __all__ = [
     "SDL_GL_CONTEXT_PROFILE_MASK", "SDL_GL_SHARE_WITH_CURRENT_CONTEXT",
     "SDL_GL_FRAMEBUFFER_SRGB_CAPABLE", "SDL_GL_CONTEXT_RELEASE_BEHAVIOR",
     "SDL_GL_CONTEXT_RESET_NOTIFICATION", "SDL_GL_CONTEXT_NO_ERROR",
+    "SDL_GL_FLOATBUFFERS",
 
     "SDL_GLprofile",
     "SDL_GL_CONTEXT_PROFILE_CORE",
@@ -198,6 +199,7 @@ SDL_GL_FRAMEBUFFER_SRGB_CAPABLE = 23
 SDL_GL_CONTEXT_RELEASE_BEHAVIOR = 24
 SDL_GL_CONTEXT_RESET_NOTIFICATION = 25
 SDL_GL_CONTEXT_NO_ERROR = 26
+SDL_GL_FLOATBUFFERS = 27
 
 SDL_GLprofile = c_int
 SDL_GL_CONTEXT_PROFILE_CORE = 0x0001
@@ -306,6 +308,8 @@ _funcdefs = [
         [c_int, _P(SDL_DisplayMode), _P(SDL_DisplayMode)],
         returns = _P(SDL_DisplayMode)
     ),
+    SDLFunc("SDL_GetPointDisplayIndex", [_P(SDL_Point)], c_int, added='2.24.0'),
+    SDLFunc("SDL_GetRectDisplayIndex", [_P(SDL_Rect)], c_int, added='2.24.0'),
     SDLFunc("SDL_GetWindowDisplayIndex", [_P(SDL_Window)], c_int),
     SDLFunc("SDL_SetWindowDisplayMode", [_P(SDL_Window), _P(SDL_DisplayMode)], c_int),
     SDLFunc("SDL_GetWindowDisplayMode", [_P(SDL_Window), _P(SDL_DisplayMode)], c_int),
@@ -408,6 +412,8 @@ SDL_GetDisplayMode = _ctypes["SDL_GetDisplayMode"]
 SDL_GetDesktopDisplayMode = _ctypes["SDL_GetDesktopDisplayMode"]
 SDL_GetCurrentDisplayMode = _ctypes["SDL_GetCurrentDisplayMode"]
 SDL_GetClosestDisplayMode = _ctypes["SDL_GetClosestDisplayMode"]
+SDL_GetPointDisplayIndex = _ctypes["SDL_GetPointDisplayIndex"]
+SDL_GetRectDisplayIndex = _ctypes["SDL_GetRectDisplayIndex"]
 SDL_GetWindowDisplayIndex = _ctypes["SDL_GetWindowDisplayIndex"]
 SDL_SetWindowDisplayMode = _ctypes["SDL_SetWindowDisplayMode"]
 SDL_GetWindowDisplayMode = _ctypes["SDL_GetWindowDisplayMode"]

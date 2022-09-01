@@ -26,12 +26,17 @@ def test_SDL_GetWindowWMInfo(with_sdl):
     window = video.SDL_CreateWindow(
         b"Test", 10, 10, 10, 10, video.SDL_WINDOW_HIDDEN
     )
+    if not isinstance(window.contents, video.SDL_Window):
+        assert SDL_GetError() == b""
+        assert isinstance(window.contents, video.SDL_Window)
+    sdl2.SDL_ClearError()
     wminfo = sdl2.SDL_SysWMinfo()
     version.SDL_VERSION(wminfo.version)
     ret = sdl2.SDL_GetWindowWMInfo(window, ctypes.byref(wminfo))
     video.SDL_DestroyWindow(window)
-    assert SDL_GetError() == b""
-    assert ret == SDL_TRUE
+    if not ret == SDL_TRUE:
+        assert SDL_GetError() == b""
+        assert ret == SDL_TRUE
     # Test window manager types for different platforms
     platform = sys.platform
     if platform in ("win32", "cygwin", "msys"):
