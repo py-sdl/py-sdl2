@@ -66,6 +66,8 @@ class DisplayInfo(object):
         return modes
 
     def _check_connected(self):
+        # NOTE: SDL2 doesn't seem to notice if a display is disconnected, at
+        # least on macOS
         if video.SDL_GetDisplayName(self.index) != self._sdl_name:
             err = "The display '{0}' is no longer connected to the system."
             raise RuntimeError(err.format(self.name))
@@ -73,6 +75,10 @@ class DisplayInfo(object):
     @property
     def dpi(self):
         """float: The current diagonal DPI for the display.
+
+        Note that this value is the DPI reported by the display itself, which
+        is not always available or guaranteed to be accurate.
+
         """
         self._check_connected()
         ddpi, hdpi, vdpi = c_float(0), c_float(0), c_float(0)
