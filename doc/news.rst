@@ -15,6 +15,12 @@ New Features:
   individually using keyword arguments (e.g. ``sdl2.ext.init(audio=True)`` to
   initialize the audio subsystem as well as the default video subsystem).
   Previously, this function only initailized the video subsystem.
+* Updated to wrap new functions and constants in SDL2 2.24.0 (PR #246).
+
+Fixed Bugs:
+
+* Fixed broken behaviour (and potential segfaults) with usage of
+  :func:`sdl2.SDL_GUIDToString` on Python 3.6 and older (PR #246).
 
 
 0.9.13
