@@ -3,7 +3,6 @@ from ctypes import Structure, c_int, c_char_p, c_void_p, CFUNCTYPE
 from ctypes import POINTER as _P
 from .dll import _bind, SDLFunc, AttributeDict
 from .stdinc import Sint16, Sint32, Uint32, Uint16, Uint8, SDL_bool
-from .guid import SDL_GUID
 
 __all__ = [
     # Structs & Opaque Types
@@ -72,7 +71,9 @@ SDL_VIRTUAL_JOYSTICK_DESC_VERSION = 1
 # Structs & typedefs
 
 SDL_JoystickID = Sint32
-SDL_JoystickGUID = SDL_GUID
+
+class SDL_JoystickGUID(Structure):
+    _fields_ = [("data", (Uint8 * 16))]
 
 class SDL_Joystick(c_void_p):
     pass
