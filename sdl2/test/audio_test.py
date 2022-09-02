@@ -20,6 +20,7 @@ def with_sdl_audio():
     if original_driver:
         os.environ["SDL_AUDIODRIVER"] = original_driver
     # Initialize SDL2 with video and audio subsystems
+    sdl2.SDL_Quit()
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_AUDIO)
     assert sdl2.SDL_GetError() == b""
@@ -30,6 +31,23 @@ def with_sdl_audio():
     os.environ.pop("SDL_AUDIODRIVER", None)
     if original_driver:
         os.environ["SDL_AUDIODRIVER"] = original_driver
+
+@pytest.fixture
+def with_default_driver(with_sdl_audio):
+    driver = sdl2.SDL_GetCurrentAudioDriver()
+    if driver == None or sdl2.SDL_GetNumAudioDevices(False) == 0:
+        sdl2.SDL_QuitSubSystem(SDL_INIT_AUDIO)
+        os.environ["SDL_AUDIODRIVER"] = b'dummy'
+        sdl2.SDL_InitSubSystem(SDL_INIT_AUDIO)
+        driver = sdl2.SDL_GetCurrentAudioDriver()
+    yield driver
+
+def _get_audio_drivers():
+    drivers = []
+    for index in range(sdl2.SDL_GetNumAudioDrivers()):
+        name = sdl2.SDL_GetAudioDriver(index)
+        drivers.append(name.decode('utf-8'))
+    return drivers
 
 
 # Test macro functions
@@ -227,11 +245,10 @@ def test_SDL_GetAudioDeviceName(with_sdl_audio):
     # Reset audio subsystem
     SDL_Quit()
     SDL_Init(0)
-    for index in range(sdl2.SDL_GetNumAudioDrivers()):
+    for drivername in _get_audio_drivers():
         # Get input/output device names for each audio driver
-        drivername = sdl2.SDL_GetAudioDriver(index)
-        backends.append(drivername.decode("utf-8"))
-        os.environ["SDL_AUDIODRIVER"] = drivername.decode("utf-8")
+        backends.append(drivername)
+        os.environ["SDL_AUDIODRIVER"] = drivername
         # Need to reinitialize subsystem for each driver
         SDL_InitSubSystem(SDL_INIT_AUDIO)
         driver = sdl2.SDL_GetCurrentAudioDriver()
@@ -258,24 +275,13 @@ def test_SDL_GetAudioDeviceName(with_sdl_audio):
         print(" - output: {0}".format(str(devices[driver]['output'])))
 
 @pytest.mark.skipif(sdl2.dll.version < 2016, reason="not available")
-def test_SDL_GetAudioDeviceSpec(with_sdl_audio):
-    # Reset audio subsystem
-    SDL_Quit()
-    SDL_Init(0)
-    # Find an audio driver with at least one output
-    SDL_InitSubSystem(SDL_INIT_AUDIO)
-    driver = sdl2.SDL_GetCurrentAudioDriver()
-    if driver == None or sdl2.SDL_GetNumAudioDevices(False) == 0:
-        SDL_QuitSubSystem(SDL_INIT_AUDIO)
-        os.environ["SDL_AUDIODRIVER"] = b'dummy'
-        SDL_InitSubSystem(SDL_INIT_AUDIO)
-        driver = sdl2.SDL_GetCurrentAudioDriver()
+def test_SDL_GetAudioDeviceSpec(with_default_driver):
+    driver = with_default_driver
     drivername = driver.decode('utf-8')
     # Get name and spec of first output device
     outspec = sdl2.SDL_AudioSpec(0, 0, 0, 0)
     outname = sdl2.SDL_GetAudioDeviceName(0, False).decode('utf-8')
     ret = sdl2.SDL_GetAudioDeviceSpec(0, False, ctypes.byref(outspec))
-    SDL_QuitSubSystem(SDL_INIT_AUDIO)
     assert ret == 0
     # Validate frequency and channel count were set
     hz = outspec.freq
@@ -290,6 +296,32 @@ def test_SDL_GetAudioDeviceSpec(with_sdl_audio):
         msg2 = "{0} Hz, {1} channels, {2} format, {3} sample buffer size"
         print(msg.format(outname, drivername))
         print(msg2.format(hz, chans, fmt, bufsize))
+
+@pytest.mark.skipif(sdl2.dll.version < 2240, reason="not available")
+def test_SDL_GetDefaultAudioInfo(with_default_driver):
+    driver = with_default_driver
+    drivername = driver.decode('utf-8')
+    # Get name and spec of first output device
+    outspec = sdl2.SDL_AudioSpec(0, 0, 0, 0)
+    outname = ctypes.c_char_p()
+    ret = sdl2.SDL_GetDefaultAudioInfo(ctypes.byref(outname), ctypes.byref(outspec), 0)
+    # If method isn't implemented for the current back end, just skip
+    if ret < 0 and b"not supported" in sdl2.SDL_GetError():
+        pytest.skip("not supported by driver")
+    assert ret == 0
+    # Validate frequency and channel count were set
+    hz = outspec.freq
+    fmt = FORMAT_NAME_MAP[outspec.format] if outspec.format > 0 else 'unknown'
+    chans = outspec.channels
+    bufsize = outspec.samples if outspec.samples > 0 else 'unknown'
+    assert hz > 0
+    assert chans > 0
+    # Print out device spec info
+    outname = outname.value.decode('utf-8')
+    msg = "Default audio spec for {0} with '{1}' driver:"
+    msg2 = "{0} Hz, {1} channels, {2} format, {3} sample buffer size"
+    print(msg.format(outname, drivername))
+    print(msg2.format(hz, chans, fmt, bufsize))
 
 def test_SDL_OpenCloseAudioDevice(with_sdl_audio):
     #TODO: Add tests for callback

@@ -29,6 +29,7 @@ class SDL_Keysym(Structure):
 _funcdefs = [
     SDLFunc("SDL_GetKeyboardFocus", None, _P(SDL_Window)),
     SDLFunc("SDL_GetKeyboardState", [_P(c_int)], _P(Uint8)),
+    SDLFunc("SDL_ResetKeyboard", None, None, added='2.24.0'),
     SDLFunc("SDL_GetModState", None, SDL_Keymod),
     SDLFunc("SDL_SetModState", [SDL_Keymod]),
     SDLFunc("SDL_GetKeyFromScancode", [SDL_Scancode], SDL_Keycode),
@@ -56,6 +57,7 @@ for f in _funcdefs:
 
 SDL_GetKeyboardFocus = _ctypes["SDL_GetKeyboardFocus"]
 SDL_GetKeyboardState = _ctypes["SDL_GetKeyboardState"]
+SDL_ResetKeyboard = _ctypes["SDL_ResetKeyboard"]
 SDL_GetModState = _ctypes["SDL_GetModState"]
 SDL_SetModState = _ctypes["SDL_SetModState"]
 SDL_GetKeyFromScancode = _ctypes["SDL_GetKeyFromScancode"]

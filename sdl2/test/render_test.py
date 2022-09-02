@@ -21,8 +21,10 @@ def _create_window(pos, size, flags=video.SDL_WINDOW_HIDDEN):
     window = video.SDL_CreateWindow(
         b"Test", pos[0], pos[1], size[0], size[1], video.SDL_WINDOW_HIDDEN
     )
-    assert SDL_GetError() == b""
-    assert isinstance(window.contents, video.SDL_Window)
+    if not isinstance(window.contents, video.SDL_Window):
+        assert SDL_GetError() == b""
+        assert isinstance(window.contents, video.SDL_Window)
+    sdl2.SDL_ClearError()
     return window
 
 def _get_renderflags():
@@ -30,6 +32,25 @@ def _get_renderflags():
     if video.SDL_GetCurrentVideoDriver() == b"dummy":
         flags = sdl2.SDL_RENDERER_SOFTWARE
     return flags
+
+@pytest.fixture(scope="module")
+def supported_renderers(with_sdl):
+    supported = []
+    flags = _get_renderflags()
+    for i in range(sdl2.SDL_GetNumRenderDrivers()):
+        window = _create_window((30, 30), (100, 100))
+        try:
+            renderer = sdl2.SDL_CreateRenderer(window, i, flags)
+        except OSError:
+            renderer = None
+        if (renderer and renderer.contents):
+            supported.append(i)
+            sdl2.SDL_DestroyRenderer(renderer)
+        video.SDL_DestroyWindow(window)
+    if not len(supported):
+        raise RuntimeError("Unable to create a renderer with any backend")
+    sdl2.SDL_ClearError()
+    yield supported
 
 @pytest.fixture
 def testsurf(with_sdl):
@@ -60,7 +81,10 @@ def with_renderer(with_sdl):
     window = video.SDL_CreateWindow(
         b"Test", 30, 30, 100, 100, video.SDL_WINDOW_HIDDEN
     )
-    assert SDL_GetError() == b""
+    if not isinstance(window.contents, sdl2.SDL_Window):
+        assert sdl2.SDL_GetError() == b""
+        assert isinstance(window.contents, sdl2.SDL_Window)
+    sdl2.SDL_ClearError()
     renderer = sdl2.SDL_CreateRenderer(window, -1, flags)
     assert SDL_GetError() == b""
     yield (renderer, window)
@@ -186,16 +210,20 @@ def test_SDL_CreateWindowAndRenderer(with_sdl):
     )
     sdl2.SDL_DestroyRenderer(renderer)
     video.SDL_DestroyWindow(window)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    if ret != 0:
+        assert SDL_GetError() == b""
+        assert ret == 0
 
-def test_SDL_CreateDestroyRenderer(with_sdl):
+def test_SDL_CreateDestroyRenderer(supported_renderers):
     flags = _get_renderflags()
     errs = {}
     rcount = sdl2.SDL_GetNumRenderDrivers()
     for i in range(rcount):
         window = _create_window((30, 30), (100, 100))
-        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
+        try:
+            renderer = sdl2.SDL_CreateRenderer(window, i, flags)
+        except OSError:
+            renderer = None
         if (renderer and renderer.contents):
             assert isinstance(renderer.contents, sdl2.SDL_Renderer)
             sdl2.SDL_DestroyRenderer(renderer)
@@ -215,11 +243,10 @@ def test_SDL_CreateSoftwareRenderer(with_sdl):
     sdl2.SDL_DestroyRenderer(renderer)
     surface.SDL_FreeSurface(sf)
 
-def test_SDL_GetRenderer(with_sdl):
+def test_SDL_GetRenderer(supported_renderers):
     flags = _get_renderflags()
     usable = 0
-    rcount = sdl2.SDL_GetNumRenderDrivers()
-    for i in range(rcount):
+    for i in supported_renderers:
         window = _create_window((30, 30), (100, 100))
         renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
@@ -233,10 +260,9 @@ def test_SDL_GetRenderer(with_sdl):
     assert usable > 0
 
 @pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
-def test_SDL_RenderGetWindow(with_sdl):
+def test_SDL_RenderGetWindow(supported_renderers):
     flags = _get_renderflags()
-    rcount = sdl2.SDL_GetNumRenderDrivers()
-    for i in range(rcount):
+    for i in supported_renderers:
         window = _create_window((30, 30), (100, 100))
         renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
@@ -258,7 +284,10 @@ def test_SDL_GetRendererInfo(with_sdl):
     for i in range(rcount):
         sdl2.SDL_ClearError()
         window = _create_window((30, 30), (100, 100))
-        renderer = sdl2.SDL_CreateRenderer(window, i, flags)
+        try:
+            renderer = sdl2.SDL_CreateRenderer(window, i, flags)
+        except OSError:
+            renderer = None
         if not (renderer and renderer.contents):
             err = stringify(sdl2.SDL_GetError())
             errs.append("Unable to create renderer {0}: {1}".format(i, err))
@@ -463,11 +492,10 @@ def test_SDL_LockUnlockTexture(texture):
 def test_SDL_LockTextureToSurface(texture):
     pass
 
-def test_SDL_RenderTargetSupported(with_sdl):
+def test_SDL_RenderTargetSupported(supported_renderers):
     flags = _get_renderflags()
     usable = 0
-    rcount = sdl2.SDL_GetNumRenderDrivers()
-    for i in range(rcount):
+    for i in supported_renderers:
         window = _create_window((30, 30), (100, 100))
         renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
@@ -480,13 +508,12 @@ def test_SDL_RenderTargetSupported(with_sdl):
         video.SDL_DestroyWindow(window)
     assert usable > 0
 
-def test_SDL_GetSetRenderTarget(with_sdl):
+def test_SDL_GetSetRenderTarget(supported_renderers):
     # First, determine which renderers support render targets
     flags = _get_renderflags()
     usable = 0
     supports_targets = []
-    rcount = sdl2.SDL_GetNumRenderDrivers()
-    for i in range(rcount):
+    for i in supported_renderers:
         window = _create_window((30, 30), (100, 100))
         renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
