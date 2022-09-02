@@ -1,6 +1,6 @@
 import ctypes
 from .compat import isiterable, UnsupportedError
-from .common import raise_sdl_err
+from .err import raise_sdl_err
 from .array import to_ctypes
 from .color import convert_to_color
 from .. import surface, pixels, rect

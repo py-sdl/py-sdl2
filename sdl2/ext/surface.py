@@ -1,5 +1,5 @@
 from .compat import isiterable
-from .common import raise_sdl_err
+from .err import raise_sdl_err
 from .color import convert_to_color
 from .. import pixels
 from .. import surface as surf

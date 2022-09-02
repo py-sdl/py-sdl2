@@ -3,7 +3,7 @@ import re
 from ctypes import c_int, byref
 from .. import surface, pixels, rwops, rect
 from .compat import byteify, stringify, utf8, _is_text
-from .common import raise_sdl_err
+from .err import raise_sdl_err
 from .color import Color, convert_to_color
 from .draw import prepare_color
 from .resources import _validate_path

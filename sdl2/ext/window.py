@@ -1,7 +1,7 @@
 """Window routines to manage on-screen windows."""
 from ctypes import c_int, byref
 from .compat import stringify, utf8
-from .common import SDLError, raise_sdl_err
+from .err import SDLError, raise_sdl_err
 from .displays import _check_video_init
 from .. import video
 

@@ -16,12 +16,19 @@ New Features:
   initialize the audio subsystem as well as the default video subsystem).
   Previously, this function only initailized the video subsystem.
 * Updated to wrap new functions and constants in SDL2 2.24.0 (PR #246).
+* Added the error-handling :func:`sdl2.ext.raise_sdl_err` function to the public
+  API.
 
 Fixed Bugs:
 
 * Fixed broken behaviour (and potential segfaults) with usage of
   :func:`sdl2.SDL_GUIDToString` on Python 3.6 and older (PR #246).
 * Fixed :func:`sdl2.ext.draw` when drawing on 1bpp surfaces (PR #242).
+
+API Changes:
+
+* Moved :class:`sdl2.ext.SDLError` and :func:`sdl2.ext.raise_sdl_err`
+  internally to a new submodule :mod:`sdl2.ext.err`.
 
 
 0.9.13

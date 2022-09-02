@@ -1,5 +1,5 @@
 from .. import surface, rect, pixels
-from .common import SDLError, raise_sdl_err
+from .err import SDLError, raise_sdl_err
 from .sprite import SoftwareSprite
 from .surface import _get_target_surface
 from .image import load_bmp

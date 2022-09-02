@@ -1,7 +1,7 @@
 from ctypes import byref, c_int
 from .color import Color
 from .compat import isiterable, utf8
-from .common import raise_sdl_err
+from .err import raise_sdl_err
 from .window import Window
 from .. import dll, SDL_PumpEvents, SDL_Window
 from .. import messagebox as mb

@@ -11,6 +11,7 @@ from .resources import *
 from .events import *
 from .ebs import *
 
+from .err import *
 from .common import *
 from .draw import *
 from .bitmapfont import *

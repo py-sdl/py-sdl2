@@ -49,6 +49,7 @@ objects to Numpy arrays:
 .. toctree::
 	:maxdepth: 1
 
+	ext/err.rst
 	ext/compat.rst
 	ext/array.rst
 	ext/pixelaccess.rst

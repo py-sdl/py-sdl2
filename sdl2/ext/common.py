@@ -4,6 +4,7 @@ from .. import (events, timer, error, dll,
     SDL_INIT_VIDEO, SDL_INIT_AUDIO, SDL_INIT_TIMER, SDL_INIT_HAPTIC,
     SDL_INIT_JOYSTICK, SDL_INIT_GAMECONTROLLER, SDL_INIT_SENSOR, SDL_INIT_EVENTS,
 )
+from .err import raise_sdl_err
 
 _HASSDLTTF = True
 try:
@@ -16,7 +17,7 @@ try:
 except ImportError:
     _HASSDLIMAGE = False
 
-__all__ = ["SDLError", "init", "quit", "get_events", "TestEventProcessor"]
+__all__ = ["init", "quit", "get_events", "TestEventProcessor"]
 
 
 _sdl_subsystems = {
@@ -29,38 +30,6 @@ _sdl_subsystems = {
     'events': SDL_INIT_EVENTS,
     'sensor': SDL_INIT_SENSOR,
 }
-
-
-class SDLError(Exception):
-    """An SDL2-specific exception class."""
-
-    def __init__(self, msg=None):
-        """Creates a new SDLError instance with the specified message.
-
-        If no msg is passed, it will try to get the current SDL2 error via
-        :func:`sdl2.SDL_GetError`.
-
-        """
-        super(SDLError, self).__init__()
-        self.msg = msg
-        if not msg:
-            self.msg = error.SDL_GetError()
-            error.SDL_ClearError()
-
-    def __str__(self):
-        return repr(self.msg)
-
-
-def raise_sdl_err(desc=None):
-    # Raises and clears the latest SDL error. For internal use.
-    errmsg = error.SDL_GetError().decode('utf-8')
-    error.SDL_ClearError()
-    e = "Error encountered"
-    if desc:
-        e += " " + desc
-    if len(errmsg):
-        e += ": {0}".format(errmsg)
-    raise SDLError(e)
 
 
 def init(

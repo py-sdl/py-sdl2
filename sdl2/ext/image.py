@@ -1,6 +1,6 @@
 import os
 from .. import endian, surface, pixels, error, rwops
-from .common import raise_sdl_err
+from .err import raise_sdl_err
 from .compat import UnsupportedError, byteify, stringify
 from .resources import _validate_path
 from .surface import _get_target_surface

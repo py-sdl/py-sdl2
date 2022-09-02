@@ -4,7 +4,7 @@ from ctypes import byref, c_int
 from .. import surface, rect, render
 from ..stdinc import Uint32
 
-from .common import SDLError
+from .err import SDLError
 from .surface import subsurface
 
 __all__ = ["Sprite", "SoftwareSprite", "TextureSprite"]

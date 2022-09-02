@@ -4,7 +4,7 @@ from .. import blendmode, surface, rect, video, render, error, dll, hints
 from ..stdinc import Uint8, Uint32
 
 from .color import convert_to_color
-from .common import raise_sdl_err
+from .err import raise_sdl_err
 from .compat import deprecated, stringify, byteify, isiterable
 from .sprite import SoftwareSprite, TextureSprite
 from .surface import _get_target_surface

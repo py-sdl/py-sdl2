@@ -1,7 +1,7 @@
 from .. import surface, rect, video, pixels, render, rwops
 
 from .color import convert_to_color
-from .common import SDLError
+from .err import SDLError
 from .compat import isiterable
 from .ebs import System
 from .image import load_image
