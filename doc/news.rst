@@ -21,6 +21,7 @@ Fixed Bugs:
 
 * Fixed broken behaviour (and potential segfaults) with usage of
   :func:`sdl2.SDL_GUIDToString` on Python 3.6 and older (PR #246).
+* Fixed :func:`sdl2.ext.draw` when drawing on 1bpp surfaces (PR #242).
 
 
 0.9.13

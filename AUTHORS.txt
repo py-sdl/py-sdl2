@@ -11,6 +11,7 @@ with contributions from
 
 Thanks to everyone else for their assistance, support, fixes and improvements:
 
+* A-Wpro
 * Andreas Schiefer
 * Bao "Mantle" Rong
 * Ben Greiner 
