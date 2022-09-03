@@ -25,4 +25,5 @@ from .sprite import *
 from .spritesystem import *
 from .surface import *
 from .window import *
+from .mouse import *
 from .displays import *
