@@ -33,6 +33,7 @@ Thanks to everyone else for their assistance, support, fixes and improvements:
 * Linus Heckemann
 * Marcel Rodrigues
 * Martin Chaperot-Merino
+* Matěj Cepl
 * Max Bareiss
 * mgorny
 * Michael McCandless

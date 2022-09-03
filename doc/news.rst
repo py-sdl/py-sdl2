@@ -5,6 +5,8 @@ This describes the latest changes between the PySDL2 releases.
 0.9.14 (Unreleased)
 -------------------
 
+Released on 2022-09-03.
+
 New Features:
 
 * Added a new function :func:`~sdl2.ext.get_displays` and class
