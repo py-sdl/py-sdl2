@@ -2,8 +2,12 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
-0.9.14 (Unreleased)
+0.9.15 (Unreleased)
 -------------------
+
+
+0.9.14
+------
 
 Released on 2022-09-03.
 
