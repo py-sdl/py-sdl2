@@ -5,6 +5,20 @@ This describes the latest changes between the PySDL2 releases.
 0.9.15 (Unreleased)
 -------------------
 
+New Features:
+
+* Added a series of new functions :func:`~sdl2.ext.show_cursor`, 
+  :func:`~sdl2.ext.hide_cursor`, and :func:`~sdl2.ext.cursor_hidden` for
+  changing and querying the visibility of the mouse cursor.
+* Added new functions :func:`~sdl2.ext.mouse_coords` and
+  :func:`~sdl2.ext.warp_mouse` for getting and setting the current position of
+  the mouse cursor.
+* Added a new function :func:`~sdl2.ext.mouse_delta` for checking the relative
+  movement of the mouse cursor since last checked.
+* Added a new function :func:`~sdl2.ext.mouse_button_state` and corresponding
+  class :class:`~sdl2.ext.ButtonState` for easily  checking the current state
+  of the mouse buttons.
+
 
 0.9.14
 ------
