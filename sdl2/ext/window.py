@@ -8,6 +8,17 @@ from .. import video
 __all__ = ["Window"]
 
 
+def _get_sdl_window(w, argname="window"):
+    if isinstance(w, Window):
+        w = w.window
+    elif hasattr(w, "contents"):
+        w = w.contents
+    if not isinstance(w, video.SDL_Window):
+        err = "'{0}' is not a valid SDL window.".format(argname)
+        raise ValueError(err)
+    return w
+
+
 class Window(object):
     """Creates a visible window with an optional border and title text.
 

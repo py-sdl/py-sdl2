@@ -185,14 +185,12 @@ def run():
               factory.from_image(RESOURCES.get_path("star.png"))
               )
 
-    # Center the mouse on the window. We use the SDL2 functions directly
-    # here. Since the SDL2 functions do not know anything about the
-    # sdl2.ext.Window class, we have to pass the window's SDL_Window to it.
-    sdl2.SDL_WarpMouseInWindow(window.window, world.mousex, world.mousey)
+    # Center the mouse on the window.
+    sdl2.ext.warp_mouse(world.mousex, world.mousey, window=window)
 
     # Hide the mouse cursor, so it does not show up - just show the
     # particles.
-    sdl2.SDL_ShowCursor(0)
+    sdl2.ext.hide_cursor()
 
     # Create the rendering system for the particles. This is somewhat
     # similar to the SoftSpriteRenderSystem, but since we only operate with
@@ -204,26 +202,18 @@ def run():
     # The almighty event loop. You already know several parts of it.
     running = True
     while running:
+
+        # Check for any quit events
         for event in sdl2.ext.get_events():
             if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
 
-            if event.type == sdl2.SDL_MOUSEMOTION:
-                # Take care of the mouse motions here. Every time the
-                # mouse is moved, we will make that information globally
-                # available to our application environment by updating
-                # the world attributes created earlier.
-                world.mousex = event.motion.x
-                world.mousey = event.motion.y
-                # We updated the mouse coordinates once, ditch all the
-                # other ones. Since world.process() might take several
-                # milliseconds, new motion events can occur on the event
-                # queue (10ths to 100ths!), and we do not want to handle
-                # each of them. For this example, it is enough to handle
-                # one per update cycle.
-                sdl2.SDL_FlushEvent(sdl2.SDL_MOUSEMOTION)
-                break
+        # Once per loop, update the world with the current mouse position
+        x, y = sdl2.ext.mouse_coords()
+        world.mousex = x
+        world.mousey = y
+
         world.process()
         sdl2.SDL_Delay(1)
 

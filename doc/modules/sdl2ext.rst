@@ -32,6 +32,7 @@ and/or unpleasant parts of the SDL2 API. At present, these modules include:
 
 	ext/common.rst
 	ext/window.rst
+	ext/mouse.rst
 	ext/displays.rst
 	ext/renderer.rst
 	ext/msgbox.rst
