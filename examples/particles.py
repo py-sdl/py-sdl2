@@ -100,35 +100,26 @@ class ParticleRenderSystem(sdl2.ext.System):
         # particle components; that said, we render all created
         # particles here.
 
-        # We deal with quite a set of items, so we create some shortcuts
-        # to save Python the time to look things up.
-        #
         # The SDL_Rect is used for the blit operation below and is used
         # as destination position for rendering the particle.
         r = sdl2.SDL_Rect()
 
-        # The SDL2 blit function to use. This will take an image
-        # (SDL_Texture) as source and copies it on the target.
-        dorender = sdl2.SDL_RenderCopy
-
-        # And some more shortcuts.
+        # Add a short alias for the SDL renderer
         sdlrenderer = self.renderer.sdlrenderer
-        images = self.images
         # Before rendering all particles, make sure the old ones are
         # removed from the window by filling it with a black color.
         self.renderer.clear(0x0)
 
         # Render all particles.
         for particle in components:
+            # Select the correct image for the particle.
+            img = self.images[particle.type]
             # Set the correct destination position for the particle
             r.x = int(particle.x)
             r.y = int(particle.y)
-
-            # Select the correct image for the particle.
-            img = images[particle.type]
             r.w, r.h = img.size
             # Render (or blit) the particle by using the designated image.
-            dorender(sdlrenderer, img.texture, None, r)
+            sdl2.SDL_RenderCopy(sdlrenderer, img.tx, None, r)
         self.renderer.present()
 
 
@@ -172,18 +163,16 @@ def run():
     window = sdl2.ext.Window("Particles", size=(800, 600))
     window.show()
 
-    # Create a hardware-accelerated sprite factory. The sprite factory requires
-    # a rendering context, which enables it to create the underlying textures
-    # that serve as the visual parts for the sprites.
+    # Create a hardware-accelerated renderer to use for drawing to the window.
     renderer = sdl2.ext.Renderer(window)
-    factory = sdl2.ext.SpriteFactory(sdl2.ext.TEXTURE, renderer=renderer)
 
     # Create a set of images to be used as particles on rendering. The
     # images are used by the ParticleRenderer created below.
-    images = (factory.from_image(RESOURCES.get_path("circle.png")),
-              factory.from_image(RESOURCES.get_path("square.png")),
-              factory.from_image(RESOURCES.get_path("star.png"))
-              )
+    images = []
+    for img in ("circle.png", "square.png", "star.png"):
+        fpath = RESOURCES.get_path(img)
+        tx = sdl2.ext.Texture(renderer, sdl2.ext.load_img(fpath))
+        images.append(tx)
 
     # Center the mouse on the window.
     sdl2.ext.warp_mouse(world.mousex, world.mousey, window=window)
