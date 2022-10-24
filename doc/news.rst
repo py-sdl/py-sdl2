@@ -18,6 +18,8 @@ New Features:
 * Added a new function :func:`~sdl2.ext.mouse_button_state` and corresponding
   class :class:`~sdl2.ext.ButtonState` for easily  checking the current state
   of the mouse buttons.
+* Added indexing support for :class:`sdl2.SDL_Point` and :class:`sdl2.SDL_Rect`
+  to allow easier unpacking in Python (e.g. ``x, y, w, h = rect``).
 
 
 0.9.14

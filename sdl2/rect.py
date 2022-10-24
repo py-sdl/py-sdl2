@@ -39,6 +39,9 @@ class SDL_Point(Structure):
     def __ne__(self, pt):
         return self.x != pt.x or self.y != pt.y
 
+    def __getitem__(self, i):
+        return (self.x, self.y)[i]
+
 
 class SDL_FPoint(Structure):
     _fields_ = [("x", c_float), ("y", c_float)]
@@ -62,6 +65,9 @@ class SDL_FPoint(Structure):
 
     def __ne__(self, pt):
         return self.x != pt.x or self.y != pt.y
+
+    def __getitem__(self, i):
+        return (self.x, self.y)[i]
 
 
 class SDL_Rect(Structure):
@@ -99,6 +105,9 @@ class SDL_Rect(Structure):
         size_equal = self.w == rt.w and self.h == rt.h
         return not (origin_equal and size_equal)
 
+    def __getitem__(self, i):
+        return (self.x, self.y, self.w, self.h)[i]
+
 
 class SDL_FRect(Structure):
     _fields_ = [
@@ -134,6 +143,9 @@ class SDL_FRect(Structure):
         origin_equal = self.x == rt.x and self.y == rt.y
         size_equal = self.w == rt.w and self.h == rt.h
         return not (origin_equal and size_equal)
+
+    def __getitem__(self, i):
+        return (self.x, self.y, self.w, self.h)[i]
 
 
 # Macro & inline functions

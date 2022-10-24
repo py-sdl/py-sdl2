@@ -76,6 +76,14 @@ class TestSDLPoint(object):
                 notequal = sdl2.SDL_Point(x1, y1) != sdl2.SDL_Point(x2, y2)
                 assert notequal if (x1 != x2 or y1 != y2) else not notequal
 
+    def test___getitem__(self):
+        p = sdl2.SDL_Point(5, 10)
+        x, y = p
+        assert x == 5
+        assert y == 10
+        with pytest.raises(IndexError):
+            a = p[2]
+
 
 
 @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
@@ -140,6 +148,14 @@ class TestSDLFPoint(object):
             for x2, y2 in coords:
                 notequal = sdl2.SDL_FPoint(x1, y1) != sdl2.SDL_FPoint(x2, y2)
                 assert notequal if (x1 != x2 or y1 != y2) else not notequal
+
+    def test___getitem__(self):
+        p = sdl2.SDL_FPoint(5.5, 10)
+        x, y = p
+        assert x == 5.5
+        assert y == 10
+        with pytest.raises(IndexError):
+            a = p[2]
 
 
 class TestSDLRect(object):
@@ -225,6 +241,16 @@ class TestSDLRect(object):
                 notequal = sdlr(x1, y1, w1, h1) != sdlr(x2, y2, w2, h2)
                 assert notequal if same == False else not notequal
 
+    def test___getitem__(self):
+        r = sdl2.SDL_Rect(5, 10, 20, 40)
+        x, y, w, h = r
+        assert x == 5
+        assert y == 10
+        assert w == 20
+        assert h == 40
+        with pytest.raises(IndexError):
+            a = r[4]
+
 
 @pytest.mark.skipif(sdl2.dll.version < 2010, reason="not available")
 class TestSDLFRect(object):
@@ -309,6 +335,16 @@ class TestSDLFRect(object):
                 same = x1 == x2 and y1 == y2 and w1 == w2 and h1 == h2
                 notequal = sdlr(x1, y1, w1, h1) != sdlr(x2, y2, w2, h2)
                 assert notequal if same == False else not notequal
+
+    def test___getitem__(self):
+        r = sdl2.SDL_FRect(5.5, 10, 20, 40)
+        x, y, w, h = r
+        assert x == 5.5
+        assert y == 10
+        assert w == 20
+        assert h == 40
+        with pytest.raises(IndexError):
+            a = r[4]
 
 
 def test_SDL_RectEmpty():
