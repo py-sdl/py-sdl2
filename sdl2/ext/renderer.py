@@ -18,9 +18,22 @@ __all__ = ["set_texture_scale_quality", "Renderer", "Texture"]
 def is_numeric(x):
     try:
         return float(x) == x
-    except TypeError:
+    except (TypeError, ValueError):
         return False
 
+def _is_point(x):
+    if isiterable(x):
+        return len(x) == 2
+    if isinstance(x, rect.SDL_Point) or isinstance(x, rect.SDL_FPoint):
+        return True
+    return False
+
+def _is_rect(x):
+    if isiterable(x):
+        return len(x) == 4
+    if isinstance(x, rect.SDL_Rect) or isinstance(x, rect.SDL_FRect):
+        return True
+    return False
 
 def _sanitize_points(points):
     # If first item is numeric, assume flat list of points
@@ -60,7 +73,7 @@ def _sanitize_rects(rects):
         "SDL_Rect objects (Got unsupported format '{0}')"
     )
     out = []
-    if not isiterable(rects) or not isiterable(rects[0]):
+    if not (isiterable(rects) and _is_rect(rects[0])):
         rects = [rects]
     for r in rects:
         if isinstance(r, rect.SDL_Rect) or isinstance(r, rect.SDL_FRect):
@@ -597,14 +610,17 @@ class Renderer(object):
             srcrect = rect.SDL_Rect(int(x), int(y), int(w), int(h))
 
         if dstrect:
-            if len(dstrect) == 2:
-                x, y = _sanitize_points([dstrect])[0]
+            if _is_point(dstrect):
+                x, y = dstrect
                 if srcrect:
                     w, h = (srcrect.w, srcrect.h)
                 else:
                     w, h = _get_texture_size(texture)
-            elif len(dstrect) == 4:
-                x, y, w, h = _sanitize_rects([dstrect])[0]
+            elif _is_rect(dstrect):
+                x, y, w, h = dstrect
+            else:
+                err = "'dstrect' must be a valid point or rectangle."
+                raise ValueError(err)
             dstrect = Rect(x, y, w, h)
 
         if center:

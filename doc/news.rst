@@ -21,6 +21,11 @@ New Features:
 * Added indexing support for :class:`sdl2.SDL_Point` and :class:`sdl2.SDL_Rect`
   to allow easier unpacking in Python (e.g. ``x, y, w, h = rect``).
 
+Fixed Bugs:
+
+* Fixed bug preventing SDL Points and Rects from being used as ``srcrect`` or
+  ``dstrect`` for :meth:`~sdl2.ext.Renderer.copy`.
+
 
 0.9.14
 ------

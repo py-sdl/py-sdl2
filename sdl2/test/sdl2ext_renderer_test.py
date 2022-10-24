@@ -5,7 +5,7 @@ from ctypes import addressof
 
 from sdl2 import ext as sdl2ext
 from sdl2 import dll
-from sdl2.rect import SDL_Point
+from sdl2.rect import SDL_Point, SDL_Rect
 from sdl2.render import SDL_Renderer, SDL_Texture
 from sdl2.surface import SDL_CreateRGBSurface, SDL_FreeSurface
 
@@ -232,6 +232,15 @@ class TestExtRenderer(object):
         # Test copying a subset of a Texture
         renderer.clear(0xAABBCC) # reset surface
         renderer.copy(tx, srcrect=(0, 0, 10, 10), dstrect=(10, 10))
+        renderer.present()
+        assert view[0][0] == 0xAABBCC
+        assert view[10][10] == 0
+        assert view[19][19] == 0
+        assert view[20][20] == 0xAABBCC
+
+        # Test copying a subset of a Texture w/ point/rect args
+        renderer.clear(0xAABBCC) # reset surface
+        renderer.copy(tx, srcrect=SDL_Rect(0, 0, 10, 10), dstrect=SDL_Point(10, 10))
         renderer.present()
         assert view[0][0] == 0xAABBCC
         assert view[10][10] == 0
