@@ -20,6 +20,8 @@ New Features:
   of the mouse buttons.
 * Added indexing support for :class:`sdl2.SDL_Point` and :class:`sdl2.SDL_Rect`
   to allow easier unpacking in Python (e.g. ``x, y, w, h = rect``).
+* Cache :class:`sdl2.ext.Texture` sizes for faster retrieval, improving render
+  performance in some cases.
 
 Fixed Bugs:
 

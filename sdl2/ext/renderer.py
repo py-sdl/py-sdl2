@@ -167,6 +167,8 @@ class Texture(object):
         self._tx = render.SDL_CreateTextureFromSurface(self._renderer, surface)
         if not self._tx:
             raise_sdl_err("creating the texture")
+        # Cache the size of the texture for future use
+        self._size = _get_texture_size(self.tx)
 
     def __del__(self):
         if hasattr(self, "_tx"):
@@ -203,7 +205,8 @@ class Texture(object):
     @property
     def size(self):
         """tuple: The width and height (in pixels) of the texture."""
-        return _get_texture_size(self.tx)
+        tx = self.tx # Makes sure texture is still usable
+        return self._size
 
     def destroy(self):
         """Deletes the texture and frees its associated memory.
