@@ -57,7 +57,8 @@ def test_SDL_GetRevision():
     # If revision not empty string (e.g. Conda), test the prefix
     if len(rev):
         if dll.version_tuple >= (2, 0, 16):
-            assert rev[0:4] == b"http"
+            if rev[0:4] not in (b"http", b"SDL-"):
+                pytest.xfail("no API guarantee about the format of this string")
         else:
             assert rev[0:3] == b"hg-"
 
