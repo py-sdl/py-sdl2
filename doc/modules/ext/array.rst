@@ -103,7 +103,7 @@ both, rows and columns of the image. ::
     [ , d, a, t, a]
     >>> for row in view:
     ...    row[1] = "X"
-    ...    print row
+    ...    print(row)
     ...
     [s, X, m, e,  ]
     [1, X, b, y, t]
