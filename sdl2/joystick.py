@@ -115,6 +115,10 @@ _funcdefs = [
     SDLFunc("SDL_LockJoysticks", None, None, added='2.0.7'),
     SDLFunc("SDL_UnlockJoysticks", None, None, added='2.0.7'),
     SDLFunc("SDL_NumJoysticks", None, c_int),
+    SDLFunc("SDL_GetJoystickGUIDInfo",
+        [SDL_JoystickGUID, _P(Uint16), _P(Uint16), _P(Uint16), _P(Uint16)],
+        None, added = '2.26.0'
+    ),
     SDLFunc("SDL_JoystickNameForIndex", [c_int], c_char_p),
     SDLFunc("SDL_JoystickPathForIndex", [c_int], c_char_p, added='2.23.1'),
     SDLFunc("SDL_JoystickGetDevicePlayerIndex", [c_int], c_int, added='2.0.9'),
@@ -200,6 +204,7 @@ for f in _funcdefs:
 # Aliases for ctypes bindings
 
 SDL_NumJoysticks = _ctypes["SDL_NumJoysticks"]
+SDL_GetJoystickGUIDInfo = _ctypes["SDL_GetJoystickGUIDInfo"]
 SDL_JoystickNameForIndex = _ctypes["SDL_JoystickNameForIndex"]
 SDL_JoystickPathForIndex = _ctypes["SDL_JoystickPathForIndex"]
 SDL_JoystickOpen = _ctypes["SDL_JoystickOpen"]
