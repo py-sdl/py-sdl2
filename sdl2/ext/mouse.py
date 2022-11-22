@@ -1,4 +1,3 @@
-"""Window routines to manage on-screen windows."""
 from ctypes import c_int, byref
 from collections import namedtuple
 from .compat import stringify, utf8
