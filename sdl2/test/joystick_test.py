@@ -370,6 +370,7 @@ def test_SDL_JoystickGetGUIDFromString():
     assert list(guid.data) == expected
 
 @pytest.mark.skipif(sdl2.dll.version < 2260, reason="not available")
+@pytest.mark.xfail(sys.version_info >= (3, 7, 0, 'final'), reason="ctypes bug")
 def test_SDL_GetJoystickGUIDInfo():
     guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
     guid = sdl2.SDL_JoystickGetGUIDFromString(guid_str)

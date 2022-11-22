@@ -116,6 +116,10 @@ available within :mod:`sdl2`.
 * Everything from ``SDL_opengl.h`` (see PyOpenGL for a compatible OpenGL API)
 * Everything from ``SDL_mutex.h``
 
+Additionally, ``SDL_GetJoystickGUIDInfo`` only functions properly in Python 3.7
+and newer due to a ctypes bug. On older versions of Python, the function can be
+called but will have no effect.
+
 Additional interfaces
 ---------------------
 The following functions, classes, constants and macros are *not* part of

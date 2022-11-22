@@ -212,7 +212,6 @@ SDL_JoystickPath = _ctypes["SDL_JoystickPath"]
 SDL_JoystickGetDeviceGUID = _ctypes["SDL_JoystickGetDeviceGUID"]
 SDL_JoystickGetGUID = _ctypes["SDL_JoystickGetGUID"]
 SDL_JoystickGetGUIDFromString = _ctypes["SDL_JoystickGetGUIDFromString"]
-SDL_GetJoystickGUIDInfo = _ctypes["SDL_GetJoystickGUIDInfo"]
 SDL_JoystickGetAttached = _ctypes["SDL_JoystickGetAttached"]
 SDL_JoystickInstanceID = _ctypes["SDL_JoystickInstanceID"]
 SDL_JoystickNumAxes = _ctypes["SDL_JoystickNumAxes"]
@@ -272,3 +271,12 @@ else:
             s += "{:x}".format(g & 0x0F)
         s = s.encode('utf-8')
         pszGUID.value = s[:(cbGUID * 2)]
+
+if sys.version_info >= (3, 7, 0, 'final'):
+    SDL_GetJoystickGUIDInfo = _ctypes["SDL_GetJoystickGUIDInfo"]
+else:
+    def SDL_GetJoystickGUIDInfo(guid, vendor, product, version, crc16):
+        # We can't modify ctypes arguments passed with byref in Python,
+        # so to avoid a segfault on older Python versions we just do
+        # nothing here since we can't replicate its functionality.
+        pass
