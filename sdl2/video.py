@@ -329,11 +329,11 @@ _funcdefs = [
     SDLFunc("SDL_GetWindowPosition", [_P(SDL_Window), _P(c_int), _P(c_int)]),
     SDLFunc("SDL_SetWindowSize", [_P(SDL_Window), c_int, c_int]),
     SDLFunc("SDL_GetWindowSize", [_P(SDL_Window), _P(c_int), _P(c_int)]),
-    SDLFunc("SDL_GetWindowSizeInPixels", [_P(SDL_Window), _P(c_int), _P(c_int)], added='2.26.0'),
     SDLFunc("SDL_GetWindowBordersSize",
         [_P(SDL_Window), _P(c_int), _P(c_int), _P(c_int), _P(c_int)],
         returns = c_int, added = '2.0.5'
     ),
+    SDLFunc("SDL_GetWindowSizeInPixels", [_P(SDL_Window), _P(c_int), _P(c_int)], added='2.26.0'),
     SDLFunc("SDL_SetWindowMinimumSize", [_P(SDL_Window), c_int, c_int]),
     SDLFunc("SDL_GetWindowMinimumSize", [_P(SDL_Window), _P(c_int), _P(c_int)]),
     SDLFunc("SDL_SetWindowMaximumSize", [_P(SDL_Window), c_int, c_int]),

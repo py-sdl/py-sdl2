@@ -412,7 +412,7 @@ _funcdefs = [
     SDLFunc("SDL_GetHintBoolean", [c_char_p, SDL_bool], SDL_bool, added='2.0.5'),
     SDLFunc("SDL_ClearHints"),
     SDLFunc("SDL_AddHintCallback", [c_char_p, SDL_HintCallback, c_void_p]),
-    SDLFunc("SDL_DelHintCallback",[c_char_p, SDL_HintCallback, c_void_p]),
+    SDLFunc("SDL_DelHintCallback", [c_char_p, SDL_HintCallback, c_void_p]),
 ]
 _ctypes = AttributeDict()
 for f in _funcdefs:

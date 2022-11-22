@@ -115,10 +115,6 @@ _funcdefs = [
     SDLFunc("SDL_LockJoysticks", None, None, added='2.0.7'),
     SDLFunc("SDL_UnlockJoysticks", None, None, added='2.0.7'),
     SDLFunc("SDL_NumJoysticks", None, c_int),
-    SDLFunc("SDL_GetJoystickGUIDInfo",
-        [SDL_JoystickGUID, _P(Uint16), _P(Uint16), _P(Uint16), _P(Uint16)],
-        None, added = '2.26.0'
-    ),
     SDLFunc("SDL_JoystickNameForIndex", [c_int], c_char_p),
     SDLFunc("SDL_JoystickPathForIndex", [c_int], c_char_p, added='2.23.1'),
     SDLFunc("SDL_JoystickGetDevicePlayerIndex", [c_int], c_int, added='2.0.9'),
@@ -160,6 +156,10 @@ _funcdefs = [
     SDLFunc("SDL_JoystickGetType", [_P(SDL_Joystick)], SDL_JoystickType, added='2.0.6'),
     SDLFunc("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int]),
     SDLFunc("SDL_JoystickGetGUIDFromString", [c_char_p], SDL_JoystickGUID),
+    SDLFunc("SDL_GetJoystickGUIDInfo",
+        [SDL_JoystickGUID, _P(Uint16), _P(Uint16), _P(Uint16), _P(Uint16)],
+        None, added = '2.26.0'
+    ),
     SDLFunc("SDL_JoystickGetAttached", [_P(SDL_Joystick)], SDL_bool),
     SDLFunc("SDL_JoystickInstanceID", [_P(SDL_Joystick)], SDL_JoystickID),
     SDLFunc("SDL_JoystickNumAxes", [_P(SDL_Joystick)], c_int),
@@ -204,7 +204,6 @@ for f in _funcdefs:
 # Aliases for ctypes bindings
 
 SDL_NumJoysticks = _ctypes["SDL_NumJoysticks"]
-SDL_GetJoystickGUIDInfo = _ctypes["SDL_GetJoystickGUIDInfo"]
 SDL_JoystickNameForIndex = _ctypes["SDL_JoystickNameForIndex"]
 SDL_JoystickPathForIndex = _ctypes["SDL_JoystickPathForIndex"]
 SDL_JoystickOpen = _ctypes["SDL_JoystickOpen"]
@@ -213,6 +212,7 @@ SDL_JoystickPath = _ctypes["SDL_JoystickPath"]
 SDL_JoystickGetDeviceGUID = _ctypes["SDL_JoystickGetDeviceGUID"]
 SDL_JoystickGetGUID = _ctypes["SDL_JoystickGetGUID"]
 SDL_JoystickGetGUIDFromString = _ctypes["SDL_JoystickGetGUIDFromString"]
+SDL_GetJoystickGUIDInfo = _ctypes["SDL_GetJoystickGUIDInfo"]
 SDL_JoystickGetAttached = _ctypes["SDL_JoystickGetAttached"]
 SDL_JoystickInstanceID = _ctypes["SDL_JoystickInstanceID"]
 SDL_JoystickNumAxes = _ctypes["SDL_JoystickNumAxes"]
