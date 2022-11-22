@@ -1,11 +1,13 @@
 import sys
 import pytest
-from ctypes import c_float 
+from ctypes import c_float, byref
 import sdl2
-from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_SENSOR
+from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_SENSOR, Uint64
 from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2.error import SDL_GetError, SDL_ClearError
+
+#TODO: Rewrite these tests in the current joystick/gamecontroller format
 
 # Make sure sensor subsystem is available and works before running tests
 available = sdl2.dll.version >= 2009
@@ -99,8 +101,17 @@ class TestSDLSensor(object):
             assert type(iid) == int
             sdl2.SDL_SensorUpdate()
             data = c_float(-0.00323)  # Set a random initial value
-            assert sdl2.SDL_SensorGetData(s, data, 1) == 0
+            assert sdl2.SDL_SensorGetData(s, byref(data), 1) == 0
             assert data.value != -0.00323
+            if sdl2.dll.version >= 2260:
+                timestamp = Uint64(1)
+                data = c_float(-0.00323)  # Set a random initial value
+                ret = sdl2.SDL_SensorGetDataWithTimestamp(
+                    s, byref(timestamp), byref(data), 1
+                )
+                assert ret == 0
+                assert data.value != -0.00323
+                assert timestamp.value != 1
             sdl2.SDL_SensorClose(s)
             s_info = {
                 'name': name.decode('utf-8'), 'type': types[dtype],

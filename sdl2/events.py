@@ -4,7 +4,7 @@ from ctypes import (
 from ctypes import POINTER as _P
 from .dll import version as sdl_version
 from .dll import _bind, SDLFunc, AttributeDict
-from .stdinc import Sint16, Sint32, Uint8, Uint16, Uint32, SDL_bool
+from .stdinc import Sint16, Sint32, Uint8, Uint16, Uint32, Uint64, SDL_bool
 from .keyboard import SDL_Keysym
 from .joystick import SDL_JoystickID, SDL_JoystickPowerLevel
 from .touch import SDL_FingerID, SDL_TouchID
@@ -264,6 +264,11 @@ if sdl_version >= 2018:
         ("preciseX", c_float),
         ("preciseY", c_float)
     ]
+if sdl_version >= 2260:
+    _mousewheel_fields += [
+        ("mouseX", Sint32),
+        ("mouseY", Sint32)
+    ]
 class SDL_MouseWheelEvent(Structure):
     _fields_ = _mousewheel_fields
 
@@ -373,14 +378,19 @@ class SDL_ControllerTouchpadEvent(Structure):
         ("pressure", c_float),
     ]
 
-class SDL_ControllerSensorEvent(Structure):
-    _fields_ = [
-        ("type", Uint32),
-        ("timestamp", Uint32),
-        ("which", SDL_JoystickID),
-        ("sensor", Sint32),
-        ("data", c_float * 3),
+_controller_sensor_fields = [
+    ("type", Uint32),
+    ("timestamp", Uint32),
+    ("which", SDL_JoystickID),
+    ("sensor", Sint32),
+    ("data", c_float * 3),
+]
+if sdl_version >= 2260:
+    _controller_sensor_fields += [
+        ("timestamp_us", Uint64)
     ]
+class SDL_ControllerSensorEvent(Structure):
+    _fields_ = _controller_sensor_fields
 
 class SDL_AudioDeviceEvent(Structure):
     _fields_ = [
@@ -442,13 +452,18 @@ class SDL_DropEvent(Structure):
         ("windowID", Uint32),
     ]
 
-class SDL_SensorEvent(Structure):
-    _fields_ = [
-        ("type", Uint32),
-        ("timestamp", Uint32),
-        ("which", Sint32),
-        ("data", (c_float * 6)),
+_sensor_fields = [
+    ("type", Uint32),
+    ("timestamp", Uint32),
+    ("which", Sint32),
+    ("data", (c_float * 6)),
+]
+if sdl_version >= 2260:
+    _sensor_fields += [
+        ("timestamp_us", Uint64)
     ]
+class SDL_SensorEvent(Structure):
+    _fields_ = _sensor_fields
 
 class SDL_QuitEvent(Structure):
     _fields_ = [

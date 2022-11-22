@@ -25,7 +25,7 @@ def test_SDL_ClipboardText(window):
     # Test whether HasClipboardText is accurate
     expected = SDL_FALSE if len(ret) == 0 else SDL_TRUE
     assert sdl2.SDL_HasClipboardText() == expected
-    # Set some new clipboard test and test for it
+    # Set some new clipboard text and test for it
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_SetClipboardText(b"test")
     assert SDL_GetError() == b""
@@ -34,3 +34,23 @@ def test_SDL_ClipboardText(window):
     assert sdl2.SDL_GetClipboardText() == b"test"
     # Reset original contents
     sdl2.SDL_SetClipboardText(original_contents)
+
+
+@pytest.mark.skipif(sdl2.dll.version < 2260, reason="not available")
+def test_SDL_PrimarySelectionText(window):
+    # Test retrieving text from the clipboard
+    ret = sdl2.SDL_GetPrimarySelectionText()
+    original_contents = ret
+    assert type(ret) in (str, bytes)
+    # Test whether HasPrimarySelectionText is accurate
+    expected = SDL_FALSE if len(ret) == 0 else SDL_TRUE
+    assert sdl2.SDL_HasPrimarySelectionText() == expected
+    # Set some new primary selection text and test for it
+    sdl2.SDL_ClearError()
+    ret = sdl2.SDL_SetPrimarySelectionText(b"test")
+    assert SDL_GetError() == b""
+    assert ret == 0
+    assert sdl2.SDL_HasPrimarySelectionText() == SDL_TRUE
+    assert sdl2.SDL_GetPrimarySelectionText() == b"test"
+    # Reset original contents
+    sdl2.SDL_SetPrimarySelectionText(original_contents)

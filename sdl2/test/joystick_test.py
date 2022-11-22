@@ -1,6 +1,6 @@
 import sys
 import pytest
-from ctypes import create_string_buffer, byref, c_int, c_int16, CFUNCTYPE
+from ctypes import create_string_buffer, byref, c_int, c_int16, c_uint16, CFUNCTYPE
 import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_JOYSTICK
 from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
@@ -368,6 +368,22 @@ def test_SDL_JoystickGetGUIDFromString():
     expected = [3, 0, 0, 0, 126, 5, 0, 0, 6, 3, 0, 0, 28, 58, 0, 0]
     guid = sdl2.SDL_JoystickGetGUIDFromString(guid_str)
     assert list(guid.data) == expected
+
+@pytest.mark.skipif(sdl2.dll.version < 2260, reason="not available")
+@pytest.mark.xfail(sys.version_info < (3, 7, 0, 'final'), reason="ctypes bug")
+def test_SDL_GetJoystickGUIDInfo():
+    guid_str = b'030000007e050000060300001c3a0000' # Wiimote on macOS
+    guid = sdl2.SDL_JoystickGetGUIDFromString(guid_str)
+    # Try parsing field information from GUID
+    vendor, product, version = c_uint16(0), c_uint16(0), c_uint16(0)
+    crc16 = c_uint16(0)
+    sdl2.SDL_GetJoystickGUIDInfo(
+        guid, byref(vendor), byref(product), byref(version), byref(crc16)
+    )
+    assert vendor.value == 1406
+    assert product.value > 0
+    assert version.value > 0
+    assert crc16.value == 0
 
 def test_SDL_JoystickGetAttached(joysticks):
     for stick in joysticks:

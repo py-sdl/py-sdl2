@@ -504,6 +504,15 @@ def test_SDL_GetSetWindowSize(window):
     sdl2.SDL_GetWindowSize(window, byref(sx), byref(sy))
     assert (sx.value, sy.value) == (480, 320)
 
+@pytest.mark.skipif(sdl2.dll.version < 2260, reason="not available")
+def test_SDL_GetWindowSizeInPixels(window):
+    sx, sy = c_int(0), c_int(0)
+    sxp, syp = c_int(0), c_int(0)
+    sdl2.SDL_GetWindowSize(window, byref(sx), byref(sy))
+    sdl2.SDL_GetWindowSizeInPixels(window, byref(sxp), byref(syp))
+    assert sxp.value >= sx.value
+    assert syp.value >= sy.value
+
 def test_SDL_GetWindowBordersSize(window, decorated_window):
     # Currently, only X11 and Windows video drivers support border size
     supports_borders = sdl2.SDL_GetCurrentVideoDriver() in [b"x11", b"windows"]

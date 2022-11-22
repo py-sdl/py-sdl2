@@ -1,7 +1,7 @@
 from ctypes import c_char_p, c_int, c_float, c_void_p
 from ctypes import POINTER as _P
 from .dll import _bind, SDLFunc, AttributeDict
-from .stdinc import Uint32
+from .stdinc import Uint64, Uint32
 
 
 __all__ = [
@@ -14,7 +14,8 @@ __all__ = [
     # Enums
     "SDL_SensorType",
     "SDL_SENSOR_INVALID", "SDL_SENSOR_UNKNOWN", "SDL_SENSOR_ACCEL",
-    "SDL_SENSOR_GYRO",
+    "SDL_SENSOR_GYRO", "SDL_SENSOR_ACCEL_L", "SDL_SENSOR_GYRO_L",
+    "SDL_SENSOR_ACCEL_R", "SDL_SENSOR_GYRO_R",
 ]
 
 
@@ -25,6 +26,10 @@ SDL_SENSOR_INVALID = -1
 SDL_SENSOR_UNKNOWN = 0
 SDL_SENSOR_ACCEL = 1
 SDL_SENSOR_GYRO = 2
+SDL_SENSOR_ACCEL_L = 3
+SDL_SENSOR_GYRO_L = 4
+SDL_SENSOR_ACCEL_R = 5
+SDL_SENSOR_GYRO_R = 6
 
 SDL_STANDARD_GRAVITY = 9.80665
 
@@ -54,6 +59,10 @@ _funcdefs = [
     SDLFunc("SDL_SensorGetNonPortableType", [_P(SDL_Sensor)], c_int, added='2.0.9'),
     SDLFunc("SDL_SensorGetInstanceID", [_P(SDL_Sensor)], SDL_SensorID, added='2.0.9'),
     SDLFunc("SDL_SensorGetData", [_P(SDL_Sensor), _P(c_float), c_int], c_int, added='2.0.9'),
+    SDLFunc("SDL_SensorGetDataWithTimestamp",
+        [_P(SDL_Sensor), _P(Uint64), _P(c_float), c_int],
+        c_int, added = '2.26.0'
+    ),
     SDLFunc("SDL_SensorClose", [_P(SDL_Sensor)], None, added='2.0.9'),
     SDLFunc("SDL_SensorUpdate", None, None, added='2.0.9'),
 ]
@@ -79,5 +88,6 @@ SDL_SensorGetType = _ctypes["SDL_SensorGetType"]
 SDL_SensorGetNonPortableType = _ctypes["SDL_SensorGetNonPortableType"]
 SDL_SensorGetInstanceID = _ctypes["SDL_SensorGetInstanceID"]
 SDL_SensorGetData = _ctypes["SDL_SensorGetData"] # Needs testing
+SDL_SensorGetDataWithTimestamp = _ctypes["SDL_SensorGetDataWithTimestamp"] # Needs testing
 SDL_SensorClose = _ctypes["SDL_SensorClose"]
 SDL_SensorUpdate = _ctypes["SDL_SensorUpdate"]

@@ -156,6 +156,10 @@ _funcdefs = [
     SDLFunc("SDL_JoystickGetType", [_P(SDL_Joystick)], SDL_JoystickType, added='2.0.6'),
     SDLFunc("SDL_JoystickGetGUIDString", [SDL_JoystickGUID, c_char_p, c_int]),
     SDLFunc("SDL_JoystickGetGUIDFromString", [c_char_p], SDL_JoystickGUID),
+    SDLFunc("SDL_GetJoystickGUIDInfo",
+        [SDL_JoystickGUID, _P(Uint16), _P(Uint16), _P(Uint16), _P(Uint16)],
+        None, added = '2.26.0'
+    ),
     SDLFunc("SDL_JoystickGetAttached", [_P(SDL_Joystick)], SDL_bool),
     SDLFunc("SDL_JoystickInstanceID", [_P(SDL_Joystick)], SDL_JoystickID),
     SDLFunc("SDL_JoystickNumAxes", [_P(SDL_Joystick)], c_int),
@@ -267,3 +271,12 @@ else:
             s += "{:x}".format(g & 0x0F)
         s = s.encode('utf-8')
         pszGUID.value = s[:(cbGUID * 2)]
+
+if sys.version_info >= (3, 7, 0, 'final'):
+    SDL_GetJoystickGUIDInfo = _ctypes["SDL_GetJoystickGUIDInfo"]
+else:
+    def SDL_GetJoystickGUIDInfo(guid, vendor, product, version, crc16):
+        # We can't modify ctypes arguments passed with byref in Python,
+        # so to avoid a segfault on older Python versions we just do
+        # nothing here since we can't replicate its functionality.
+        pass

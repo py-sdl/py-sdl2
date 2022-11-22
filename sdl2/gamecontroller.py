@@ -5,7 +5,7 @@ from ctypes import (
 from ctypes import POINTER as _P
 from .dll import _bind, SDLFunc, AttributeDict
 from .dll import version as sdl_version
-from .stdinc import SDL_bool, Sint16, Uint32, Uint16, Uint8
+from .stdinc import SDL_bool, Sint16, Uint64, Uint32, Uint16, Uint8
 from .joystick import (SDL_JoystickGUID, SDL_Joystick, SDL_JoystickID,
     SDL_JoystickGetGUIDString)
 from .rwops import SDL_RWops, SDL_RWFromFile
@@ -228,6 +228,10 @@ _funcdefs = [
         [_P(SDL_GameController), SDL_SensorType, _P(c_float), c_int],
         returns = c_int, added = '2.0.14'
     ),
+    SDLFunc("SDL_GameControllerGetSensorDataWithTimestamp",
+        [_P(SDL_GameController), SDL_SensorType, _P(Uint64), _P(c_float), c_int],
+        returns = c_int, added = '2.26.0'
+    ),
     SDLFunc("SDL_GameControllerRumble",
         [_P(SDL_GameController), Uint16, Uint16, Uint32],
         returns = c_int, added = '2.0.9'
@@ -300,6 +304,7 @@ SDL_GameControllerSetSensorEnabled = _ctypes["SDL_GameControllerSetSensorEnabled
 SDL_GameControllerIsSensorEnabled = _ctypes["SDL_GameControllerIsSensorEnabled"]
 SDL_GameControllerGetSensorDataRate = _ctypes["SDL_GameControllerGetSensorDataRate"]
 SDL_GameControllerGetSensorData = _ctypes["SDL_GameControllerGetSensorData"]
+SDL_GameControllerGetSensorDataWithTimestamp = _ctypes["SDL_GameControllerGetSensorDataWithTimestamp"]
 SDL_GameControllerAddMappingsFromRW = _ctypes["SDL_GameControllerAddMappingsFromRW"]
 SDL_GameControllerAddMappingsFromFile = lambda fname: SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(fname, b"rb"), 1)
 SDL_GameControllerFromInstanceID = _ctypes["SDL_GameControllerFromInstanceID"]
