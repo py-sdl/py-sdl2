@@ -406,6 +406,11 @@ def test_SDL_GameControllerGetSensorDataRate(gamepads):
 def test_SDL_GameControllerGetSensorData(gamepads):
     pass
 
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdl2.dll.version < 2260, reason="not available")
+def test_SDL_GameControllerGetSensorDataWithTimestamp(gamepads):
+    pass
+
 @pytest.mark.skipif(sdl2.dll.version < 2009, reason="not available")
 def test_SDL_GameControllerRumble(gamepads):
     # If we ever add an interactive test suite, this should be moved there

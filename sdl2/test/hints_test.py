@@ -71,3 +71,21 @@ def test_SDL_AddDelHintCallback(with_sdl):
     sdl2.SDL_DelHintCallback(topmost_hint, hintcb, udata)
     sdl2.SDL_SetHint(topmost_hint, b"false")
     assert len(calls) == 2
+
+@pytest.mark.skipif(sdl2.dll.version < 2240, reason="not available")
+def test_SDL_ResetHint(with_sdl):
+    default = sdl2.SDL_GetHint(sdl2.SDL_HINT_ORIENTATIONS)
+    override = b"PortraitUpsideDown"
+    assert sdl2.SDL_SetHint(sdl2.SDL_HINT_ORIENTATIONS, override) == 1
+    assert sdl2.SDL_GetHint(sdl2.SDL_HINT_ORIENTATIONS) == override
+    assert sdl2.SDL_ResetHint(sdl2.SDL_HINT_ORIENTATIONS) == sdl2.SDL_TRUE
+    assert sdl2.SDL_GetHint(sdl2.SDL_HINT_ORIENTATIONS) == default
+
+@pytest.mark.skipif(sdl2.dll.version < 2260, reason="not available")
+def test_SDL_ResetHints(with_sdl):
+    default = sdl2.SDL_GetHint(sdl2.SDL_HINT_ORIENTATIONS)
+    override = b"PortraitUpsideDown"
+    assert sdl2.SDL_SetHint(sdl2.SDL_HINT_ORIENTATIONS, override) == 1
+    assert sdl2.SDL_GetHint(sdl2.SDL_HINT_ORIENTATIONS) == override
+    sdl2.SDL_ResetHints()
+    assert sdl2.SDL_GetHint(sdl2.SDL_HINT_ORIENTATIONS) == default
