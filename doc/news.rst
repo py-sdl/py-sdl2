@@ -22,11 +22,14 @@ New Features:
   to allow easier unpacking in Python (e.g. ``x, y, w, h = rect``).
 * Cache :class:`sdl2.ext.Texture` sizes for faster retrieval, improving render
   performance in some cases.
+* Updated to wrap new functions and constants in SDL2 2.26.0 (PR #252 & #253).
 
 Fixed Bugs:
 
 * Fixed bug preventing SDL Points and Rects from being used as ``srcrect`` or
   ``dstrect`` for :meth:`~sdl2.ext.Renderer.copy`.
+* Added a binding for ``SDL_ResetHint``, which was added in SDL 2.24.0 but
+  got missed in PR #246.
 
 
 0.9.14
