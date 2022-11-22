@@ -381,6 +381,8 @@ _funcdefs = [
     SDLFunc("SDL_SetHintWithPriority", [c_char_p, c_char_p, SDL_HintPriority], SDL_bool),
     SDLFunc("SDL_SetHint", [c_char_p, c_char_p], SDL_bool),
     SDLFunc("SDL_GetHint", [c_char_p], c_char_p),
+    SDLFunc("SDL_ResetHint", [c_char_p], SDL_bool, added='2.24.0'),
+    SDLFunc("SDL_ResetHints", None, None, added='2.26.0'),
     SDLFunc("SDL_GetHintBoolean", [c_char_p, SDL_bool], SDL_bool, added='2.0.5'),
     SDLFunc("SDL_ClearHints"),
     SDLFunc("SDL_AddHintCallback", [c_char_p, SDL_HintCallback, c_void_p]),
@@ -397,6 +399,8 @@ for f in _funcdefs:
 SDL_SetHintWithPriority = _ctypes["SDL_SetHintWithPriority"]
 SDL_SetHint = _ctypes["SDL_SetHint"]
 SDL_GetHint = _ctypes["SDL_GetHint"]
+SDL_ResetHint = _ctypes["SDL_ResetHint"]
+SDL_ResetHints = _ctypes["SDL_ResetHints"]
 SDL_GetHintBoolean = _ctypes["SDL_GetHintBoolean"]
 SDL_ClearHints = _ctypes["SDL_ClearHints"]
 SDL_AddHintCallback = _ctypes["SDL_AddHintCallback"]
