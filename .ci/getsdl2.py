@@ -35,7 +35,7 @@ sdl2_alt_urls = {
 
 libversions = {
     '2.26.0': {
-        'SDL2': '2.26.0',
+        'SDL2': '2.26.2',
         'SDL2_mixer': '2.6.0',
         'SDL2_ttf': '2.20.0',
         'SDL2_image': '2.6.0',
