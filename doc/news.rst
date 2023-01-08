@@ -23,6 +23,8 @@ New Features:
 * Cache :class:`sdl2.ext.Texture` sizes for faster retrieval, improving render
   performance in some cases.
 * Updated to wrap new functions and constants in SDL2 2.26.0 (PR #252 & #253).
+* :meth:`~sdl2.ext.SpriteFactory.from_image` now accepts ``PIL.Image.Image``
+  objects directly in addition to image filepaths (PR #255 & #256).
 
 Fixed Bugs:
 
