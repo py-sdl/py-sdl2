@@ -38,6 +38,7 @@ Thanks to everyone else for their assistance, support, fixes and improvements:
 * mgorny
 * Michael McCandless
 * Mihail Latyshov
+* Minhal Valiya Peedikakkal
 * otus
 * Paul Vallet
 * Piper Thunstrom
