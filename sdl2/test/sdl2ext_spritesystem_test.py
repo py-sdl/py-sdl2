@@ -11,6 +11,12 @@ from sdl2.surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.pixels import SDL_MapRGBA
 from sdl2.error import SDL_GetError, SDL_ClearError
 
+try:
+    import PIL
+    _HASPIL = True
+except ImportError:
+    _HASPIL = False
+
 RESOURCES = Resources(__file__, "resources")
 
 BLACK = (0, 0, 0, 255)
@@ -142,6 +148,15 @@ class TestSpriteFactory(object):
             tsprite = tfactory.from_image(imgname)
             assert isinstance(tsprite, sdl2ext.TextureSprite)
             ssprite = sfactory.from_image(imgname)
+            assert isinstance(ssprite, sdl2ext.SoftwareSprite)
+
+        if _HASPIL:
+            from PIL import Image
+            imgname = RESOURCES.get_path("surfacetest.png")
+            img = Image.open(imgname)
+            tsprite = tfactory.from_image(img)
+            assert isinstance(tsprite, sdl2ext.TextureSprite)
+            ssprite = sfactory.from_image(img)
             assert isinstance(ssprite, sdl2ext.SoftwareSprite)
 
         for factory in (tfactory, sfactory):

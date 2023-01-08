@@ -4,12 +4,10 @@ from .color import convert_to_color
 from .err import SDLError
 from .compat import isiterable
 from .ebs import System
-from .image import load_image, pillow_to_surface
+from .image import load_image, pillow_to_surface, _HASPIL
 from .renderer import Renderer
 from .sprite import Sprite, SoftwareSprite, TextureSprite
 from .window import Window
-
-from PIL.Image import Image
 
 __all__ = [
     "SpriteFactory", "SoftwareSpriteRenderSystem", "SpriteRenderSystem",
@@ -65,10 +63,11 @@ class SpriteFactory(object):
 
     def from_image(self, img):
         """Creates a Sprite from the passed PIL.Image or image file name."""
-        if isinstance(img, Image):
-            return self.from_surface(pillow_to_surface(img))
-        else:
-            return self.from_surface(load_image(img), True)
+        if _HASPIL:
+            from PIL.Image import Image
+            if isinstance(img, Image):
+                return self.from_surface(pillow_to_surface(img))
+        return self.from_surface(load_image(img), True)
 
     def from_surface(self, tsurface, free=False):
         """Creates a Sprite from the passed SDL_Surface.
