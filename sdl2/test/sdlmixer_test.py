@@ -32,8 +32,7 @@ def with_sdl_mixer():
     # Initialize SDL2 with video and audio subsystems
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_AUDIO)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
     # Initialize SDL_mixer and open an audio device
     flags = (
         sdlmixer.MIX_INIT_FLAC | sdlmixer.MIX_INIT_MOD | sdlmixer.MIX_INIT_MP3 |

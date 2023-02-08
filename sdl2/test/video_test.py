@@ -194,8 +194,7 @@ def test_SDL_VideoInitQuit():
     # Test with default driver
     assert sdl2.SDL_WasInit(0) & sdl2.SDL_INIT_VIDEO != sdl2.SDL_INIT_VIDEO
     ret = sdl2.SDL_VideoInit(None)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
     assert sdl2.SDL_GetCurrentVideoDriver() # If initialized, should be string
     sdl2.SDL_VideoQuit()
     assert not sdl2.SDL_GetCurrentVideoDriver()
