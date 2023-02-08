@@ -140,7 +140,7 @@ def test_load_img(with_sdl):
     # Test loading all test images, with and without ARGB conversion
     resources = os.listdir(resource_path)
     test_imgs = [f for f in resources if f[:11] == "surfacetest"]
-    for img in test_imgs:
+    for img in sorted(test_imgs):
         img_path = os.path.join(resource_path, img)
         fmt = img.split(".")[-1]
         if fmt in skip_formats:
