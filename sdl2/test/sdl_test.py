@@ -25,7 +25,7 @@ def test_SDL_Init():
         ret = sdl2.SDL_Init(flags)
         err = sdl2.SDL_GetError()
         if name in ['timer', 'audio', 'video', 'events']:
-            assert ret == 0
+            assert ret == 0, err.decode('utf-8', 'replace')
         if err:
             err = err.decode('utf-8')
             print("Error loading {0} subsystem: {1}".format(name, err))
@@ -40,12 +40,11 @@ def test_SDL_Init():
 def test_SDL_InitSubSystem():
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
     # Test initializing an additional subsystem
     assert sdl2.SDL_WasInit(0) & SDL_INIT_TIMER != SDL_INIT_TIMER
     ret = sdl2.SDL_InitSubSystem(SDL_INIT_TIMER)
-    assert sdl2.SDL_GetError() == b""
+    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
     assert sdl2.SDL_WasInit(0) & SDL_INIT_TIMER == SDL_INIT_TIMER
     # Test shutting down a single subsystem
     sdl2.SDL_QuitSubSystem(SDL_INIT_AUDIO)

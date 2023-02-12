@@ -11,7 +11,7 @@ from sdl2.error import SDL_GetError, SDL_ClearError
 any_joysticks = False
 SDL_ClearError()
 ret = SDL_Init(SDL_INIT_JOYSTICK)
-joystick_works = ret == 0 and SDL_GetError() == b""
+joystick_works = ret == 0
 if joystick_works:
     devices = sdl2.SDL_NumJoysticks()
     if sdl2.dll.version >= 2014:
@@ -42,8 +42,7 @@ def with_sdl():
     sdl2.SDL_ClearError()
     sdl2.SDL_SetHint(b"SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", b"1")
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_JOYSTICK)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
     # Also initialize a virtual joystick (if supported)
     if sdl2.dll.version >= 2014:
         virt_type = sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER

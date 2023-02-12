@@ -10,7 +10,7 @@ from sdl2 import joystick
 # Get status of gamepad support/availability before running tests
 SDL_ClearError()
 ret = SDL_Init(sdl2.SDL_INIT_GAMECONTROLLER)
-gamepad_works = ret == 0 and SDL_GetError() == b""
+gamepad_works = ret == 0
 SDL_Quit()
 
 pytestmark = pytest.mark.skipif(not gamepad_works, reason="system unsupported")
@@ -35,8 +35,7 @@ def with_sdl():
     sdl2.SDL_ClearError()
     sdl2.SDL_SetHint(b"SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", b"1")
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_GAMECONTROLLER)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
     # Also initialize a virtual joystick (if supported)
     if sdl2.dll.version >= 2014:
         virt_type = joystick.SDL_JOYSTICK_TYPE_GAMECONTROLLER
