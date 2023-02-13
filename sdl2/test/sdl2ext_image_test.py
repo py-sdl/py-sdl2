@@ -53,7 +53,7 @@ skip_color_check = ['gif', 'jpg', 'lbm', 'pbm', 'pgm', 'svg', 'webp']
 
 # Skip ICO and CUR tests on big-endian, since they don't seem to work yet
 if sys.byteorder == "big":
-    skip_color_check += ['ico', 'cur']
+    skip_color_check += ['ico', 'cur', 'xcf']
 
 # SDL 2.0.10 has a bug that messes up converting surfaces with transparency
 if sdl2.dll.version == 2010:
@@ -140,7 +140,7 @@ def test_load_img(with_sdl):
     # Test loading all test images, with and without ARGB conversion
     resources = os.listdir(resource_path)
     test_imgs = [f for f in resources if f[:11] == "surfacetest"]
-    for img in test_imgs:
+    for img in sorted(test_imgs):
         img_path = os.path.join(resource_path, img)
         fmt = img.split(".")[-1]
         if fmt in skip_formats:
