@@ -2,8 +2,9 @@
 
 import os
 import sys
+import time
+import datetime
 import pkg_resources
-from datetime import date
 
 # -- Path setup --------------------------------------------------------------
 
@@ -17,7 +18,9 @@ sys.path.append(os.path.join(parent_dir, "sdl2", "ext"))
 
 # -- Project information -----------------------------------------------------
 
-curr_date = date.today()
+curr_date = datetime.datetime.utcfromtimestamp(
+    int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))
+).date()
 copyright_str = '{0}, Marcus von Appen. Last updated: {1}'
 
 project = 'PySDL2'
