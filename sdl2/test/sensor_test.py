@@ -19,7 +19,7 @@ pytestmark = pytest.mark.skipif(ret != 0 or not available, reason=skipmsg)
 
 def test_SDL_NumSensors():
     ret = SDL_Init(SDL_INIT_SENSOR)
-    assert ret == 0
+    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
     retval = sdl2.SDL_NumSensors()
     SDL_Quit()
     assert retval >= 0

@@ -65,13 +65,18 @@ def _get_mode_properties(mode):
 
 
 def _ensure_argb32(sf, fname):
-    # Check if image already ARGB32 and return if True
-    ARGB32 = pixels.SDL_PIXELFORMAT_ARGB8888
-    if sf.contents.format.contents.format == ARGB32:
+    # Return if it's already SDL_PIXELFORMAT_ABGR8888.
+    # As per SDL documentation, this is the format where each 32-bit word
+    # (in machine-native endianness) has alpha in the most significant
+    # 8 bits and red in the least significant, so the 32-bit word
+    # 0xff0066cc is equivalent to HTML #cc6600.
+    ARGB8888 = pixels.SDL_PIXELFORMAT_ARGB8888
+    if sf.contents.format.contents.format == ARGB8888:
         return sf
 
-    # Convert the image to ARGB32. Note that this frees the original surface.
-    out_fmt = pixels.SDL_AllocFormat(ARGB32)
+    # Convert the image to the desired format. Note that this frees the
+    # original surface.
+    out_fmt = pixels.SDL_AllocFormat(ARGB8888)
     converted = surface.SDL_ConvertSurface(sf, out_fmt, 0)
     surface.SDL_FreeSurface(sf)
     if not converted:
