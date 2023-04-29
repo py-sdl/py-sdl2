@@ -10,7 +10,7 @@ import os
 import sys
 import sdl2.ext
 from sdl2.sdlttf import TTF_FontLineSkip
-from sdl2.ext import FontTTF, key_pressed, get_text_input
+from sdl2.ext import FontTTF, key_pressed, get_text_input, quit_requested
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 RESOURCES = sdl2.ext.Resources(filepath, "resources")
@@ -72,10 +72,9 @@ def run():
         update_txt = False
         events = sdl2.ext.get_events()
 
-        for event in events:
-            if event.type == sdl2.SDL_QUIT:
-                running = False
-                break
+        if quit_requested(events):
+            running = False
+            break
 
         # Handle special keyboard events
         if key_pressed(events):

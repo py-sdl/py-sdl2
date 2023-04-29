@@ -3,6 +3,7 @@ import sys
 from random import randint
 import sdl2
 import sdl2.ext
+from sdl2.ext import get_events, quit_requested, mouse_clicked
 
 # Draws random lines on the passed surface
 def draw_lines(surface, width, height):
@@ -71,27 +72,26 @@ def run():
     curindex = 0
     draw_lines(windowsurface, 800, 600)
 
-    # The event loop is nearly the same as we used in colorpalettes.py. If you
-    # do not know, what happens here, take a look at colorpalettes.py for a
-    # detailled description.
+    # The event loop is nearly the same as we used in colorpalettes.py, except
+    # that here we use some functions from sdl2.ext for handling mouse clicks
+    # and quit requests to make the code more Pythonic.
     running = True
     while running:
-        events = sdl2.ext.get_events()
-        for event in events:
-            if event.type == sdl2.SDL_QUIT:
-                running = False
-                break
-            if event.type == sdl2.SDL_MOUSEBUTTONDOWN:
-                curindex += 1
-                if curindex >= len(functions):
-                    curindex = 0
-                # In contrast to colorpalettes.py, our mapping table consists
-                # of functions and their arguments. Thus, we get the currently
-                # requested function and argument tuple and execute the
-                # function with the arguments.
-                func, args = functions[curindex]
-                func(*args)
-                break
+        events = get_events()
+        # Handle any quit requests
+        if quit_requested(events):
+            running = False
+        # If the mouse is clicked, switch to the next drawing function
+        if mouse_clicked(events):
+            curindex += 1
+            if curindex >= len(functions):
+                curindex = 0
+            # In contrast to colorpalettes.py, our mapping table consists
+            # of functions and their arguments. Thus, we get the currently
+            # requested function and argument tuple and execute the
+            # function with the arguments.
+            func, args = functions[curindex]
+            func(*args)
         window.refresh()
     sdl2.ext.quit()
     return 0
