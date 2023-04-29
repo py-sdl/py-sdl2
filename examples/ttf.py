@@ -10,7 +10,7 @@ import os
 import sys
 import sdl2.ext
 from sdl2.sdlttf import TTF_FontLineSkip
-from sdl2.ext import FontTTF
+from sdl2.ext import FontTTF, key_pressed, get_text_input
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 RESOURCES = sdl2.ext.Resources(filepath, "resources")
@@ -64,55 +64,54 @@ def run():
 
     # Tell SDL2 to start reading Text Editing events. This allows for proper
     # handling of unicode characters and modifier keys.
-    sdl2.SDL_StartTextInput()
+    sdl2.ext.start_text_input()
 
     # Create a simple event loop and wait for keydown, text editing, and quit events.
     running = True
     while running:
+        update_txt = False
         events = sdl2.ext.get_events()
+
         for event in events:
-            update_txt = False
             if event.type == sdl2.SDL_QUIT:
                 running = False
                 break
 
-            # Handle non-standard keyboard events
-            elif event.type == sdl2.SDL_KEYDOWN:
-                update_txt = True
-                sdl_keysym = event.key.keysym.sym
-                # If backspace pressed, remove last character (if any) from txt
-                if sdl_keysym == sdl2.SDLK_BACKSPACE:
-                    txt = txt[:-1]
-                # If enter/return pressed, insert a newline
-                elif sdl_keysym == sdl2.SDLK_RETURN:
-                    txt = txt + u"\n"
-                # If left or right arrow pressed, change text alignment mode
-                elif sdl_keysym == sdl2.SDLK_LEFT:
-                    align_idx = (align_idx - 1) % 3
-                elif sdl_keysym == sdl2.SDLK_RIGHT:
-                    align_idx = (align_idx + 1) % 3
-                elif sdl_keysym == sdl2.SDLK_UP:
-                    line_height += 1
-                elif sdl_keysym == sdl2.SDLK_DOWN:
-                    if line_height > 1:
-                        line_height -= 1 
-                # If tab pressed, cycle through the different font styles
-                elif sdl_keysym == sdl2.SDLK_TAB:
-                    style_idx = (style_idx + 1) % len(styles)
+        # Handle special keyboard events
+        if key_pressed(events):
+             # If any key pressed, re-render text
+            update_txt = True
+            # If backspace pressed, remove last character (if any) from txt
+            if key_pressed(events, sdl2.SDLK_BACKSPACE):
+                txt = txt[:-1]
+            # If enter/return pressed, insert a newline
+            elif key_pressed(events, sdl2.SDLK_RETURN):
+                txt = txt + u"\n"
+            # If left or right arrow pressed, change text alignment mode
+            elif key_pressed(events, "left"):
+                align_idx = (align_idx - 1) % 3
+            elif key_pressed(events, "right"):
+                align_idx = (align_idx + 1) % 3
+            elif key_pressed(events, "up"):
+                line_height += 1
+            elif key_pressed(events, "down"):
+                if line_height > 1:
+                    line_height -= 1 
+            # If tab pressed, cycle through the different font styles
+            elif key_pressed(events, "tab"):
+                style_idx = (style_idx + 1) % len(styles)
 
-            # Handle text input events
-            elif event.type == sdl2.SDL_TEXTINPUT:
-                update_txt = True
-                txt += event.text.text.decode("utf-8")
+        # Handle text input events
+        txt += get_text_input(events)
 
-            # If txt has changed since the start of the loop, update the renderer
-            if update_txt:
-                align = alignments[align_idx]
-                style = styles[style_idx]
-                txt_rendered = font.render_text(
-                    txt, style, width=780, line_h=line_height, align=align
-                )
-                update_text(renderer, txt_rendered)
+        # If txt has changed since the start of the loop, update the renderer
+        if update_txt:
+            align = alignments[align_idx]
+            style = styles[style_idx]
+            txt_rendered = font.render_text(
+                txt, style, width=780, line_h=line_height, align=align
+            )
+            update_text(renderer, txt_rendered)
 
     # Now that we're done, close everything down and quit SDL2
     font.close()
