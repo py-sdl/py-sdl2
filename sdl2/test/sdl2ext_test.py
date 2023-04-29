@@ -2,8 +2,10 @@ import sys
 import pytest
 import sdl2
 from sdl2 import ext as sdl2ext
-from sdl2 import SDL_Quit, SDL_WasInit, SDL_FlushEvent, SDL_USEREVENT, \
-    SDL_FIRSTEVENT, SDL_LASTEVENT, SDL_Event, SDL_UserEvent, SDL_PushEvent
+from sdl2 import (
+    SDL_Quit, SDL_WasInit, SDL_FlushEvent, SDL_UserEvent, SDL_PushEvent, 
+    SDL_Event, SDL_USEREVENT, SDL_FIRSTEVENT, SDL_LASTEVENT, SDL_QUIT,
+)
 
 @pytest.fixture(scope="module")
 def with_sdl_ext():
@@ -68,6 +70,15 @@ def test_get_events(with_sdl_ext):
     assert len(results) == 12
     for idx, r in enumerate(results):
         assert idx == r.type - SDL_USEREVENT
+
+def test_quit_requested(with_sdl_ext):
+    # Create a fake quit event
+    e = SDL_Event()
+    e.type = SDL_QUIT
+    # Test without any events
+    assert sdl2ext.quit_requested([]) == False
+    # Test with a quit event
+    assert sdl2ext.quit_requested([e]) == True
 
 def test_TestEventProcessor(with_sdl_ext):
     # NOTE: This doesn't really test functionality, but since I don't think
