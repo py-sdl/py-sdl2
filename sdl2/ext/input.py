@@ -65,7 +65,7 @@ def _parse_keycode(key):
 
 
 def _mod_to_masks(mod):
-    
+
     if not isiterable(mod):
         mod = [mod]
     
@@ -188,9 +188,11 @@ def key_pressed(events, key=None, mod=None, released=False):
         if e.type == (SDL_KEYUP if released else SDL_KEYDOWN):
             if not keycode:
                 pressed = True
+                break
             elif e.key.keysym.sym == keycode:
                 if not mod or all([e.key.keysym.mod & m for m in mod]):
                     pressed = True
+                    break
 
     return pressed
 
@@ -249,6 +251,7 @@ def mouse_clicked(events, button=None, released=False):
         if e.type == (SDL_MOUSEBUTTONUP if released else SDL_MOUSEBUTTONDOWN):
             if not button or e.button.button == button:
                 clicked = True
+                break
 
     return clicked
 
