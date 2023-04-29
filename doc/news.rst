@@ -5,6 +5,22 @@ This describes the latest changes between the PySDL2 releases.
 0.9.16 (Unreleased)
 -------------------
 
+New Features:
+
+* Added a new function :func:`~sdl2.ext.key_pressed` for easily checking
+  if a given key has been pressed (or released).
+* Added a new function :func:`~sdl2.ext.mouse_clicked` for easily checking
+  if a mouse button has been pressed (or released), as well as a
+  :func:`~sdl2.ext.get_clicks` function for retrieving the pixel coordinates
+  of any mouse clicks.
+* Added a new function :func:`~sdl2.ext.get_text_input` for returning
+  text input as a unicode string, as well as :func:`~sdl2.ext.start_text_input`,
+  :func:`~sdl2.ext.stop_text_input`, and :func:`~sdl2.ext.text_input_enabled`
+  functions for toggling and querying whether SDL text input events are enabled.
+* Added a new function :func:`~sdl2.ext.quit_requested` for easily checking
+  :func:`~sdl2.ext.get_events` output for quit requests.
+
+
 0.9.15
 ------
 
@@ -21,7 +37,7 @@ New Features:
 * Added a new function :func:`~sdl2.ext.mouse_delta` for checking the relative
   movement of the mouse cursor since last checked.
 * Added a new function :func:`~sdl2.ext.mouse_button_state` and corresponding
-  class :class:`~sdl2.ext.ButtonState` for easily  checking the current state
+  class :class:`~sdl2.ext.ButtonState` for easily checking the current state
   of the mouse buttons.
 * Added indexing support for :class:`sdl2.SDL_Point` and :class:`sdl2.SDL_Rect`
   to allow easier unpacking in Python (e.g. ``x, y, w, h = rect``).
