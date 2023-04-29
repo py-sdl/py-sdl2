@@ -60,13 +60,14 @@ SDL2-based extensions
 ---------------------
 
 In addition to simple Pythonic wrappers for SDL2 functions and structures, the
-:mod:`sdl2.ext` module also offers a number of  high-level classes and functions
-that use SDL2 internally to provide APIs for font rendering, building GUIs,
-importing images, and more:
+:mod:`sdl2.ext` module also offers a number of high-level classes and functions
+that use SDL2 internally to provide APIs for font rendering, handling input
+events, importing images, and more:
 
 .. toctree::
 	:maxdepth: 1
 
+	ext/input.rst
 	ext/surface.rst
 	ext/draw.rst
 	ext/image.rst

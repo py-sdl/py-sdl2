@@ -27,3 +27,4 @@ from .surface import *
 from .window import *
 from .mouse import *
 from .displays import *
+from .input import *
