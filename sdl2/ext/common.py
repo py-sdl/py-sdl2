@@ -162,7 +162,7 @@ def quit_requested(events):
                 running = False
 
     Args:
-        events (list or :obj:`sdl2.SDL_Event`): A list of SDL events to check
+        events (list of :obj:`sdl2.SDL_Event`): A list of SDL events to check
             for quit requests.
 
     Returns:

@@ -16,8 +16,8 @@ from ..events import (
 from .compat import _is_text, byteify, isiterable
 
 __all__ = [
-    "start_text_input", "stop_text_input", "text_input_enabled",
-    "get_text_input", "key_pressed", "mouse_clicked", "get_clicks"
+    "key_pressed", "mouse_clicked", "get_clicks", "get_text_input",
+    "start_text_input", "stop_text_input", "text_input_enabled",  
 ]
 
 
@@ -154,7 +154,7 @@ def key_pressed(events, key=None, mod=None, released=False):
     https://wiki.libsdl.org/SDL_Keycode
 
     Args:
-        events (list or :obj:`sdl2.SDL_Event`): A list of SDL events to check
+        events (list of :obj:`sdl2.SDL_Event`): A list of SDL events to check
             for matching key presses (or releases).
         key (str or :obj:`sdl2.SDL_Keycode`, optional): The name or SDL keycode
             of the key to check. If ``None``, will return True on any keypress.
@@ -162,8 +162,8 @@ def key_pressed(events, key=None, mod=None, released=False):
         mod (str or list, optional): The key modifiers (if any) to require for
             the key press (e.g. 'ctrl' for Control-Q). Has no effect if ``key``
             is not specified. Defaults to ``None``.
-        released (bool, optional): If ``True``, will check for key release
-            events instead of key presses. Defaults to ``False``.
+        released (bool, optional): If True, will check for key release
+            events instead of key presses. Defaults to False.
 
     Returns:
         bool: True if key has been pressed, otherwise False.
@@ -225,13 +225,13 @@ def mouse_clicked(events, button=None, released=False):
     ===================== =============
 
     Args:
-        events (list or :obj:`sdl2.SDL_Event`): A list of SDL events to check
+        events (list of :obj:`sdl2.SDL_Event`): A list of SDL events to check
             for mouse click events.
         button (str or int, optional): The name or SDL constant of the mouse
             button to listen for. If ``None``, all mouse buttons will . Defaults to ``None``.
-        released (bool, optional): If ``True``, will check the queue for mouse
+        released (bool, optional): If True, will check the queue for mouse
             button release events instead of mouse button down events. Defaults
-            to ``False``.
+            to False.
 
     Returns:
         bool: True if the mouse has been clicked, otherwise False.
@@ -264,17 +264,17 @@ def get_clicks(events, button=None, released=False):
     SDL button constant (see :func:`mouse_clicked` for details).
 
     Args:
-        events (list or :obj:`sdl2.SDL_Event`): A list of SDL events to check
+        events (list of :obj:`sdl2.SDL_Event`): A list of SDL events to check
             for mouse click events.
         button (str or int, optional): The name or SDL constant of the mouse
             button to listen for. If ``None``, will return clicks from any mouse
             button. Defaults to ``None``.
-        released (bool, optional): If ``True``, will return the coordinates for
+        released (bool, optional): If True, will return the coordinates for
             mouse button release events instead of mouse button click events.
-            Defaults to ``False``.
+            Defaults to False.
 
     Returns:
-        list: A list of the ``(x, y)`` coordinates for each matching click event
+        list: A list of the (x, y) coordinates for each matching click event
         in the queue.
     
     """
@@ -343,7 +343,7 @@ def get_text_input(events):
     string will be returned.
 
     Args:
-        events (list or :obj:`sdl2.SDL_Event`): A list of SDL events to check
+        events (list of :obj:`sdl2.SDL_Event`): A list of SDL events to check
             for unicode text input (``SDL_TEXTINPUT``) events.
 
     Returns:
