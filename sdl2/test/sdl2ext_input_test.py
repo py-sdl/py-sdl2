@@ -62,11 +62,11 @@ def test_start_stop_text_input(with_ext_window):
 
 def test_get_text_input(with_ext_window):
     q = [
-        textinput("h"),
-        textinput("é"),
-        textinput("l"),
-        textinput("l"),
-        textinput("ø"),
+        textinput(u"h"),
+        textinput(u"é"),
+        textinput(u"l"),
+        textinput(u"l"),
+        textinput(u"ø"),
     ]
     # Enable text input
     sdl2ext.start_text_input()
