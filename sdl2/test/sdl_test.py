@@ -5,6 +5,7 @@ from sdl2 import (
     SDL_INIT_TIMER, SDL_INIT_AUDIO, SDL_INIT_VIDEO, SDL_INIT_JOYSTICK, SDL_INIT_HAPTIC,
     SDL_INIT_GAMECONTROLLER, SDL_INIT_EVENTS, SDL_INIT_SENSOR, SDL_INIT_EVERYTHING
 )
+from .conftest import _check_error_msg
 
 subsystems = {
     'timer': SDL_INIT_TIMER,
@@ -40,11 +41,11 @@ def test_SDL_Init():
 def test_SDL_InitSubSystem():
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     # Test initializing an additional subsystem
     assert sdl2.SDL_WasInit(0) & SDL_INIT_TIMER != SDL_INIT_TIMER
     ret = sdl2.SDL_InitSubSystem(SDL_INIT_TIMER)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     assert sdl2.SDL_WasInit(0) & SDL_INIT_TIMER == SDL_INIT_TIMER
     # Test shutting down a single subsystem
     sdl2.SDL_QuitSubSystem(SDL_INIT_AUDIO)

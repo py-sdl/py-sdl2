@@ -2,7 +2,7 @@ import sys
 import pytest
 import sdl2
 from sdl2 import SDL_GetError, SDL_TRUE, SDL_FALSE
-from .conftest import SKIP_ANNOYING
+from .conftest import SKIP_ANNOYING, _check_error_msg
 
 @pytest.fixture
 def window(with_sdl):
@@ -28,8 +28,7 @@ def test_SDL_ClipboardText(window):
     # Set some new clipboard text and test for it
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_SetClipboardText(b"test")
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert sdl2.SDL_HasClipboardText() == SDL_TRUE
     assert sdl2.SDL_GetClipboardText() == b"test"
     # Reset original contents
@@ -48,8 +47,7 @@ def test_SDL_PrimarySelectionText(window):
     # Set some new primary selection text and test for it
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_SetPrimarySelectionText(b"test")
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert sdl2.SDL_HasPrimarySelectionText() == SDL_TRUE
     assert sdl2.SDL_GetPrimarySelectionText() == b"test"
     # Reset original contents

@@ -36,3 +36,11 @@ def sdl_cleanup():
     yield
     sdl2.SDL_ClearError()
     gc.collect()
+
+
+def _check_error_msg():
+    # Convenience function for retrieving the current SDL error as a str
+    e = sdl2.SDL_GetError()
+    if sys.version_info[0] >= 3:
+        e = e.decode('utf-8', 'replace')
+    return e

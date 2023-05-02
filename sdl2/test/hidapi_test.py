@@ -3,6 +3,7 @@ import pytest
 import sdl2
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2.error import SDL_GetError, SDL_ClearError
+from .conftest import _check_error_msg
 
 # Make sure hidapi subsystem is available and works before running tests
 skipmsg = 'HIDAPI requires SDL 2.0.18 or newer'
@@ -19,18 +20,14 @@ def hidapi_setup():
     assert ret == 0
 
 
-# NOTE: Remove this xfail once libudev is officially removed from pysdl2-dll
-@pytest.mark.xfail("linux" in sys.platform, reason="udev problems")
 def test_SDL_hid_init_exit():
     SDL_ClearError()
     # Initialize the library
     ret = sdl2.SDL_hid_init()
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     # Exit the library
     ret = sdl2.SDL_hid_exit()
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
 
 
 def test_SDL_hid_device_change_count(hidapi_setup):
