@@ -1,5 +1,6 @@
 # pytest configuration file
 import os
+import sys
 import gc
 import pytest
 import sdl2
@@ -8,6 +9,18 @@ from sdl2 import ext as sdl2ext
 # A flag to skip annoying audiovisual tests (e.g. window minimize).
 # Defaults to True unless an environment variable is explicitly set.
 SKIP_ANNOYING = os.getenv("PYSDL2_ALL_TESTS", "0") == "0"
+
+# Set a global constant identifying the current video driver
+SDL_VIDEODRIVER = "dummy"
+try:
+    sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+    SDL_VIDEODRIVER = sdl2.SDL_GetCurrentVideoDriver()
+    sdl2.SDL_Quit()
+    if sys.version_info[0] >= 3:
+        SDL_VIDEODRIVER = SDL_VIDEODRIVER.decode('utf-8')
+except:
+    pass
+
 
 @pytest.fixture(scope="module")
 def with_sdl():

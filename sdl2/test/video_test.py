@@ -7,7 +7,7 @@ import pytest
 import sdl2
 from sdl2.stdinc import SDL_FALSE, SDL_TRUE, Uint16
 from sdl2 import rect, pixels, surface, SDL_GetError
-from .conftest import SKIP_ANNOYING
+from .conftest import SKIP_ANNOYING, SDL_VIDEODRIVER
 
 # Some tests don't work properly with some video drivers, so check the name
 DRIVER_DUMMY = False
@@ -741,8 +741,9 @@ def test_SDL_GetSetWindowMouseRect(with_sdl):
     assert not bounds_out  # bounds_out should be null pointer
     sdl2.SDL_DestroyWindow(window)
 
-@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GetSetWindowBrightness(window):
+    if SDL_VIDEODRIVER in ["dummy", "wayland"]:
+        pytest.skip("Unsupported by {0} driver".format(SDL_VIDEODRIVER))
     orig = sdl2.SDL_GetWindowBrightness(window)
     assert isinstance(orig, float)
     assert orig >= 0
@@ -762,7 +763,7 @@ def test_SDL_GetSetWindowOpacity(window):
     ret = sdl2.SDL_GetWindowOpacity(window, byref(opacity))
     assert ret == 0
     assert opacity.value == 1.0
-    if not DRIVER_DUMMY:
+    if not SDL_VIDEODRIVER in ["dummy", "wayland"]:
         ret = sdl2.SDL_SetWindowOpacity(window, 0.5)
         assert SDL_GetError() == b""
         assert ret == 0
@@ -781,14 +782,15 @@ def test_SDL_SetWindowModalFor(window, decorated_window):
 
 @pytest.mark.skipif(sdl2.dll.version < 2005, reason="not available")
 def test_SDL_SetWindowInputFocus(window):
-    # NOTE: Only supported on X11 and Wayland
+    # NOTE: Only supported on X11
     ret = sdl2.SDL_SetWindowInputFocus(window)
-    if sdl2.SDL_GetCurrentVideoDriver() in [b"x11", b"wayland"]:
+    if SDL_VIDEODRIVER == "x11":
         assert SDL_GetError() == b""
         assert ret == 0
 
-@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GetSetWindowGammaRamp(window):
+    if SDL_VIDEODRIVER in ["dummy", "wayland"]:
+        pytest.skip("Unsupported by {0} driver".format(SDL_VIDEODRIVER))
     vals = (Uint16 * 256)()
     pixels.SDL_CalculateGammaRamp(0.5, vals)
     ret = sdl2.SDL_SetWindowGammaRamp(window, vals, vals, vals)
