@@ -1,9 +1,14 @@
 import ctypes
-from .. import (events, timer, error, dll,
+from .. import (timer, error, dll,
     SDL_Init, SDL_InitSubSystem, SDL_Quit, SDL_QuitSubSystem, SDL_WasInit,
     SDL_INIT_VIDEO, SDL_INIT_AUDIO, SDL_INIT_TIMER, SDL_INIT_HAPTIC,
     SDL_INIT_JOYSTICK, SDL_INIT_GAMECONTROLLER, SDL_INIT_SENSOR, SDL_INIT_EVENTS,
 )
+from ..events import (
+    SDL_Event, SDL_PumpEvents, SDL_PeepEvents,  SDL_PollEvent,
+    SDL_QUIT, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT,
+)
+from .compat import isiterable
 from .err import raise_sdl_err
 
 _HASSDLTTF = True
@@ -17,7 +22,7 @@ try:
 except ImportError:
     _HASSDLIMAGE = False
 
-__all__ = ["init", "quit", "get_events", "TestEventProcessor"]
+__all__ = ["init", "quit", "get_events", "quit_requested", "TestEventProcessor"]
 
 
 _sdl_subsystems = {
@@ -125,19 +130,15 @@ def get_events():
         the event queue.
     
     """
-    events.SDL_PumpEvents()
+    SDL_PumpEvents()
 
     evlist = []
-    SDL_PeepEvents = events.SDL_PeepEvents
-
-    op = events.SDL_GETEVENT
-    first = events.SDL_FIRSTEVENT
-    last = events.SDL_LASTEVENT
-
     while True:
-        evarray = (events.SDL_Event * 10)()
-        ptr = ctypes.cast(evarray, ctypes.POINTER(events.SDL_Event))
-        ret = SDL_PeepEvents(ptr, 10, op, first, last)
+        evarray = (SDL_Event * 10)()
+        ptr = ctypes.cast(evarray, ctypes.POINTER(SDL_Event))
+        ret = SDL_PeepEvents(
+            ptr, 10, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT
+        )
         if ret <= 0:
             break
         evlist += list(evarray)[:ret]
@@ -145,6 +146,41 @@ def get_events():
             break
 
     return evlist
+
+
+def quit_requested(events):
+    """Checks for quit requests in a given event queue.
+
+    Quit requests occur when an SDL recieves a system-level quit signal (e.g
+    clicking the 'close' button on an SDL window, pressing Command-Q on macOS).
+    This function makes it easier to handle these events in your code::
+
+        running = True
+        while running:
+            events = sdl2.ext.get_events()
+            if quit_requested(events):
+                running = False
+
+    Args:
+        events (list of :obj:`sdl2.SDL_Event`): A list of SDL events to check
+            for quit requests.
+
+    Returns:
+        bool: True if a quit request has occurred, otherwise False.
+
+    """
+    # Ensure 'events' is iterable
+    if not isiterable(events):
+        events = [events]
+
+    # Check for any quit events in the queue
+    requested = False
+    for e in events:
+        if e.type == SDL_QUIT:
+            requested = True
+            break
+
+    return requested
 
 
 class TestEventProcessor(object):
@@ -160,12 +196,12 @@ class TestEventProcessor(object):
                 the test event loop.
         
         """
-        event = events.SDL_Event()
+        event = SDL_Event()
         running = True
         while running:
-            ret = events.SDL_PollEvent(ctypes.byref(event), 1)
+            ret = SDL_PollEvent(ctypes.byref(event), 1)
             if ret == 1:
-                if event.type == events.SDL_QUIT:
+                if event.type == SDL_QUIT:
                     running = False
                     break
             window.refresh()

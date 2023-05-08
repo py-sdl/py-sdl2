@@ -1,5 +1,5 @@
-`sdl2.ext.displays` - Getting info about the connected displays
-===============================================================
+`sdl2.ext.displays` - Querying the Connected Displays
+=====================================================
 
 This module provides the ``get_displays`` function, which returns a list of
 ``DisplayInfo`` objects containing information about the names, supported
