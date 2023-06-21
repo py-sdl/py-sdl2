@@ -86,21 +86,27 @@ class TestExtRenderer(object):
         assert renderer.rendertarget == window
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         renderer.destroy()
+        del window
 
         # Create software renderer with Window
+        window = sdl2ext.Window("Test", size=(1, 1))
         renderer = sdl2ext.Renderer(window, backend='software')
         assert renderer.rendertarget == window
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         renderer.destroy()
+        del window
 
         # Create renderer with SDL_Window
+        window = sdl2ext.Window("Test", size=(1, 1))
         sdlwindow = window.window
         renderer = sdl2ext.Renderer(sdlwindow)
         assert renderer.rendertarget == sdlwindow
         assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
         renderer.destroy()
+        del window
 
         # Test exception on invalid renderer backend
+        window = sdl2ext.Window("Test", size=(1, 1))
         with pytest.raises(RuntimeError):
             sdl2ext.Renderer(window, backend='QuickDraw3D')
         with pytest.raises(sdl2ext.SDLError):
@@ -129,17 +135,20 @@ class TestExtRenderer(object):
         renderer.reset_logical_size()
         assert renderer.logical_size == (150, 50)
         renderer.destroy()
+        window.close()
 
         # Test changing and resetting logical size with different target types
         targets = {
-            "SDL_Surface": sf.contents,
-            "SDL_Surface_pointer": sf,
-            "SoftwareSprite": sprite,
-            "Window": window,
-            "SDL_Window": window.window
+            "SDL_Surface": lambda _: sf.contents,
+            "SDL_Surface_pointer": lambda _: sf,
+            "SoftwareSprite": lambda _: sprite,
+            "Window": lambda window: window,
+            "SDL_Window": lambda window: window.window
         }
-        for name, target in targets.items():
+        for name, get_target in targets.items():
             target_name = name
+            window = sdl2ext.Window("Test", size=(150, 50))
+            target = get_target(window)
             renderer = sdl2ext.Renderer(target)
             assert isinstance(renderer.sdlrenderer.contents, SDL_Renderer)
             assert renderer.logical_size == (150, 50)
@@ -148,8 +157,7 @@ class TestExtRenderer(object):
             renderer.reset_logical_size()
             assert renderer.logical_size == (150, 50)
             renderer.destroy()
-
-        window.close()
+            window.close()
         
     def test_color(self, with_sdl):
         sf = SDL_CreateRGBSurface(
