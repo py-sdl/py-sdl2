@@ -176,6 +176,10 @@ def warp_mouse(x, y, window=None, desktop=False):
     the cursor can be warped within a specific SDL window or relative to the
     full desktop.
 
+    .. NOTE: For security reasons, the Wayland protocol does not allow programs
+             to change the cursor position. However, it is possible to warp the
+             cursor when using XWayland (the default for SDL2).
+
     Args:
         x (int): The new X position for the mouse cursor.
         y (int): The new Y position for the mouse cursor.

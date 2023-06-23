@@ -4,13 +4,15 @@ import sdl2
 from sdl2 import SDL_Window, SDL_ClearError
 from sdl2 import ext as sdl2ext
 
-from .conftest import SKIP_ANNOYING
+from .conftest import SKIP_ANNOYING, SDL_VIDEODRIVER
 
 
 @pytest.fixture(scope="module")
 def with_ext_window(with_sdl):
     win = sdl2ext.Window("Test", (100, 100))
+    win.get_surface()
     win.show()
+    win.refresh()
     yield win
     win.close()
 
@@ -61,17 +63,24 @@ def test_mouse_delta(with_ext_window):
 
 @pytest.mark.skipif(SKIP_ANNOYING, reason="Skip unless requested")
 def test_warp_mouse(with_ext_window):
+    if SDL_VIDEODRIVER == "wayland":
+        pytest.skip("mouse warping unsupported in Wayland")
+    # Get initial cursor coordinates
+    sdl2.ext.get_events() # Needed for XWayland
     x_orig, y_orig = sdl2ext.mouse_coords(desktop=True)
     # Test warping within a specific window
     win = with_ext_window
     sdl2ext.warp_mouse(20, 30, window=win)
+    sdl2.ext.get_events()
     x, y = sdl2ext.mouse_coords()
     assert x == 20 and y == 30
     # Test warping in the window that currently has focus
     sdl2ext.warp_mouse(50, 50)
+    sdl2.ext.get_events()
     x, y = sdl2ext.mouse_coords()
     assert x == 50 and y == 50
     # Test warping relative to the desktop
     sdl2ext.warp_mouse(x_orig, y_orig, desktop=True)
+    sdl2.ext.get_events()
     x, y = sdl2ext.mouse_coords(desktop=True)
     assert x == x_orig and y == y_orig
