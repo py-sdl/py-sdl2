@@ -918,7 +918,13 @@ def test_SDL_GL_GetSetSwapInterval(gl_window):
     for value in [0, 1]:
         ret = sdl2.SDL_GL_SetSwapInterval(value)
         if ret == 0:
-            assert sdl2.SDL_GL_GetSwapInterval() == value
+            actual = sdl2.SDL_GL_GetSwapInterval()
+            if value == 1 and SDL_VIDEODRIVER == "x11":
+                # XWayland seems to enable adaptive sync (-1) by default when
+                # enabling vsync (1)
+                assert actual in [-1, 1]
+            else:
+                assert actual == value
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_SwapWindow(gl_window):
