@@ -232,18 +232,19 @@ jobs:
       - name: Set up Python 2.7
         run: |
           choco install python2 --x86
+          refreshenv
 
       - name: Install dependencies
         run: |
-          python2 -m pip install --upgrade pip
-          python2 -m pip install numpy pytest pillow
+          python2.7 -m pip install --upgrade pip
+          python2.7 -m pip install numpy pytest pillow
 
       - name: Download SDL2 binaries
         run: |
-          python2 .ci/getsdl2.py
+          python2.7 .ci/getsdl2.py
 
       - name: Install and test PySDL2
         run: |
           $env:PYSDL2_DLL_PATH = "$pwd\dlls"
-          python2 -m pip install .
-          python2 -B -m pytest -vvl -rxXP
+          python2.7 -m pip install .
+          python2.7 -B -m pytest -vvl -rxXP
