@@ -10,7 +10,7 @@ def test_SDL_GetBasePath():
     path = path.decode("utf-8")
     if sys.version_info[0] < 3:
         is_python_path = False
-        for s in [u"python", u"pypy", u"pyenv", u"virtualenv"]:
+        for s in [u"python", u"pypy", u"pyenv", u"virtualenv", u"bin"]:
             if s in path.lower():
                 is_python_path = True
                 break

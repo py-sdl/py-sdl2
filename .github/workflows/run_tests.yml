@@ -12,6 +12,39 @@ on:
 
 jobs:
 
+  # Test on Python 2.7 with Linux and latest SDL2
+  test-linux-py27:
+
+    name: Linux (Python 2.7, SDL ${{ matrix.sdl2 }})
+    runs-on: ubuntu-20.04
+    container: python:2.7
+
+    strategy:
+      matrix:
+        sdl2: ['2.26.0']
+
+    env:
+      PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      SDL_RENDER_DRIVER: software
+      PYTHONFAULTHANDLER: 1
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies and latest SDL2 binaries
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pytest pillow
+          python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
+
+      - name: Install and test PySDL2
+        run: |
+          python -m pip install .
+          python -B -m pytest -vvl -rxXP
+
+
   # Test on all supported Python versions with Linux and latest SDL2
   # Experimental: Also test on latest PyPy 2.7 and 3.x versions with Linux and latest SDL2
   test-linux:
@@ -47,39 +80,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies and latest SDL2 binaries
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install numpy pytest pillow
-          python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
-
-      - name: Install and test PySDL2
-        run: |
-          python -m pip install .
-          python -B -m pytest -vvl -rxXP
-
-
-  # Test on Python 2.7 with Linux and latest SDL2
-  test-linux-py27:
-
-    name: Linux (Python 2.7, SDL ${{ matrix.sdl2 }})
-    runs-on: ubuntu-20.04
-    container: python:2.7
-
-    strategy:
-      matrix:
-        sdl2: ['2.26.0']
-
-    env:
-      PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
-      SDL_VIDEODRIVER: dummy
-      SDL_AUDIODRIVER: dummy
-      SDL_RENDER_DRIVER: software
-      PYTHONFAULTHANDLER: 1
-    
-    steps:
-      - uses: actions/checkout@v2
 
       - name: Install dependencies and latest SDL2 binaries
         run: |
@@ -231,19 +231,19 @@ jobs:
 
       - name: Set up Python 2.7
         run: |
-          choco install python2
+          choco install python2 --x86
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install numpy pytest pillow
+          python2 -m pip install --upgrade pip
+          python2 -m pip install numpy pytest pillow
 
       - name: Download SDL2 binaries
         run: |
-          python .ci/getsdl2.py
+          python2 .ci/getsdl2.py
 
       - name: Install and test PySDL2
         run: |
           $env:PYSDL2_DLL_PATH = "$pwd\dlls"
-          python -m pip install .
-          python -B -m pytest -vvl -rxXP
+          python2 -m pip install .
+          python2 -B -m pytest -vvl -rxXP
