@@ -52,9 +52,9 @@ def with_sdl_gl(with_sdl):
 def window(with_sdl):
     flag = sdl2.SDL_WINDOW_BORDERLESS
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
+    if not w:
         assert SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
     sdl2.SDL_DestroyWindow(w)
@@ -63,9 +63,9 @@ def window(with_sdl):
 def decorated_window(with_sdl):
     flag = sdl2.SDL_WINDOW_RESIZABLE
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
+    if not w:
         assert SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
     sdl2.SDL_DestroyWindow(w)
@@ -74,9 +74,9 @@ def decorated_window(with_sdl):
 def gl_window(with_sdl_gl):
     flag = sdl2.SDL_WINDOW_OPENGL
     w = sdl2.SDL_CreateWindow(b"OpenGL", 10, 40, 12, 13, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
+    if not w:
         assert SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     ctx = sdl2.SDL_GL_CreateContext(w)
     assert SDL_GetError() == b""
@@ -86,9 +86,9 @@ def gl_window(with_sdl_gl):
 
 def _create_window(name, h, w, x, y, flags):
     window = sdl2.SDL_CreateWindow(name, h, w, x, y, flags)
-    if not isinstance(window.contents, sdl2.SDL_Window):
+    if not window:
         assert SDL_GetError() == b""
-        assert isinstance(window.contents, sdl2.SDL_Window)
+    assert isinstance(window.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     return window
 
@@ -862,43 +862,43 @@ def test_SDL_GL_ExtensionSupported(gl_window):
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_GetSetResetAttribute(with_sdl_gl):
-    # Create a context and get its bit depth
+    # Create a context and get its major version
     window = _create_window(
         b"OpenGL", 10, 40, 12, 13, sdl2.SDL_WINDOW_OPENGL
     )
     ctx = sdl2.SDL_GL_CreateContext(window)
     bufstate = c_int(0)
-    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, byref(bufstate))
+    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, byref(bufstate))
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(window)
     assert ret == 0, _check_error_msg()
     sdl2.SDL_ClearError()
-    # Try setting a different GL bit depth
-    new_bufstate = 0 if bufstate.value == 1 else 1
-    sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, new_bufstate)
+    # Try setting a different GL context version
+    new_bufstate = 1 if bufstate.value == 2 else 2
+    sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, new_bufstate)
     assert ret == 0, _check_error_msg()
     sdl2.SDL_ClearError()
-    # Create a new context to see if it's using the new bit depth 
+    # Create a new context to see if it's using the new version
     window = _create_window(
         b"OpenGL", 10, 40, 12, 13, sdl2.SDL_WINDOW_OPENGL
     )
     ctx = sdl2.SDL_GL_CreateContext(window)
     val = c_int(0)
-    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, byref(val))
+    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, byref(val))
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(window)
     assert ret == 0, _check_error_msg()
     sdl2.SDL_ClearError()
     assert bufstate.value != val.value
     assert val.value == new_bufstate
-    # Try resetting the context and see if it goes back to the original depth
+    # Try resetting the context and see if it goes back to the original version
     sdl2.SDL_GL_ResetAttributes()
     window = _create_window(
         b"OpenGL", 10, 40, 12, 13, sdl2.SDL_WINDOW_OPENGL
     )
     ctx = sdl2.SDL_GL_CreateContext(window)
     val = c_int(0)
-    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, byref(val))
+    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, byref(val))
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(window)
     assert bufstate.value == val.value
