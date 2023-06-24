@@ -652,6 +652,12 @@ def test_SDL_SetWindowFullscreen(with_sdl):
         assert flags & is_fullscreen != is_fullscreen
         sdl2.SDL_DestroyWindow(window)
 
+@pytest.mark.skipif(sdl2.dll.version < 2280, reason="not available")
+def test_SDL_HasWindowSurface(window):
+    assert sdl2.SDL_HasWindowSurface(window) == SDL_FALSE
+    sdl2.SDL_GetWindowSurface(window)
+    assert sdl2.SDL_HasWindowSurface(window) == SDL_TRUE
+
 def test_SDL_GetWindowSurface(window):
     sf = sdl2.SDL_GetWindowSurface(window)
     assert SDL_GetError() == b""
@@ -675,6 +681,15 @@ def test_SDL_UpdateWindowSurfaceRects(window):
     rect_ptr = cast(rectlist, POINTER(rect.SDL_Rect))
     ret = sdl2.SDL_UpdateWindowSurfaceRects(window, rect_ptr, 4)
     assert ret == 0, _check_error_msg()
+
+@pytest.mark.skipif(sdl2.dll.version < 2280, reason="not available")
+def test_SDL_DestroyWindowSurface(window):
+    assert sdl2.SDL_HasWindowSurface(window) == SDL_FALSE
+    sdl2.SDL_GetWindowSurface(window)
+    assert sdl2.SDL_HasWindowSurface(window) == SDL_TRUE
+    ret = sdl2.SDL_DestroyWindowSurface(window)
+    assert ret == 0, _check_error_msg()
+    assert sdl2.SDL_HasWindowSurface(window) == SDL_FALSE
 
 @pytest.mark.skip("Can't set window grab for some reason")
 def test_SDL_GetSetWindowGrab(decorated_window):

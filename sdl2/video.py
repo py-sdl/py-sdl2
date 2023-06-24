@@ -42,6 +42,7 @@ __all__ = [
     "SDL_DisplayEventID",
     "SDL_DISPLAYEVENT_NONE", "SDL_DISPLAYEVENT_ORIENTATION",
     "SDL_DISPLAYEVENT_CONNECTED", "SDL_DISPLAYEVENT_DISCONNECTED",
+    "SDL_DISPLAYEVENT_MOVED",
     
     "SDL_DisplayOrientation",
     "SDL_ORIENTATION_UNKNOWN", "SDL_ORIENTATION_LANDSCAPE",
@@ -158,6 +159,7 @@ SDL_DISPLAYEVENT_NONE = 0
 SDL_DISPLAYEVENT_ORIENTATION = 1
 SDL_DISPLAYEVENT_CONNECTED = 2
 SDL_DISPLAYEVENT_DISCONNECTED = 3
+SDL_DISPLAYEVENT_MOVED = 4
 
 SDL_DisplayOrientation = c_int
 SDL_ORIENTATION_UNKNOWN = 0
@@ -348,9 +350,11 @@ _funcdefs = [
     SDLFunc("SDL_MinimizeWindow", [_P(SDL_Window)]),
     SDLFunc("SDL_RestoreWindow", [_P(SDL_Window)]),
     SDLFunc("SDL_SetWindowFullscreen", [_P(SDL_Window), Uint32], c_int),
+    SDLFunc("SDL_HasWindowSurface", [_P(SDL_Window)], SDL_bool, added='2.27.1'),
     SDLFunc("SDL_GetWindowSurface", [_P(SDL_Window)], _P(SDL_Surface)),
     SDLFunc("SDL_UpdateWindowSurface", [_P(SDL_Window)], c_int),
     SDLFunc("SDL_UpdateWindowSurfaceRects", [_P(SDL_Window), _P(SDL_Rect), c_int], c_int),
+    SDLFunc("SDL_DestroyWindowSurface", [_P(SDL_Window)], c_int, added='2.27.1'),
     SDLFunc("SDL_SetWindowGrab", [_P(SDL_Window), SDL_bool]),
     SDLFunc("SDL_SetWindowKeyboardGrab", [_P(SDL_Window), SDL_bool], added='2.0.16'),
     SDLFunc("SDL_SetWindowMouseGrab", [_P(SDL_Window), SDL_bool], added='2.0.16'),
@@ -447,9 +451,11 @@ SDL_MaximizeWindow = _ctypes["SDL_MaximizeWindow"]
 SDL_MinimizeWindow = _ctypes["SDL_MinimizeWindow"]
 SDL_RestoreWindow = _ctypes["SDL_RestoreWindow"]
 SDL_SetWindowFullscreen = _ctypes["SDL_SetWindowFullscreen"]
+SDL_HasWindowSurface = _ctypes["SDL_HasWindowSurface"]
 SDL_GetWindowSurface = _ctypes["SDL_GetWindowSurface"]
 SDL_UpdateWindowSurface = _ctypes["SDL_UpdateWindowSurface"]
 SDL_UpdateWindowSurfaceRects = _ctypes["SDL_UpdateWindowSurfaceRects"]
+SDL_DestroyWindowSurface = _ctypes["SDL_DestroyWindowSurface"]
 SDL_SetWindowGrab = _ctypes["SDL_SetWindowGrab"]
 SDL_SetWindowKeyboardGrab = _ctypes["SDL_SetWindowKeyboardGrab"]
 SDL_SetWindowMouseGrab = _ctypes["SDL_SetWindowMouseGrab"]
