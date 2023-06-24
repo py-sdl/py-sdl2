@@ -7,6 +7,7 @@ This describes the latest changes between the PySDL2 releases.
 
 New Features:
 
+* Updated to wrap new functions and constants in SDL2 2.28.0 (PR #266).
 * Added a new function :func:`~sdl2.ext.key_pressed` for easily checking
   if a given key has been pressed (or released).
 * Added a new function :func:`~sdl2.ext.mouse_clicked` for easily checking
