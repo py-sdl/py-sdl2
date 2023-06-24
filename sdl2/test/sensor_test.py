@@ -6,6 +6,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_SENSOR, Uint64
 from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2.error import SDL_GetError, SDL_ClearError
+from .conftest import _check_error_msg
 
 #TODO: Rewrite these tests in the current joystick/gamecontroller format
 
@@ -19,7 +20,7 @@ pytestmark = pytest.mark.skipif(ret != 0 or not available, reason=skipmsg)
 
 def test_SDL_NumSensors():
     ret = SDL_Init(SDL_INIT_SENSOR)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     retval = sdl2.SDL_NumSensors()
     SDL_Quit()
     assert retval >= 0

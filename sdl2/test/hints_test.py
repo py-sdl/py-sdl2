@@ -3,13 +3,14 @@ import pytest
 from ctypes import cast, c_char_p
 import sdl2
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
+from .conftest import _check_error_msg
 
 # Need to override global fixture to init/quit on every test
 @pytest.fixture
 def with_sdl():
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     yield
     sdl2.SDL_Quit()
 

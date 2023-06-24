@@ -6,6 +6,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_JOYSTICK
 from sdl2.events import SDL_QUERY, SDL_ENABLE, SDL_IGNORE
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2.error import SDL_GetError, SDL_ClearError
+from .conftest import _check_error_msg
 
 # Get status of joystick support/availability before running tests
 any_joysticks = False
@@ -42,7 +43,7 @@ def with_sdl():
     sdl2.SDL_ClearError()
     sdl2.SDL_SetHint(b"SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", b"1")
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_JOYSTICK)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     # Also initialize a virtual joystick (if supported)
     if sdl2.dll.version >= 2014:
         virt_type = sdl2.SDL_JOYSTICK_TYPE_GAMECONTROLLER
@@ -474,8 +475,7 @@ def test_SDL_JoystickGetBall(joysticks):
     for stick in sticks:
         for ball in range(sdl2.SDL_JoystickNumBalls(stick)):
             ret = get_ball(stick, ball, byref(dx), byref(dy))
-            assert SDL_GetError() == b""
-            assert ret == 0
+            assert ret == 0, _check_error_msg()
 
 def test_SDL_JoystickGetButton(joysticks):
     for stick in joysticks:

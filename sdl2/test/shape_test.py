@@ -4,6 +4,12 @@ import ctypes
 import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_QuitSubSystem, SDL_INIT_EVERYTHING
 from sdl2 import video, surface
+from .conftest import SDL_VIDEODRIVER
+
+# Skip tests if video driver doesn't support shaped windows
+if SDL_VIDEODRIVER in ["dummy", "wayland"]:
+    msg = "not supported by {0} driver".format(SDL_VIDEODRIVER)
+    pytest.skip(msg, allow_module_level=True)
 
 
 class TestSDLShape(object):
@@ -21,8 +27,6 @@ class TestSDLShape(object):
         SDL_Quit()
 
     def test_SDL_CreateShapedWindow(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support shaped windows")
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
             window = sdl2.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
@@ -31,8 +35,6 @@ class TestSDLShape(object):
             video.SDL_DestroyWindow(window)
 
     def test_SDL_IsShapedWindow(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support shaped windows")
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
             window = sdl2.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,
@@ -49,8 +51,6 @@ class TestSDLShape(object):
             video.SDL_DestroyWindow(window)
 
     def test_SDL_SetWindowShape(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support shaped windows")
         sf = surface.SDL_CreateRGBSurface(0, 10, 10, 32,
                                           0xFF000000,
                                           0x00FF0000,
@@ -97,8 +97,6 @@ class TestSDLShape(object):
         surface.SDL_FreeSurface(sf)
 
     def test_SDL_GetShapedWindowMode(self):
-        if video.SDL_GetCurrentVideoDriver() == b"dummy":
-            pytest.skip("dummy video driver does not support shaped windows")
         flags = (video.SDL_WINDOW_HIDDEN,)
         for flag in flags:
             window = sdl2.SDL_CreateShapedWindow(b"Test", 10, 10, 10, 10,

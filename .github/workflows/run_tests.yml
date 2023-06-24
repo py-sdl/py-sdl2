@@ -12,6 +12,39 @@ on:
 
 jobs:
 
+  # Test on Python 2.7 with Linux and latest SDL2
+  test-linux-py27:
+
+    name: Linux (Python 2.7, SDL ${{ matrix.sdl2 }})
+    runs-on: ubuntu-20.04
+    container: python:2.7
+
+    strategy:
+      matrix:
+        sdl2: ['2.26.0']
+
+    env:
+      PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      SDL_RENDER_DRIVER: software
+      PYTHONFAULTHANDLER: 1
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies and latest SDL2 binaries
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy pytest pillow
+          python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
+
+      - name: Install and test PySDL2
+        run: |
+          python -m pip install .
+          python -B -m pytest -vvl -rxXP
+
+
   # Test on all supported Python versions with Linux and latest SDL2
   # Experimental: Also test on latest PyPy 2.7 and 3.x versions with Linux and latest SDL2
   test-linux:
@@ -22,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['2.7', '3.7', '3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
         sdl2: ['2.26.0']
         name-prefix: ['Linux (Python ']
         include:
@@ -61,7 +94,6 @@ jobs:
 
 
   # Test on previous Python release with last 3 SDL2 releases on macOS
-  # Also test on Python 2.7 with latest SDL2 on macOS
   # All tests run without Numpy/Pillow deps to make sure things work without them
   # Experimental: Test on previous Python release with latest Homebrew SDL2
   test-macos:
@@ -76,9 +108,6 @@ jobs:
         sdl2: ['2.26.0', '2.24.0', '2.0.22']
         name-prefix: ['macOS (Python ']
         include:
-          - python-version: '2.7'
-            sdl2: '2.26.0'
-            name-prefix: 'macOS (Python '
           - python-version: '3.10'
             sdl2: 'from Homebrew'
             name-prefix: 'Experimental / macOS (Python '
@@ -135,31 +164,15 @@ jobs:
         ]
         name-prefix: ['Windows (Python ']
         include:
-          - python-version: '2.7'
-            architecture: 'x64'
-            sdl2: '2.26.0'
-            name-prefix: 'Windows (Python '
-          - python-version: '2.7'
+          - python-version: '3.8'
             architecture: 'x86'
             sdl2: '2.26.0'
             name-prefix: 'Windows 32-bit (Python '
-          - python-version: '3.10'
-            architecture: 'x86'
-            sdl2: '2.26.0'
-            name-prefix: 'Windows 32-bit (Python '
-          - python-version: '2.7'
+          - python-version: '3.8'
             architecture: 'x86'
             sdl2: '2.0.22'
             name-prefix: 'Windows 32-bit (Python '
-          - python-version: '2.7'
-            architecture: 'x86'
-            sdl2: '2.0.9'
-            name-prefix: 'Windows 32-bit (Python '
-          - python-version: '2.7'
-            architecture: 'x86'
-            sdl2: '2.0.7'
-            name-prefix: 'Windows 32-bit (Python '
-          - python-version: '2.7'
+          - python-version: '3.8'
             architecture: 'x86'
             sdl2: '2.0.5'
             name-prefix: 'Windows 32-bit (Python '
@@ -193,3 +206,44 @@ jobs:
           $env:PYSDL2_DLL_PATH = "$pwd\dlls"
           python -m pip install .
           python -B -m pytest -vvl -rxXP
+
+
+  # Test select versions of SDL2 on Windows with Python 2.7
+  test-windows-py27:
+
+    name: Windows 32-bit (Python 2.7, SDL ${{ matrix.sdl2 }})
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: ['x86']
+        sdl2: ['2.26.0', '2.0.5']
+
+    env:
+      PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      SDL_RENDER_DRIVER: software
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 2.7
+        run: |
+          choco install python2 --x86
+
+      - name: Install dependencies
+        run: |
+          C:\Python27\python -m pip install --upgrade pip
+          C:\Python27\python -m pip install numpy pytest pillow
+
+      - name: Download SDL2 binaries
+        run: |
+          C:\Python27\python .ci/getsdl2.py
+
+      - name: Install and test PySDL2
+        run: |
+          $env:PYSDL2_DLL_PATH = "$pwd\dlls"
+          C:\Python27\python -m pip install .
+          C:\Python27\python -B -m pytest -vvl -rxXP

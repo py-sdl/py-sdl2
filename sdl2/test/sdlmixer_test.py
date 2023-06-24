@@ -6,6 +6,8 @@ from ctypes import byref, c_int, c_uint16
 import sdl2
 from sdl2.stdinc import SDL_TRUE, SDL_FALSE
 from sdl2 import SDL_Init, SDL_Quit, rwops, version, audio
+from .conftest import _check_error_msg
+
 if sys.version_info[0] >= 3:
     from functools import reduce
 
@@ -32,7 +34,7 @@ def with_sdl_mixer():
     # Initialize SDL2 with video and audio subsystems
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_AUDIO)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     # Initialize SDL_mixer and open an audio device
     flags = (
         sdlmixer.MIX_INIT_FLAC | sdlmixer.MIX_INIT_MOD | sdlmixer.MIX_INIT_MP3 |

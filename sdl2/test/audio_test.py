@@ -7,6 +7,7 @@ from sdl2 import SDL_Init, SDL_Quit, SDL_InitSubSystem, SDL_QuitSubSystem, \
     SDL_INIT_AUDIO
 from sdl2.audio import FORMAT_NAME_MAP
 from sdl2.error import SDL_GetError, SDL_ClearError
+from .conftest import _check_error_msg
 
 # NOTE: This module is missing a lot of tests, but is also going to be tricky
 # to write more tests for.
@@ -23,7 +24,7 @@ def with_sdl_audio():
     sdl2.SDL_Quit()
     sdl2.SDL_ClearError()
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_AUDIO)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     yield
     sdl2.SDL_Quit()
     # Reset original audio driver in environment
@@ -307,7 +308,7 @@ def test_SDL_GetDefaultAudioInfo(with_default_driver):
     # If method isn't implemented for the current back end, just skip
     if ret < 0 and b"not supported" in sdl2.SDL_GetError():
         pytest.skip("not supported by driver")
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     # Validate frequency and channel count were set
     hz = outspec.freq
     fmt = FORMAT_NAME_MAP[outspec.format] if outspec.format > 0 else 'unknown'

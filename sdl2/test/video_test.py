@@ -7,7 +7,7 @@ import pytest
 import sdl2
 from sdl2.stdinc import SDL_FALSE, SDL_TRUE, Uint16
 from sdl2 import rect, pixels, surface, SDL_GetError
-from .conftest import SKIP_ANNOYING
+from .conftest import SKIP_ANNOYING, SDL_VIDEODRIVER, _check_error_msg
 
 # Some tests don't work properly with some video drivers, so check the name
 DRIVER_DUMMY = False
@@ -44,8 +44,7 @@ def get_opengl_path():
 @pytest.fixture
 def with_sdl_gl(with_sdl):
     ret = sdl2.SDL_GL_LoadLibrary(None)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     yield
     sdl2.SDL_GL_UnloadLibrary()
 
@@ -53,9 +52,9 @@ def with_sdl_gl(with_sdl):
 def window(with_sdl):
     flag = sdl2.SDL_WINDOW_BORDERLESS
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
+    if not w:
         assert SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
     sdl2.SDL_DestroyWindow(w)
@@ -64,9 +63,9 @@ def window(with_sdl):
 def decorated_window(with_sdl):
     flag = sdl2.SDL_WINDOW_RESIZABLE
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
+    if not w:
         assert SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
     sdl2.SDL_DestroyWindow(w)
@@ -75,9 +74,9 @@ def decorated_window(with_sdl):
 def gl_window(with_sdl_gl):
     flag = sdl2.SDL_WINDOW_OPENGL
     w = sdl2.SDL_CreateWindow(b"OpenGL", 10, 40, 12, 13, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
+    if not w:
         assert SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     ctx = sdl2.SDL_GL_CreateContext(w)
     assert SDL_GetError() == b""
@@ -87,9 +86,9 @@ def gl_window(with_sdl_gl):
 
 def _create_window(name, h, w, x, y, flags):
     window = sdl2.SDL_CreateWindow(name, h, w, x, y, flags)
-    if not isinstance(window.contents, sdl2.SDL_Window):
+    if not window:
         assert SDL_GetError() == b""
-        assert isinstance(window.contents, sdl2.SDL_Window)
+    assert isinstance(window.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     return window
 
@@ -310,8 +309,7 @@ def test_SDL_GetDisplayDPI(with_sdl):
         ret = sdl2.SDL_GetDisplayDPI(
             index, byref(ddpi), byref(hdpi), byref(vdpi)
         )
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert ddpi.value >= 96.0
         assert hdpi.value >= 96.0
         assert vdpi.value >= 96.0
@@ -385,9 +383,7 @@ def test_SDL_GetWindowDisplayMode(window):
     # NOTE: Gets fullscreen mode of parent display, not size of window
     dmode = sdl2.SDL_DisplayMode()
     ret = sdl2.SDL_GetWindowDisplayMode(window, byref(dmode))
-    if ret != 0:
-        assert SDL_GetError() == b""
-        assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert dmode.w > 0
     assert dmode.h > 0
 
@@ -401,9 +397,7 @@ def test_SDL_SetWindowDisplayMode(window):
     sdl2.SDL_SetWindowDisplayMode(window, dmode)
     wmode = sdl2.SDL_DisplayMode()
     ret = sdl2.SDL_GetWindowDisplayMode(window, byref(wmode))
-    if ret != 0:
-        assert SDL_GetError() == b""
-        assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert dmode == wmode
 
 @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
@@ -667,8 +661,7 @@ def test_SDL_UpdateWindowSurface(window):
     sf = sdl2.SDL_GetWindowSurface(window)
     assert isinstance(sf.contents, surface.SDL_Surface)
     ret = sdl2.SDL_UpdateWindowSurface(window)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
 
 def test_SDL_UpdateWindowSurfaceRects(window):
     sf = sdl2.SDL_GetWindowSurface(window)
@@ -681,8 +674,7 @@ def test_SDL_UpdateWindowSurfaceRects(window):
     )
     rect_ptr = cast(rectlist, POINTER(rect.SDL_Rect))
     ret = sdl2.SDL_UpdateWindowSurfaceRects(window, rect_ptr, 4)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
 
 @pytest.mark.skip("Can't set window grab for some reason")
 def test_SDL_GetSetWindowGrab(decorated_window):
@@ -728,21 +720,20 @@ def test_SDL_GetSetWindowMouseRect(with_sdl):
     window = _create_window(b"Test", 200, 200, 200, 200, flags)
     # Try setting a mouse boundary
     ret = sdl2.SDL_SetWindowMouseRect(window, byref(bounds_in))
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     bounds_out = sdl2.SDL_GetWindowMouseRect(window)
     assert bounds_out != None
     assert bounds_in == bounds_out.contents
     # Try removing the boundary
     ret = sdl2.SDL_SetWindowMouseRect(window, None)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     bounds_out = sdl2.SDL_GetWindowMouseRect(window)
     assert not bounds_out  # bounds_out should be null pointer
     sdl2.SDL_DestroyWindow(window)
 
-@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GetSetWindowBrightness(window):
+    if SDL_VIDEODRIVER in ["dummy", "wayland"]:
+        pytest.skip("Unsupported by {0} driver".format(SDL_VIDEODRIVER))
     orig = sdl2.SDL_GetWindowBrightness(window)
     assert isinstance(orig, float)
     assert orig >= 0
@@ -762,13 +753,11 @@ def test_SDL_GetSetWindowOpacity(window):
     ret = sdl2.SDL_GetWindowOpacity(window, byref(opacity))
     assert ret == 0
     assert opacity.value == 1.0
-    if not DRIVER_DUMMY:
+    if not SDL_VIDEODRIVER in ["dummy", "wayland"]:
         ret = sdl2.SDL_SetWindowOpacity(window, 0.5)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         ret = sdl2.SDL_GetWindowOpacity(window, byref(opacity))
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert opacity.value == 0.5
 
 @pytest.mark.skipif(sdl2.dll.version < 2005, reason="not available")
@@ -776,30 +765,27 @@ def test_SDL_SetWindowModalFor(window, decorated_window):
     # NOTE: Only supported on X11
     ret = sdl2.SDL_SetWindowModalFor(window, decorated_window)
     if sdl2.SDL_GetCurrentVideoDriver() == b"x11":
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
 
 @pytest.mark.skipif(sdl2.dll.version < 2005, reason="not available")
 def test_SDL_SetWindowInputFocus(window):
-    # NOTE: Only supported on X11 and Wayland
+    # NOTE: Only supported on X11
     ret = sdl2.SDL_SetWindowInputFocus(window)
-    if sdl2.SDL_GetCurrentVideoDriver() in [b"x11", b"wayland"]:
-        assert SDL_GetError() == b""
-        assert ret == 0
+    if SDL_VIDEODRIVER == "x11":
+        assert ret == 0, _check_error_msg()
 
-@pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GetSetWindowGammaRamp(window):
+    if SDL_VIDEODRIVER in ["dummy", "wayland"]:
+        pytest.skip("Unsupported by {0} driver".format(SDL_VIDEODRIVER))
     vals = (Uint16 * 256)()
     pixels.SDL_CalculateGammaRamp(0.5, vals)
     ret = sdl2.SDL_SetWindowGammaRamp(window, vals, vals, vals)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     r = (Uint16 * 256)()
     g = (Uint16 * 256)()
     b = (Uint16 * 256)()
     ret = sdl2.SDL_GetWindowGammaRamp(window, r, g, b)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     for i in range(len(vals)):
         assert r[i] == vals[i]
         assert g[i] == vals[i]
@@ -817,8 +803,7 @@ def test_SDL_FlashWindow(window):
     # NOTE: Not the most comprehensive test, but it does test the basic bindings
     ret = sdl2.SDL_FlashWindow(window, sdl2.SDL_FLASH_BRIEFLY)
     if not DRIVER_DUMMY:
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
 
 def test_screensaver(with_sdl):
     sdl2.SDL_EnableScreenSaver()
@@ -842,15 +827,13 @@ def test_SDL_GL_LoadUnloadLibrary(with_sdl):
     # TODO: Test whether other GL functions work after GL is unloaded
     # (unloading doesn't always work right on macOS for some reason)
     ret = sdl2.SDL_GL_LoadLibrary(None)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     sdl2.SDL_GL_UnloadLibrary()
     # Try loading a library from a path
     if has_opengl_lib():
         fpath = get_opengl_path().encode("utf-8")
         ret = sdl2.SDL_GL_LoadLibrary(fpath)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         sdl2.SDL_GL_UnloadLibrary()
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
@@ -879,49 +862,43 @@ def test_SDL_GL_ExtensionSupported(gl_window):
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_GetSetResetAttribute(with_sdl_gl):
-    # Create a context and get its bit depth
+    # Create a context and get its major version
     window = _create_window(
         b"OpenGL", 10, 40, 12, 13, sdl2.SDL_WINDOW_OPENGL
     )
     ctx = sdl2.SDL_GL_CreateContext(window)
     bufstate = c_int(0)
-    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, byref(bufstate))
+    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, byref(bufstate))
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(window)
-    if ret != 0:
-        assert SDL_GetError() == b""
-        assert ret == 0
+    assert ret == 0, _check_error_msg()
     sdl2.SDL_ClearError()
-    # Try setting a different GL bit depth
-    new_bufstate = 0 if bufstate.value == 1 else 1
-    sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, new_bufstate)
-    if ret != 0:
-        assert SDL_GetError() == b""
-        assert ret == 0
+    # Try setting a different GL context version
+    new_bufstate = 1 if bufstate.value == 2 else 2
+    sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, new_bufstate)
+    assert ret == 0, _check_error_msg()
     sdl2.SDL_ClearError()
-    # Create a new context to see if it's using the new bit depth 
+    # Create a new context to see if it's using the new version
     window = _create_window(
         b"OpenGL", 10, 40, 12, 13, sdl2.SDL_WINDOW_OPENGL
     )
     ctx = sdl2.SDL_GL_CreateContext(window)
     val = c_int(0)
-    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, byref(val))
+    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, byref(val))
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(window)
-    if ret != 0:
-        assert SDL_GetError() == b""
-        assert ret == 0
+    assert ret == 0, _check_error_msg()
     sdl2.SDL_ClearError()
     assert bufstate.value != val.value
     assert val.value == new_bufstate
-    # Try resetting the context and see if it goes back to the original depth
+    # Try resetting the context and see if it goes back to the original version
     sdl2.SDL_GL_ResetAttributes()
     window = _create_window(
         b"OpenGL", 10, 40, 12, 13, sdl2.SDL_WINDOW_OPENGL
     )
     ctx = sdl2.SDL_GL_CreateContext(window)
     val = c_int(0)
-    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, byref(val))
+    ret = sdl2.SDL_GL_GetAttribute(sdl2.SDL_GL_CONTEXT_MAJOR_VERSION, byref(val))
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(window)
     assert bufstate.value == val.value
@@ -930,27 +907,30 @@ def test_SDL_GL_GetSetResetAttribute(with_sdl_gl):
 def test_SDL_GL_MakeCurrent(gl_window):
     window, ctx = gl_window
     ret = sdl2.SDL_GL_MakeCurrent(window, ctx)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_GetSetSwapInterval(gl_window):
     window, ctx = gl_window
     ret = sdl2.SDL_GL_MakeCurrent(window, ctx)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     # Try enabling/disabling OpenGL vsync
     for value in [0, 1]:
         ret = sdl2.SDL_GL_SetSwapInterval(value)
         if ret == 0:
-            assert sdl2.SDL_GL_GetSwapInterval() == value
+            actual = sdl2.SDL_GL_GetSwapInterval()
+            if value == 1 and SDL_VIDEODRIVER == "x11":
+                # XWayland seems to enable adaptive sync (-1) by default when
+                # enabling vsync (1)
+                assert actual in [-1, 1]
+            else:
+                assert actual == value
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_SwapWindow(gl_window):
     window, ctx = gl_window
     ret = sdl2.SDL_GL_MakeCurrent(window, ctx)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     sdl2.SDL_GL_SwapWindow(window)
     sdl2.SDL_GL_SwapWindow(window)
     sdl2.SDL_GL_SwapWindow(window)

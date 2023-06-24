@@ -6,6 +6,7 @@ from sdl2 import (
     SDL_FALSE, SDL_TRUE, SDL_IGNORE, SDL_ENABLE, SDL_QUERY
 )
 from sdl2 import joystick
+from .conftest import _check_error_msg
 
 # Get status of gamepad support/availability before running tests
 SDL_ClearError()
@@ -35,7 +36,7 @@ def with_sdl():
     sdl2.SDL_ClearError()
     sdl2.SDL_SetHint(b"SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", b"1")
     ret = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO | sdl2.SDL_INIT_GAMECONTROLLER)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     # Also initialize a virtual joystick (if supported)
     if sdl2.dll.version >= 2014:
         virt_type = joystick.SDL_JOYSTICK_TYPE_GAMECONTROLLER

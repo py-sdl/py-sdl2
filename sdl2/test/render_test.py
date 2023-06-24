@@ -12,6 +12,7 @@ from sdl2.pixels import SDL_Color
 from sdl2 import video, surface, pixels, blendmode, rect
 from sdl2.ext.compat import byteify, stringify
 from sdl2.ext.pixelaccess import PixelView
+from .conftest import _check_error_msg
 
 # TODO: Write tests for more functions
 
@@ -210,9 +211,7 @@ def test_SDL_CreateWindowAndRenderer(with_sdl):
     )
     sdl2.SDL_DestroyRenderer(renderer)
     video.SDL_DestroyWindow(window)
-    if ret != 0:
-        assert SDL_GetError() == b""
-        assert ret == 0
+    assert ret == 0, _check_error_msg()
 
 def test_SDL_CreateDestroyRenderer(supported_renderers):
     flags = _get_renderflags()
@@ -379,8 +378,7 @@ def test_SDL_QueryTexture(with_renderer):
                 ret = sdl2.SDL_QueryTexture(
                     tx, byref(txf), byref(txa), byref(txw), byref(txh)
                 )
-                assert SDL_GetError() == b""
-                assert ret == 0
+                assert ret == 0, _check_error_msg()
                 assert txf.value == fmt
                 assert txa.value == acc
                 assert txw.value == w
@@ -400,25 +398,21 @@ def test_SDL_GetSetTextureColorMod(texture):
     ]
     for r, g, b in colors:
         ret = sdl2.SDL_SetTextureColorMod(texture, r, g, b)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         tr, tg, tb = Uint8(0), Uint8(0), Uint8(0)
         ret = sdl2.SDL_GetTextureColorMod(
             texture, byref(tr), byref(tg), byref(tb)
         )
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert (tr.value, tg.value, tb.value) == (r, g, b)
 
 def test_SDL_GetSetTextureAlphaMod(texture):
     for alpha in range(0, 255, 7):
         ret = sdl2.SDL_SetTextureAlphaMod(texture, alpha)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         talpha = Uint8(0)
         ret = sdl2.SDL_GetTextureAlphaMod(texture, byref(talpha))
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert talpha.value == alpha
 
 def test_SDL_GetSetTextureBlendMode(texture):
@@ -430,12 +424,10 @@ def test_SDL_GetSetTextureBlendMode(texture):
     )
     for mode in modes:
         ret = sdl2.SDL_SetTextureBlendMode(texture, mode)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         tmode = blendmode.SDL_BlendMode()
         ret = sdl2.SDL_GetTextureBlendMode(texture, byref(tmode))
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert tmode.value == mode
 
 @pytest.mark.skipif(sdl2.dll.version < 2012, reason="not available")
@@ -447,12 +439,10 @@ def test_SDL_GetSetTextureScaleMode(texture):
     )
     for mode in modes:
         ret = sdl2.SDL_SetTextureScaleMode(texture, mode)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         tmode = sdl2.SDL_ScaleMode()
         ret = sdl2.SDL_GetTextureScaleMode(texture, byref(tmode))
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert tmode.value == mode
 
 @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
@@ -461,8 +451,7 @@ def test_SDL_GetSetTextureUserData(texture):
     dat_raw = ctypes.c_char_p(b"hello!")
     dat = ctypes.cast(dat_raw, ctypes.c_void_p)
     ret = sdl2.SDL_SetTextureUserData(texture, dat)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     # Try retrieving the user data
     dat_ptr = sdl2.SDL_GetTextureUserData(texture)
     assert SDL_GetError() == b""
@@ -537,8 +526,7 @@ def test_SDL_GetSetRenderTarget(supported_renderers):
             renderer, pixfmt, sdl2.SDL_TEXTUREACCESS_TARGET, 10, 10
         )
         ret = sdl2.SDL_SetRenderTarget(renderer, tex)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         tgt = sdl2.SDL_GetRenderTarget(renderer)
         assert SDL_GetError() == b""
         assert isinstance(tgt.contents, sdl2.SDL_Texture)
@@ -558,8 +546,7 @@ def test_SDL_RenderGetSetLogicalSize(sw_renderer):
 
     # Try setting the logical size to 1/10 of normal
     ret = sdl2.SDL_RenderSetLogicalSize(renderer, 10, 10)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     lw, lh = c_int(0), c_int(0)
     sdl2.SDL_RenderGetLogicalSize(renderer, byref(lw), byref(lh))
     assert [lw.value, lh.value] == [10, 10]
@@ -597,16 +584,14 @@ def test_SDL_RenderGetSetViewport(sw_renderer):
     )
     # First, try setting viewport to whole window
     ret = sdl2.SDL_RenderSetViewport(renderer, None)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     vport = rect.SDL_Rect()
     sdl2.SDL_RenderGetViewport(renderer, byref(vport))
     assert vport == rect.SDL_Rect(0, 0, 100, 100)
     # Then, try setting it to different sizes
     for r in rects:
         ret = sdl2.SDL_RenderSetViewport(renderer, r)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         sdl2.SDL_RenderGetViewport(renderer, byref(vport))
         assert vport == r
 
@@ -636,8 +621,7 @@ def test_SDL_RenderWindowToLogical(with_renderer):
     assert wy.value == 50
     # Set custom scaling on the renderer
     ret = sdl2.SDL_RenderSetScale(renderer, 2.0, 0.5)
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     # Test again after resizing
     sdl2.SDL_RenderWindowToLogical(renderer, 50, 50, byref(lx), byref(ly))
     assert lx.value == 25
@@ -669,8 +653,7 @@ def test_SDL_GetSetRenderDrawColor(with_renderer):
     )
     for r, g, b, a in colors:
         ret = sdl2.SDL_SetRenderDrawColor(renderer, r, g, b, a)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         rr, rg, rb, ra = Uint8(0), Uint8(0), Uint8(0), Uint8(0)
         ret = sdl2.SDL_GetRenderDrawColor(
             renderer, byref(rr), byref(rg), byref(rb), byref(ra)
@@ -688,8 +671,7 @@ def test_SDL_GetSetRenderDrawBlendMode(with_renderer):
     ]
     for mode in modes:
         ret = sdl2.SDL_SetRenderDrawBlendMode(renderer, mode)
-        assert SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         bmode = blendmode.SDL_BlendMode()
         ret = sdl2.SDL_GetRenderDrawBlendMode(renderer, byref(bmode))
         assert ret == 0
@@ -833,8 +815,7 @@ def test_SDL_RenderGeometry(sw_renderer):
     ret = sdl2.SDL_RenderGeometry(
         renderer, None, vtx, len(vertices), None, 0
     )
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     # TODO: Actually check the surface for the rendered triangle
 
 @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
@@ -859,8 +840,7 @@ def test_SDL_RenderGeometryRaw(sw_renderer):
         uv, xy_size,
         3, None, 0, 1
     )
-    assert SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     # Check the surface for the rendered triangle
     RED_RGBA = 0xFF0000FF
     BLACK_RGBA = 0x000000FF
