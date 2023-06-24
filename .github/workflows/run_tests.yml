@@ -232,7 +232,7 @@ jobs:
       - name: Set up Python 2.7
         run: |
           choco install python2 --x86
-          refreshenv
+          set PATH=%PATH%;C:\Python27
 
       - name: Install dependencies
         run: |
