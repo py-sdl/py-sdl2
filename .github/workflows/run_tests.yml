@@ -232,19 +232,18 @@ jobs:
       - name: Set up Python 2.7
         run: |
           choco install python2 --x86
-          $env:PATH += ";C:\Python27"
 
       - name: Install dependencies
         run: |
-          python2.7 -m pip install --upgrade pip
-          python2.7 -m pip install numpy pytest pillow
+          C:\Python27\python -m pip install --upgrade pip
+          C:\Python27\python -m pip install numpy pytest pillow
 
       - name: Download SDL2 binaries
         run: |
-          python2.7 .ci/getsdl2.py
+          C:\Python27\python .ci/getsdl2.py
 
       - name: Install and test PySDL2
         run: |
           $env:PYSDL2_DLL_PATH = "$pwd\dlls"
-          python2.7 -m pip install .
-          python2.7 -B -m pytest -vvl -rxXP
+          C:\Python27\python -m pip install .
+          C:\Python27\python -B -m pytest -vvl -rxXP
