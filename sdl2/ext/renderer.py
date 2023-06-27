@@ -596,13 +596,16 @@ class Renderer(object):
             Point = rect.SDL_FPoint
             Rect = rect.SDL_FRect
 
+        w, h = (None, None)
         if isinstance(src, TextureSprite):
             texture = src.texture
             angle = angle if angle != 0 else src.angle
             center = center if center else src.center
             flip = flip if flip != 0 else src.flip
+            w, h = src.size
         elif isinstance(src, Texture):
             texture = src.tx
+            w, h = src.size
         elif isinstance(src, render.SDL_Texture):
             texture = src
         else:
@@ -617,7 +620,7 @@ class Renderer(object):
                 x, y = dstrect
                 if srcrect:
                     w, h = (srcrect.w, srcrect.h)
-                else:
+                elif w is None:
                     w, h = _get_texture_size(texture)
             elif _is_rect(dstrect):
                 x, y, w, h = dstrect
@@ -644,6 +647,70 @@ class Renderer(object):
 
         """
         self.copy(src, srcrect, dstrect, angle, center, flip)
+
+    def rcopy(self, src, loc, size=None, align=(0.0, 0.0), srcrect=None):
+        """Copies a texture to the rendering context with relative alignment.
+
+        This method draws a texture to the rendering context using two things:
+        a location on the renderer surface, and a point on the texture to align
+        to that location. For example, you may want to draw a texture such that
+        its center is aligned with the middle of the screen::
+
+           screen_c = [int(n / 2) for n in renderer.logical_size]
+           renderer.rcopy(img, loc=screen_c, align=(0.5, 0.5))
+
+        Alignments are specified with an (x, y) tuple of values from 0.0 to 1.0,
+        inclusive, indicating the point on the texture to place at the given
+        location. ``(0, 0)`` represents the top-left corner of the texture, and
+        ``(1, 1)`` represents the bottom right. An alignment of ``(0.5, 0.5)``
+        represents the midpoint of the surface.
+
+        Args:
+            src (:obj:`~sdl2.ext.Texture`, :obj:`~sdl2.SDL_Texture`): The source
+                texture to copy to the rendering surface.
+            loc (tuple): The (x, y) pixel coordinates at which to place the
+                texture on the surface.
+            size (tuple, optional): The scaled ``(width, height)`` output size
+                in pixels of the texture on the surface. If not specified, the
+                texture will be drawn with its original size.
+            align (tuple, optional): The point on the source texture to align to
+                the given location. Values can range from ``(0.0, 0.0)``
+                (top-left corner) to ``(1.0, 1.0)`` (bottom-right corner).
+            srcrect (tuple, optional): An ``(x, y, w, h)`` rectangle defining
+                the subset of the source texture to copy to the rendering
+                surface. Defaults to copying the entire source texture.
+
+        """
+        # Do initial type checking
+        if not _is_point(loc):
+            raise ValueError("'loc' must be a valid set of (x, y) coordinates")
+        if size and not (isiterable(size) and len(size) == 2):
+            raise ValueError("'size' must be a valid set of (width, height) values")
+
+        # If using subset of surface and size not given, get size from srcrect
+        if srcrect and not size:
+            x, y, w, h = _sanitize_rects([srcrect])[0]
+            size = (w, h)
+
+        if isinstance(src, TextureSprite):
+            texture = src.texture
+            w, h = size if size else src.size
+        elif isinstance(src, Texture):
+            texture = src.tx
+            w, h = size if size else src.size
+        elif isinstance(src, render.SDL_Texture):
+            texture = src
+            w, h = size if size else _get_texture_size(texture)
+        else:
+            raise TypeError("src must be a Texture object or an SDL_Texture")
+
+        # Calcuate the destination rect for the given loc/size/alignment
+        loc_x, loc_y = loc
+        align_x, align_y = align
+        left = loc_x - int(w * align_x)
+        top = loc_y - int(h * align_y)
+
+        self.copy(src, srcrect, (left, top, w, h), 0, None, 0)
 
     def present(self):
         """Presents the current rendering surface to the screen.

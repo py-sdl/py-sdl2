@@ -8,6 +8,9 @@ This describes the latest changes between the PySDL2 releases.
 New Features:
 
 * Updated to wrap new functions and constants in SDL2 2.28.0 (PR #266).
+* Added a new method :meth:`~sdl2.ext.Renderer.rcopy` for copying textures to
+  a Renderer by aligning a given point on the texture to a given location on the
+  rendering context. Useful for centering textures in the renderer.
 * Added a new function :func:`~sdl2.ext.key_pressed` for easily checking
   if a given key has been pressed (or released).
 * Added a new function :func:`~sdl2.ext.mouse_clicked` for easily checking

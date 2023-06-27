@@ -285,6 +285,63 @@ class TestExtRenderer(object):
 
         del view
 
+    def test_rcopy(self, with_sdl):
+        # Initialize target surface and renderer
+        surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
+        renderer = sdl2ext.Renderer(surface)
+        renderer.clear(0xAABBCC)
+        view = sdl2ext.PixelView(surface)
+
+        # Test copying a Texture with only location argument
+        sf = SDL_CreateRGBSurface(0, 16, 16, 32, 0, 0, 0, 0)
+        sdl2ext.fill(sf, (0, 0, 0, 0))
+        tx = sdl2ext.Texture(renderer, sf)
+        renderer.rcopy(tx, loc=(10, 10))
+        renderer.present()
+        assert view[0][0] == 0xAABBCC
+        assert view[10][10] == 0
+        assert view[25][25] == 0
+        assert view[26][26] == 0xAABBCC
+
+        # Test copying a Texture with location and size
+        renderer.clear(0xAABBCC) # reset surface
+        renderer.rcopy(tx, loc=(10, 10), size=(30, 40))
+        renderer.present()
+        assert view[0][0] == 0xAABBCC
+        assert view[10][10] == 0
+        assert view[49][39] == 0
+        assert view[50][40] == 0xAABBCC
+
+        # Test copying a Texture with center alignment
+        renderer.clear(0xAABBCC) # reset surface
+        renderer.rcopy(tx, loc=(16, 16), align=(0.5, 0.5))
+        renderer.present()
+        assert view[7][7] == 0xAABBCC
+        assert view[8][8] == 0
+        assert view[23][23] == 0
+        assert view[24][24] == 0xAABBCC
+
+        # Test copying a Texture with mid-left alignment and scaling
+        renderer.clear(0xAABBCC) # reset surface
+        renderer.rcopy(tx, loc=(16, 16), align=(0, 0.5), size=(8, 8))
+        renderer.present()
+        assert view[15][11] == 0xAABBCC
+        assert view[12][16] == 0
+        assert view[19][23] == 0
+        assert view[20][24] == 0xAABBCC
+
+        # Test copying a Texture subset with mid-left alignment and scaling
+        renderer.clear(0xAABBCC) # reset surface
+        tx_subset = SDL_Rect(0, 0, 8, 8)
+        renderer.rcopy(tx, loc=(16, 16), align=(0, 0.5), srcrect=tx_subset)
+        renderer.present()
+        assert view[15][11] == 0xAABBCC
+        assert view[12][16] == 0
+        assert view[19][23] == 0
+        assert view[20][24] == 0xAABBCC
+
+        del view
+
     def test_draw_line(self, with_sdl):
         surface = SDL_CreateRGBSurface(0, 128, 128, 32, 0, 0, 0, 0).contents
         sdl2ext.fill(surface, 0x0)
