@@ -2,6 +2,10 @@ Release News
 ============
 This describes the latest changes between the PySDL2 releases.
 
+0.9.17 (Unreleased)
+-------------------
+
+
 0.9.16
 ------
 
