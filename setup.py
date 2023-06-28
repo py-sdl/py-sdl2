@@ -4,7 +4,7 @@ import sys
 import re
 from setuptools import setup
 
-VERSION = "0.9.16a1"
+VERSION = "0.9.16"
 
 if __name__ == "__main__":
 
