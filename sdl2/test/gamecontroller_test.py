@@ -51,7 +51,7 @@ def gamepads(with_sdl):
     for i in range(count):
         if sdl2.SDL_IsGameController(i) == SDL_TRUE:
             pad = sdl2.SDL_GameControllerOpen(i)
-            assert sdl2.SDL_GetError() == b""
+            assert pad, _check_error_msg()
             assert isinstance(pad.contents, sdl2.SDL_GameController)
             devices.append(pad)
     yield devices
@@ -133,21 +133,18 @@ def test_SDL_GameControllerMappingForGUID(with_sdl):
 def test_SDL_GameControllerMapping(gamepads):
     for pad in gamepads:
         mapping = sdl2.SDL_GameControllerMapping(pad)
-        assert SDL_GetError() == b""
         assert mapping == None or type(mapping) in (str, bytes)
 
 def test_SDL_IsGameController(with_sdl):
     count = joystick.SDL_NumJoysticks()
     for index in range(count):
         ret = sdl2.SDL_IsGameController(index)
-        assert sdl2.SDL_GetError() == b""
         assert ret in [SDL_TRUE, SDL_FALSE]
 
 def test_SDL_GameControllerNameForIndex(with_sdl):
     count = joystick.SDL_NumJoysticks()
     for index in range(count):
         name = sdl2.SDL_GameControllerNameForIndex(index)
-        assert sdl2.SDL_GetError() == b""
         assert name == None or type(name) in (str, bytes)
 
 @pytest.mark.skipif(sdl2.dll.version < 2231, reason="not available")
@@ -174,7 +171,7 @@ def test_SDL_GameControllerOpenClose(with_sdl):
     for index in range(count):
         if sdl2.SDL_IsGameController(index) == SDL_TRUE:
             pad = sdl2.SDL_GameControllerOpen(index)
-            assert sdl2.SDL_GetError() == b""
+            assert pad, _check_error_msg()
             assert isinstance(pad.contents, sdl2.SDL_GameController)
             sdl2.SDL_GameControllerClose(pad)
 
@@ -220,7 +217,6 @@ def test_SDL_GameControllerPath(gamepads):
 def test_SDL_GameControllerGetType(gamepads):
     for pad in gamepads:
         padtype = sdl2.SDL_GameControllerGetType(pad)
-        assert SDL_GetError() == b""
         assert padtype in gamepad_types
         if is_virtual(pad):
             assert padtype == sdl2.SDL_CONTROLLER_TYPE_VIRTUAL
@@ -244,7 +240,6 @@ def test_SDL_GameControllerSetPlayerIndex(gamepads):
 def test_SDL_GameControllerGetVendor(gamepads):
     for pad in gamepads:
         vid = sdl2.SDL_GameControllerGetVendor(pad)
-        assert SDL_GetError() == b""
         if not is_virtual(pad):
             assert vid > 0
 
@@ -252,7 +247,6 @@ def test_SDL_GameControllerGetVendor(gamepads):
 def test_SDL_GameControllerGetProduct(gamepads):
     for pad in gamepads:
         pid = sdl2.SDL_GameControllerGetProduct(pad)
-        assert SDL_GetError() == b""
         if not is_virtual(pad):
             assert pid > 0
 
@@ -260,21 +254,18 @@ def test_SDL_GameControllerGetProduct(gamepads):
 def test_SDL_GameControllerGetProductVersion(gamepads):
     for pad in gamepads:
         pver = sdl2.SDL_GameControllerGetProductVersion(pad)
-        assert SDL_GetError() == b""
         assert pver >= 0
 
 @pytest.mark.skipif(sdl2.dll.version < 2231, reason="not available")
 def test_SDL_GameControllerGetFirmwareVersion(gamepads):
     for pad in gamepads:
         fw_ver = sdl2.SDL_GameControllerGetFirmwareVersion(pad)
-        assert SDL_GetError() == b""
         assert fw_ver >= 0
 
 @pytest.mark.skipif(sdl2.dll.version < 2014, reason="not available")
 def test_SDL_GameControllerGetSerial(gamepads):
     for pad in gamepads:
         serial = sdl2.SDL_GameControllerGetSerial(pad)
-        assert SDL_GetError() == b""
         assert serial == None or type(serial) in (str, bytes)
 
 def test_SDL_GameControllerGetAttached(gamepads):
@@ -285,7 +276,7 @@ def test_SDL_GameControllerGetAttached(gamepads):
 def test_SDL_GameControllerGetJoystick(gamepads):
     for pad in gamepads:
         stick = sdl2.SDL_GameControllerGetJoystick(pad)
-        assert SDL_GetError() == b""
+        assert stick, _check_error_msg()
         assert isinstance(stick.contents, joystick.SDL_Joystick)
 
 def test_SDL_GameControllerEventState(with_sdl):
@@ -298,7 +289,6 @@ def test_SDL_GameControllerEventState(with_sdl):
 def test_SDL_GameControllerUpdate(with_sdl):
     # NOTE: Returns void, can't really test anything else
     sdl2.SDL_GameControllerUpdate()
-    assert SDL_GetError() == b""
 
 def test_SDL_GameControllerGetAxisFromString(with_sdl):
     expected = {
