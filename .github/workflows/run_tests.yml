@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies and latest SDL2 binaries
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy pytest pillow
+          python -m pip install --prefer-binary numpy pytest pillow
           python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
 
       - name: Install and test PySDL2
@@ -84,7 +84,7 @@ jobs:
       - name: Install dependencies and latest SDL2 binaries
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy pytest pillow
+          python -m pip install --prefer-binary numpy pytest pillow
           python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
 
       - name: Install and test PySDL2
@@ -195,7 +195,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy pytest pillow
+          python -m pip install --prefer-binary numpy pytest pillow
 
       - name: Download SDL2 binaries
         run: |
@@ -236,7 +236,7 @@ jobs:
       - name: Install dependencies
         run: |
           C:\Python27\python -m pip install --upgrade pip
-          C:\Python27\python -m pip install numpy pytest pillow
+          C:\Python27\python -m pip install --prefer-binary numpy pytest pillow
 
       - name: Download SDL2 binaries
         run: |
