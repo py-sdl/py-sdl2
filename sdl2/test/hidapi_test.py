@@ -38,10 +38,11 @@ def test_SDL_hid_device_change_count(hidapi_setup):
 
 def test_SDL_hid_enumerate(hidapi_setup):
     devices = sdl2.SDL_hid_enumerate(0, 0)
-    assert SDL_GetError() == b""
+    # Cannot check the error indicator here: a non-error empty list is
+    # indistinguishable from an error, and it is not guaranteed that the
+    # error indicator will not be set as a side-effect of a successful load
     if devices != None:
         sdl2.SDL_hid_free_enumeration(devices)
-        assert SDL_GetError() == b""
 
 
 @pytest.mark.skip("not implemented")
