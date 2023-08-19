@@ -52,8 +52,7 @@ def with_sdl_gl(with_sdl):
 def window(with_sdl):
     flag = sdl2.SDL_WINDOW_BORDERLESS
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not w:
-        assert SDL_GetError() == b""
+    assert w, _check_error_msg()
     assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
@@ -63,8 +62,7 @@ def window(with_sdl):
 def decorated_window(with_sdl):
     flag = sdl2.SDL_WINDOW_RESIZABLE
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not w:
-        assert SDL_GetError() == b""
+    assert w, _check_error_msg()
     assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
@@ -74,20 +72,18 @@ def decorated_window(with_sdl):
 def gl_window(with_sdl_gl):
     flag = sdl2.SDL_WINDOW_OPENGL
     w = sdl2.SDL_CreateWindow(b"OpenGL", 10, 40, 12, 13, flag)
-    if not w:
-        assert SDL_GetError() == b""
+    assert w, _check_error_msg()
     assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     ctx = sdl2.SDL_GL_CreateContext(w)
-    assert SDL_GetError() == b""
+    assert ctx, _check_error_msg()
     yield (w, ctx)
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(w)
 
 def _create_window(name, h, w, x, y, flags):
     window = sdl2.SDL_CreateWindow(name, h, w, x, y, flags)
-    if not window:
-        assert SDL_GetError() == b""
+    assert window, _check_error_msg()
     assert isinstance(window.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     return window
@@ -193,7 +189,7 @@ def test_SDL_VideoInitQuit():
     # Test with default driver
     assert sdl2.SDL_WasInit(0) & sdl2.SDL_INIT_VIDEO != sdl2.SDL_INIT_VIDEO
     ret = sdl2.SDL_VideoInit(None)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     assert sdl2.SDL_GetCurrentVideoDriver() # If initialized, should be string
     sdl2.SDL_VideoQuit()
     assert not sdl2.SDL_GetCurrentVideoDriver()
@@ -234,8 +230,7 @@ def test_SDL_GetDisplayMode(with_sdl):
         for mode in range(modes):
             dmode = sdl2.SDL_DisplayMode()
             ret = sdl2.SDL_GetDisplayMode(index, mode, byref(dmode))
-            assert sdl2.SDL_GetError() == b""
-            assert ret == 0
+            assert ret == 0, _check_error_msg()
             if not DRIVER_DUMMY:
                 assert dmode.w > 0
                 assert dmode.h > 0
@@ -245,8 +240,7 @@ def test_SDL_GetCurrentDisplayMode(with_sdl):
     for index in range(numdisplays):
         dmode = sdl2.SDL_DisplayMode()
         ret = sdl2.SDL_GetCurrentDisplayMode(index, byref(dmode))
-        assert sdl2.SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert dmode.w > 0
         assert dmode.h > 0
 
@@ -255,8 +249,7 @@ def test_SDL_GetDesktopDisplayMode(with_sdl):
     for index in range(numdisplays):
         dmode = sdl2.SDL_DisplayMode()
         ret = sdl2.SDL_GetDesktopDisplayMode(index, byref(dmode))
-        assert sdl2.SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert dmode.w > 0
         assert dmode.h > 0
 
@@ -266,8 +259,7 @@ def test_SDL_GetClosestDisplayMode(with_sdl):
     for index in range(numdisplays):
         dmode = sdl2.SDL_DisplayMode()
         ret = sdl2.SDL_GetCurrentDisplayMode(index, byref(dmode))
-        assert sdl2.SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         cmode = sdl2.SDL_DisplayMode(
             dmode.format, dmode.w - 1, dmode.h - 1, dmode.refresh_rate
         )
@@ -286,8 +278,7 @@ def test_SDL_GetDisplayBounds(with_sdl):
     for index in range(numdisplays):
         bounds = rect.SDL_Rect()
         ret = sdl2.SDL_GetDisplayBounds(index, byref(bounds))
-        assert sdl2.SDL_GetError() == b""
-        assert ret == 0
+        assert ret == 0, _check_error_msg()
         assert bounds.w > 0
         assert bounds.h > 0
         assert not rect.SDL_RectEmpty(bounds)
@@ -345,8 +336,8 @@ def test_GetDisplayInfo(with_sdl):
 def test_SDL_CreateDestroyWindow(with_sdl):
     flag = sdl2.SDL_WINDOW_BORDERLESS
     window = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
+    assert window, _check_error_msg()
     if not isinstance(window.contents, sdl2.SDL_Window):
-        assert SDL_GetError() == b""
         assert isinstance(window.contents, sdl2.SDL_Window)
     sdl2.SDL_DestroyWindow(window)
 
@@ -453,7 +444,10 @@ def test_SDL_SetWindowIcon(window):
         0, 16, 16, 16, 0xF000, 0x0F00, 0x00F0, 0x000F
     )
     assert isinstance(sf.contents, surface.SDL_Surface)
+    sdl2.SDL_ClearError()
     sdl2.SDL_SetWindowIcon(window, sf)
+    # TODO: This is not 100% safe, but in SDL2, SetWindowIcon returns void,
+    # so we can't reliably detect error
     assert SDL_GetError() == b""
 
 @pytest.mark.xfail(is_pypy, reason="PyPy can't create proper py_object values")
@@ -535,7 +529,10 @@ def test_SDL_GetSetWindowMinimumSize(window):
     sdl2.SDL_GetWindowSize(window, byref(sx), byref(sy))
     assert (sx.value, sy.value) == (12, 13)
     # Set and verify the minimum window size
+    sdl2.SDL_ClearError()
     sdl2.SDL_SetWindowMinimumSize(window, 10, 10)
+    # TODO: This is not 100% safe, but in SDL2, SetWindowMinimumSize returns
+    # void, so we can't reliably detect error
     assert SDL_GetError() == b""
     sdl2.SDL_GetWindowMinimumSize(window, byref(minx), byref(miny))
     assert (minx.value, miny.value) == (10, 10)
@@ -549,8 +546,11 @@ def test_SDL_GetSetWindowMaximumSize(window):
     maxx, maxy = c_int(0), c_int(0)
     sdl2.SDL_GetWindowSize(window, byref(sx), byref(sy))
     assert (sx.value, sy.value) == (12, 13)
+    sdl2.SDL_ClearError()
     # Set and verify the maximum window size
     sdl2.SDL_SetWindowMaximumSize(window, 32, 32)
+    # TODO: This is not 100% safe, but in SDL2, SetWindowMaximumSize returns
+    # void, so we can't reliably detect error
     assert SDL_GetError() == b""
     sdl2.SDL_GetWindowMaximumSize(window, byref(maxx), byref(maxy))
     assert (maxx.value, maxy.value) == (32, 32)
@@ -660,7 +660,7 @@ def test_SDL_HasWindowSurface(window):
 
 def test_SDL_GetWindowSurface(window):
     sf = sdl2.SDL_GetWindowSurface(window)
-    assert SDL_GetError() == b""
+    assert sf, _check_error_msg()
     assert isinstance(sf.contents, surface.SDL_Surface)
 
 def test_SDL_UpdateWindowSurface(window):
@@ -857,23 +857,22 @@ def test_SDL_GL_CreateDeleteContext(with_sdl_gl):
         b"OpenGL", 10, 40, 32, 24, sdl2.SDL_WINDOW_OPENGL
     )
     ctx = sdl2.SDL_GL_CreateContext(window)
-    assert SDL_GetError() == b""
+    assert ctx, _check_error_msg()
     sdl2.SDL_GL_DeleteContext(ctx)
     ctx = sdl2.SDL_GL_CreateContext(window)
-    assert SDL_GetError() == b""
+    assert ctx, _check_error_msg()
     sdl2.SDL_GL_DeleteContext(ctx)
     sdl2.SDL_DestroyWindow(window)
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_GetProcAddress(gl_window):
     procaddr = sdl2.SDL_GL_GetProcAddress(b"glGetString")
-    assert SDL_GetError() == b""
-    assert procaddr is not None and int(procaddr) != 0
+    assert procaddr is not None and int(procaddr) != 0, _check_error_msg()
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_ExtensionSupported(gl_window):
-    assert sdl2.SDL_GL_ExtensionSupported(b"GL_EXT_bgra")
-    assert SDL_GetError() == b""
+    sdl2.SDL_ClearError()
+    assert sdl2.SDL_GL_ExtensionSupported(b"GL_EXT_bgra"), _check_error_msg()
 
 @pytest.mark.skipif(DRIVER_DUMMY, reason="Doesn't work with dummy driver")
 def test_SDL_GL_GetSetResetAttribute(with_sdl_gl):
@@ -946,7 +945,10 @@ def test_SDL_GL_SwapWindow(gl_window):
     window, ctx = gl_window
     ret = sdl2.SDL_GL_MakeCurrent(window, ctx)
     assert ret == 0, _check_error_msg()
+    sdl2.SDL_ClearError()
     sdl2.SDL_GL_SwapWindow(window)
     sdl2.SDL_GL_SwapWindow(window)
     sdl2.SDL_GL_SwapWindow(window)
+    # TODO: This is not 100% safe, but in SDL2, GL_SwapWindow returns
+    # void, so we can't reliably detect error
     assert SDL_GetError() == b""
