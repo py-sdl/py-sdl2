@@ -52,8 +52,7 @@ def with_sdl_gl(with_sdl):
 def window(with_sdl):
     flag = sdl2.SDL_WINDOW_BORDERLESS
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not w:
-        assert SDL_GetError() == b""
+    assert w, _check_error_msg()
     assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
@@ -63,8 +62,7 @@ def window(with_sdl):
 def decorated_window(with_sdl):
     flag = sdl2.SDL_WINDOW_RESIZABLE
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not w:
-        assert SDL_GetError() == b""
+    assert w, _check_error_msg()
     assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
@@ -74,8 +72,7 @@ def decorated_window(with_sdl):
 def gl_window(with_sdl_gl):
     flag = sdl2.SDL_WINDOW_OPENGL
     w = sdl2.SDL_CreateWindow(b"OpenGL", 10, 40, 12, 13, flag)
-    if not w:
-        assert SDL_GetError() == b""
+    assert w, _check_error_msg()
     assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     ctx = sdl2.SDL_GL_CreateContext(w)
@@ -192,7 +189,7 @@ def test_SDL_VideoInitQuit():
     # Test with default driver
     assert sdl2.SDL_WasInit(0) & sdl2.SDL_INIT_VIDEO != sdl2.SDL_INIT_VIDEO
     ret = sdl2.SDL_VideoInit(None)
-    assert ret == 0, sdl2.SDL_GetError().decode('utf-8', 'replace')
+    assert ret == 0, _check_error_msg()
     assert sdl2.SDL_GetCurrentVideoDriver() # If initialized, should be string
     sdl2.SDL_VideoQuit()
     assert not sdl2.SDL_GetCurrentVideoDriver()
