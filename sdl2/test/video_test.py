@@ -444,7 +444,10 @@ def test_SDL_SetWindowIcon(window):
         0, 16, 16, 16, 0xF000, 0x0F00, 0x00F0, 0x000F
     )
     assert isinstance(sf.contents, surface.SDL_Surface)
+    sdl2.SDL_ClearError()
     sdl2.SDL_SetWindowIcon(window, sf)
+    # TODO: This is not 100% safe, but in SDL2, SetWindowIcon returns void,
+    # so we can't reliably detect error
     assert SDL_GetError() == b""
 
 @pytest.mark.xfail(is_pypy, reason="PyPy can't create proper py_object values")
@@ -526,7 +529,10 @@ def test_SDL_GetSetWindowMinimumSize(window):
     sdl2.SDL_GetWindowSize(window, byref(sx), byref(sy))
     assert (sx.value, sy.value) == (12, 13)
     # Set and verify the minimum window size
+    sdl2.SDL_ClearError()
     sdl2.SDL_SetWindowMinimumSize(window, 10, 10)
+    # TODO: This is not 100% safe, but in SDL2, SetWindowMinimumSize returns
+    # void, so we can't reliably detect error
     assert SDL_GetError() == b""
     sdl2.SDL_GetWindowMinimumSize(window, byref(minx), byref(miny))
     assert (minx.value, miny.value) == (10, 10)
@@ -540,8 +546,11 @@ def test_SDL_GetSetWindowMaximumSize(window):
     maxx, maxy = c_int(0), c_int(0)
     sdl2.SDL_GetWindowSize(window, byref(sx), byref(sy))
     assert (sx.value, sy.value) == (12, 13)
+    sdl2.SDL_ClearError()
     # Set and verify the maximum window size
     sdl2.SDL_SetWindowMaximumSize(window, 32, 32)
+    # TODO: This is not 100% safe, but in SDL2, SetWindowMaximumSize returns
+    # void, so we can't reliably detect error
     assert SDL_GetError() == b""
     sdl2.SDL_GetWindowMaximumSize(window, byref(maxx), byref(maxy))
     assert (maxx.value, maxy.value) == (32, 32)
@@ -936,7 +945,10 @@ def test_SDL_GL_SwapWindow(gl_window):
     window, ctx = gl_window
     ret = sdl2.SDL_GL_MakeCurrent(window, ctx)
     assert ret == 0, _check_error_msg()
+    sdl2.SDL_ClearError()
     sdl2.SDL_GL_SwapWindow(window)
     sdl2.SDL_GL_SwapWindow(window)
     sdl2.SDL_GL_SwapWindow(window)
+    # TODO: This is not 100% safe, but in SDL2, GL_SwapWindow returns
+    # void, so we can't reliably detect error
     assert SDL_GetError() == b""
