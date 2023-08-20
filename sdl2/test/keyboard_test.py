@@ -170,6 +170,7 @@ def test_SDL_SetTextInputRect(with_sdl):
     coords = [(0, 0, 0, 0), (-10, -70, 3, 6), (10, 10, 10, 10)]
     for x, y, w, h in coords:
         r = rect.SDL_Rect(x, y, w, h)
+        sdl2.SDL_ClearError()
         sdl2.SDL_SetTextInputRect(r)
         assert SDL_GetError() == b""
     sdl2.SDL_StopTextInput()
