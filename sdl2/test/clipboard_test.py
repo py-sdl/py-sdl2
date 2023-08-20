@@ -8,9 +8,8 @@ from .conftest import SKIP_ANNOYING, _check_error_msg
 def window(with_sdl):
     flag = sdl2.SDL_WINDOW_BORDERLESS
     w = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
-        assert sdl2.SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert w, _check_error_msg()
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
     sdl2.SDL_DestroyWindow(w)

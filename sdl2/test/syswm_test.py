@@ -5,6 +5,7 @@ import ctypes
 import sdl2
 from sdl2.stdinc import SDL_TRUE
 from sdl2 import video, version, SDL_GetError
+from .conftest import _check_error_msg
 
 # Check if using dummy video driver
 DRIVER_DUMMY = os.getenv("SDL_VIDEODRIVER", "") == "dummy"
@@ -26,9 +27,8 @@ def test_SDL_GetWindowWMInfo(with_sdl):
     window = video.SDL_CreateWindow(
         b"Test", 10, 10, 10, 10, video.SDL_WINDOW_HIDDEN
     )
-    if not isinstance(window.contents, video.SDL_Window):
-        assert SDL_GetError() == b""
-        assert isinstance(window.contents, video.SDL_Window)
+    assert window, _check_error_msg()
+    assert isinstance(window.contents, video.SDL_Window)
     sdl2.SDL_ClearError()
     wminfo = sdl2.SDL_SysWMinfo()
     version.SDL_VERSION(wminfo.version)

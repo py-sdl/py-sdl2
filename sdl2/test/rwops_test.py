@@ -4,6 +4,7 @@ import ctypes
 import pytest
 from io import BytesIO
 import sdl2
+from .conftest import _check_error_msg
 
 
 if sys.version_info[0] >= 3:
@@ -25,7 +26,7 @@ def with_test_rw():
     sdl2.SDL_ClearError()
     buf = ctypes.create_string_buffer(b"abcdefghijklmnop")
     rw = sdl2.SDL_RWFromMem(buf, len(buf))
-    assert sdl2.SDL_GetError() == b""
+    assert rw, _check_error_msg()
     assert isinstance(rw.contents, sdl2.SDL_RWops)
     yield (rw, buf)
     sdl2.SDL_RWclose(rw)
@@ -68,7 +69,7 @@ def test_SDL_RWFromFP():
 def test_SDL_RWFromMem():
     buf = ctypes.create_string_buffer(b"1234")
     rw = sdl2.SDL_RWFromMem(buf, len(buf))
-    assert sdl2.SDL_GetError() == b""
+    assert rw, _check_error_msg()
     assert isinstance(rw.contents, sdl2.SDL_RWops)
     # Make sure it's writable
     value = (
@@ -80,7 +81,7 @@ def test_SDL_RWFromMem():
 def test_SDL_RWFromConstMem():
     buf = ctypes.create_string_buffer(b"1234")
     rw = sdl2.SDL_RWFromConstMem(buf, len(buf))
-    assert sdl2.SDL_GetError() == b""
+    assert rw, _check_error_msg()
     assert isinstance(rw.contents, sdl2.SDL_RWops)
     # Make sure it isn't writable
     value = (
@@ -138,20 +139,18 @@ def test_SDL_RWwrite(with_test_rw):
 def test_SDL_RWclose():
     buf = ctypes.create_string_buffer(b"abcdefghijklmnop")
     rw = sdl2.SDL_RWFromMem(buf, len(buf))
-    assert sdl2.SDL_GetError() == b""
+    assert rw, _check_error_msg()
     assert isinstance(rw.contents, sdl2.SDL_RWops)
     # Close the RW object and check for any errors
     assert sdl2.SDL_RWsize(rw) == len(buf)
     ret = sdl2.SDL_RWclose(rw)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
 
 def test_SDL_AllocFreeRW():
     rw = sdl2.SDL_AllocRW()
-    assert sdl2.SDL_GetError() == b""
+    assert rw, _check_error_msg()
     assert isinstance(rw.contents, sdl2.SDL_RWops)
     sdl2.SDL_FreeRW(rw)
-    assert sdl2.SDL_GetError() == b""
 
 @pytest.mark.skipif(sdl2.dll.version < 2006, reason="not available")
 def test_SDL_LoadFile_RW(testfile_path):
@@ -159,7 +158,7 @@ def test_SDL_LoadFile_RW(testfile_path):
     assert isinstance(rw.contents, sdl2.SDL_RWops)
     datasize = ctypes.c_size_t(0)
     data_p = sdl2.SDL_LoadFile_RW(rw, ctypes.byref(datasize), 0)
-    assert sdl2.SDL_GetError() == b""
+    assert data_p, _check_error_msg()
     assert datasize.value > 0
     data = ctypes.string_at(data_p, datasize.value)
     assert data[:19] == b"This is a test file"
@@ -168,7 +167,7 @@ def test_SDL_LoadFile_RW(testfile_path):
 def test_SDL_LoadFile(testfile_path):
     datasize = ctypes.c_size_t(0)
     data_p = sdl2.SDL_LoadFile(testfile_path, ctypes.byref(datasize))
-    assert sdl2.SDL_GetError() == b""
+    assert data_p, _check_error_msg()
     assert datasize.value > 0
     data = ctypes.string_at(data_p, datasize.value)
     assert data[:19] == b"This is a test file"

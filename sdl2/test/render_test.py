@@ -22,9 +22,8 @@ def _create_window(pos, size, flags=video.SDL_WINDOW_HIDDEN):
     window = video.SDL_CreateWindow(
         b"Test", pos[0], pos[1], size[0], size[1], video.SDL_WINDOW_HIDDEN
     )
-    if not isinstance(window.contents, video.SDL_Window):
-        assert SDL_GetError() == b""
-        assert isinstance(window.contents, video.SDL_Window)
+    assert window, _check_error_msg()
+    assert isinstance(window.contents, video.SDL_Window)
     sdl2.SDL_ClearError()
     return window
 
@@ -59,18 +58,18 @@ def testsurf(with_sdl):
     sf = surface.SDL_CreateRGBSurface(
         0, 100, 100, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
     )
-    assert SDL_GetError() == b""
+    assert sf, _check_error_msg()
     pixfmt = sf.contents.format.contents
     fill = pixels.SDL_MapRGBA(pixfmt, 0, 0, 0, 255)
-    surface.SDL_FillRect(sf, None, fill)
-    assert SDL_GetError() == b""
+    ret = surface.SDL_FillRect(sf, None, fill)
+    assert ret == 0, _check_error_msg()
     yield sf
     surface.SDL_FreeSurface(sf)
 
 @pytest.fixture
 def sw_renderer(testsurf):
     renderer = sdl2.SDL_CreateSoftwareRenderer(testsurf)
-    assert SDL_GetError() == b""
+    assert renderer, _check_error_msg()
     assert isinstance(renderer.contents, sdl2.SDL_Renderer)
     yield (renderer, testsurf)
     sdl2.SDL_DestroyRenderer(renderer)
@@ -82,12 +81,11 @@ def with_renderer(with_sdl):
     window = video.SDL_CreateWindow(
         b"Test", 30, 30, 100, 100, video.SDL_WINDOW_HIDDEN
     )
-    if not isinstance(window.contents, sdl2.SDL_Window):
-        assert sdl2.SDL_GetError() == b""
-        assert isinstance(window.contents, sdl2.SDL_Window)
+    assert window, _check_error_msg()
+    assert isinstance(window.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     renderer = sdl2.SDL_CreateRenderer(window, -1, flags)
-    assert SDL_GetError() == b""
+    assert renderer, _check_error_msg()
     yield (renderer, window)
     sdl2.SDL_DestroyRenderer(renderer)
     video.SDL_DestroyWindow(window)
@@ -98,7 +96,7 @@ def texture(with_renderer):
     fmt = pixels.SDL_PIXELFORMAT_ARGB8888
     access = sdl2.SDL_TEXTUREACCESS_STREAMING
     tx = sdl2.SDL_CreateTexture(renderer, fmt, access, 16, 16)
-    assert SDL_GetError() == b""
+    assert tx, _check_error_msg()
     assert isinstance(tx.contents, sdl2.SDL_Texture)
     yield tx
     sdl2.SDL_DestroyTexture(tx)
@@ -237,7 +235,7 @@ def test_SDL_CreateSoftwareRenderer(with_sdl):
         0, 100, 100, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
     )
     renderer = sdl2.SDL_CreateSoftwareRenderer(sf)
-    assert SDL_GetError() == b""
+    assert renderer, _check_error_msg()
     assert isinstance(renderer.contents, sdl2.SDL_Renderer)
     sdl2.SDL_DestroyRenderer(renderer)
     surface.SDL_FreeSurface(sf)
@@ -250,8 +248,9 @@ def test_SDL_GetRenderer(supported_renderers):
         renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
             usable += 1
+            sdl2.SDL_ClearError()
             ren = sdl2.SDL_GetRenderer(window)
-            assert SDL_GetError() == b""
+            assert ren, _check_error_msg()
             assert isinstance(ren.contents, sdl2.SDL_Renderer)
             sdl2.SDL_DestroyRenderer(renderer)
             assert not sdl2.SDL_GetRenderer(window)
@@ -265,8 +264,9 @@ def test_SDL_RenderGetWindow(supported_renderers):
         window = _create_window((30, 30), (100, 100))
         renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         if (renderer and renderer.contents):
+            sdl2.SDL_ClearError()
             win = sdl2.SDL_RenderGetWindow(renderer)
-            assert SDL_GetError() == b""
+            assert win, _check_error_msg()
             assert isinstance(win.contents, sdl2.SDL_Window)
             assert sdl2.SDL_GetWindowID(window) == sdl2.SDL_GetWindowID(win)
             sdl2.SDL_DestroyRenderer(renderer)
@@ -335,8 +335,9 @@ def test_SDL_CreateDestroyTexture(with_renderer):
     for fmt in formats:
         for acc in access:
             for w, h in sizes:
+                sdl2.SDL_ClearError()
                 tx = sdl2.SDL_CreateTexture(renderer, fmt, acc, w, h)
-                assert SDL_GetError() == b""
+                assert tx, _check_error_msg()
                 assert isinstance(tx.contents, sdl2.SDL_Texture)
                 sdl2.SDL_DestroyTexture(tx)
     # Test SDL error on bad input
@@ -348,8 +349,7 @@ def test_SDL_CreateDestroyTexture(with_renderer):
 def test_SDL_CreateTextureFromSurface(with_renderer, testsurf):
     renderer, win = with_renderer
     tx = sdl2.SDL_CreateTextureFromSurface(renderer, testsurf)
-    if sdl2.dll.version != 2008: # Weird non-fatal colorkey error on 2.0.8
-        assert SDL_GetError() == b"" 
+    assert tx, _check_error_msg()
     assert isinstance(tx.contents, sdl2.SDL_Texture)
     sdl2.SDL_DestroyTexture(tx)
 
@@ -454,8 +454,7 @@ def test_SDL_GetSetTextureUserData(texture):
     assert ret == 0, _check_error_msg()
     # Try retrieving the user data
     dat_ptr = sdl2.SDL_GetTextureUserData(texture)
-    assert SDL_GetError() == b""
-    assert dat_ptr != None
+    assert dat_ptr, _check_error_msg()
     dat_out = ctypes.cast(dat_ptr, ctypes.c_char_p)
     assert dat_raw.value == dat_out.value
 
@@ -491,7 +490,6 @@ def test_SDL_RenderTargetSupported(supported_renderers):
             usable += 1
             assert isinstance(renderer.contents, sdl2.SDL_Renderer)
             val = sdl2.SDL_RenderTargetSupported(renderer)
-            assert SDL_GetError() == b""
             assert val in (SDL_TRUE, SDL_FALSE)
             sdl2.SDL_DestroyRenderer(renderer)
         video.SDL_DestroyWindow(window)
@@ -520,6 +518,7 @@ def test_SDL_GetSetRenderTarget(supported_renderers):
     pixfmt = pixels.SDL_PIXELFORMAT_ARGB8888
     for i in supports_targets:
         window = _create_window((30, 30), (100, 100))
+        sdl2.SDL_ClearError()
         renderer = sdl2.SDL_CreateRenderer(window, i, flags)
         # Try setting a texture as the render target
         tex = sdl2.SDL_CreateTexture(
@@ -527,8 +526,9 @@ def test_SDL_GetSetRenderTarget(supported_renderers):
         )
         ret = sdl2.SDL_SetRenderTarget(renderer, tex)
         assert ret == 0, _check_error_msg()
+        sdl2.SDL_ClearError()
         tgt = sdl2.SDL_GetRenderTarget(renderer)
-        assert SDL_GetError() == b""
+        assert tgt, _check_error_msg()
         assert isinstance(tgt.contents, sdl2.SDL_Texture)
         # Try setting NULL as the render target (resets target to window)
         ret = sdl2.SDL_SetRenderTarget(renderer, None)

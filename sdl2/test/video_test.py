@@ -337,8 +337,7 @@ def test_SDL_CreateDestroyWindow(with_sdl):
     flag = sdl2.SDL_WINDOW_BORDERLESS
     window = sdl2.SDL_CreateWindow(b"Test", 10, 40, 12, 13, flag)
     assert window, _check_error_msg()
-    if not isinstance(window.contents, sdl2.SDL_Window):
-        assert isinstance(window.contents, sdl2.SDL_Window)
+    assert isinstance(window.contents, sdl2.SDL_Window)
     sdl2.SDL_DestroyWindow(window)
 
 @pytest.mark.skip("not implemented")

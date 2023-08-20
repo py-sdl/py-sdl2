@@ -4,6 +4,7 @@ from ctypes import c_int, cast, byref, POINTER
 import sdl2
 from sdl2 import SDL_TRUE, SDL_FALSE, SDL_GetError
 from sdl2 import rect, scancode, keycode, video
+from .conftest import _check_error_msg
 
 byteify = lambda x: x.encode("utf-8")
 
@@ -11,9 +12,8 @@ byteify = lambda x: x.encode("utf-8")
 def window(with_sdl):
     flag = video.SDL_WINDOW_INPUT_FOCUS
     w = video.SDL_CreateWindow(b"Test", 10, 40, 32, 24, flag)
-    if not isinstance(w.contents, sdl2.SDL_Window):
-        assert sdl2.SDL_GetError() == b""
-        assert isinstance(w.contents, sdl2.SDL_Window)
+    assert w, _check_error_msg()
+    assert isinstance(w.contents, sdl2.SDL_Window)
     sdl2.SDL_ClearError()
     yield w
     video.SDL_DestroyWindow(w)
@@ -150,11 +150,9 @@ def test_SDL_GetKeyFromName(with_sdl):
 
 def test_SDL_StartStopTextInput(with_sdl):
     sdl2.SDL_StopTextInput()
-    assert SDL_GetError() == b""
-    assert sdl2.SDL_IsTextInputActive() == SDL_FALSE
+    assert sdl2.SDL_IsTextInputActive() == SDL_FALSE, _check_error_msg()
     sdl2.SDL_StartTextInput()
-    assert SDL_GetError() == b""
-    assert sdl2.SDL_IsTextInputActive() == SDL_TRUE
+    assert sdl2.SDL_IsTextInputActive() == SDL_TRUE, _check_error_msg()
 
 @pytest.mark.skipif(sdl2.dll.version < 2022, reason="not available")
 def test_SDL_ClearComposition(with_sdl):
@@ -166,12 +164,15 @@ def test_SDL_IsTextInputShown(with_sdl):
     assert ret in [SDL_TRUE, SDL_FALSE]
 
 def test_SDL_SetTextInputRect(with_sdl):
+    # TODO: This is not 100% safe, but in SDL2, SetTextInputRect returns
+    # void, so we can't reliably detect error
     sdl2.SDL_StartTextInput()
     coords = [(0, 0, 0, 0), (-10, -70, 3, 6), (10, 10, 10, 10)]
     for x, y, w, h in coords:
         r = rect.SDL_Rect(x, y, w, h)
         sdl2.SDL_SetTextInputRect(r)
         assert SDL_GetError() == b""
+    sdl2.SDL_StopTextInput()
 
 def test_SDL_HasScreenKeyboardSupport(with_sdl):
     ret = sdl2.SDL_HasScreenKeyboardSupport()

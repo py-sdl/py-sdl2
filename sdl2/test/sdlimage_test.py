@@ -6,6 +6,7 @@ import pytest
 
 import sdl2
 from sdl2 import SDL_Init, SDL_Quit, version, surface, rwops, render
+from .conftest import _check_error_msg
 
 sdlimage = pytest.importorskip("sdl2.sdlimage")
 
@@ -626,8 +627,7 @@ def test_IMG_SavePNG(tmpdir):
     # Try saving the PNG to a new folder
     outpath = os.path.join(str(tmpdir), "save_test.png")
     ret = sdlimage.IMG_SavePNG(sf, outpath.encode("utf-8"))
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert os.path.exists(outpath)
     surface.SDL_FreeSurface(sf)
 
@@ -642,8 +642,7 @@ def test_IMG_SavePNG_RW(tmpdir):
     rw = rwops.SDL_RWFromFile(outpath.encode("utf-8"), b"wb")
     ret = sdlimage.IMG_SavePNG_RW(sf, rw, 0)
     sdl2.SDL_RWclose(rw)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert os.path.exists(outpath)
 
     # Try reopening the RW as a PNG
@@ -662,8 +661,7 @@ def test_IMG_SaveJPG(tmpdir):
     # Try saving as JPG to a new folder
     outpath = os.path.join(str(tmpdir), "save_test.jpg")
     ret = sdlimage.IMG_SaveJPG(sf, outpath.encode("utf-8"), 90)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert os.path.exists(outpath)
     surface.SDL_FreeSurface(sf)
 
@@ -679,8 +677,7 @@ def test_IMG_SaveJPG_RW(tmpdir):
     rw = rwops.SDL_RWFromFile(outpath.encode("utf-8"), b"wb")
     ret = sdlimage.IMG_SaveJPG_RW(sf, rw, 0, 90)
     sdl2.SDL_RWclose(rw)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
     assert os.path.exists(outpath)
 
     # Try reopening the RW as a JPG
