@@ -5,6 +5,7 @@ import pytest
 import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_VIDEO
 from sdl2 import surface, render
+from .conftest import _check_error_msg
 
 sdlgfx = pytest.importorskip("sdl2.sdlgfx")
 
@@ -31,9 +32,9 @@ def software_renderer(with_sdl):
     sdl2.SDL_ClearError()
     # Create a new SDL surface and make it the target of a new renderer
     target = surface.SDL_CreateRGBSurface(0, height, width, 32, 0, 0, 0, 0)
-    assert sdl2.SDL_GetError() == b""
+    assert target, _check_error_msg()
     renderer = render.SDL_CreateSoftwareRenderer(target)
-    assert sdl2.SDL_GetError() == b""
+    assert renderer, _check_error_msg()
     # Return the renderer and surface for the test
     yield (renderer, target)
     # Free memory for the renderer and surface once we're done

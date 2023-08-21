@@ -10,6 +10,7 @@ from sdl2.render import (
 from sdl2.surface import SDL_Surface, SDL_CreateRGBSurface, SDL_FreeSurface
 from sdl2.pixels import SDL_MapRGBA
 from sdl2.error import SDL_GetError, SDL_ClearError
+from .conftest import _check_error_msg
 
 try:
     import PIL
@@ -81,12 +82,14 @@ class TestSpriteFactory(object):
 
         for w, h in sprite_test_sizes:
             for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
+                SDL_ClearError()
                 sprite = sfactory.create_sprite(size=(w, h), bpp=bpp)
+                assert sprite, _check_error_msg()
                 assert isinstance(sprite, sdl2ext.SoftwareSprite)
-                assert SDL_GetError() == b""
+            SDL_ClearError()
             sprite = tfactory.create_sprite(size=(w, h))
+            assert sprite, _check_error_msg()
             assert isinstance(sprite, sdl2ext.TextureSprite)
-            assert SDL_GetError() == b""
 
         with pytest.raises(sdl2ext.SDLError):
             tfactory.create_sprite(size=(0, 1))
@@ -95,9 +98,10 @@ class TestSpriteFactory(object):
         factory = sdl2ext.SpriteFactory(sdl2ext.SOFTWARE)
         for w, h in sprite_test_sizes:
             for bpp in (1, 4, 8, 12, 15, 16, 24, 32):
+                SDL_ClearError()
                 sprite = factory.create_software_sprite((w, h), bpp)
+                assert sprite, _check_error_msg()
                 assert isinstance(sprite, sdl2ext.SoftwareSprite)
-                assert SDL_GetError() == b""
 
         with pytest.raises(TypeError):
             factory.create_software_sprite(size=None)
@@ -119,9 +123,10 @@ class TestSpriteFactory(object):
         renderer = sdl2ext.Renderer(window)
         factory = sdl2ext.SpriteFactory(sdl2ext.TEXTURE, renderer=renderer)
         for w, h in sprite_test_sizes:
+            SDL_ClearError()
             sprite = factory.create_texture_sprite(renderer, size=(w, h))
+            assert sprite, _check_error_msg()
             assert isinstance(sprite, sdl2ext.TextureSprite)
-            assert SDL_GetError() == b""
             del sprite
 
         # Test different access flags
@@ -130,11 +135,12 @@ class TestSpriteFactory(object):
             SDL_TEXTUREACCESS_STREAMING,
             SDL_TEXTUREACCESS_TARGET
         ):
+            SDL_ClearError()
             sprite = factory.create_texture_sprite(
                 renderer, size=(64, 64), access=flag
             )
+            assert sprite, _check_error_msg()
             assert isinstance(sprite, sdl2ext.TextureSprite)
-            assert SDL_GetError() == b""
             del sprite
 
     def test_from_image(self, with_sdl):

@@ -6,6 +6,7 @@ from sdl2.ext.compat import byteify
 from sdl2.ext.pixelaccess import pixels2d
 from sdl2.ext.surface import _create_surface
 from sdl2 import surface, pixels, rwops, SDL_ClearError, SDL_GetError
+from .conftest import _check_error_msg
 
 _HASSDLTTF = True
 try:
@@ -39,8 +40,7 @@ def with_font_ttf(with_sdl):
         SDL_ClearError()
         fontpath = RESOURCES.get_path("tuffy.ttf")
         font = sdl2ext.FontTTF(fontpath, 20, RED_RGBA)
-        assert SDL_GetError() == b""
-        assert font
+        assert font, _check_error_msg()
         yield font
         font.close()
         gc.collect()
@@ -253,26 +253,22 @@ class TestFontTTF(object):
         # Try opening and closing a font
         fontpath = RESOURCES.get_path("tuffy.ttf")
         font = sdl2ext.FontTTF(fontpath, 20, RED_RGBA)
-        assert SDL_GetError() == b""
-        assert font
+        assert font, _check_error_msg()
         font.close()
 
         # Try opening a font with size specified in pt
         font = sdl2ext.FontTTF(fontpath, "20pt", RED_RGBA)
-        assert SDL_GetError() == b""
-        assert font
+        assert font, _check_error_msg()
         font.close()
 
         # Try opening a font with size specified in pixels
         font = sdl2ext.FontTTF(fontpath, "20px", RED_RGBA)
-        assert SDL_GetError() == b""
-        assert font
+        assert font, _check_error_msg()
         
         # Try opening a font with a custom set of height chars
         chars = "aeiou"
         font2 = sdl2ext.FontTTF(fontpath, "20px", RED_RGBA, height_chars=chars)
-        assert SDL_GetError() == b""
-        assert font
+        assert font, _check_error_msg()
         assert font._parse_size("20px") != font2._parse_size("20px")
         font.close()
         font2.close()
@@ -295,8 +291,7 @@ class TestFontTTF(object):
         font_file = open(fontpath, "rb")
         font_rw = rwops.rw_from_object(font_file)
         font = sdl2ext.FontTTF(font_rw, 20, RED_RGBA)
-        assert SDL_GetError() == b""
-        assert font
+        assert font, _check_error_msg()
         font.close()
 
     def test_get_ttf_font(self, with_font_ttf):
@@ -334,21 +329,21 @@ class TestFontTTF(object):
         # Try rendering some text
         msg = "hello there!"
         text = font.render_text(msg)
-        assert SDL_GetError() == b""
+        assert text, _check_error_msg()
         assert isinstance(text, surface.SDL_Surface)
         assert text.format.contents.format == pixels.SDL_PIXELFORMAT_ARGB8888
 
         # Test multiline rendering
         msg = "hello\nthere!"
         text2 = font.render_text(msg)
-        assert SDL_GetError() == b""
+        assert text2, _check_error_msg()
         assert isinstance(text2, surface.SDL_Surface)
         assert text2.h > text.h
 
         # Test strings with empty lines
         msg = "hello\n\nthere!\n"
         text3 = font.render_text(msg)
-        assert SDL_GetError() == b""
+        assert text3, _check_error_msg()
         assert isinstance(text3, surface.SDL_Surface)
         assert text3.h > text2.h
         surface.SDL_FreeSurface(text3)
@@ -356,7 +351,7 @@ class TestFontTTF(object):
         # Test custom line height
         msg = "hello\nthere!"
         text3 = font.render_text(msg, line_h=100)
-        assert SDL_GetError() == b""
+        assert text3, _check_error_msg()
         assert isinstance(text3, surface.SDL_Surface)
         assert text3.h > text2.h
         surface.SDL_FreeSurface(text3)
@@ -364,7 +359,7 @@ class TestFontTTF(object):
         # Test custom line height as a string (in px)
         msg = "hello\nthere!"
         text3 = font.render_text(msg, line_h='100px')
-        assert SDL_GetError() == b""
+        assert text3, _check_error_msg()
         assert isinstance(text3, surface.SDL_Surface)
         assert text3.h > text2.h
         surface.SDL_FreeSurface(text3)
@@ -372,7 +367,7 @@ class TestFontTTF(object):
         # Test custom line height as a percentage
         msg = "hello\nthere!"
         text3 = font.render_text(msg, line_h='110%')
-        assert SDL_GetError() == b""
+        assert text3, _check_error_msg()
         assert isinstance(text3, surface.SDL_Surface)
         assert text3.h > text2.h
         surface.SDL_FreeSurface(text3)
@@ -380,7 +375,7 @@ class TestFontTTF(object):
         # Test wrap width
         msg = "hello there! This is a very long line of text."
         text3 = font.render_text(msg, width=200)
-        assert SDL_GetError() == b""
+        assert text3, _check_error_msg()
         assert isinstance(text3, surface.SDL_Surface)
         assert text3.h > text.h
         surface.SDL_FreeSurface(text3)
@@ -389,7 +384,7 @@ class TestFontTTF(object):
         msg = "hello there!"
         font.add_style("blue", 30, (0, 0, 255, 255))
         text3 = font.render_text(msg, "blue")
-        assert SDL_GetError() == b""
+        assert text3, _check_error_msg()
         assert isinstance(text3, surface.SDL_Surface)
         surface.SDL_FreeSurface(text3)
 
@@ -397,16 +392,17 @@ class TestFontTTF(object):
         msg = "hello there!"
         font.add_style("red_on_white", 30, RED_RGBA, (255, 255, 255))
         text3 = font.render_text(msg, "red_on_white")
-        assert SDL_GetError() == b""
+        assert text3, _check_error_msg()
         assert isinstance(text3, surface.SDL_Surface)
         surface.SDL_FreeSurface(text3)
 
         # Test font alignment (not extensive)
         msg = "hello there!\nThis is a very long line of\ntext."
         for align in ["left", "center", "right"]:
+            SDL_ClearError()
             tmp = font.render_text(msg, align=align)
-            assert SDL_GetError() == b""
-            assert isinstance(text3, surface.SDL_Surface)
+            assert tmp, _check_error_msg()
+            assert isinstance(tmp, surface.SDL_Surface)
             surface.SDL_FreeSurface(tmp)
 
         surface.SDL_FreeSurface(text)

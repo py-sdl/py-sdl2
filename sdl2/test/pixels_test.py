@@ -6,6 +6,7 @@ import sdl2
 from sdl2 import SDL_Init, SDL_Quit, SDL_INIT_EVERYTHING, SDL_TRUE
 from sdl2 import SDL_Color
 from sdl2.stdinc import Uint8, Uint16, Uint32
+from .conftest import _check_error_msg
 
 RGBA8888 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF]
 RGBX8888 = [0xFF000000, 0x00FF0000, 0x0000FF00, 0]
@@ -163,11 +164,11 @@ def test_SDL_PixelFormatEnumToMasks():
     bpp = c_int(0)
     r, g, b, a = Uint32(0), Uint32(0), Uint32(0), Uint32(0)
     for fmt, expected in formats:
+        sdl2.SDL_ClearError()
         ret = sdl2.SDL_PixelFormatEnumToMasks(
             fmt, byref(bpp), byref(r), byref(g), byref(b), byref(a)
         )
-        assert sdl2.SDL_GetError() == b""
-        assert ret == SDL_TRUE
+        assert ret == SDL_TRUE, _check_error_msg()
         assert [x.value for x in (bpp, r, g, b, a)] == expected
 
 def test_SDL_AllocFreeFormat():
@@ -232,8 +233,7 @@ def test_SDL_SetPixelFormatPalette():
     pixfmt = sdl2.SDL_AllocFormat(sdl2.SDL_PIXELFORMAT_INDEX1MSB)
     assert isinstance(pixfmt.contents, sdl2.SDL_PixelFormat)
     ret = sdl2.SDL_SetPixelFormatPalette(pixfmt, palette)
-    assert sdl2.SDL_GetError() == b""
-    assert ret == 0
+    assert ret == 0, _check_error_msg()
 
     fmt_palette = pixfmt.contents.palette.contents
     assert fmt_palette.colors[1].r == 128
