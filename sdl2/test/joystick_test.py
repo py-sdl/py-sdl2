@@ -427,6 +427,7 @@ def test_SDL_JoystickNumButtons(joysticks):
 def test_SDL_JoystickUpdate(with_sdl):
     # TODO: This is not 100% safe, but in SDL2, JoystickUpdate returns void
     # so we can't reliably detect error
+    sdl2.SDL_ClearError()
     sdl2.SDL_JoystickUpdate()
     assert SDL_GetError() == b""
 
