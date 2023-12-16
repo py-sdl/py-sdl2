@@ -735,7 +735,7 @@ def test_IMG_LoadGIFAnimation_RW():
 @pytest.mark.skipif(sdlimage.dll.version < 2080, reason="Added in 2.8.0")
 def test_IMG_LoadWEBPAnimation_RW():
     fp = io.open(_get_animation_path("webp"), "rb")
-    anim = sdlimage.IMG_LoadGIFAnimation_RW(rwops.rw_from_object(fp))
+    anim = sdlimage.IMG_LoadWEBPAnimation_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_anim_load(anim)
     sdlimage.IMG_FreeAnimation(anim)
