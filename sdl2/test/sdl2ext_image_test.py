@@ -216,6 +216,10 @@ def test_pillow_to_image(with_sdl):
     check_image_contents(sf)
     surf.SDL_FreeSurface(sf)
 
+    # Pallete conversion not working reliably on 2.0.5 64-bit
+    if sdl2.dll.version_tuple < (2, 0, 6):
+        pytest.skip("Requires SDL2 >= 2.0.6")
+
     # Try converting a palette image
     palette_img = pil_img.convert("P", palette=WEB_PALETTE)
     sfp = sdl2ext.pillow_to_surface(palette_img)
