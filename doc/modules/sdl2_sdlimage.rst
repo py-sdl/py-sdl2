@@ -190,6 +190,8 @@ Animation objects and functions
 
 .. autofunction:: IMG_LoadGIFAnimation_RW
 
+.. autofunction:: IMG_LoadWEBPAnimation_RW
+
 .. autofunction:: IMG_FreeAnimation
 
 

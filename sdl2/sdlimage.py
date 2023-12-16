@@ -47,8 +47,8 @@ _bind = dll.bind_function
 # Constants, enums, type definitions, and macros
 
 SDL_IMAGE_MAJOR_VERSION = 2
-SDL_IMAGE_MINOR_VERSION = 6
-SDL_IMAGE_PATCHLEVEL = 0
+SDL_IMAGE_MINOR_VERSION = 8
+SDL_IMAGE_PATCHLEVEL = 1
 
 def SDL_IMAGE_VERSION(x):
     x.major = SDL_IMAGE_MAJOR_VERSION
@@ -173,6 +173,7 @@ _funcdefs = [
     SDLFunc("IMG_LoadAnimationTyped_RW", [_P(SDL_RWops), c_int, c_char_p], _P(IMG_Animation), added='2.6.0'),
     SDLFunc("IMG_FreeAnimation", [_P(IMG_Animation)], added='2.6.0'),
     SDLFunc("IMG_LoadGIFAnimation_RW", [_P(SDL_RWops)], _P(IMG_Animation), added='2.6.0'),
+    SDLFunc("IMG_LoadWEBPAnimation_RW", [_P(SDL_RWops)], _P(IMG_Animation), added='2.8.0'),
 ]
 _ctypes = AttributeDict()
 for f in _funcdefs:
@@ -1114,8 +1115,8 @@ def IMG_LoadAnimation(file):
     """Loads an animated image from a file.
 
     For more information on how to work with imported animations, see the
-    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, this currently
-    only supports GIF animations.
+    :class:`IMG_Animation` documentation. As of SDL_image 2.8.0, this currently
+    supports GIF and WEBP animations.
 
     `Note: Added in SDL_image 2.6.0`
 
@@ -1134,8 +1135,8 @@ def IMG_LoadAnimation_RW(src, freesrc):
     """Loads an animated image from an SDL file object.
 
     For more information on how to work with imported animations, see the
-    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, this currently
-    only supports GIF animations.
+    :class:`IMG_Animation` documentation. As of SDL_image 2.8.0, this currently
+    supports GIF and WEBP animations.
 
     `Note: Added in SDL_image 2.6.0`
 
@@ -1156,8 +1157,8 @@ def IMG_LoadAnimationTyped_RW(src, freesrc, type):
     """Loads an animated image from an SDL file object as a specific format.
 
     For more information on how to work with imported animations, see the
-    :class:`IMG_Animation` documentation. As of SDL_image 2.6.0, the only
-    supported animation type is ``b'GIF'``.
+    :class:`IMG_Animation` documentation. As of SDL_image 2.8.0, the only
+    supported animation types are ``b'GIF'`` and ``b'WEBP'``.
 
     `Note: Added in SDL_image 2.6.0`
 
@@ -1209,6 +1210,25 @@ def IMG_LoadGIFAnimation_RW(src):
 
     """
     return _ctypes["IMG_LoadGIFAnimation_RW"](src)
+
+def IMG_LoadWEBPAnimation_RW(src):
+    """Loads a WEBP animation from an SDL file object.
+
+    For more information on how to work with imported animations, see the
+    :class:`IMG_Animation` documentation. Use the :func:`IMG_GetError`
+    function to check for any errors.
+
+    `Note: Added in SDL_image 2.8.0`
+
+    Args:
+        src (:obj:`SDL_RWops`): The file object from which to load the WEBP.
+
+    Returns:
+        POINTER(:obj:`IMG_Animation`): A pointer to an animation object, or a
+        a null pointer if there was an error.
+
+    """
+    return _ctypes["IMG_LoadWEBPAnimation_RW"](src)
 
 
 IMG_SetError = SDL_SetError

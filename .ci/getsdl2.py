@@ -34,6 +34,13 @@ sdl2_alt_urls = {
 }
 
 libversions = {
+    '2.28.5': {
+        'SDL2': '2.28.5',
+        'SDL2_mixer': '2.6.3',
+        'SDL2_ttf': '2.20.2',
+        'SDL2_image': '2.8.1',
+        'SDL2_gfx': '1.0.4'
+    },
     '2.28.0': {
         'SDL2': '2.28.0',
         'SDL2_mixer': '2.6.0',
@@ -166,6 +173,8 @@ def getDLLs(platform_name, version):
             dllname = lib + '.framework'
             dllpath = os.path.join(mountpoint, dllname)
             dlloutpath = os.path.join(dlldir, dllname)
+            optpath = os.path.join(mountpoint, 'optional')
+            extraframeworkpath = os.path.join(dlloutpath, 'Versions', 'A', 'Frameworks')
             
             # Download disk image containing library
             libversion = libversions[version][lib]
@@ -177,6 +186,8 @@ def getDLLs(platform_name, version):
             # Mount image, extract framework, then unmount
             sub.check_call(['hdiutil', 'attach', outpath, '-mountpoint', mountpoint])
             shutil.copytree(dllpath, dlloutpath, symlinks=True)
+            if os.path.isdir(optpath):
+                shutil.copytree(optpath, extraframeworkpath, symlinks=True)
             sub.call(['hdiutil', 'unmount', mountpoint])
 
     elif platform_name in ['win32', 'win-amd64']:

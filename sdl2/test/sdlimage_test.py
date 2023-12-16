@@ -37,7 +37,7 @@ formats = [
 ]
 
 animation_formats = [
-    "gif",
+    "gif", "webp",
 ]
 
 
@@ -52,6 +52,10 @@ isconda = os.getenv("CONDA_PREFIX") != None
 # QOI unsupported on SDL2_image < 2.6.0
 if img_ver < 2060:
     formats.remove("qoi")
+
+# WEBP animations unsupported on SDL2_image < 2.8.0
+if img_ver < 2080:
+    animation_formats.remove("webp")
 
 # SVG unsupported on SDL2_image < 2.0.2 as well as in Conda's current (2.0.5)
 # Windows binaries
@@ -724,6 +728,14 @@ def test_IMG_LoadAnimationTyped_RW():
 def test_IMG_LoadGIFAnimation_RW():
     fp = io.open(_get_animation_path("gif"), "rb")
     anim = sdlimage.IMG_LoadGIFAnimation_RW(rwops.rw_from_object(fp))
+    fp.close()
+    _verify_anim_load(anim)
+    sdlimage.IMG_FreeAnimation(anim)
+
+@pytest.mark.skipif(sdlimage.dll.version < 2080, reason="Added in 2.8.0")
+def test_IMG_LoadWEBPAnimation_RW():
+    fp = io.open(_get_animation_path("webp"), "rb")
+    anim = sdlimage.IMG_LoadWEBPAnimation_RW(rwops.rw_from_object(fp))
     fp.close()
     _verify_anim_load(anim)
     sdlimage.IMG_FreeAnimation(anim)
