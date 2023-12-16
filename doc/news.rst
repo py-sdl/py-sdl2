@@ -5,6 +5,17 @@ This describes the latest changes between the PySDL2 releases.
 0.9.17 (Unreleased)
 -------------------
 
+New Features:
+
+* Updated to wrap new function added in SDL_image 2.8.0 (PR #274).
+* Updated to wrap new hints added in SDL 2.28.2 and 2.28.5 (PR #274).
+
+
+Fixed Bugs:
+
+* Fixed proper exporting of controller enum constants for the NVidia Shield and
+  Joycon controllers.
+
 
 0.9.16
 ------
