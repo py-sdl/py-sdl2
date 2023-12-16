@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
+from ..scancode import SDL_SCANCODE_SPACE, SDL_SCANCODE_A
 from ..keycode import SDLK_a, KMOD_LSHIFT, KMOD_RCTRL
 from ..mouse import SDL_BUTTON_LEFT
 from ..events import (
@@ -111,6 +112,21 @@ def test_key_pressed():
         sdl2ext.key_pressed(q, 'nope')
     with pytest.raises(ValueError):
         sdl2ext.key_pressed(q, key=-100)
+
+
+def test_get_key_state():
+    # NOTE: Can't fake key status for tests, so just test API
+    assert sdl2ext.get_key_state('space') in (0, 1)
+    assert sdl2ext.get_key_state('a') in (0, 1)
+    assert sdl2ext.get_key_state(SDL_SCANCODE_SPACE) in (0, 1)
+    assert sdl2ext.get_key_state(SDL_SCANCODE_A) in (0, 1)
+    # Test exception on bad key names/scancodes
+    with pytest.raises(ValueError):
+        sdl2ext.get_key_state('nope')
+    with pytest.raises(ValueError):
+        sdl2ext.get_key_state(0)
+    with pytest.raises(ValueError):
+        sdl2ext.get_key_state(1000)
 
 
 def test_mouse_clicked():

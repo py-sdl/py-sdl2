@@ -1,8 +1,10 @@
+from ctypes import c_int, byref
 from ..stdinc import SDL_TRUE
 from ..keyboard import (
     SDL_GetKeyFromName, SDL_GetKeyName, SDL_StartTextInput, SDL_StopTextInput,
-    SDL_IsTextInputActive,
+    SDL_IsTextInputActive, SDL_GetKeyboardState, SDL_GetScancodeFromName,
 )
+from ..scancode import SDL_SCANCODE_UNKNOWN, SDL_NUM_SCANCODES
 from ..keycode import KMOD_ALT, KMOD_CTRL, KMOD_GUI, KMOD_SHIFT
 from ..mouse import (
     SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT, SDL_BUTTON_MIDDLE,
@@ -10,13 +12,13 @@ from ..mouse import (
 )
 from ..events import (
     SDL_KEYDOWN, SDL_KEYUP, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP,
-    SDL_TEXTINPUT,
+    SDL_TEXTINPUT, SDL_PumpEvents,
 )
 
 from .compat import _is_text, byteify, isiterable
 
 __all__ = [
-    "key_pressed", "mouse_clicked", "get_clicks", "get_text_input",
+    "key_pressed", "get_key_state", "mouse_clicked", "get_clicks", "get_text_input",
     "start_text_input", "stop_text_input", "text_input_enabled",  
 ]
 
@@ -195,6 +197,53 @@ def key_pressed(events, key=None, mod=None, released=False):
                     break
 
     return pressed
+
+
+def get_key_state(key):
+    """Checks the current state (pressed or released) of a given keyboard key.
+
+    Unlike :func:`key_pressed`, which checks an SDL event queue for key down
+    and key up events, this function checks the current state of a given key
+    directly. This can be helpful in certain situations, such as ignoring
+    repeated keydown events from a held key::
+
+       key_released = False
+       while True:
+           q = pump(True)
+           if not key_released:
+               # Ignore repeated keydown events from held down space bar by
+               # requiring key be 'up' on at least one loop before a response
+               # can be registered
+               if get_key_state('space') == 0:
+                   key_released = True
+           else:
+               if key_pressed('space', queue=q):
+                   break
+
+    Args:
+        key (int or str): The name (or SDL scancode) of the key to check.
+
+    Returns:
+        int: 1 if the key is currently pressed, otherwise 0.
+
+    """
+    # If key given as string, get the corresponding scancode
+    if _is_text(key):
+        scancode = SDL_GetScancodeFromName(byteify(key))
+        if scancode == SDL_SCANCODE_UNKNOWN:
+            e = "'{0}' is not a valid name for an SDL scancode."
+            raise ValueError(e.format(key))
+    else:
+        if key <= 0 or key >= SDL_NUM_SCANCODES:
+            e = "'{0}' is not a valid SDL scancode constant."
+            raise ValueError(e.format(key))
+        scancode = key
+
+    # Check for and return the current key state
+    SDL_PumpEvents()
+    numkeys = c_int(0)
+    keys = SDL_GetKeyboardState(byref(numkeys))
+    return keys[scancode]
 
 
 def mouse_clicked(events, button=None, released=False):
