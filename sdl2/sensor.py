@@ -1,7 +1,7 @@
 from ctypes import c_char_p, c_int, c_float, c_void_p
 from ctypes import POINTER as _P
 from .dll import _bind, SDLFunc, AttributeDict
-from .stdinc import Uint64, Uint32
+from .stdinc import Uint64, Sint32
 
 
 __all__ = [
@@ -36,7 +36,7 @@ SDL_STANDARD_GRAVITY = 9.80665
 
 # Structs & typedefs
 
-SDL_SensorID = Uint32
+SDL_SensorID = Sint32
 
 class SDL_Sensor(c_void_p):
     pass
