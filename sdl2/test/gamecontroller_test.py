@@ -268,6 +268,12 @@ def test_SDL_GameControllerGetSerial(gamepads):
         serial = sdl2.SDL_GameControllerGetSerial(pad)
         assert serial == None or type(serial) in (str, bytes)
 
+@pytest.mark.skipif(sdl2.dll.version < 2300, reason="not available")
+def test_SDL_GameControllerGetSteamHandle(gamepads):
+    for pad in gamepads:
+        handle = sdl2.SDL_GameControllerGetSteamHandle(pad)
+        assert handle >= 0
+
 def test_SDL_GameControllerGetAttached(gamepads):
     for pad in gamepads:
         ret = sdl2.SDL_GameControllerGetAttached(pad)
