@@ -38,7 +38,8 @@ def with_sdl_mixer():
     # Initialize SDL_mixer and open an audio device
     flags = (
         sdlmixer.MIX_INIT_FLAC | sdlmixer.MIX_INIT_MOD | sdlmixer.MIX_INIT_MP3 |
-        sdlmixer.MIX_INIT_OGG | sdlmixer.MIX_INIT_MID | sdlmixer.MIX_INIT_OPUS
+        sdlmixer.MIX_INIT_OGG | sdlmixer.MIX_INIT_MID | sdlmixer.MIX_INIT_OPUS |
+        sdlmixer.MIX_INIT_WAVPACK
     )
     sdlmixer.Mix_Init(flags)
     ret = sdlmixer.Mix_OpenAudio(48000, sdlmixer.MIX_DEFAULT_FORMAT, 2, 1024)
