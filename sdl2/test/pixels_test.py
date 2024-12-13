@@ -78,6 +78,7 @@ def test_SDL_PIXELLAYOUT():
 def test_SDL_BITSPERPIXEL():
     bitspp = sdl2.SDL_BITSPERPIXEL
     assert bitspp(sdl2.SDL_PIXELFORMAT_INDEX1LSB) == 1
+    assert bitspp(sdl2.SDL_PIXELFORMAT_INDEX2LSB) == 2
     assert bitspp(sdl2.SDL_PIXELFORMAT_INDEX4LSB) == 4
     assert bitspp(sdl2.SDL_PIXELFORMAT_RGB332) == 8
     assert bitspp(sdl2.SDL_PIXELFORMAT_ARGB8888) == 32
@@ -85,6 +86,7 @@ def test_SDL_BITSPERPIXEL():
 def test_SDL_BYTESPERPIXEL():
     bytespp = sdl2.SDL_BYTESPERPIXEL
     assert bytespp(sdl2.SDL_PIXELFORMAT_INDEX1LSB) == 0
+    assert bytespp(sdl2.SDL_PIXELFORMAT_INDEX2LSB) == 0
     assert bytespp(sdl2.SDL_PIXELFORMAT_INDEX4LSB) == 0
     assert bytespp(sdl2.SDL_PIXELFORMAT_RGB332) == 1
     assert bytespp(sdl2.SDL_PIXELFORMAT_ARGB8888) == 4
@@ -96,6 +98,8 @@ def test_SDL_ISPIXELFORMAT_INDEXED():
     isindexed = sdl2.SDL_ISPIXELFORMAT_INDEXED
     assert isindexed(sdl2.SDL_PIXELFORMAT_INDEX1LSB)
     assert isindexed(sdl2.SDL_PIXELFORMAT_INDEX1MSB)
+    assert isindexed(sdl2.SDL_PIXELFORMAT_INDEX2LSB)
+    assert isindexed(sdl2.SDL_PIXELFORMAT_INDEX2MSB)
     assert isindexed(sdl2.SDL_PIXELFORMAT_INDEX4LSB)
     assert isindexed(sdl2.SDL_PIXELFORMAT_INDEX4MSB)
     assert isindexed(sdl2.SDL_PIXELFORMAT_INDEX8)
@@ -110,6 +114,7 @@ def test_SDL_ISPIXELFORMAT_ALPHA():
     assert isalpha(sdl2.SDL_PIXELFORMAT_RGBA4444)
     assert isalpha(sdl2.SDL_PIXELFORMAT_ABGR1555)
     assert not isalpha(sdl2.SDL_PIXELFORMAT_INDEX1LSB)
+    assert not isalpha(sdl2.SDL_PIXELFORMAT_INDEX2LSB)
     assert not isalpha(sdl2.SDL_PIXELFORMAT_INDEX4MSB)
     assert not isalpha(sdl2.SDL_PIXELFORMAT_RGB332)
     assert not isalpha(sdl2.SDL_PIXELFORMAT_YUY2)
