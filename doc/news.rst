@@ -9,6 +9,8 @@ New Features:
 
 * Updated to wrap new function added in SDL_image 2.8.0 (PR #274).
 * Updated to wrap new hints added in SDL 2.28.2 and 2.28.5 (PR #274).
+* Updated to wrap new functions and constants in SDL2 2.30.10 (PR #277).
+* Updated to wrap new functions and constants in SDL_mixer 2.8.0 (PR #277).
 * Added a new function :func:`~sdl2.ext.get_key_state` for checking if a given
   key is currently down or up independently of the SDL event queue.
 
