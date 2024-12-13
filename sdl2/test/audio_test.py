@@ -332,6 +332,9 @@ def test_SDL_OpenCloseAudioDevice(with_sdl_audio):
         spec = sdl2.SDL_AudioSpec(0, 0, 0, 0)
         name = sdl2.SDL_GetAudioDeviceName(x, 0)
         assert name is not None
+        if name == b"Null Audio Device":
+            # Skip problematic dummy device on macOS CI runner
+            continue
         deviceid = sdl2.SDL_OpenAudioDevice(
             name, 0, reqspec, ctypes.byref(spec),
             sdl2.SDL_AUDIO_ALLOW_ANY_CHANGE

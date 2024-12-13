@@ -127,6 +127,9 @@ def test_Mix_OpenAudioDevice():
     fmt = sdlmixer.MIX_DEFAULT_FORMAT
     flags = audio.SDL_AUDIO_ALLOW_ANY_CHANGE
     for device in devices:
+        if device == b"Null Audio Device":
+            # Skip problematic dummy device on macOS CI runner
+            continue
         ret = sdlmixer.Mix_OpenAudioDevice(22050, fmt, 2, 1024, device, flags)
         assert ret == 0
         sdlmixer.Mix_CloseAudio()
