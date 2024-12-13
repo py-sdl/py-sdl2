@@ -3,7 +3,7 @@ from ctypes import Structure, CFUNCTYPE, c_int, c_char_p, c_void_p, c_double
 from ctypes import POINTER as _P
 from .dll import DLL, SDLFunc, AttributeDict
 from .version import SDL_version, SDL_VERSIONNUM
-from .audio import AUDIO_S16LSB, AUDIO_S16MSB, SDL_MIX_MAXVOLUME
+from .audio import AUDIO_S16SYS, SDL_MIX_MAXVOLUME
 from .stdinc import Uint8, Uint16, Uint32, Sint16, SDL_bool
 from .endian import SDL_LIL_ENDIAN, SDL_BYTEORDER
 from .rwops import SDL_RWops, SDL_RWFromFile
@@ -23,7 +23,7 @@ __all__ = [
     # Enums
     "MIX_InitFlags",
     "MIX_INIT_FLAC", "MIX_INIT_MOD", "MIX_INIT_MP3", "MIX_INIT_OGG",
-    "MIX_INIT_MID", "MIX_INIT_OPUS",
+    "MIX_INIT_MID", "MIX_INIT_OPUS", "MIX_INIT_WAVPACK",
 
     "Mix_Fading",
     "MIX_NO_FADING", "MIX_FADING_OUT", "MIX_FADING_IN",
@@ -31,7 +31,7 @@ __all__ = [
     "Mix_MusicType",
     "MUS_NONE", "MUS_CMD", "MUS_WAV", "MUS_MOD", "MUS_MID", "MUS_OGG",
     "MUS_MP3", "MUS_MP3_MAD_UNUSED", "MUS_FLAC", "MUS_MODPLUG_UNUSED",
-    "MUS_OPUS",
+    "MUS_OPUS", "MUS_WAVPACK", "MUS_GME",
     
     # Macro Functions
     "SDL_MIXER_VERSION",  "MIX_VERSION", "SDL_MIXER_COMPILEDVERSION",
@@ -89,6 +89,7 @@ MIX_INIT_MP3 = 0x00000008
 MIX_INIT_OGG = 0x000000010
 MIX_INIT_MID = 0x00000020
 MIX_INIT_OPUS = 0x00000040
+MIX_INIT_WAVPACK = 0x00000080
 
 Mix_Fading = c_int
 MIX_NO_FADING = 0
@@ -107,13 +108,12 @@ MUS_MP3_MAD_UNUSED = 7
 MUS_FLAC = 9
 MUS_MODPLUG_UNUSED = 10
 MUS_OPUS = 11
+MUS_WAVPACK = 12
+MUS_GME = 13
 
 MIX_CHANNELS = 8
 MIX_DEFAULT_FREQUENCY = 44100
-if SDL_BYTEORDER == SDL_LIL_ENDIAN:
-    MIX_DEFAULT_FORMAT = AUDIO_S16LSB
-else:
-    MIX_DEFAULT_FORMAT = AUDIO_S16MSB
+MIX_DEFAULT_FORMAT = AUDIO_S16SYS
 MIX_DEFAULT_CHANNELS = 2
 MIX_MAX_VOLUME = SDL_MIX_MAXVOLUME
 
@@ -174,6 +174,7 @@ _funcdefs = [
     SDLFunc("Mix_Quit"),
     SDLFunc("Mix_OpenAudio", [c_int, Uint16, c_int, c_int], c_int),
     SDLFunc("Mix_OpenAudioDevice", [c_int, Uint16, c_int, c_int, c_char_p, c_int], c_int, added='2.0.2'),
+    SDLFunc("Mix_PauseAudio", [c_int], added='2.8.0'),
     SDLFunc("Mix_AllocateChannels", [c_int], c_int),
     SDLFunc("Mix_QuerySpec", [_P(c_int), _P(Uint16), _P(c_int)], c_int),
     SDLFunc("Mix_LoadWAV_RW", [_P(SDL_RWops), c_int], _P(Mix_Chunk)),
@@ -244,6 +245,8 @@ _funcdefs = [
     SDLFunc("Mix_RewindMusic"),
     SDLFunc("Mix_PausedMusic", None, c_int),
     SDLFunc("Mix_ModMusicJumpToOrder", [c_int], c_int, added='2.6.0'),
+    SDLFunc("Mix_StartTrack", [_P(Mix_Music), c_int], c_int, added='2.8.0'),
+    SDLFunc("Mix_GetNumTracks", [_P(Mix_Music)], c_int, added='2.8.0'),
     SDLFunc("Mix_SetMusicPosition", [c_double], c_int),
     SDLFunc("Mix_GetMusicPosition", [_P(Mix_Music)], c_double, added='2.6.0'),
     SDLFunc("Mix_MusicDuration", [_P(Mix_Music)], c_double, added='2.6.0'),
@@ -290,16 +293,17 @@ def Mix_Init(flags):
 
     The following init flags are supported:
 
-    ========== =================
+    ========== ====================
     Format     Init flag
-    ========== =================
+    ========== ====================
     FLAC       ``MIX_INIT_FLAC``
     MOD        ``MIX_INIT_MID``
     MP3        ``MIX_INIT_MP3``
     MIDI       ``MIX_INIT_MID``
     Ogg Vorbis ``MIX_INIT_OGG``
     Opus       ``MIX_INIT_OPUS``
-    ========== =================
+    WavPack    ``MIX_INIT_WAVPACK``
+    ========== ====================
 
     This can be called multiple times to enable support for these formats
     separately, or can initialize multiple formats at once by passing a set of
@@ -308,10 +312,11 @@ def Mix_Init(flags):
     whether a given decoder is available on the current system::
 
        # Initialize FLAC and MP3 support separately
-       for flag in [MIX_INIT_FLAC, MIX_INIT_MP3]:
-           Mix_Init(flag)
-           err = Mix_GetError() # check for any errors loading library
-           if len(err):
+       for fmt in [MIX_INIT_FLAC, MIX_INIT_MP3]:
+           initialized = Mix_Init(fmt)
+           # Use bitwise AND to check whether the format initialized
+           if not (initialized & fmt) == fmt:
+               err = Mix_GetError()
                print(err)
 
        # Initialize FLAC and MP3 support at the same time
@@ -321,9 +326,7 @@ def Mix_Init(flags):
            print(Mix_GetError())
 
     .. note::
-       This function is not guaranteed to set an error string on failure, so
-       the return value should be used for error checking instead of just
-       :func:`Mix_GetError`.
+       This function is not guaranteed to set an error string on failure.
 
     Args:
         flags (int): A bitwise OR'd set of the flags of the audio formats to
@@ -429,6 +432,17 @@ def Mix_OpenAudioDevice(frequency, format, channels, chunksize, device, allowed_
     return _ctypes["Mix_OpenAudioDevice"](
         frequency, format, channels, chunksize, device, allowed_changes
     )
+
+def Mix_PauseAudio(pause_on):
+    """Suspends or resumes all audio output.
+
+    `Note: Added in SDL_mixer 2.8.0`
+    
+    Args:
+        pause_on (int): 1 to pause audio output, 0 to resume.
+
+    """
+    return _ctypes["Mix_PauseAudio"](pause_on)
 
 def Mix_AllocateChannels(numchans):
     """Sets the number of channels to use for the mixer API.
@@ -740,6 +754,7 @@ def Mix_GetChunkDecoder(index):
     b"WAVE"       Waveform Audio File Format
     b"AIFF"       Audio Interchange File Format
     b"VOC"        Creative Voice file
+    b"WAVPACK"    WavPack format                Added in SDL_mixer 2.8.0
     ============  ============================= =============================
 
     Use the :func:`Mix_GetNumChunkDecoders` function to get the number of
@@ -773,6 +788,8 @@ def Mix_GetNumMusicDecoders():
     the availability of the shared libraries required for supporting different
     formats.
 
+    Note that some decoders (e.g. GME) will not appear as available until used.
+
     Returns:
         int: The number of available music decoders.
 
@@ -795,6 +812,8 @@ def Mix_GetMusicDecoder(index):
     b"OPUS"       Opus Interactive Audio Codec  Added in SDL_mixer 2.0.4
     b"CMD         External music command        Not available on Windows
     b"WAVE"       Waveform Audio File Format
+    b"WAVPACK"    WavPack format                Added in SDL_mixer 2.8.0
+    b"GME"        Game Music Emu library        Added in SDL_mixer 2.8.0
     ============= ============================= =============================
 
     Use the :func:`Mix_GetNumMusicDecoders` function to get the number of
@@ -1229,6 +1248,12 @@ def Mix_PausedMusic():
 
 def Mix_ModMusicJumpToOrder(order):
     return _ctypes["Mix_ModMusicJumpToOrder"](order)
+
+def Mix_StartTrack(music, track):
+    return _ctypes["Mix_StartTrack"](music, track)
+
+def Mix_GetNumTracks(music):
+    return _ctypes["Mix_GetNumTracks"](music)
 
 def Mix_SetMusicPosition(position):
     return _ctypes["Mix_SetMusicPosition"](position)

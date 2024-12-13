@@ -93,7 +93,8 @@ def test_Mix_InitQuit():
         'MP3': sdlmixer.MIX_INIT_MP3,
         'OGG': sdlmixer.MIX_INIT_OGG,
         'MID': sdlmixer.MIX_INIT_MID,
-        'OPUS': sdlmixer.MIX_INIT_OPUS
+        'OPUS': sdlmixer.MIX_INIT_OPUS,
+        'WAVPACK': sdlmixer.MIX_INIT_WAVPACK,
     }
     for lib in libs.keys():
         flags = libs[lib]
@@ -135,6 +136,11 @@ def test_Mix_OpenAudioDevice():
         sdlmixer.Mix_CloseAudio()
     sdlmixer.Mix_Quit()
     SDL_Quit()
+
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdlmixer.dll.version < 2080, reason="Added in 2.8.0")
+def test_Mix_PauseAudio(with_sdl_mixer):
+    pass
 
 def test_Mix_AllocateChannels(with_sdl_mixer):
     # Get number currently allocated
@@ -464,6 +470,16 @@ def test_Mix_PausedMusic(with_sdl_mixer):
 
 @pytest.mark.skip("not implemented")
 def test_Mix_ModMusicJumpToOrder(with_sdl_mixer):
+    pass
+
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdlmixer.dll.version < 2080, reason="Added in 2.8.0")
+def test_Mix_StartTrack(with_sdl_mixer):
+    pass
+
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdlmixer.dll.version < 2080, reason="Added in 2.8.0")
+def test_Mix_GetNumTracks(with_sdl_mixer):
     pass
 
 @pytest.mark.skip("not implemented")
