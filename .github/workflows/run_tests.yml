@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        sdl2: ['2.28.5']
+        sdl2: ['2.30.10']
 
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
@@ -55,15 +55,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-        sdl2: ['2.28.5']
+        python-version: ['3.8', '3.10', '3.11', '3.12', '3.13']
+        sdl2: ['2.30.10']
         name-prefix: ['Linux (Python ']
         include:
           - python-version: 'pypy-2.7'
-            sdl2: '2.28.5'
+            sdl2: '2.30.10'
             name-prefix: 'Experimental / Linux ('
-          - python-version: 'pypy-3.8'
-            sdl2: '2.28.5'
+          - python-version: 'pypy-3.10'
+            sdl2: '2.30.10'
             name-prefix: 'Experimental / Linux ('
 
     env:
@@ -104,11 +104,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10']
-        sdl2: ['2.28.5', '2.26.5', '2.24.0']
+        python-version: ['3.12']
+        sdl2: ['2.30.10', '2.28.5', '2.26.5']
         name-prefix: ['macOS (Python ']
         include:
-          - python-version: '3.10'
+          - python-version: '3.12'
             sdl2: 'from Homebrew'
             name-prefix: 'Experimental / macOS (Python '
 
@@ -128,7 +128,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pytest
+          python -m pip install setuptools pytest
 
       - name: Install latest SDL2 via Homebrew
         if: ${{ matrix.sdl2 == 'from Homebrew' }}
@@ -156,23 +156,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10']
+        python-version: ['3.11']
         architecture: ['x64']
         sdl2: [
-          '2.28.5', '2.26.5', '2.24.0', '2.0.22', '2.0.20', '2.0.18', '2.0.16', '2.0.14',
-          '2.0.12', '2.0.10', '2.0.9', '2.0.8', '2.0.7', '2.0.6', '2.0.5'
+          '2.0.5', '2.0.6', '2.0.7', '2.0.8', '2.0.9', '2.0.10', '2.0.12',
+          '2.0.14', '2.0.16', '2.0.18', '2.0.20', '2.0.22', '2.24.0', '2.26.5',
+          '2.28.5', '2.30.10'
         ]
         name-prefix: ['Windows (Python ']
         include:
-          - python-version: '3.8'
+          - python-version: '3.11'
             architecture: 'x86'
-            sdl2: '2.28.5'
+            sdl2: '2.30.10'
             name-prefix: 'Windows 32-bit (Python '
-          - python-version: '3.8'
+          - python-version: '3.11'
             architecture: 'x86'
             sdl2: '2.0.22'
             name-prefix: 'Windows 32-bit (Python '
-          - python-version: '3.8'
+          - python-version: '3.11'
             architecture: 'x86'
             sdl2: '2.0.5'
             name-prefix: 'Windows 32-bit (Python '
@@ -218,7 +219,7 @@ jobs:
       fail-fast: false
       matrix:
         architecture: ['x86']
-        sdl2: ['2.28.5', '2.0.5']
+        sdl2: ['2.30.10', '2.0.5']
 
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}

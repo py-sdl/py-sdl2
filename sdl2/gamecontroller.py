@@ -26,6 +26,7 @@ __all__ = [
     "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT",
     "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT",
     "SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR",
+    "SDL_CONTROLLER_TYPE_MAX",
 
     "SDL_GameControllerBindType",
     "SDL_CONTROLLER_BINDTYPE_NONE", "SDL_CONTROLLER_BINDTYPE_BUTTON",
@@ -80,6 +81,7 @@ SDL_CONTROLLER_TYPE_NVIDIA_SHIELD = 10
 SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT = 11
 SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT = 12
 SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR = 13
+SDL_CONTROLLER_TYPE_MAX = 14
 
 SDL_GameControllerAxis = c_int
 SDL_CONTROLLER_AXIS_INVALID = -1
@@ -173,6 +175,10 @@ _funcdefs = [
         returns = Uint16, added = '2.23.1'
     ),
     SDLFunc("SDL_GameControllerGetSerial", [_P(SDL_GameController)], c_char_p, added='2.0.14'),
+    SDLFunc("SDL_GameControllerGetSteamHandle",
+        [_P(SDL_GameController)],
+        returns = Uint64, added = '2.30.0'
+    ),
     SDLFunc("SDL_GameControllerGetAttached", [_P(SDL_GameController)], SDL_bool),
     SDLFunc("SDL_GameControllerGetJoystick", [_P(SDL_GameController)], _P(SDL_Joystick)),
     SDLFunc("SDL_GameControllerEventState", [c_int], c_int),
@@ -320,6 +326,7 @@ SDL_GameControllerGetProduct = _ctypes["SDL_GameControllerGetProduct"]
 SDL_GameControllerGetProductVersion = _ctypes["SDL_GameControllerGetProductVersion"]
 SDL_GameControllerGetFirmwareVersion = _ctypes["SDL_GameControllerGetFirmwareVersion"]
 SDL_GameControllerGetSerial = _ctypes["SDL_GameControllerGetSerial"]
+SDL_GameControllerGetSteamHandle = _ctypes["SDL_GameControllerGetSteamHandle"]
 SDL_GameControllerNumMappings = _ctypes["SDL_GameControllerNumMappings"]
 SDL_GameControllerMappingForIndex = _ctypes["SDL_GameControllerMappingForIndex"]
 SDL_GameControllerMappingForDeviceIndex = _ctypes["SDL_GameControllerMappingForDeviceIndex"]

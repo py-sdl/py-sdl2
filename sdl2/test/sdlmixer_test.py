@@ -38,7 +38,8 @@ def with_sdl_mixer():
     # Initialize SDL_mixer and open an audio device
     flags = (
         sdlmixer.MIX_INIT_FLAC | sdlmixer.MIX_INIT_MOD | sdlmixer.MIX_INIT_MP3 |
-        sdlmixer.MIX_INIT_OGG | sdlmixer.MIX_INIT_MID | sdlmixer.MIX_INIT_OPUS
+        sdlmixer.MIX_INIT_OGG | sdlmixer.MIX_INIT_MID | sdlmixer.MIX_INIT_OPUS |
+        sdlmixer.MIX_INIT_WAVPACK
     )
     sdlmixer.Mix_Init(flags)
     ret = sdlmixer.Mix_OpenAudio(48000, sdlmixer.MIX_DEFAULT_FORMAT, 2, 1024)
@@ -93,7 +94,8 @@ def test_Mix_InitQuit():
         'MP3': sdlmixer.MIX_INIT_MP3,
         'OGG': sdlmixer.MIX_INIT_OGG,
         'MID': sdlmixer.MIX_INIT_MID,
-        'OPUS': sdlmixer.MIX_INIT_OPUS
+        'OPUS': sdlmixer.MIX_INIT_OPUS,
+        'WAVPACK': sdlmixer.MIX_INIT_WAVPACK,
     }
     for lib in libs.keys():
         flags = libs[lib]
@@ -127,11 +129,19 @@ def test_Mix_OpenAudioDevice():
     fmt = sdlmixer.MIX_DEFAULT_FORMAT
     flags = audio.SDL_AUDIO_ALLOW_ANY_CHANGE
     for device in devices:
+        if device == b"Null Audio Device":
+            # Skip problematic dummy device on macOS CI runner
+            continue
         ret = sdlmixer.Mix_OpenAudioDevice(22050, fmt, 2, 1024, device, flags)
         assert ret == 0
         sdlmixer.Mix_CloseAudio()
     sdlmixer.Mix_Quit()
     SDL_Quit()
+
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdlmixer.dll.version < 2080, reason="Added in 2.8.0")
+def test_Mix_PauseAudio(with_sdl_mixer):
+    pass
 
 def test_Mix_AllocateChannels(with_sdl_mixer):
     # Get number currently allocated
@@ -461,6 +471,16 @@ def test_Mix_PausedMusic(with_sdl_mixer):
 
 @pytest.mark.skip("not implemented")
 def test_Mix_ModMusicJumpToOrder(with_sdl_mixer):
+    pass
+
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdlmixer.dll.version < 2080, reason="Added in 2.8.0")
+def test_Mix_StartTrack(with_sdl_mixer):
+    pass
+
+@pytest.mark.skip("not implemented")
+@pytest.mark.skipif(sdlmixer.dll.version < 2080, reason="Added in 2.8.0")
+def test_Mix_GetNumTracks(with_sdl_mixer):
     pass
 
 @pytest.mark.skip("not implemented")

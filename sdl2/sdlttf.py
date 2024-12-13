@@ -61,7 +61,7 @@ _bind = dll.bind_function
 # Constants, enums, type definitions, and macros
 
 SDL_TTF_MAJOR_VERSION = 2
-SDL_TTF_MINOR_VERSION = 20
+SDL_TTF_MINOR_VERSION = 22
 SDL_TTF_PATCHLEVEL = 0
 
 def SDL_TTF_VERSION(x):
