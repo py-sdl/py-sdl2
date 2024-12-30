@@ -49,5 +49,5 @@ from .scancode import *
 _SDL_SetMainReady = _bind("SDL_SetMainReady")
 _SDL_SetMainReady()
 
-__version__ = "0.9.17"
-version_info = (0, 9, 17)
+__version__ = "0.9.18a1"
+version_info = (0, 9, 18)
