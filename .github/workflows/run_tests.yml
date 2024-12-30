@@ -81,10 +81,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Pillow build dependencies for PyPy 2.7
+        if: ${{ matrix.python-version == 'pypy-2.7' }}
+        run: |
+          sudo apt-get install -y libjpeg8-dev zlib1g-dev
+
       - name: Install dependencies and latest SDL2 binaries
         run: |
           python -m pip install --upgrade pip
-          python -m pip install wheel
           python -m pip install --prefer-binary numpy pytest pillow
           python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
 
