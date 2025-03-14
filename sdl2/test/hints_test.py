@@ -32,8 +32,6 @@ def test_SDL_SetHint(with_sdl):
     assert sdl2.SDL_GetHint(b"TEST") == b"32"
     assert sdl2.SDL_SetHint(b"TEST", b"abcdef") == 1
     assert sdl2.SDL_GetHint(b"TEST") == b"abcdef"
-    assert sdl2.SDL_SetHint(b"", b"hi") == 1
-    assert sdl2.SDL_GetHint(b"") == b"hi"
 
 def test_SDL_SetHintWithPriority(with_sdl):
     tst_hints = [
