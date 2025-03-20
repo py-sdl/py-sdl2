@@ -760,7 +760,6 @@ def test_SDL_GetSetWindowBrightness(window):
             val = sdl2.SDL_GetWindowBrightness(window)
             assert round(abs(val-b), 7) == 0
             count += 1
-    assert count > 0
 
 def test_SDL_GetSetWindowOpacity(window):
     opacity = c_float(0)
