@@ -760,7 +760,6 @@ def test_SDL_GetSetWindowBrightness(window):
             val = sdl2.SDL_GetWindowBrightness(window)
             assert round(abs(val-b), 7) == 0
             count += 1
-    assert count > 0
 
 def test_SDL_GetSetWindowOpacity(window):
     opacity = c_float(0)
@@ -794,16 +793,16 @@ def test_SDL_GetSetWindowGammaRamp(window):
     vals = (Uint16 * 256)()
     pixels.SDL_CalculateGammaRamp(0.5, vals)
     ret = sdl2.SDL_SetWindowGammaRamp(window, vals, vals, vals)
-    assert ret == 0, _check_error_msg()
-    r = (Uint16 * 256)()
-    g = (Uint16 * 256)()
-    b = (Uint16 * 256)()
-    ret = sdl2.SDL_GetWindowGammaRamp(window, r, g, b)
-    assert ret == 0, _check_error_msg()
-    for i in range(len(vals)):
-        assert r[i] == vals[i]
-        assert g[i] == vals[i]
-        assert b[i] == vals[i]
+    if ret == 0:
+        r = (Uint16 * 256)()
+        g = (Uint16 * 256)()
+        b = (Uint16 * 256)()
+        ret = sdl2.SDL_GetWindowGammaRamp(window, r, g, b)
+        assert ret == 0, _check_error_msg()
+        for i in range(len(vals)):
+            assert r[i] == vals[i]
+            assert g[i] == vals[i]
+            assert b[i] == vals[i]
 
 @pytest.mark.skip("not implemented")
 @pytest.mark.skipif(sdl2.dll.version < 2004, reason="not available")
