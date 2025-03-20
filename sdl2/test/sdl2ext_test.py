@@ -3,7 +3,7 @@ import pytest
 import sdl2
 from sdl2 import ext as sdl2ext
 from sdl2 import (
-    SDL_Quit, SDL_WasInit, SDL_FlushEvent, SDL_UserEvent, SDL_PushEvent, 
+    SDL_Quit, SDL_WasInit, SDL_FlushEvents, SDL_UserEvent, SDL_PushEvent,
     SDL_Event, SDL_USEREVENT, SDL_FIRSTEVENT, SDL_LASTEVENT, SDL_QUIT,
 )
 
@@ -58,7 +58,7 @@ def test_init_quit():
     sdl2ext.quit()
 
 def test_get_events(with_sdl_ext):
-    SDL_FlushEvent(SDL_FIRSTEVENT, SDL_LASTEVENT)
+    SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT)
     for x in range(12):
         event = SDL_Event()
         event.type = SDL_USEREVENT + x
