@@ -11,12 +11,14 @@ from .conftest import SKIP_ANNOYING, SDL_VIDEODRIVER, _check_error_msg
 
 # Some tests don't work properly with some video drivers, so check the name
 DRIVER_DUMMY = False
+DRIVER_WAYLAND = False
 DRIVER_X11 = False
 try:
     sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
     driver_name = sdl2.SDL_GetCurrentVideoDriver()
     sdl2.SDL_Quit()
     DRIVER_DUMMY = driver_name == b"dummy"
+    DRIVER_WAYLAND = driver_name == b"wayland"
     DRIVER_X11 = driver_name == b"x11"
 except:
     pass
