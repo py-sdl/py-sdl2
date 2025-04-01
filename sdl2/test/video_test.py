@@ -440,6 +440,7 @@ def test_SDL_GetSetWindowTitle(window):
     sdl2.SDL_SetWindowTitle(window, b"Hello there")
     assert sdl2.SDL_GetWindowTitle(window) == b"Hello there"
 
+@pytest.mark.xfail(DRIVER_WAYLAND, reason="wayland does not allow changing the window icon")
 def test_SDL_SetWindowIcon(window):
     sf = surface.SDL_CreateRGBSurface(
         0, 16, 16, 16, 0xF000, 0x0F00, 0x00F0, 0x000F
