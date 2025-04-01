@@ -464,7 +464,7 @@ def test_SDL_GetSetWindowData(window):
         retval = sdl2.SDL_GetWindowData(window, k)
         assert retval.contents.value == v.value
 
-@pytest.mark.xfail(DRIVER_X11, reason="Wonky with some window managers")
+@pytest.mark.xfail(DRIVER_X11 or DRIVER_WAYLAND, reason="Wonky with some window managers")
 def test_SDL_GetSetWindowPosition(with_sdl):
     window = _create_window(b"Test", 10, 200, 10, 10, 0)
     px, py = c_int(0), c_int(0)
