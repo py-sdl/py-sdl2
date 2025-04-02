@@ -11,12 +11,14 @@ from .conftest import SKIP_ANNOYING, SDL_VIDEODRIVER, _check_error_msg
 
 # Some tests don't work properly with some video drivers, so check the name
 DRIVER_DUMMY = False
+DRIVER_WAYLAND = False
 DRIVER_X11 = False
 try:
     sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
     driver_name = sdl2.SDL_GetCurrentVideoDriver()
     sdl2.SDL_Quit()
     DRIVER_DUMMY = driver_name == b"dummy"
+    DRIVER_WAYLAND = driver_name == b"wayland"
     DRIVER_X11 = driver_name == b"x11"
 except:
     pass
@@ -438,6 +440,7 @@ def test_SDL_GetSetWindowTitle(window):
     sdl2.SDL_SetWindowTitle(window, b"Hello there")
     assert sdl2.SDL_GetWindowTitle(window) == b"Hello there"
 
+@pytest.mark.xfail(DRIVER_WAYLAND, reason="wayland does not allow changing the window icon")
 def test_SDL_SetWindowIcon(window):
     sf = surface.SDL_CreateRGBSurface(
         0, 16, 16, 16, 0xF000, 0x0F00, 0x00F0, 0x000F
@@ -461,7 +464,7 @@ def test_SDL_GetSetWindowData(window):
         retval = sdl2.SDL_GetWindowData(window, k)
         assert retval.contents.value == v.value
 
-@pytest.mark.xfail(DRIVER_X11, reason="Wonky with some window managers")
+@pytest.mark.xfail(DRIVER_X11 or DRIVER_WAYLAND, reason="Wonky with some window managers")
 def test_SDL_GetSetWindowPosition(with_sdl):
     window = _create_window(b"Test", 10, 200, 10, 10, 0)
     px, py = c_int(0), c_int(0)
