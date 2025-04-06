@@ -24,6 +24,7 @@ from .renderer import *
 from .sprite import *
 from .spritesystem import *
 from .surface import *
+from .time import *
 from .window import *
 from .mouse import *
 from .displays import *
