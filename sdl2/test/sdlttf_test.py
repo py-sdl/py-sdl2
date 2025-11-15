@@ -370,7 +370,9 @@ def test_TTF_GlyphMetrics(with_sdl_ttf):
         results = [x.value for x in (minX, maxX, minY, maxY, adv)]
         assert sdlttf.TTF_GetError() == b""
         assert ret == 0
-        assert results == expected[char]
+        # Allow deviation of up to 1px
+        # With FreeType >= 2.14.0 maxY for 'j' is 29 instead of expected 28
+        assert results == pytest.approx(expected[char], abs=1)
     sdlttf.TTF_CloseFont(font)
 
 @pytest.mark.skipif(sdlttf.dll.version < 2018, reason="not available")
@@ -391,12 +393,14 @@ def test_TTF_GlyphMetrics32(with_sdl_ttf):
         results = [x.value for x in (minX, maxX, minY, maxY, adv)]
         assert sdlttf.TTF_GetError() == b""
         assert ret == 0
-        assert results == expected[char]
+        # Allow deviation of up to 1px
+        # With FreeType >= 2.14.0 maxY for 'j' is 29 instead of expected 28
+        assert results == pytest.approx(expected[char], abs=1)
     sdlttf.TTF_CloseFont(font)
 
 def test_TTF_SizeText(with_font):
     font = with_font
-    min_expected_w = 69     # SDL2_ttf 2.0.18
+    min_expected_w = 67     # SDL2_tff 2.22.0 with FreeType >= 2.14.0
     max_expected_w = 70     # SDL2_ttf <= 2.0.15
     min_expected_h = 21     # SDL2_ttf 2.0.15 with FreeType 2.10.1
     max_expected_h = 25     # SDL2_ttf < 2.0.15
@@ -409,7 +413,7 @@ def test_TTF_SizeText(with_font):
 
 def test_TTF_SizeUTF8(with_font):
     font = with_font
-    min_expected_w = 72     # SDL2_ttf 2.0.18
+    min_expected_w = 70     # SDL2_tff 2.22.0 with FreeType >= 2.14.0
     max_expected_w = 73     # SDL2_ttf <= 2.0.15
     min_expected_h = 21     # SDL2_ttf 2.0.15 with FreeType 2.10.1
     max_expected_h = 25     # SDL2_ttf < 2.0.15
@@ -422,7 +426,7 @@ def test_TTF_SizeUTF8(with_font):
 
 def test_TTF_SizeUNICODE(with_font):
     font = with_font
-    min_expected_w = 69     # SDL2_ttf 2.0.18
+    min_expected_w = 67     # SDL2_tff 2.22.0 with FreeType >= 2.14.0
     max_expected_w = 70     # SDL2_ttf <= 2.0.15
     min_expected_h = 21     # SDL2_ttf 2.0.15 with FreeType 2.10.1
     max_expected_h = 25     # SDL2_ttf < 2.0.15
