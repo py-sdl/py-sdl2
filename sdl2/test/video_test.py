@@ -730,6 +730,7 @@ def test_SDL_GetGrabbedWindow(window):
     # NOTE: Should implement this once the above tests are fixed
     pass
 
+@pytest.mark.skipif(DRIVER_DUMMY, reason="Not implemented by dummy driver")
 @pytest.mark.skipif(sdl2.dll.version < 2018, reason="not available")
 def test_SDL_GetSetWindowMouseRect(with_sdl):
     flags = sdl2.SDL_WINDOW_BORDERLESS
