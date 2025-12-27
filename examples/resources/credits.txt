@@ -1,0 +1,3 @@
+
+title_screen.wav: CC0 by Juhani Junkala
+handleCoins.ogg: CC0 by Kenney (www.kenney.nl)
