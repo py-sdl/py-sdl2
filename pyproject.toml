@@ -8,6 +8,7 @@ version = "0.9.18a1"
 description = "Python SDL2 bindings"
 readme = "README.md"
 license = "CC0-1.0 OR Zlib"
+license-files = []
 requires-python = ">=2.7"
 authors = [
     { name = "Marcus von Appen", email = "marcus@sysfault.org" },
