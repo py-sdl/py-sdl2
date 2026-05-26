@@ -12,39 +12,6 @@ on:
 
 jobs:
 
-  # Test on Python 2.7 with Linux and latest SDL2
-  test-linux-py27:
-
-    name: Linux (Python 2.7, SDL ${{ matrix.sdl2 }})
-    runs-on: ubuntu-20.04
-    container: python:2.7
-
-    strategy:
-      matrix:
-        sdl2: ['2.30.10']
-
-    env:
-      PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
-      SDL_VIDEODRIVER: dummy
-      SDL_AUDIODRIVER: dummy
-      SDL_RENDER_DRIVER: software
-      PYTHONFAULTHANDLER: 1
-    
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install dependencies and latest SDL2 binaries
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install --prefer-binary numpy pytest pillow
-          python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
-
-      - name: Install and test PySDL2
-        run: |
-          python -m pip install .
-          python -B -m pytest -vvl -rxXP
-
-
   # Test on all supported Python versions with Linux and latest SDL2
   # Experimental: Also test on latest PyPy 2.7 and 3.x versions with Linux and latest SDL2
   test-linux:
@@ -55,15 +22,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.8', '3.10', '3.11', '3.12', '3.13']
-        sdl2: ['2.30.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+        sdl2: ['2.32.10']
         name-prefix: ['Linux (Python ']
         include:
           - python-version: 'pypy-2.7'
-            sdl2: '2.30.10'
+            sdl2: '2.32.10'
             name-prefix: 'Experimental / Linux ('
           - python-version: 'pypy-3.10'
-            sdl2: '2.30.10'
+            sdl2: '2.32.10'
             name-prefix: 'Experimental / Linux ('
 
     env:
@@ -74,10 +41,10 @@ jobs:
       PYTHONFAULTHANDLER: 1
     
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -88,7 +55,7 @@ jobs:
 
       - name: Install dependencies and latest SDL2 binaries
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools
           python -m pip install --prefer-binary numpy pytest pillow
           python -m pip install pysdl2-dll==$PYSDL2_DLL_VERSION
 
@@ -110,7 +77,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.12']
-        sdl2: ['2.30.10', '2.28.5', '2.26.5']
+        sdl2: ['2.32.10', '2.30.10', '2.28.5']
         name-prefix: ['macOS (Python ']
         include:
           - python-version: '3.12'
@@ -123,10 +90,10 @@ jobs:
       SDL_RENDER_DRIVER: software
     
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -161,24 +128,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.11']
+        python-version: ['3.12']
         architecture: ['x64']
         sdl2: [
           '2.0.5', '2.0.6', '2.0.7', '2.0.8', '2.0.9', '2.0.10', '2.0.12',
           '2.0.14', '2.0.16', '2.0.18', '2.0.20', '2.0.22', '2.24.0', '2.26.5',
-          '2.28.5', '2.30.10'
+          '2.28.5', '2.30.10', '2.32.10'
         ]
         name-prefix: ['Windows (Python ']
         include:
-          - python-version: '3.11'
+          - python-version: '3.12'
             architecture: 'x86'
-            sdl2: '2.30.10'
+            sdl2: '2.32.10'
             name-prefix: 'Windows 32-bit (Python '
-          - python-version: '3.11'
+          - python-version: '3.12'
             architecture: 'x86'
             sdl2: '2.0.22'
             name-prefix: 'Windows 32-bit (Python '
-          - python-version: '3.11'
+          - python-version: '3.12'
             architecture: 'x86'
             sdl2: '2.0.5'
             name-prefix: 'Windows 32-bit (Python '
@@ -190,17 +157,17 @@ jobs:
       SDL_RENDER_DRIVER: software
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools
           python -m pip install --prefer-binary numpy pytest pillow
 
       - name: Download SDL2 binaries
@@ -224,7 +191,7 @@ jobs:
       fail-fast: false
       matrix:
         architecture: ['x86']
-        sdl2: ['2.30.10', '2.0.5']
+        sdl2: ['2.32.10', '2.0.5']
 
     env:
       PYSDL2_DLL_VERSION: ${{ matrix.sdl2 }}
@@ -233,7 +200,7 @@ jobs:
       SDL_RENDER_DRIVER: software
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Python 2.7
         run: |
@@ -241,7 +208,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          C:\Python27\python -m pip install --upgrade pip
+          C:\Python27\python -m pip install --upgrade pip setuptools
           C:\Python27\python -m pip install --prefer-binary numpy pytest pillow
 
       - name: Download SDL2 binaries
