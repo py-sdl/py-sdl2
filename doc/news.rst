@@ -5,6 +5,9 @@ This describes the latest changes between the PySDL2 releases.
 0.9.18 (Unreleased)
 -------------------
 
+* Updated to wrap new hints added in 2.32.0 and 2.32.2 (PR #293).
+* Updated to wrap new function added in SDL_ttf 2.24.0 (PR #293).
+
 
 0.9.17
 ------
