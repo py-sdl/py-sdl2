@@ -61,7 +61,7 @@ _bind = dll.bind_function
 # Constants, enums, type definitions, and macros
 
 SDL_TTF_MAJOR_VERSION = 2
-SDL_TTF_MINOR_VERSION = 22
+SDL_TTF_MINOR_VERSION = 24
 SDL_TTF_PATCHLEVEL = 0
 
 def SDL_TTF_VERSION(x):
@@ -182,6 +182,7 @@ _funcdefs = [
     SDLFunc("TTF_FontAscent", [_P(TTF_Font)], c_int),
     SDLFunc("TTF_FontDescent", [_P(TTF_Font)], c_int),
     SDLFunc("TTF_FontLineSkip", [_P(TTF_Font)], c_int),
+    SDLFunc("TTF_SetFontLineSkip", [_P(TTF_Font), c_int], None, added='2.24.0'),
     SDLFunc("TTF_GetFontKerning", [_P(TTF_Font)], c_int),
     SDLFunc("TTF_SetFontKerning", [_P(TTF_Font), c_int]),
     SDLFunc("TTF_FontFaces", [_P(TTF_Font)], c_long),
@@ -883,6 +884,18 @@ def TTF_FontLineSkip(font):
 
     """
     return _ctypes["TTF_FontLineSkip"](font)
+
+def TTF_SetFontLineSkip(font, lineskip):
+    """Sets the spacing between lines of text for a given font.
+
+    `Note: Added in SDL_ttf 2.24.0`
+
+    Args:
+        font (:obj:`TTF_Font`): The font object to modify.
+        lineskip (int): The new line skip height (in pixels) for the font.
+
+    """
+    return _ctypes["TTF_SetFontLineSkip"](font, lineskip)
 
 def TTF_GetFontKerning(font):
     """Checks whether or not kerning is enabled for a given font.
