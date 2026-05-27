@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PySDL2"
+version = "0.9.18a1"
+description = "Python SDL2 bindings"
+readme = "README.md"
+license = {text = "CC0-1.0 OR Zlib"}
+requires-python = ">=2.7"
+authors = [
+    { name = "Marcus von Appen", email = "marcus@sysfault.org" },
+    { name = "Austin Hurst", email = "mynameisaustinhurst@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/py-sdl/py-sdl2"
+Documentation = "https://pysdl2.readthedocs.io/en/stable/"
+
+[tool.setuptools.package-dir]
+sdl2 = "sdl2"
+"sdl2.ext" = "sdl2/ext"
+"sdl2.test" = "sdl2/test"
+"sdl2.examples" = "examples"

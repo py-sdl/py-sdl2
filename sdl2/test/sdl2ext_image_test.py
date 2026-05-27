@@ -273,8 +273,9 @@ def test_load_image(with_sdl):
 
         # Force only PIL
         if _HASPIL and fmt not in ("webp", "xcf", "lbm", "svg", "qoi"):
-            sf = sdl2ext.load_image(img_path, enforce="PIL")
-            assert isinstance(sf, surf.SDL_Surface)
+            if not fmt == "xpm" and sdlimage.dll.version_tuple < (2, 0, 6):
+                sf = sdl2ext.load_image(img_path, enforce="PIL")
+                assert isinstance(sf, surf.SDL_Surface)
 
         # Force only sdlimage
         sf = sdl2ext.load_image(img_path, enforce="SDL")
