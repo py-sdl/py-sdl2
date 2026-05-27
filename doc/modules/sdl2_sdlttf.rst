@@ -112,6 +112,9 @@ Sizing functions
 
 .. autofunction:: TTF_FontLineSkip
 
+.. autofunction:: TTF_SetFontLineSkip
+
+
 Style functions
 ^^^^^^^^^^^^^^^
 

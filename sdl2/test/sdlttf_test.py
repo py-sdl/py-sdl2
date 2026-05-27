@@ -310,6 +310,13 @@ def test_TTF_FontLineSkip(with_sdl_ttf):
         last = cur
         sdlttf.TTF_CloseFont(font)
 
+@pytest.mark.skipif(sdlttf.dll.version_tuple < (2, 24, 0), reason="not available")
+def test_TTF_SetFontLineSkip(with_sdl_ttf):
+    font = sdlttf.TTF_OpenFont(fontfile, 20)
+    cur = sdlttf.TTF_FontLineSkip(font)
+    sdlttf.TTF_SetFontLineSkip(font, cur + 10)
+    assert sdlttf.TTF_FontLineSkip(font) == (cur + 10)
+
 def test_TTF_GetSetFontKerning(with_font):
     font = with_font
     assert sdlttf.TTF_GetFontKerning(font) == 1
