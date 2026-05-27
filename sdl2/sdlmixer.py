@@ -66,8 +66,8 @@ _bind = dll.bind_function
 # Constants, enums, type definitions, and macros
 
 SDL_MIXER_MAJOR_VERSION = 2
-SDL_MIXER_MINOR_VERSION = 6
-SDL_MIXER_PATCHLEVEL = 1
+SDL_MIXER_MINOR_VERSION = 8
+SDL_MIXER_PATCHLEVEL = 2
 
 def SDL_MIXER_VERSION(x):
     x.major = SDL_MIXER_MAJOR_VERSION
