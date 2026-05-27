@@ -467,13 +467,20 @@ class TestSDLSurface(object):
             sdl2.SDL_FreeSurface(sf)
 
     def test_SDL_GetSetClipRect(self):
+        # A bug in intersecting empty rectangles was fixed in SDL2 2.33.x
+        # and in sdl2-compat (which reports its version as >= 2.32.50)
+        if sdl2.dll.version_tuple >= (2, 32, 50):
+            true_if_fixed = True
+        else:
+            true_if_fixed = None
+
         rectlist = ((rect.SDL_Rect(0, 0, 0, 0), SDL_FALSE, True),
-                    (rect.SDL_Rect(2, 2, 0, 0), SDL_FALSE, False),
+                    (rect.SDL_Rect(2, 2, 0, 0), SDL_FALSE, true_if_fixed),
                     (rect.SDL_Rect(2, 2, 5, 1), SDL_TRUE, True),
                     (rect.SDL_Rect(6, 5, 10, 3), SDL_TRUE, False),
                     (rect.SDL_Rect(0, 0, 10, 10), SDL_TRUE, True),
-                    (rect.SDL_Rect(0, 0, -10, 10), SDL_FALSE, False),
-                    (rect.SDL_Rect(0, 0, -10, -10), SDL_FALSE, False),
+                    (rect.SDL_Rect(0, 0, -10, 10), SDL_FALSE, true_if_fixed),
+                    (rect.SDL_Rect(0, 0, -10, -10), SDL_FALSE, true_if_fixed),
                     (rect.SDL_Rect(-10, -10, 10, 10), SDL_FALSE, False),
                     (rect.SDL_Rect(10, -10, 10, 10), SDL_FALSE, False),
                     (rect.SDL_Rect(10, 10, 10, 10), SDL_TRUE, False)
@@ -490,7 +497,8 @@ class TestSDLSurface(object):
             sdl2.SDL_GetClipRect(sf, byref(clip))
             err = "Could not set clip rect %s" % r
             assert retval == clipsetval, "retval: " + err
-            assert (clip == r) == cmpval, "clip: " + err
+            if cmpval is not None:
+                assert (clip == r) == cmpval, "clip: " + err
         sdl2.SDL_FreeSurface(sf)
 
     def test_SDL_GetSetSurfaceAlphaMod(self):
